@@ -7,13 +7,13 @@ import { cn } from '@/lib/utils';
 interface HomeViewProps {
   lang: Language;
   theme: Theme;
+  onSelectCategory: (id: string) => void;
 }
 
-export const HomeView = ({ lang, theme }: HomeViewProps) => {
+export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
 
-  // Future-proof translation dictionary for the main banner
   const bannerContent = {
     line1: isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions',
     line2: isHindi 
@@ -25,7 +25,6 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
     line4: isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Complete Health at Home Without Medicine'
   };
 
-  // Structured category data for easy expansion
   const categories = [
     {
       id: 'fever',
@@ -40,12 +39,10 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
         }
       }
     },
-    // Future categories can be added here easily
   ];
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
-      {/* Main Banner with 16:9 Aspect Ratio and Premium Typographic Contrast */}
       <section className={cn(
         "w-full aspect-video rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-center justify-center p-6 sm:p-10 text-center transition-all duration-500",
         isNight 
@@ -53,23 +50,20 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
           : "herbal-gradient border-2 border-[#14532D]"
       )}>
         
-        {/* Line 1: Bold & Highly Visible Label */}
         <p className={cn(
-          "text-xl sm:text-2xl font-black tracking-[0.2em] uppercase mb-4 drop-shadow-sm transition-colors duration-500",
+          "text-xl sm:text-2xl font-black tracking-[0.2em] uppercase mb-4 transition-colors duration-500",
           "text-white"
         )}>
           {bannerContent.line1}
         </p>
 
-        {/* Line 2: Prominent, Extra Bold Header Sync Slogan */}
         <h2 className={cn(
-          "text-3xl sm:text-5xl font-black leading-[1.1] max-w-xl mx-auto mb-4 drop-shadow-sm transition-colors duration-500",
+          "text-3xl sm:text-5xl font-black leading-[1.1] max-w-xl mx-auto mb-4 transition-colors duration-500",
           isNight ? "text-white" : "text-[#14532D]"
         )}>
           {bannerContent.line2}
         </h2>
 
-        {/* Line 3: Bold & Large Charcoal Description for High Readability */}
         <p className={cn(
           "text-xl sm:text-3xl font-bold max-w-2xl mx-auto leading-relaxed mb-6 italic transition-colors duration-500",
           isNight ? "text-white" : "text-[#1E293B]"
@@ -77,7 +71,6 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
           {bannerContent.line3}
         </p>
 
-        {/* Line 4: Prominent Ivory Footer Slogan with increased word spacing */}
         <p className={cn(
           "text-2xl sm:text-4xl font-black [word-spacing:0.25rem] transition-colors duration-500",
           "text-white"
@@ -86,7 +79,6 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
         </p>
       </section>
 
-      {/* Categories Grid */}
       <div className="space-y-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {categories.map((category) => {
@@ -94,6 +86,7 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
             return (
               <button
                 key={category.id}
+                onClick={() => onSelectCategory(category.id)}
                 className={cn(
                   "group relative w-full p-10 rounded-[2.5rem] border transition-all duration-500",
                   "flex flex-col items-center justify-center text-center space-y-5 shadow-2xl hover:-translate-y-1 active:scale-[0.98]",
@@ -114,8 +107,6 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
                 )}>
                   {content.subtitle}
                 </p>
-                
-                {/* Subtle background glow on hover */}
                 <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 rounded-[2.5rem] transition-opacity duration-300" />
               </button>
             );

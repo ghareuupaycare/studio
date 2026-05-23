@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { TopBar } from '@/components/gharelu/top-bar';
 import { BottomNav } from '@/components/gharelu/bottom-nav';
 import { HomeView } from '@/components/gharelu/home-view';
+import { CategoryDetailView } from '@/components/gharelu/category-detail-view';
+import { AIConsultant } from '@/components/gharelu/ai-consultant';
 import { cn } from '@/lib/utils';
 
 export type Language = 'hi' | 'en';
@@ -11,6 +13,7 @@ export type Theme = 'cream' | 'night';
 
 export default function GhareluUpayApp() {
   const [view, setView] = useState<'home' | 'ai'>('home');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [lang, setLang] = useState<Language>('hi');
   const [theme, setTheme] = useState<Theme>('cream');
 
@@ -18,6 +21,15 @@ export default function GhareluUpayApp() {
   const toggleTheme = () => setTheme((prev) => (prev === 'cream' ? 'night' : 'cream'));
 
   const isNight = theme === 'night';
+
+  const handleSelectCategory = (id: string) => {
+    setSelectedCategoryId(id);
+    setView('home'); // Ensure we are on home view to show category details
+  };
+
+  const handleBackToCategories = () => {
+    setSelectedCategoryId(null);
+  };
 
   return (
     <div className={cn(
@@ -31,7 +43,6 @@ export default function GhareluUpayApp() {
         onToggleTheme={toggleTheme} 
       />
       
-      {/* Middle section with dynamic background */}
       <main 
         className={cn(
           "flex-1 w-full transition-colors duration-500",
@@ -39,21 +50,26 @@ export default function GhareluUpayApp() {
         )}
       >
         <div className="max-w-2xl mx-auto px-6 py-12">
-          {view === 'home' ? (
-            <HomeView lang={lang} theme={theme} />
+          {view === 'ai' ? (
+            <AIConsultant />
+          ) : selectedCategoryId ? (
+            <CategoryDetailView 
+              categoryId={selectedCategoryId} 
+              lang={lang} 
+              theme={theme} 
+              onBack={handleBackToCategories} 
+            />
           ) : (
-            <div className="text-center py-20 opacity-50">
-              <p className={isNight ? "text-white/60" : "text-muted-foreground"}>
-                {lang === 'hi' ? 'सामग्री जल्द आ रही है' : 'Content coming soon'}
-              </p>
-            </div>
+            <HomeView lang={lang} theme={theme} onSelectCategory={handleSelectCategory} />
           )}
         </div>
-        {/* Spacer to prevent content from being hidden behind the mega-footer and bottom bar */}
         <div className="h-[400px]" />
       </main>
 
-      <BottomNav lang={lang} theme={theme} currentView={view} onViewChange={setView} />
+      <BottomNav lang={lang} theme={theme} currentView={view} onViewChange={(v) => {
+        setView(v);
+        if (v === 'ai') setSelectedCategoryId(null);
+      }} />
     </div>
   );
 }
