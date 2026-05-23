@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home } from 'lucide-react';
+import { Home, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Language, Theme } from '@/app/page';
 
@@ -12,42 +12,60 @@ interface BottomNavProps {
 
 export const BottomNav = ({ lang, theme, currentView, onViewChange }: BottomNavProps) => {
   const isNight = theme === 'night';
+  const isHindi = lang === 'hi';
 
   return (
     <nav className="fixed bottom-0 left-0 z-50 w-full flex flex-col shadow-2xl pointer-events-none">
-      {/* Mega Footer Section - Pure Placeholder for future digital library */}
+      {/* Mega Footer Section - Pure Placeholder */}
       <div className={cn(
         "h-80 w-full pointer-events-auto border-t transition-colors duration-500",
         isNight ? "bg-black border-white/10" : "bg-[#14532D] border-white/5"
       )} />
       
-      {/* Bottom Patti (Bar) */}
+      {/* Bottom Navigation Bar */}
       <div className={cn(
-        "h-20 w-full flex items-center px-8 pointer-events-auto border-t transition-colors duration-500",
+        "h-20 w-full flex items-center justify-center gap-12 px-8 pointer-events-auto border-t transition-colors duration-500",
         isNight ? "bg-[#0A0A0A] border-white/10" : "bg-[#0F2F1D] border-white/5"
       )}>
         <button
           onClick={() => onViewChange('home')}
           className={cn(
-            "flex items-center gap-3 transition-all duration-200 group outline-none",
+            "flex flex-col items-center gap-1 transition-all duration-200 group outline-none",
             currentView === 'home' ? "text-accent" : "text-white/60 hover:text-white"
           )}
         >
           <div className={cn(
-            "p-2.5 rounded-xl transition-all duration-200",
+            "p-2 rounded-xl transition-all duration-200",
             currentView === 'home' 
-              ? "bg-[#D97706]/20 text-[#D97706]" 
-              : "bg-white/5 group-active:bg-[#B45309] group-active:text-[#FDFBF7]"
+              ? "bg-accent/20 text-accent" 
+              : "bg-white/5 hover:bg-white/10"
           )}>
-            <Home className={cn(
-              "w-6 h-6",
-              currentView === 'home' ? "text-accent" : "group-active:text-[#FDFBF7]"
-            )} />
+            <Home className="w-6 h-6" />
           </div>
+          <span className="text-[10px] font-bold uppercase tracking-widest transition-colors">
+            {isHindi ? 'मुख्य पेज' : 'Home'}
+          </span>
         </button>
-        
-        {/* Remaining space on the right is kept empty */}
-        <div className="flex-1" />
+
+        <button
+          onClick={() => onViewChange('ai')}
+          className={cn(
+            "flex flex-col items-center gap-1 transition-all duration-200 group outline-none",
+            currentView === 'ai' ? "text-accent" : "text-white/60 hover:text-white"
+          )}
+        >
+          <div className={cn(
+            "p-2 rounded-xl transition-all duration-200",
+            currentView === 'ai' 
+              ? "bg-accent/20 text-accent" 
+              : "bg-white/5 hover:bg-white/10"
+          )}>
+            <Sparkles className="w-6 h-6" />
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-widest transition-colors">
+            {isHindi ? 'वैद्य जी' : 'Consult AI'}
+          </span>
+        </button>
       </div>
     </nav>
   );

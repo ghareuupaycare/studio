@@ -24,11 +24,16 @@ export default function GhareluUpayApp() {
 
   const handleSelectCategory = (id: string) => {
     setSelectedCategoryId(id);
-    setView('home'); // Ensure we are on home view to show category details
+    setView('home'); 
   };
 
   const handleBackToCategories = () => {
     setSelectedCategoryId(null);
+  };
+
+  const handleViewChange = (v: 'home' | 'ai') => {
+    setView(v);
+    setSelectedCategoryId(null); // Reset navigation state when switching via bottom nav
   };
 
   return (
@@ -66,10 +71,12 @@ export default function GhareluUpayApp() {
         <div className="h-[400px]" />
       </main>
 
-      <BottomNav lang={lang} theme={theme} currentView={view} onViewChange={(v) => {
-        setView(v);
-        if (v === 'ai') setSelectedCategoryId(null);
-      }} />
+      <BottomNav 
+        lang={lang} 
+        theme={theme} 
+        currentView={view} 
+        onViewChange={handleViewChange} 
+      />
     </div>
   );
 }
