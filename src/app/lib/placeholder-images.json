@@ -1,0 +1,40 @@
+{
+  "placeholderImages": [
+    {
+      "id": "ayurveda-herbs",
+      "description": "Traditional Ayurvedic herbs and spices",
+      "imageUrl": "https://picsum.photos/seed/herb1/600/400",
+      "imageHint": "ayurveda herbs"
+    },
+    {
+      "id": "joint-pain",
+      "description": "Natural remedy for joint pain",
+      "imageUrl": "https://picsum.photos/seed/joint/600/400",
+      "imageHint": "joint massage"
+    },
+    {
+      "id": "respiratory",
+      "description": "Herbal tea for cough and cold",
+      "imageUrl": "https://picsum.photos/seed/cough/600/400",
+      "imageHint": "herbal tea"
+    },
+    {
+      "id": "digestion",
+      "description": "Ayurvedic digestive health herbs",
+      "imageUrl": "https://picsum.photos/seed/digestion/600/400",
+      "imageHint": "digestive spices"
+    },
+    {
+      "id": "skincare",
+      "description": "Natural skincare with turmeric and aloe",
+      "imageUrl": "https://picsum.photos/seed/skin/600/400",
+      "imageHint": "natural skincare"
+    },
+    {
+      "id": "vaidya-expert",
+      "description": "Ayurvedic expert consultation",
+      "imageUrl": "https://picsum.photos/seed/vaidya/600/400",
+      "imageHint": "ayurvedic doctor"
+    }
+  ]
+}
