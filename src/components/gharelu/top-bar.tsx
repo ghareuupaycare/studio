@@ -1,4 +1,6 @@
 import React from 'react';
+import { Bell, Search, Heart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export const TopBar = () => {
   return (
@@ -8,7 +10,20 @@ export const TopBar = () => {
           घरेलू उपाय केयर
         </h1>
       </div>
+      
       <div className="flex-1" />
+      
+      <div className="flex items-center gap-2">
+        <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/5">
+          <Bell className="w-5 h-5" />
+        </Button>
+        <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/5">
+          <Search className="w-5 h-5" />
+        </Button>
+        <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/5">
+          <Heart className="w-5 h-5" />
+        </Button>
+      </div>
     </header>
   );
 };
