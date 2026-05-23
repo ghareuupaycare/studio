@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Sparkles } from 'lucide-react';
+import { Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface BottomNavProps {
@@ -11,7 +11,7 @@ export const BottomNav = ({ currentView, onViewChange }: BottomNavProps) => {
   return (
     <nav className="fixed bottom-0 left-0 z-50 w-full bg-primary shadow-2xl h-80 pt-6">
       <div className="max-w-2xl mx-auto px-6">
-        <div className="flex justify-center gap-12">
+        <div className="flex justify-center">
           {/* Home Button */}
           <button
             onClick={() => onViewChange('home')}
@@ -27,23 +27,6 @@ export const BottomNav = ({ currentView, onViewChange }: BottomNavProps) => {
               <Home className="w-6 h-6" />
             </div>
             <span className="text-xs font-bold tracking-wider">मुख्य पेज</span>
-          </button>
-
-          {/* AI Consultant Button */}
-          <button
-            onClick={() => onViewChange('ai')}
-            className={cn(
-              "flex flex-col items-center gap-1 transition-all duration-300",
-              currentView === 'ai' ? "text-accent scale-110" : "text-white/60 hover:text-white"
-            )}
-          >
-            <div className={cn(
-              "p-3 rounded-2xl transition-colors",
-              currentView === 'ai' ? "bg-accent/20" : "bg-white/5"
-            )}>
-              <Sparkles className="w-6 h-6" />
-            </div>
-            <span className="text-xs font-bold tracking-wider">वैद्य जी सलाह</span>
           </button>
         </div>
 
