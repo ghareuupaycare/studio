@@ -16,7 +16,7 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
     {
       id: 'fever',
       title: 'मौसमी बुखार एवं फ्लू',
-      subtitle: '(Seasonal Fever & Flu)',
+      subtitle: 'बुखार, मलेरिया, डेंगू, चिकनगुनिया, लू लगना',
     },
   ];
 
@@ -67,7 +67,7 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
               <h3 className="text-xl sm:text-2xl font-black text-primary group-hover:text-accent transition-colors">
                 {category.title}
               </h3>
-              <p className="text-sm sm:text-base font-bold text-muted-foreground/60 tracking-tight">
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground/60 tracking-tight">
                 {category.subtitle}
               </p>
               
