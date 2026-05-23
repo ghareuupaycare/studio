@@ -18,7 +18,7 @@ export default function GhareluUpayApp() {
   const toggleTheme = () => setTheme((prev) => (prev === 'cream' ? 'night' : 'cream'));
 
   return (
-    <div className="min-h-screen bg-[#F0F9F4] flex flex-col selection:bg-primary selection:text-primary-foreground">
+    <div className="min-h-screen flex flex-col selection:bg-accent selection:text-white">
       <TopBar 
         lang={lang} 
         theme={theme} 

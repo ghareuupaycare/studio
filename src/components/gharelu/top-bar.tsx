@@ -13,13 +13,13 @@ interface TopBarProps {
 export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarProps) => {
   const isNight = theme === 'night';
 
-  // Common button styles for header icons
-  const headerBtnClass = "text-primary hover:bg-transparent hover:text-[#D97706] active:text-[#B45309] transition-colors duration-200";
+  // Premium interactive button styles: No opacity fade, deep amber highlight on active
+  const headerBtnClass = "text-white/90 hover:bg-white/5 hover:text-[#FBBF24] active:text-[#B45309] active:scale-95 transition-all duration-200 border-none shadow-none focus-visible:ring-0";
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-border h-20 flex items-center px-6">
+    <header className="sticky top-0 z-50 w-full bg-[#14532D] border-b border-white/10 h-20 flex items-center px-6 shadow-md">
       <div className="flex items-center">
-        <h1 className="text-2xl font-headline font-black tracking-tight text-primary">
+        <h1 className="text-2xl font-headline font-black tracking-tight text-[#FDFBF7]">
           {lang === 'hi' ? 'घरेलू उपाय केयर' : 'Gharelu Upay Care'}
         </h1>
       </div>
