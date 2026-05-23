@@ -20,17 +20,25 @@ export const BottomNav = ({ lang, currentView, onViewChange }: BottomNavProps) =
         <button
           onClick={() => onViewChange('home')}
           className={cn(
-            "flex items-center gap-3 transition-all duration-300",
+            "flex items-center gap-3 transition-all duration-200 group outline-none",
             currentView === 'home' ? "text-accent" : "text-white/60 hover:text-white"
           )}
         >
           <div className={cn(
             "p-2.5 rounded-xl transition-colors",
-            currentView === 'home' ? "bg-accent/20" : "bg-white/5"
+            currentView === 'home' 
+              ? "bg-accent/20" 
+              : "bg-white/5 group-active:bg-[#B45309]/30"
           )}>
-            <Home className="w-6 h-6" />
+            <Home className={cn(
+              "w-6 h-6",
+              currentView === 'home' ? "text-accent" : "group-active:text-[#D97706]"
+            )} />
           </div>
-          <span className="text-sm font-bold tracking-wider">
+          <span className={cn(
+            "text-sm font-bold tracking-wider",
+            currentView === 'home' ? "text-accent" : "group-active:text-[#D97706]"
+          )}>
             {lang === 'hi' ? 'मुख्य पेज' : 'Home'}
           </span>
         </button>

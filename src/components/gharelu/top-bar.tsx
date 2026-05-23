@@ -13,6 +13,9 @@ interface TopBarProps {
 export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarProps) => {
   const isNight = theme === 'night';
 
+  // Common button styles for header icons
+  const headerBtnClass = "text-primary hover:bg-transparent hover:text-[#D97706] active:text-[#B45309] transition-colors duration-200";
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-border h-20 flex items-center px-6">
       <div className="flex items-center">
@@ -29,10 +32,9 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarP
           variant="ghost" 
           size="icon" 
           onClick={onToggleLanguage}
-          className="text-primary hover:bg-primary/5 flex flex-col items-center gap-0"
+          className={headerBtnClass}
         >
           <Languages className="w-5 h-5" />
-          <span className="text-[8px] font-bold uppercase mt-0.5">{lang === 'hi' ? 'EN' : 'हिं'}</span>
         </Button>
 
         {/* Theme Toggle */}
@@ -40,19 +42,19 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarP
           variant="ghost" 
           size="icon" 
           onClick={onToggleTheme}
-          className="text-primary hover:bg-primary/5"
+          className={headerBtnClass}
         >
           {isNight ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </Button>
 
         {/* Existing Icons */}
-        <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/5">
+        <Button variant="ghost" size="icon" className={headerBtnClass}>
           <Bell className="w-5 h-5" />
         </Button>
-        <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/5">
+        <Button variant="ghost" size="icon" className={headerBtnClass}>
           <Search className="w-5 h-5" />
         </Button>
-        <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/5">
+        <Button variant="ghost" size="icon" className={headerBtnClass}>
           <Heart className="w-5 h-5" />
         </Button>
       </div>
