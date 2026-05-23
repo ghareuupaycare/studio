@@ -15,8 +15,8 @@ export default function GhareluUpayApp() {
         <div className="max-w-2xl mx-auto px-6 py-12">
           <HomeView />
         </div>
-        {/* Spacer to prevent content from being hidden behind the large footer */}
-        <div className="h-40" />
+        {/* Spacer to prevent content from being hidden behind the large mega-footer */}
+        <div className="h-80" />
       </main>
 
       <BottomNav />
