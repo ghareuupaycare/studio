@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Sparkles } from 'lucide-react';
+import { Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Language, Theme } from '@/app/page';
 
@@ -24,7 +24,7 @@ export const BottomNav = ({ lang, theme, currentView, onViewChange }: BottomNavP
       
       {/* Bottom Navigation Bar */}
       <div className={cn(
-        "h-20 w-full flex items-center justify-center gap-12 px-8 pointer-events-auto border-t transition-colors duration-500",
+        "h-20 w-full flex items-center justify-start px-8 pointer-events-auto border-t transition-colors duration-500",
         isNight ? "bg-[#0A0A0A] border-white/10" : "bg-[#0F2F1D] border-white/5"
       )}>
         <button
@@ -44,26 +44,6 @@ export const BottomNav = ({ lang, theme, currentView, onViewChange }: BottomNavP
           </div>
           <span className="text-[10px] font-bold uppercase tracking-widest transition-colors">
             {isHindi ? 'मुख्य पेज' : 'Home'}
-          </span>
-        </button>
-
-        <button
-          onClick={() => onViewChange('ai')}
-          className={cn(
-            "flex flex-col items-center gap-1 transition-all duration-200 group outline-none",
-            currentView === 'ai' ? "text-accent" : "text-white/60 hover:text-white"
-          )}
-        >
-          <div className={cn(
-            "p-2 rounded-xl transition-all duration-200",
-            currentView === 'ai' 
-              ? "bg-accent/20 text-accent" 
-              : "bg-white/5 hover:bg-white/10"
-          )}>
-            <Sparkles className="w-6 h-6" />
-          </div>
-          <span className="text-[10px] font-bold uppercase tracking-widest transition-colors">
-            {isHindi ? 'वैद्य जी' : 'Consult AI'}
           </span>
         </button>
       </div>
