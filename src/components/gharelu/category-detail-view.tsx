@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Language, Theme } from '@/app/page';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, Stethoscope, Clock, ShieldCheck } from 'lucide-react';
+import { ChevronLeft, Stethoscope, ArrowRight } from 'lucide-react';
 
 interface CategoryDetailViewProps {
   categoryId: string;
@@ -13,48 +13,47 @@ interface CategoryDetailViewProps {
 }
 
 export const CategoryDetailView = ({ categoryId, lang, theme, onBack }: CategoryDetailViewProps) => {
+  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string | null>(null);
+  
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
 
-  const content = {
+  const categoryContent = {
     fever: {
       title: isHindi ? 'मौसमी बुखार एवं फ्लू' : 'Seasonal Fever & Flu',
-      sections: [
+      illnesses: [
         {
           id: 'general-fever',
-          title: isHindi ? '1. सामान्य बुखार' : '1. General Fever',
-          remedies: [
-            {
-              name: isHindi ? 'तुलसी और काली मिर्च का काढ़ा' : 'Tulsi & Black Pepper Decoction',
-              description: isHindi 
-                ? 'यह काढ़ा शरीर की रोग प्रतिरोधक क्षमता बढ़ाता है और बुखार को कम करने में मदद करता है।' 
-                : 'This decoction boosts immunity and helps in reducing fever naturally.',
-              ingredients: isHindi 
-                ? ['10-12 तुलसी के पत्ते', '3-4 काली मिर्च', 'एक छोटा टुकड़ा अदरक', '1 गिलास पानी'] 
-                : ['10-12 Tulsi leaves', '3-4 Black peppercorns', 'Small piece of ginger', '1 glass water'],
-              method: isHindi 
-                ? 'पानी में सभी सामग्री डालकर तब तक उबालें जब तक पानी आधा न रह जाए।' 
-                : 'Boil all ingredients in water until the quantity reduces to half.',
-              usage: isHindi 
-                ? 'दिन में 2 बार गुनगुना पिएं।' 
-                : 'Drink it lukewarm twice a day.'
-            }
-          ]
+          title: isHindi ? '१. सामान्य बुखार' : '1. General Fever',
+          description: isHindi 
+            ? 'हल्के बुखार और शारीरिक थकान के लिए प्राकृतिक उपचार' 
+            : 'Natural treatments for mild fever and physical fatigue'
         }
       ]
     }
   };
 
-  const activeCategory = content[categoryId as keyof typeof content];
+  const activeCategory = categoryContent[categoryId as keyof typeof categoryContent];
 
   if (!activeCategory) return null;
+
+  // Function to handle back button logic
+  const handleInternalBack = () => {
+    if (selectedSubCategoryId) {
+      setSelectedSubCategoryId(null);
+    } else {
+      onBack();
+    }
+  };
+
+  const selectedSubCategory = activeCategory.illnesses.find(i => i.id === selectedSubCategoryId);
 
   return (
     <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
       {/* Header with Back Button */}
       <div className="flex items-center gap-4">
         <button 
-          onClick={onBack}
+          onClick={handleInternalBack}
           className={cn(
             "p-3 rounded-full transition-all active:scale-95",
             isNight ? "bg-white text-black hover:bg-white/90" : "bg-[#14532D] text-white hover:bg-[#166534]"
@@ -62,80 +61,83 @@ export const CategoryDetailView = ({ categoryId, lang, theme, onBack }: Category
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
-        <h2 className={cn(
-          "text-3xl font-black font-headline",
-          isNight ? "text-white" : "text-[#14532D]"
-        )}>
-          {activeCategory.title}
-        </h2>
-      </div>
-
-      {/* Sections Grid */}
-      <div className="space-y-12">
-        {activeCategory.sections.map((section) => (
-          <div key={section.id} className="space-y-6">
-            <h3 className={cn(
-              "text-2xl font-black border-b-4 pb-2 inline-block",
-              isNight ? "text-white border-white" : "text-[#1E293B] border-accent"
+        <div className="flex flex-col">
+          <h2 className={cn(
+            "text-2xl sm:text-3xl font-black font-headline leading-tight",
+            isNight ? "text-white" : "text-[#14532D]"
+          )}>
+            {selectedSubCategoryId ? selectedSubCategory?.title : activeCategory.title}
+          </h2>
+          {selectedSubCategoryId && (
+            <span className={cn(
+              "text-xs font-bold uppercase tracking-widest opacity-60",
+              isNight ? "text-white" : "text-[#14532D]"
             )}>
-              {section.title}
-            </h3>
-
-            <div className="grid grid-cols-1 gap-6">
-              {section.remedies.map((remedy, idx) => (
-                <div 
-                  key={idx}
-                  className={cn(
-                    "p-8 rounded-[2rem] border-2 shadow-xl space-y-6 transition-all",
-                    isNight ? "bg-black border-white text-white" : "bg-white border-primary/5 text-[#1E293B]"
-                  )}
-                >
-                  <div className="flex items-start justify-between">
-                    <h4 className="text-2xl font-black flex items-center gap-3">
-                      <Stethoscope className="text-accent" />
-                      {remedy.name}
-                    </h4>
-                  </div>
-
-                  <p className="text-lg leading-relaxed italic opacity-80">
-                    {remedy.description}
-                  </p>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-                    <div className="space-y-4">
-                      <p className="text-xs font-black uppercase tracking-widest text-accent">सामग्री / Ingredients</p>
-                      <ul className="space-y-2">
-                        {remedy.ingredients.map((ing, i) => (
-                          <li key={i} className="flex items-center gap-3 font-bold">
-                            <span className="w-2 h-2 rounded-full bg-accent" />
-                            {ing}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="space-y-6">
-                      <div className="space-y-2">
-                        <p className="text-xs font-black uppercase tracking-widest text-accent flex items-center gap-2">
-                          <Clock className="w-4 h-4" /> बनाने की विधि
-                        </p>
-                        <p className="font-bold leading-relaxed">{remedy.method}</p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <p className="text-xs font-black uppercase tracking-widest text-accent flex items-center gap-2">
-                          <ShieldCheck className="w-4 h-4" /> उपयोग
-                        </p>
-                        <p className="font-bold leading-relaxed">{remedy.usage}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+              {activeCategory.title}
+            </span>
+          )}
+        </div>
       </div>
+
+      {!selectedSubCategoryId ? (
+        /* Level 1: List of Illnesses */
+        <div className="grid grid-cols-1 gap-4">
+          {activeCategory.illnesses.map((illness) => (
+            <button
+              key={illness.id}
+              onClick={() => setSelectedSubCategoryId(illness.id)}
+              className={cn(
+                "group relative w-full p-8 rounded-[2rem] border transition-all duration-300 text-left",
+                "flex items-center justify-between shadow-xl hover:-translate-y-1 active:scale-[0.98]",
+                isNight 
+                  ? "bg-black border-white text-white active:bg-white active:text-black" 
+                  : "bg-[#FDF6E2] border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
+              )}
+            >
+              <div className="space-y-2">
+                <h3 className={cn(
+                  "text-2xl font-black transition-colors leading-tight",
+                  isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
+                )}>
+                  {illness.title}
+                </h3>
+                <p className={cn(
+                  "text-sm font-bold opacity-70 transition-colors",
+                  isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
+                )}>
+                  {illness.description}
+                </p>
+              </div>
+              <div className={cn(
+                "p-4 rounded-full transition-all",
+                isNight 
+                  ? "bg-white/10 group-active:bg-black/20" 
+                  : "bg-accent/10 group-active:bg-white/20"
+              )}>
+                <ArrowRight className={cn(
+                  "w-6 h-6",
+                  isNight ? "text-white group-active:text-black" : "text-accent group-active:text-white"
+                )} />
+              </div>
+            </button>
+          ))}
+        </div>
+      ) : (
+        /* Level 2: Remedy List Placeholder */
+        <div className="space-y-6">
+          <div className={cn(
+            "p-10 rounded-[2.5rem] border-2 border-dashed flex flex-col items-center justify-center text-center space-y-4",
+            isNight ? "border-white/20 text-white/40" : "border-primary/10 text-[#1E293B]/40"
+          )}>
+            <Stethoscope className="w-12 h-12 opacity-20" />
+            <p className="font-bold text-lg">
+              {isHindi 
+                ? 'इस श्रेणी के लिए नुस्खे जल्द ही जोड़े जाएंगे।' 
+                : 'Remedies for this category will be added soon.'}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
