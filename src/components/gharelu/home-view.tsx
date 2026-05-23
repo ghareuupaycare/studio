@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Language, Theme } from '@/app/page';
+import { cn } from '@/lib/utils';
 
 interface HomeViewProps {
   lang: Language;
@@ -10,6 +11,14 @@ interface HomeViewProps {
 
 export const HomeView = ({ lang, theme }: HomeViewProps) => {
   const isHindi = lang === 'hi';
+
+  const categories = [
+    {
+      id: 'fever',
+      title: 'मौसमी बुखार एवं फ्लू',
+      subtitle: '(Seasonal Fever & Flu)',
+    },
+  ];
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
@@ -39,8 +48,35 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
         <p className="text-2xl sm:text-4xl font-black text-[#FDFBF7] [word-spacing:0.25rem]">
           {isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Complete Health at Home Without Medicine'}
         </p>
-        
       </section>
+
+      {/* Categories Grid */}
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              className={cn(
+                "group relative w-full p-8 rounded-[2rem] border transition-all duration-300",
+                "bg-white border-primary/10 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)]",
+                "hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] hover:-translate-y-1 active:scale-[0.98]",
+                "flex flex-col items-center justify-center text-center space-y-2",
+                "hover:border-accent/40"
+              )}
+            >
+              <h3 className="text-xl sm:text-2xl font-black text-primary group-hover:text-accent transition-colors">
+                {category.title}
+              </h3>
+              <p className="text-sm sm:text-base font-bold text-muted-foreground/60 tracking-tight">
+                {category.subtitle}
+              </p>
+              
+              {/* Subtle background glow on hover */}
+              <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 rounded-[2rem] transition-opacity duration-300" />
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
