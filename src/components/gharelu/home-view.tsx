@@ -14,7 +14,7 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
       {/* Main Banner with 16:9 Aspect Ratio and Premium Typographic Contrast */}
-      <section className="w-full aspect-video rounded-[2.5rem] shadow-2xl herbal-gradient overflow-hidden flex flex-col items-center justify-center p-6 sm:p-10 text-center border border-white/20">
+      <section className="w-full aspect-video rounded-[2.5rem] shadow-2xl herbal-gradient overflow-hidden flex flex-col items-center justify-center p-6 sm:p-10 text-center border-2 border-[#14532D]">
         
         {/* Line 1: Bold & Highly Visible Label */}
         <p className="text-xl sm:text-2xl font-black tracking-[0.2em] text-[#FDFBF7] uppercase mb-4 drop-shadow-sm">
