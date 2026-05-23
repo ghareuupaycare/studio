@@ -35,8 +35,8 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
             : 'Traditional shastra-based remedies, the hidden treasure of health in your kitchen'}
         </p>
 
-        {/* Line 4: Prominent Ivory Footer Slogan */}
-        <p className="text-2xl sm:text-4xl font-black text-[#FDFBF7] tracking-tight">
+        {/* Line 4: Prominent Ivory Footer Slogan with increased word spacing */}
+        <p className="text-2xl sm:text-4xl font-black text-[#FDFBF7] [word-spacing:0.25rem]">
           {isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Complete Health at Home Without Medicine'}
         </p>
         
