@@ -57,22 +57,22 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
             <button
               key={category.id}
               className={cn(
-                "group relative w-full p-10 rounded-[2rem] border transition-all duration-300",
-                "bg-[#FDFBF7] border-primary/10 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)]",
-                "hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] hover:-translate-y-1 active:scale-[0.98]",
-                "flex flex-col items-center justify-center text-center space-y-4",
+                "group relative w-full p-10 rounded-[2.5rem] border transition-all duration-300",
+                "bg-[#FDF6E2] border-primary/10 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)]",
+                "hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] hover:-translate-y-1 active:scale-[0.98]",
+                "flex flex-col items-center justify-center text-center space-y-5",
                 "hover:border-accent/40"
               )}
             >
-              <h3 className="text-2xl sm:text-3xl font-black text-[#1E293B] transition-colors leading-tight">
+              <h3 className="text-3xl sm:text-4xl font-black text-[#1E293B] transition-colors leading-tight">
                 {category.title}
               </h3>
-              <p className="text-base sm:text-lg font-bold text-[#1E293B] tracking-tight leading-relaxed max-w-[90%] mx-auto">
+              <p className="text-lg sm:text-xl font-bold text-[#1E293B] tracking-tight leading-relaxed max-w-[90%] mx-auto">
                 {category.subtitle}
               </p>
               
               {/* Subtle background glow on hover */}
-              <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 rounded-[2rem] transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 rounded-[2.5rem] transition-opacity duration-300" />
             </button>
           ))}
         </div>
