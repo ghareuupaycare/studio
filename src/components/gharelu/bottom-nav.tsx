@@ -1,13 +1,15 @@
 import React from 'react';
 import { Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Language } from '@/app/page';
 
 interface BottomNavProps {
+  lang: Language;
   currentView: 'home' | 'ai';
   onViewChange: (view: 'home' | 'ai') => void;
 }
 
-export const BottomNav = ({ currentView, onViewChange }: BottomNavProps) => {
+export const BottomNav = ({ lang, currentView, onViewChange }: BottomNavProps) => {
   return (
     <nav className="fixed bottom-0 left-0 z-50 w-full flex flex-col shadow-2xl">
       {/* Mega Footer Section - Pure Placeholder */}
@@ -28,7 +30,9 @@ export const BottomNav = ({ currentView, onViewChange }: BottomNavProps) => {
           )}>
             <Home className="w-6 h-6" />
           </div>
-          <span className="text-sm font-bold tracking-wider">मुख्य पेज</span>
+          <span className="text-sm font-bold tracking-wider">
+            {lang === 'hi' ? 'मुख्य पेज' : 'Home'}
+          </span>
         </button>
         
         {/* Remaining space on the right is kept empty */}
