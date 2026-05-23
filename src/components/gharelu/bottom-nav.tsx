@@ -1,22 +1,31 @@
 import React from 'react';
 import { Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Language } from '@/app/page';
+import { Language, Theme } from '@/app/page';
 
 interface BottomNavProps {
   lang: Language;
+  theme: Theme;
   currentView: 'home' | 'ai';
   onViewChange: (view: 'home' | 'ai') => void;
 }
 
-export const BottomNav = ({ lang, currentView, onViewChange }: BottomNavProps) => {
+export const BottomNav = ({ lang, theme, currentView, onViewChange }: BottomNavProps) => {
+  const isNight = theme === 'night';
+
   return (
     <nav className="fixed bottom-0 left-0 z-50 w-full flex flex-col shadow-2xl pointer-events-none">
       {/* Mega Footer Section - Pure Placeholder for future digital library */}
-      <div className="bg-[#14532D] h-80 w-full pointer-events-auto border-t border-white/5" />
+      <div className={cn(
+        "h-80 w-full pointer-events-auto border-t transition-colors duration-500",
+        isNight ? "bg-black border-white/10" : "bg-[#14532D] border-white/5"
+      )} />
       
       {/* Bottom Patti (Bar) */}
-      <div className="bg-[#0F2F1D] h-20 w-full flex items-center px-8 pointer-events-auto border-t border-white/5">
+      <div className={cn(
+        "h-20 w-full flex items-center px-8 pointer-events-auto border-t transition-colors duration-500",
+        isNight ? "bg-[#0A0A0A] border-white/10" : "bg-[#0F2F1D] border-white/5"
+      )}>
         <button
           onClick={() => onViewChange('home')}
           className={cn(
@@ -35,13 +44,6 @@ export const BottomNav = ({ lang, currentView, onViewChange }: BottomNavProps) =
               currentView === 'home' ? "text-accent" : "group-active:text-[#FDFBF7]"
             )} />
           </div>
-          {/* Text is hidden for ultra-clean look as requested previously, keeping logic for consistency */}
-          {/* <span className={cn(
-            "text-sm font-bold tracking-wider",
-            currentView === 'home' ? "text-accent" : "group-active:text-[#FDFBF7]"
-          )}>
-            {lang === 'hi' ? 'मुख्य पेज' : 'Home'}
-          </span> */}
         </button>
         
         {/* Remaining space on the right is kept empty */}

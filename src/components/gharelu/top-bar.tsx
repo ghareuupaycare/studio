@@ -2,6 +2,7 @@ import React from 'react';
 import { Bell, Search, Heart, Languages, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Language, Theme } from '@/app/page';
+import { cn } from '@/lib/utils';
 
 interface TopBarProps {
   lang: Language;
@@ -13,11 +14,14 @@ interface TopBarProps {
 export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarProps) => {
   const isNight = theme === 'night';
 
-  // Premium interactive button styles: No opacity fade, deep amber highlight on active
+  // Premium interactive button styles: Deep amber highlight on active
   const headerBtnClass = "text-white/90 hover:bg-white/5 hover:text-[#FBBF24] active:text-[#B45309] active:scale-95 transition-all duration-200 border-none shadow-none focus-visible:ring-0";
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#14532D] border-b border-white/10 h-20 flex items-center px-6 shadow-md">
+    <header className={cn(
+      "sticky top-0 z-50 w-full h-20 flex items-center px-6 shadow-md transition-colors duration-500",
+      isNight ? "bg-black border-b border-white/20" : "bg-[#14532D] border-b border-white/10"
+    )}>
       <div className="flex items-center">
         <h1 className="text-2xl font-headline font-black tracking-tight text-[#FDFBF7]">
           {lang === 'hi' ? 'घरेलू उपाय केयर' : 'Gharelu Upay Care'}
@@ -27,7 +31,6 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarP
       <div className="flex-1" />
       
       <div className="flex items-center gap-1 sm:gap-2">
-        {/* Language Switcher */}
         <Button 
           variant="ghost" 
           size="icon" 
@@ -37,7 +40,6 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarP
           <Languages className="w-5 h-5" />
         </Button>
 
-        {/* Theme Toggle */}
         <Button 
           variant="ghost" 
           size="icon" 
@@ -47,7 +49,6 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarP
           {isNight ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </Button>
 
-        {/* Existing Icons */}
         <Button variant="ghost" size="icon" className={headerBtnClass}>
           <Bell className="w-5 h-5" />
         </Button>

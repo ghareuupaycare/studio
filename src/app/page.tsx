@@ -17,8 +17,13 @@ export default function GhareluUpayApp() {
   const toggleLanguage = () => setLang((prev) => (prev === 'hi' ? 'en' : 'hi'));
   const toggleTheme = () => setTheme((prev) => (prev === 'cream' ? 'night' : 'cream'));
 
+  const isNight = theme === 'night';
+
   return (
-    <div className="min-h-screen flex flex-col selection:bg-accent selection:text-white">
+    <div className={cn(
+      "min-h-screen flex flex-col transition-colors duration-500",
+      isNight ? "bg-black text-white" : "bg-[#FDFBF7] text-foreground"
+    )}>
       <TopBar 
         lang={lang} 
         theme={theme} 
@@ -30,7 +35,7 @@ export default function GhareluUpayApp() {
       <main 
         className={cn(
           "flex-1 w-full transition-colors duration-500",
-          theme === 'cream' ? "bg-[#FDFBF7]" : "bg-[#1A1C1B]"
+          isNight ? "bg-black" : "bg-[#FDFBF7]"
         )}
       >
         <div className="max-w-2xl mx-auto px-6 py-12">
@@ -38,7 +43,7 @@ export default function GhareluUpayApp() {
             <HomeView lang={lang} theme={theme} />
           ) : (
             <div className="text-center py-20 opacity-50">
-              <p className={theme === 'night' ? "text-white/60" : "text-muted-foreground"}>
+              <p className={isNight ? "text-white/60" : "text-muted-foreground"}>
                 {lang === 'hi' ? 'सामग्री जल्द आ रही है' : 'Content coming soon'}
               </p>
             </div>
@@ -48,7 +53,7 @@ export default function GhareluUpayApp() {
         <div className="h-[400px]" />
       </main>
 
-      <BottomNav lang={lang} currentView={view} onViewChange={setView} />
+      <BottomNav lang={lang} theme={theme} currentView={view} onViewChange={setView} />
     </div>
   );
 }
