@@ -22,8 +22,8 @@ export default function GhareluUpayApp() {
             <AIConsultant />
           )}
         </div>
-        {/* Spacer to prevent content from being hidden behind the large mega-footer */}
-        <div className="h-80" />
+        {/* Spacer to prevent content from being hidden behind the mega-footer and bottom bar */}
+        <div className="h-[400px]" />
       </main>
 
       <BottomNav currentView={view} onViewChange={setView} />
