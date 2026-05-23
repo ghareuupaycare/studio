@@ -14,29 +14,29 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
   return (
     <div className="space-y-12 animate-in fade-in duration-700">
       {/* Main Banner with Premium Typographic Contrast */}
-      <section className="w-full min-h-[28rem] rounded-[2.5rem] shadow-2xl herbal-gradient overflow-hidden flex flex-col items-center justify-center p-8 sm:p-14 text-center border border-white/20">
+      <section className="w-full min-h-[32rem] rounded-[2.5rem] shadow-2xl herbal-gradient overflow-hidden flex flex-col items-center justify-center p-8 sm:p-14 text-center border border-white/20">
         
-        {/* Line 1: Neat Ivory Label */}
-        <p className="text-xs sm:text-sm font-bold tracking-[0.4em] text-[#FDFBF7]/90 uppercase mb-8">
+        {/* Line 1: Bold & Highly Visible Label */}
+        <p className="text-xl sm:text-2xl font-black tracking-[0.2em] text-[#FDFBF7] uppercase mb-10 drop-shadow-sm">
           {isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions'}
         </p>
 
         {/* Line 2: Prominent, Extra Bold Neem Green Slogan */}
-        <h2 className="text-3xl sm:text-5xl font-black text-[#14532D] leading-[1.1] max-w-xl mx-auto mb-8 drop-shadow-sm">
+        <h2 className="text-3xl sm:text-5xl font-black text-[#14532D] leading-[1.1] max-w-xl mx-auto mb-10 drop-shadow-sm">
           {isHindi 
             ? 'भारतीय घरेलू उपाय और वैद्य जी द्वारा संचालित आयुर्वेदिक स्वास्थ्य' 
             : 'Indian Home Remedies & Vaidya-led Ayurvedic Health'}
         </h2>
 
-        {/* Line 3: High-Contrast Charcoal Description */}
-        <p className="text-lg sm:text-2xl font-medium text-[#1E293B] max-w-2xl mx-auto leading-relaxed mb-10 italic">
+        {/* Line 3: Bold & Large Charcoal Description for High Readability */}
+        <p className="text-xl sm:text-3xl font-bold text-[#1E293B] max-w-2xl mx-auto leading-relaxed mb-12 italic">
           {isHindi 
             ? 'शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो आपकी रसोई में छिपे स्वस्थ्य रहने का खज़ाना हैं' 
             : 'Traditional shastra-based remedies, the hidden treasure of health in your kitchen'}
         </p>
 
-        {/* Line 4: Clean Ivory Footer Slogan */}
-        <p className="text-xl sm:text-3xl font-bold text-[#FDFBF7] tracking-tight">
+        {/* Line 4: Prominent Ivory Footer Slogan */}
+        <p className="text-2xl sm:text-4xl font-black text-[#FDFBF7] tracking-tight">
           {isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Complete Health at Home Without Medicine'}
         </p>
         
