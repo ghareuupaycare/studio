@@ -58,13 +58,13 @@ export const HomeView = ({ lang, theme }: HomeViewProps) => {
               key={category.id}
               className={cn(
                 "group relative w-full p-10 rounded-[2rem] border transition-all duration-300",
-                "bg-white border-primary/10 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)]",
+                "bg-[#FDFBF7] border-primary/10 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)]",
                 "hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] hover:-translate-y-1 active:scale-[0.98]",
                 "flex flex-col items-center justify-center text-center space-y-4",
                 "hover:border-accent/40"
               )}
             >
-              <h3 className="text-2xl sm:text-3xl font-black text-primary group-hover:text-accent transition-colors leading-tight">
+              <h3 className="text-2xl sm:text-3xl font-black text-[#1E293B] transition-colors leading-tight">
                 {category.title}
               </h3>
               <p className="text-base sm:text-lg font-bold text-[#1E293B] tracking-tight leading-relaxed max-w-[90%] mx-auto">
