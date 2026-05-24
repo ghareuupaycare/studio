@@ -143,25 +143,48 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
       {/* 6. Diet Plan Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className={cn(
-          "p-6 rounded-3xl border border-green-500/20 shadow-sm",
-          isNight ? "bg-green-500/10" : "bg-green-50"
+          "p-6 rounded-3xl border border-green-500/20 shadow-sm transition-colors duration-500",
+          isNight ? "bg-green-950/50 border-green-500/30" : "bg-green-50"
         )}>
-          <h3 className={cn(headingClass, "text-green-700")}>
+          <h3 className={cn(headingClass, isNight ? "text-green-400" : "text-green-700")}>
             <CheckCircle className="w-5 h-5 shrink-0" /> {isHindi ? 'क्या खाएं' : 'What to Eat'}
           </h3>
-          <p className={cn(bodyTextClass, "text-green-900 dark:text-green-100")}>{remedy.dietEat[lang]}</p>
+          <p className={cn(
+            "text-[1.05rem] leading-[1.5] font-medium",
+            isNight ? "text-green-100" : "text-green-900"
+          )}>
+            {remedy.dietEat[lang]}
+          </p>
         </div>
         <div className={cn(
-          "p-6 rounded-3xl border border-red-500/20 shadow-sm",
-          isNight ? "bg-red-500/10" : "bg-red-50"
+          "p-6 rounded-3xl border border-red-500/20 shadow-sm transition-colors duration-500",
+          isNight ? "bg-red-950/50 border-red-500/30" : "bg-red-50"
         )}>
-          <h3 className={cn(headingClass, "text-red-700")}>
+          <h3 className={cn(headingClass, isNight ? "text-red-400" : "text-red-700")}>
             <XCircle className="w-5 h-5 shrink-0" /> {isHindi ? 'क्या न खाएं' : 'What to Avoid'}
           </h3>
-          <p className={cn(bodyTextClass, "text-red-900 dark:text-red-100")}>{remedy.dietAvoid[lang]}</p>
-          <div className="mt-4 pt-4 border-t border-red-200/30">
-            <p className="text-[10px] font-black uppercase text-red-600 mb-2">{isHindi ? 'सख्त परहेज़' : 'Strict Avoid'}</p>
-            <p className="text-sm font-bold text-red-800 dark:text-red-200">{remedy.strictAvoid[lang]}</p>
+          <p className={cn(
+            "text-[1.05rem] leading-[1.5] font-medium",
+            isNight ? "text-red-100" : "text-red-900"
+          )}>
+            {remedy.dietAvoid[lang]}
+          </p>
+          <div className={cn(
+            "mt-4 pt-4 border-t",
+            isNight ? "border-red-500/20" : "border-red-200/30"
+          )}>
+            <p className={cn(
+              "text-[10px] font-black uppercase mb-2",
+              isNight ? "text-yellow-200" : "text-red-600"
+            )}>
+              {isHindi ? 'सख्त परहेज़' : 'Strict Avoid'}
+            </p>
+            <p className={cn(
+              "text-sm font-bold",
+              isNight ? "text-red-200" : "text-red-800"
+            )}>
+              {remedy.strictAvoid[lang]}
+            </p>
           </div>
         </div>
       </div>
