@@ -69,7 +69,7 @@ export const REMEDIES: Remedy[] = [
     },
     severity: 'moderate',
     severityLabel: {
-      hi: '🟡 हल्का से मध्यम बुखार (Mild to Moderate)',
+      hi: '🟡 हल्का से मध्यम बुखार',
       en: '🟡 Mild to Moderate Fever'
     },
     doses: [
@@ -137,7 +137,7 @@ export const REMEDIES: Remedy[] = [
     },
     severity: 'mild',
     severityLabel: {
-      hi: '🟢 शुरुआती या बहुत हल्का बुखार (Mild)',
+      hi: '🟢 शुरुआती या बहुत हल्का बुखार',
       en: '🟢 Early or Very Mild Fever'
     },
     doses: [
@@ -205,7 +205,7 @@ export const REMEDIES: Remedy[] = [
     },
     severity: 'severe',
     severityLabel: {
-      hi: '🔴 तेज या पुराना बुखार (Moderate to Severe)',
+      hi: '🔴 तेज या पुराना बुखार',
       en: '🔴 Moderate to Severe Chronic Fever'
     },
     doses: [
@@ -273,7 +273,7 @@ export const REMEDIES: Remedy[] = [
     },
     severity: 'moderate',
     severityLabel: {
-      hi: '🟡 मध्यम से तेज बुखार (Moderate)',
+      hi: '🟡 मध्यम से तेज बुखार',
       en: '🟡 Moderate to High Fever'
     },
     doses: [
@@ -303,7 +303,7 @@ export const REMEDIES: Remedy[] = [
       en: 'Hot spices, red chili, tea, coffee, garlic, and onions.'
     },
     strictAvoid: {
-      hi: 'पैकेट वाले तीखे और मसालेदार चिप्स, कुरकुरे, तली हुई डिब्बाबंद पूरियां या कचौड़ी और अचार।',
+      hi: 'पैकेट वाले तीखे and मसालेदार चिप्स, कुरकुरे, तली हुई डिब्बाबंद पूरियां या कचौड़ी और अचार।',
       en: 'Packaged spicy and hot chips, snacks, deep-fried store-bought Puris or Kachoris, and pickles.'
     },
     routine: {
@@ -341,7 +341,7 @@ export const REMEDIES: Remedy[] = [
     },
     severity: 'moderate',
     severityLabel: {
-      hi: '🟡 ठंड के साथ हल्का बुखार (Mild to Moderate)',
+      hi: '🟡 ठंड के साथ हल्का बुखार',
       en: '🟡 Mild to Moderate Fever with Chills'
     },
     doses: [
@@ -399,66 +399,66 @@ export const REMEDIES: Remedy[] = [
     id: 'gf-6',
     serialNumber: '६',
     name: {
-      hi: '६. सुदर्शन घनवटी और गिलोय सत्व का तीव्र ज्वरनाशक योग',
-      en: '6. Antipyretic Blend of Sudarshan Ghanvati and Giloy Satva'
+      hi: '६. अजवाइन, सोंठ और गुड़ का पसीना लाने वाला घरेलू काढ़ा',
+      en: '6. Sweat-Inducing Home Decoction of Carom Seeds, Dry Ginger, and Jaggery'
     },
     illnessId: 'general-fever',
     introduction: {
-      hi: "जब बुखार का वेग बहुत तेज होता है, शरीर का तापमान कम नहीं हो रहा हो, या हरारत बार-बार लौटकर आ रही हो, तब सुदर्शन घनवटी और गिलोय सत्व का यह योग अचूक काम करता है। यह शरीर की रोग प्रतिरोधक क्षमता (Immunity) को बढ़ाकर संक्रमण को जड़ से खत्म करता है और बुखार के बाद होने वाली शारीरिक कमजोरी को दूर करता है।",
-      en: "When the intensity of the fever is very high, the body temperature fails to drop, or the fever keeps recurring, this combination of Sudarshan Ghanvati and Giloy Satva works wonders. It boosts the body's immunity to eradicate the infection from its roots and eliminates the physical weakness that follows a fever."
+      hi: "जब शरीर ठंड से कांप रहा हो, बुखार का वेग तेज हो और पसीना न आ रहा हो, तो किचन में मौजूद अजवाइन, सोंठ और गुड़ का यह पुराना घरेलू काढ़ा रामबाण काम करता है। यह शरीर के बंद रोमछिद्रों को खोलता है, पसीना लाकर बुखार की गर्मी को बाहर निकालता है और ठंड लगने की समस्या को तुरंत शांत करता है।",
+      en: "When the body is shivering with severe chills, the fever is high, and there is no sweating, this traditional kitchen decoction of carom seeds, dry ginger, and jaggery works wonders. It opens pores, induces sweating to break the fever, and immediately calms the shivering."
     },
     severity: 'severe',
     severityLabel: {
-      hi: '🔴 तेज या बार-बार आने वाला बुखार (Moderate to Severe)',
+      hi: '🔴 तेज या बार-बार आने वाला बुखार',
       en: '🔴 High or Recurrent Fever'
     },
     doses: [
-      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "आधा टैबलेट (बारीक पीसकर गुनगुने पानी या शहद के साथ)", en: "Half tablet (finely crushed with lukewarm water or honey)" } },
-      { ageRange: AGE_BRACKETS.youth, dose: { hi: "1 से 2 टैबलेट (सुबह और शाम)", en: "1 to 2 tablets (Morning and Evening)" } },
-      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "1 टैबलेट सुबह और 1 टैबलेट शाम (कुल 2 टैबलेट प्रतिदिन, भोजन के बाद)", en: "1 tablet morning and 1 tablet evening (total 2 tablets daily, after meals)" } },
-      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "आधी-आधी टैबलेट दिन में दो बार (कुल 1 टैबलेट प्रतिदिन, भोजन के बाद)", en: "Half tablet twice a day (total 1 tablet daily, after meals)" } }
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "2 चम्मच काढ़ा सुबह और 2 चम्मच शाम को (बराबर मात्रा में गुनगुने पानी के साथ)", en: "2 teaspoons of decoction morning and evening (mixed with an equal amount of lukewarm water)" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा कप काढ़ा सुबह और आधा कप शाम (भोजन के आधे घंटे बाद, गुनगुना)", en: "Half a cup of decoction morning and evening (half an hour after meals, served lukewarm)" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप काढ़ा सुबह... आधा कप शाम (कुल दो बार प्रतिदिन, छानकर गुनगुना पिएं)", en: "Half a cup of decoction morning and evening (Total twice daily, strained and served lukewarm)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) कप काढ़ा दिन में दो बार (हल्का गुनगुना, केवल भोजन के बाद)", en: "Quarter (1/4) cup of decoction twice a day (mildly lukewarm, strictly after meals)" } }
     ],
     ingredients: {
-      hi: ['आयुर्वेदिक सुदर्शन घनवटी (टैबलेट)', '500 मिलीग्राम शुद्ध गिलोय सत्व (पाउडर)', 'आधा गिलास गुनगुना पानी'],
-      en: ['Ayurvedic Sudarshan Ghanvati (Tablets)', '500 mg pure Giloy Satva (Powder)', 'half a glass of lukewarm water']
+      hi: ['आधा चम्मच अजवाइन', 'एक चौथाई चम्मच सोंठ का पाउडर (सूखा अदरक)', 'एक छोटा टुकड़ा पुराना गुड़', '1.5 ग्लास साफ़ पानी'],
+      en: ['Half a teaspoon of carom seeds (Ajwain)', 'a quarter teaspoon of dry ginger powder (Saunth)', 'a small piece of old jaggery', '1.5 glasses of clean water']
     },
     preparation: {
-      hi: 'सुदर्शन घनवटी की तय खुराक को लेकर गिलोय सत्व पाउडर के साथ मिलाकर रख लें। इसे गुनगुने पानी के साथ सेवन के लिए तैयार करें।',
-      en: 'Take the recommended dose of Sudarshan Ghanvati and mix it thoroughly with the Giloy Satva powder. Keep it ready to consume with lukewarm water.'
+      hi: 'एक बर्तन में डेढ़ ग्लास पानी डालें। उसमें अजवाइन और सोंठ का पाउडर डालकर धीमी आंच पर उबालें। जब पानी उबलकर आधा ग्लास रह जाए, तब उसमें गुड़ का टुकड़ा डालें और गुड़ पिघलने तक पकाकर गैस बंद कर दें। इसे छान लें।',
+      en: 'Pour 1.5 glasses of water into a vessel. Add the carom seeds and dry ginger powder, and simmer on low heat. When the water reduces to half a glass, add the jaggery piece, cook until dissolved, then turn off the heat and strain.'
     },
     usage: {
-      hi: 'इसे दिन में दो बार—सुबह और शाम को भोजन या हल्का नाश्ता करने के ठीक आधे घंटे बाद गुनगुने पानी के साथ निगल लें। खाली पेट इसका सेवन न करें।',
-      en: 'Swallow it twice a day, in the morning and evening, exactly half an hour after meals or a light breakfast with lukewarm water. Do not consume on an empty stomach.'
+      hi: 'इसे दिन में दो बार—सुबह और शाम को भोजन या हल्का नाश्ता लेने के ठीक ३० मिनट बाद चाय की तरह गरम-गरम घूंट लेकर पिएं। इसे पीने के तुरंत बाद चादर ओढ़कर थोड़ी देर आराम करें ताकि पसीना आ सके।',
+      en: 'Sip it warm like tea twice a day—morning and evening, exactly 30 minutes after meals or a light breakfast. Wrap yourself in a blanket immediately after drinking to allow the body to sweat out the fever.'
     },
     dietEat: {
-      hi: 'परवल और लौकी का सूप, मूंग की पतली खिचड़ी (बिना घी की), उबला हुआ पानी। फायदेमंद फल: केवल अनार के दाने। फायदेमंद सलाद: उबली हुई तोरई या टिंडा।',
-      en: 'Pointed gourd and bottle gourd soup, thin Moong dal khichdi (without ghee), boiled water. Beneficial Fruits: Pomegranate seeds only. Beneficial Salad: Boiled sponge gourd or apple gourd (Tinda).'
+      hi: 'मूंग की पतली खिचड़ी (बिना तेल-घी की), उबला हुआ गुनगुना पानी, सादा दलिया, भुना हुआ पापड़। फायदेमंद फल: केवल अनार के दाने। फायदेमंद सलाद: उबली हुई लौकी या तोरई।',
+      en: 'Thin Moong dal khichdi (without oil or ghee), boiled lukewarm water, plain porridge, roasted poppadom. Beneficial Fruits: Pomegranate seeds only. Beneficial Salad: Boiled bottle gourd or sponge gourd.'
     },
     dietAvoid: {
-      hi: 'तला-भुना खाना, भारी भोजन, मिठाई, चावल, मैदा, चाय और कॉफी।',
-      en: 'Fried food, heavy meals, sweets, rice, refined flour (Maida), tea, and coffee.'
+      hi: 'ठंडा पानी, दही, छाछ, चावल, खट्टी चीजें, तली-भुनी पूरियां, मांसाहार।',
+      en: 'Cold water, curd, buttermilk, rice, sour foods, deep-fried pooris, non-vegetarian food.'
     },
     strictAvoid: {
-      hi: 'बेकरी प्रोडक्ट्स (ब्रेड, खारी, टोस्ट), पैकेट बंद चिप्स, ठंडे प्रिजर्वेटिव वाले जूस और मांसाहार।',
-      en: 'Bakery products (bread, khari, toast), packaged chips, cold juices with preservatives, and non-vegetarian food.'
+      hi: 'फ्रिज का ठंडा दूध, बाजार के पैकेट वाले चिप्स, बेकरी प्रोडक्ट्स और ठंडे डिब्बाबंद जूस।',
+      en: 'Cold refrigerated milk, market-fried chips, bakery products, and cold canned juices.'
     },
     routine: {
       morning: {
-        hi: 'सुबह: हल्के गुनगुने पानी के साथ गिलोय का पानी लें, नाश्ते में सिर्फ उबला दलिया खाएं।',
-        en: 'Morning: Take Giloy water with mildly lukewarm water, eat only boiled porridge for breakfast.'
+        hi: 'सुबह: खाली पेट हल्के गुनगुने पानी के साथ दिन की शुरुआत करें।',
+        en: 'Morning: Start your day with mildly lukewarm water on an empty stomach.'
       },
       afternoon: {
-        hi: 'दोपहर: अच्छी तरह पकी मूंग की दाल और एक पतली रोटी।',
-        en: 'Afternoon: Well-cooked Moong dal and one thin chapati.'
+        hi: 'दोपहर: सुपाच्य सादी खिचड़ी खाकर चादर ओढ़कर सोएं ताकि पसीना आकर बुखार उतरे।',
+        en: 'Afternoon: Eat easily digestible plain khichdi and rest under a blanket to break the fever through sweat.'
       },
       evening: {
-        hi: 'शाम/रात: सूरज ढलने के बाद केवल सब्जियों का गरम सूप लें। दिन में ठंडी हवा और पंखे के ठीक नीचे सोने से बचें। शरीर को गर्माहट में रखें।',
-        en: 'Evening/Night: Have only hot vegetable soup after sunset. Avoid sleeping directly under a fan or in cold air during the day. Keep the body warm.'
+        hi: 'शाम/रात: गरम सब्जियों का सूप लें। ठंडी हवा और सीधे पंखे के नीचे बैठने से पूरी तरह बचें।',
+        en: 'Evening/Night: Have hot vegetable soup. Strictly avoid cold air drafts or sitting directly under a fan.'
       }
     },
     safetyAdvice: {
-      hi: 'सुरक्षा सूचना: गर्भवती महिलाएं और अत्यंत कमजोर व्यक्ति बिना नाड़ी परीक्षण के इसका सेवन न करें।',
-      en: 'Safety Notice: Pregnant women and extremely weak individuals should not consume this without a pulse examination (Nadi Parikshan).'
+      hi: 'सुरक्षा सूचना: इसकी तासीर काफी गर्म होती है, इसलिए यदि पेट में बवासीर या अल्सर के कारण खून आने की समस्या हो, तो इसका सेवन न करें।',
+      en: 'Safety Notice: Due to its highly warm potency, avoid consumption if suffering from bleeding piles or stomach ulcers.'
     },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || ""
@@ -477,7 +477,7 @@ export const REMEDIES: Remedy[] = [
     },
     severity: 'moderate',
     severityLabel: {
-      hi: '🟡 सामान्य से मध्यम बुखार (Mild to Moderate Fever)',
+      hi: '🟡 सामान्य से मध्यम बुखार',
       en: '🟡 Mild to Moderate Fever'
     },
     doses: [
@@ -545,7 +545,7 @@ export const REMEDIES: Remedy[] = [
     },
     severity: 'moderate',
     severityLabel: {
-      hi: '🟡 सामान्य से मध्यम बुखार (Mild to Moderate Fever)',
+      hi: '🟡 सामान्य से मध्यम बुखार',
       en: '🟡 Mild to Moderate Fever'
     },
     doses: [
@@ -613,7 +613,7 @@ export const REMEDIES: Remedy[] = [
     },
     severity: 'moderate',
     severityLabel: {
-      hi: '🟡 सामान्य से मध्यम बुखार (Mild to Moderate Fever)',
+      hi: '🟡 सामान्य से मध्यम बुखार',
       en: '🟡 Mild to Moderate Fever'
     },
     doses: [
@@ -681,7 +681,7 @@ export const REMEDIES: Remedy[] = [
     },
     severity: 'mild',
     severityLabel: {
-      hi: '🟢 बुखार के बाद की कमजोरी और थकान (Post-Fever Recovery & Fatigue)',
+      hi: '🟢 बुखार के बाद की कमजोरी और थकान',
       en: '🟢 Post-Fever Recovery & Fatigue'
     },
     doses: [
