@@ -119,20 +119,23 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
         </div>
       </div>
 
-      {/* 5. Usage Section - Updated for Night Mode Consistency */}
+      {/* 5. Usage Section - High Contrast Night Mode Fix */}
       <div className={cn(
         "p-8 rounded-[2.5rem] border-2 shadow-xl transition-all duration-500",
         isNight 
-          ? "bg-zinc-950 border-white/20 text-white" 
-          : "bg-[#14532D] border-[#14532D] text-white"
+          ? "bg-zinc-950 border-white/20" 
+          : "bg-[#14532D] border-[#14532D]"
       )}>
         <h3 className={cn(
           "text-xs font-black uppercase tracking-[0.3em] mb-4",
-          isNight ? "text-accent" : "text-white"
+          isNight ? "text-accent brightness-125" : "text-white/80"
         )}>
           {isHindi ? 'सेवन विधि' : 'Usage Instructions'}
         </h3>
-        <p className="text-[1.15rem] font-bold leading-[1.5]">
+        <p className={cn(
+          "text-[1.15rem] font-bold leading-[1.5]",
+          isNight ? "text-white opacity-100" : "text-white"
+        )}>
           "{remedy.usage[lang]}"
         </p>
       </div>
@@ -207,7 +210,7 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
           </h4>
           <p className={cn(
             "text-[1.05rem] leading-[1.5] font-bold",
-            isNight ? "text-accent" : "text-[#9B2C2C]"
+            isNight ? "text-accent brightness-110" : "text-[#9B2C2C]"
           )}>
             {remedy.safetyAdvice[lang]}
           </p>
