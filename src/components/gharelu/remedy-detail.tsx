@@ -44,17 +44,19 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     isNight ? "text-white" : "text-[#2D3748]"
   );
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast({
-      title: isHindi ? 'कॉपी हो गया!' : 'Copied!',
-      description: isHindi 
-        ? 'नुस्खा कॉपी हो गया है, अब आप कहीं भी शेयर कर सकते हैं!' 
-        : 'Remedy copied to clipboard, you can now share it anywhere!',
-    });
-  };
-
   const handleShare = async () => {
+    // Check if navigator and navigator.share are available (Mobile Native Sheet)
+    if (typeof navigator === 'undefined' || !navigator.share) {
+      toast({
+        title: isHindi ? 'साझेदारी समर्थित नहीं है' : 'Sharing Not Supported',
+        description: isHindi 
+          ? 'आपका ब्राउज़र सीधे मोबाइल ऐप्स के साथ साझा करने का समर्थन नहीं करता है।' 
+          : 'Your browser does not support direct sharing with mobile apps.',
+        variant: "destructive"
+      });
+      return;
+    }
+
     const title = remedy.name[lang];
     const ingredients = remedy.ingredients[lang].join(', ');
     const prep = remedy.preparation[lang];
@@ -63,20 +65,21 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       ? `*घरेलू उपाय केयर - पसंदीदा नुस्खा*\n🌿 *${title}*\n\n📦 *आवश्यक सामग्री:*\n${ingredients}\n\n🥣 *बनाने की विधि:*\n${prep}\n\n📌 *पूरा विवरण देखने के लिए हमारी ऐप पर आएं!*`
       : `*Gharelu Upay Care - Favorite Remedy*\n🌿 *${title}*\n\n📦 *Ingredients:*\n${ingredients}\n\n🥣 *Preparation:*\n${prep}\n\n📌 *Visit our app for full details!*`;
 
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: title,
-          text: shareText,
+    try {
+      // Strictly trigger the native sharing drawer
+      await navigator.share({
+        title: title,
+        text: shareText,
+      });
+    } catch (error) {
+      // Ignore AbortError if user cancels the drawer
+      if ((error as any).name !== 'AbortError') {
+        toast({
+          title: isHindi ? 'साझा करने में त्रुटि' : 'Sharing Error',
+          description: isHindi ? 'साझाकरण पैनल खोलने में समस्या आई।' : 'Could not open the sharing panel.',
+          variant: "destructive"
         });
-      } catch (error) {
-        // If sharing is cancelled or fails, don't necessarily show an error, but we can fallback
-        if ((error as any).name !== 'AbortError') {
-          copyToClipboard(shareText);
-        }
       }
-    } else {
-      copyToClipboard(shareText);
     }
   };
 
@@ -183,7 +186,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      {/* 5. Usage Section */}
+      {/* 5. Usage Section (Custom Style for Theme) */}
       <div className={cn(
         "p-8 rounded-[2.5rem] border-2 shadow-xl transition-all duration-500",
         isNight 
@@ -192,13 +195,13 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       )}>
         <h3 className={cn(
           "text-xs font-black uppercase tracking-[0.3em] mb-4",
-          isNight ? "text-white" : "text-white/80"
+          isNight ? "text-[#FBBF24]" : "text-white/80"
         )}>
           {isHindi ? 'सेवन विधि' : 'Usage Instructions'}
         </h3>
         <p className={cn(
-          "text-[1.15rem] font-bold leading-[1.5] text-white",
-          isNight ? "opacity-100" : ""
+          "text-[1.15rem] font-bold leading-[1.5] transition-colors",
+          isNight ? "text-white" : "text-white"
         )}>
           "{remedy.usage[lang]}"
         </p>
@@ -211,12 +214,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           isNight ? "bg-green-950/50 border-green-500/30" : "bg-green-50"
         )}>
           <h3 className={headingClass}>
-            <CheckCircle className={cn("w-5 h-5 shrink-0", isNight ? "text-green-400" : "text-green-700")} /> 
-            <span className={isNight ? "text-green-400" : "text-green-700"}>{isHindi ? 'क्या खाएं' : 'What to Eat'}</span>
+            <CheckCircle className={cn("w-5 h-5 shrink-0", isNight ? "text-[#A7F3D0]" : "text-green-700")} /> 
+            <span className={isNight ? "text-[#A7F3D0]" : "text-green-700"}>{isHindi ? 'क्या खाएं' : 'What to Eat'}</span>
           </h3>
           <p className={cn(
-            "text-[1.05rem] leading-[1.5] font-medium",
-            isNight ? "text-green-100" : "text-green-900"
+            "text-[1.05rem] leading-[1.5] font-medium transition-colors",
+            isNight ? "text-[#A7F3D0]" : "text-green-900"
           )}>
             {remedy.dietEat[lang]}
           </p>
@@ -226,12 +229,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           isNight ? "bg-red-950/50 border-red-500/30" : "bg-red-50"
         )}>
           <h3 className={headingClass}>
-            <XCircle className={cn("w-5 h-5 shrink-0", isNight ? "text-red-400" : "text-red-700")} />
-            <span className={isNight ? "text-red-400" : "text-red-700"}>{isHindi ? 'क्या न खाएं' : 'What to Avoid'}</span>
+            <XCircle className={cn("w-5 h-5 shrink-0", isNight ? "text-[#FECDD3]" : "text-red-700")} />
+            <span className={isNight ? "text-[#FECDD3]" : "text-red-700"}>{isHindi ? 'क्या न खाएं' : 'What to Avoid'}</span>
           </h3>
           <p className={cn(
-            "text-[1.05rem] leading-[1.5] font-medium",
-            isNight ? "text-red-100" : "text-red-900"
+            "text-[1.05rem] leading-[1.5] font-medium transition-colors",
+            isNight ? "text-[#FECDD3]" : "text-red-900"
           )}>
             {remedy.dietAvoid[lang]}
           </p>
@@ -241,13 +244,13 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           )}>
             <p className={cn(
               "text-[10px] font-black uppercase mb-2",
-              isNight ? "text-yellow-200" : "text-red-600"
+              isNight ? "text-[#FEF08A]" : "text-red-600"
             )}>
               {isHindi ? 'सख्त परहेज़' : 'Strict Avoid'}
             </p>
             <p className={cn(
-              "text-sm font-bold",
-              isNight ? "text-red-200" : "text-red-800"
+              "text-sm font-bold transition-colors",
+              isNight ? "text-[#FECDD3]" : "text-red-800"
             )}>
               {remedy.strictAvoid[lang]}
             </p>
@@ -313,7 +316,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      {/* 9. Share Button */}
+      {/* 9. Native Share Button */}
       <div className="pt-4 pb-8 flex justify-center">
         <Button
           onClick={handleShare}
