@@ -415,7 +415,13 @@ export const REMEDIES: Remedy[] = [
     doses: [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "आधा टैबलेट (बारीक पीसकर गुनगुने पानी या शहद के साथ)", en: "Half tablet (finely crushed with lukewarm water or honey)" } },
       { ageRange: AGE_BRACKETS.youth, dose: { hi: "1 से 2 टैबलेट (सुबह और शाम)", en: "1 to 2 tablets (Morning and Evening)" } },
-      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "1 टैबलेट (दिन में दो बार, हल्के गुनगुने पानी से)", en: "1 tablet (Twice a day with mildly lukewarm water)" } },
+      { 
+        ageRange: AGE_BRACKETS.middleAge, 
+        dose: { 
+          hi: "1 टैबलेट सुबह और 1 टैबलेट शाम (कुल 2 टैबलेट प्रतिदिन, भोजन के बाद)", 
+          en: "1 tablet in the morning and 1 tablet in the evening (total 2 tablets daily, after meals)" 
+        } 
+      },
       { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "आधी-आधी टैबलेट दिन में दो बार (कुल 1 टैबलेट प्रतिदिन, भोजन के बाद)", en: "Half tablet twice a day (total 1 tablet daily, after meals)" } }
     ],
     ingredients: {
@@ -428,7 +434,7 @@ export const REMEDIES: Remedy[] = [
     },
     usage: {
       hi: 'इसे दिन में दो बार—सुबह और शाम को भोजन या हल्का नाश्ता करने के ठीक आधे घंटे बाद गुनगुने पानी के साथ निगल लें। खाली पेट इसका सेवन न करें।',
-      en: 'Swallow it twice a day, in the morning and evening, exactly half an hour after meals or a light breakfast with lukewarm water. Do not consume on an empty stomach.'
+      en: 'Swallow it twice a day, in the morning and evening, exactly half an hour after meals or a light breakfast with lukewarm water. Do not consume on an stomach.'
     },
     dietEat: {
       hi: 'परवल और लौकी का सूप, मूंग की पतली खिचड़ी (बिना घी की), उबला हुआ पानी। फायदेमंद फल: केवल अनार के दाने। फायदेमंद सलाद: उबली हुई तोरई या टिंडा।',
