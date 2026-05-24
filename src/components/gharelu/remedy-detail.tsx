@@ -127,7 +127,7 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
         "p-8 rounded-[2.5rem] border-2 shadow-xl",
         isNight ? "bg-white text-black" : "bg-[#14532D] text-white"
       )}>
-        <h3 className={cn("text-xs font-black uppercase tracking-[0.3em] mb-4 opacity-70", isNight ? "text-black/60" : "text-white/60")}>
+        <h3 className={cn("text-xs font-black uppercase tracking-[0.3em] mb-4", isNight ? "text-black" : "text-white")}>
           {isHindi ? 'सेवन विधि' : 'Usage Instructions'}
         </h3>
         <p className="text-[1.15rem] font-bold leading-[1.5]">
