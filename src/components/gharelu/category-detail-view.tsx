@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -14,11 +15,32 @@ interface CategoryDetailViewProps {
   onBack: () => void;
   favorites: string[];
   onToggleFavorite: (id: string) => void;
+  initialRemedyId?: string | null;
 }
 
-export const CategoryDetailView = ({ categoryId, lang, theme, onBack, favorites, onToggleFavorite }: CategoryDetailViewProps) => {
-  const [selectedIllnessId, setSelectedIllnessId] = useState<string | null>(null);
-  const [selectedRemedy, setSelectedRemedy] = useState<Remedy | null>(null);
+export const CategoryDetailView = ({ 
+  categoryId, 
+  lang, 
+  theme, 
+  onBack, 
+  favorites, 
+  onToggleFavorite,
+  initialRemedyId
+}: CategoryDetailViewProps) => {
+  const [selectedIllnessId, setSelectedIllnessId] = useState<string | null>(() => {
+    if (initialRemedyId) {
+      const remedy = REMEDIES.find(r => r.id === initialRemedyId);
+      return remedy ? remedy.illnessId : null;
+    }
+    return null;
+  });
+  
+  const [selectedRemedy, setSelectedRemedy] = useState<Remedy | null>(() => {
+    if (initialRemedyId) {
+      return REMEDIES.find(r => r.id === initialRemedyId) || null;
+    }
+    return null;
+  });
   
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';

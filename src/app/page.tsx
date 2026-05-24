@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -16,6 +17,7 @@ export type Theme = 'cream' | 'night';
 export default function GhareluUpayApp() {
   const [view, setView] = useState<'home' | 'ai' | 'favorites'>('home');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [selectedRemedyId, setSelectedRemedyId] = useState<string | null>(null);
   const [lang, setLang] = useState<Language>('hi');
   const [theme, setTheme] = useState<Theme>('cream');
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -33,20 +35,30 @@ export default function GhareluUpayApp() {
 
   const handleSelectCategory = (id: string) => {
     setSelectedCategoryId(id);
+    setSelectedRemedyId(null);
     setView('home'); 
   };
 
   const handleBackToCategories = () => {
     setSelectedCategoryId(null);
+    setSelectedRemedyId(null);
   };
 
   const handleViewChange = (v: 'home' | 'ai') => {
     setView(v);
     setSelectedCategoryId(null); 
+    setSelectedRemedyId(null);
   };
 
   const handleSelectRemedyFromFavorites = (remedy: Remedy) => {
-    setSelectedCategoryId(remedy.illnessId === 'general-fever' ? 'fever' : remedy.illnessId);
+    // Map internal illness IDs to the main category IDs used by HomeView
+    const categoryMap: Record<string, string> = {
+      'general-fever': 'fever',
+      // Add more mappings here as new categories are added
+    };
+    
+    setSelectedCategoryId(categoryMap[remedy.illnessId] || remedy.illnessId);
+    setSelectedRemedyId(remedy.id);
     setView('home');
   };
 
@@ -89,6 +101,7 @@ export default function GhareluUpayApp() {
               onBack={handleBackToCategories} 
               favorites={favorites}
               onToggleFavorite={toggleFavorite}
+              initialRemedyId={selectedRemedyId}
             />
           ) : (
             <HomeView lang={lang} theme={theme} onSelectCategory={handleSelectCategory} />
