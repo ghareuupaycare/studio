@@ -119,12 +119,17 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
         </div>
       </div>
 
-      {/* 5. Usage Section */}
+      {/* 5. Usage Section - Updated for Night Mode Consistency */}
       <div className={cn(
-        "p-8 rounded-[2.5rem] border-2 shadow-xl",
-        isNight ? "bg-white text-black" : "bg-[#14532D] text-white"
+        "p-8 rounded-[2.5rem] border-2 shadow-xl transition-all duration-500",
+        isNight 
+          ? "bg-zinc-950 border-white/20 text-white" 
+          : "bg-[#14532D] border-[#14532D] text-white"
       )}>
-        <h3 className={cn("text-xs font-black uppercase tracking-[0.3em] mb-4", isNight ? "text-black" : "text-white")}>
+        <h3 className={cn(
+          "text-xs font-black uppercase tracking-[0.3em] mb-4",
+          isNight ? "text-accent" : "text-white"
+        )}>
           {isHindi ? 'सेवन विधि' : 'Usage Instructions'}
         </h3>
         <p className="text-[1.15rem] font-bold leading-[1.5]">
