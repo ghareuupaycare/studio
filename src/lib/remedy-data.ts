@@ -418,7 +418,7 @@ export const REMEDIES: Remedy[] = [
       { 
         ageRange: AGE_BRACKETS.middleAge, 
         dose: { 
-          hi: "1 टैबलेट सुबह और 1 टैबलेट शाम (कुल 2 टैबलेट प्रतिदिन, भोजन के बाद)", 
+          hi: "1 टैबलेट सुबह and 1 टैबलेट शाम (कुल 2 टैबलेट प्रतिदिन, भोजन के बाद)", 
           en: "1 tablet in the morning and 1 tablet in the evening (total 2 tablets daily, after meals)" 
         } 
       },
@@ -609,7 +609,7 @@ export const REMEDIES: Remedy[] = [
     id: 'gf-9',
     serialNumber: '९',
     name: {
-      hi: '९. खस, धनिया और सोंठ का शीतल ज्वरनाशक हिम (Cold Infusion)',
+      hi: '९. खस, धनिया और सोंठ का शीतल ज्वरनाशक हिम',
       en: '9. Cooling Antipyretic Infusion of Vetiver, Coriander, and Dry Ginger'
     },
     illnessId: 'general-fever',
