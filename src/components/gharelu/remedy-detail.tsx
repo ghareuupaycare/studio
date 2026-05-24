@@ -10,21 +10,27 @@ import {
   Moon, 
   Coffee, 
   AlertTriangle,
-  Stethoscope
+  Stethoscope,
+  Heart,
+  Share2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 interface RemedyDetailProps {
   remedy: Remedy;
   theme: Theme;
   lang: Language;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
-export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
-  // Use the Hindi version of the age range as a stable state key
+export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite }: RemedyDetailProps) => {
   const [selectedAgeRangeKey, setSelectedAgeRangeKey] = useState(remedy.doses[1].ageRange.hi);
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
+  const { toast } = useToast();
 
   const currentDose = remedy.doses.find(d => d.ageRange.hi === selectedAgeRangeKey);
 
@@ -39,8 +45,62 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
     isNight ? "text-white" : "text-[#2D3748]"
   );
 
+  const handleShare = async () => {
+    const shareText = `
+${remedy.name[lang]}
+---
+${isHindi ? 'सामग्री' : 'Ingredients'}:
+${remedy.ingredients[lang].join(', ')}
+
+${isHindi ? 'उपयोग' : 'Usage'}:
+${remedy.usage[lang]}
+
+${isHindi ? 'घरेलू उपाय केयर ऐप से साझा किया गया' : 'Shared from Gharelu Upay Care App'}
+    `.trim();
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: remedy.name[lang],
+          text: shareText,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      navigator.clipboard.writeText(shareText);
+      toast({
+        title: isHindi ? 'कॉपी किया गया' : 'Copied to clipboard',
+        description: isHindi ? 'नुस्खा विवरण आपके क्लिपबोर्ड पर कॉपी हो गया है।' : 'Remedy details copied to your clipboard.',
+      });
+    }
+  };
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 pb-20">
+    <div className="space-y-8 animate-in fade-in duration-500 pb-20 relative">
+      {/* 1. Header with Favorite Button */}
+      <div className="flex items-center justify-between mb-4">
+        <div className={cn(
+          "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
+          remedy.severity === 'mild' ? "bg-green-500/10 text-green-600" :
+          remedy.severity === 'moderate' ? "bg-yellow-500/10 text-yellow-600" :
+          "bg-red-500/10 text-red-600"
+        )}>
+          {remedy.severityLabel[lang]}
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onToggleFavorite}
+          className={cn(
+            "rounded-full transition-all active:scale-90",
+            isFavorite ? "text-accent fill-accent" : "text-muted-foreground"
+          )}
+        >
+          <Heart className={cn("w-6 h-6", isFavorite && "fill-current")} />
+        </Button>
+      </div>
+
       {/* 2. Introduction Section */}
       <div className={cn(
         "p-6 rounded-3xl border transition-colors",
@@ -119,7 +179,7 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
         </div>
       </div>
 
-      {/* 5. Usage Section - High Contrast Night Mode Fix */}
+      {/* 5. Usage Section */}
       <div className={cn(
         "p-8 rounded-[2.5rem] border-2 shadow-xl transition-all duration-500",
         isNight 
@@ -146,8 +206,9 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
           "p-6 rounded-3xl border border-green-500/20 shadow-sm transition-colors duration-500",
           isNight ? "bg-green-950/50 border-green-500/30" : "bg-green-50"
         )}>
-          <h3 className={cn(headingClass, isNight ? "text-green-400" : "text-green-700")}>
-            <CheckCircle className="w-5 h-5 shrink-0" /> {isHindi ? 'क्या खाएं' : 'What to Eat'}
+          <h3 className={headingClass}>
+            <CheckCircle className={cn("w-5 h-5 shrink-0", isNight ? "text-green-400" : "text-green-700")} /> 
+            <span className={isNight ? "text-green-400" : "text-green-700"}>{isHindi ? 'क्या खाएं' : 'What to Eat'}</span>
           </h3>
           <p className={cn(
             "text-[1.05rem] leading-[1.5] font-medium",
@@ -160,8 +221,9 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
           "p-6 rounded-3xl border border-red-500/20 shadow-sm transition-colors duration-500",
           isNight ? "bg-red-950/50 border-red-500/30" : "bg-red-50"
         )}>
-          <h3 className={cn(headingClass, isNight ? "text-red-400" : "text-red-700")}>
-            <XCircle className="w-5 h-5 shrink-0" /> {isHindi ? 'क्या न खाएं' : 'What to Avoid'}
+          <h3 className={headingClass}>
+            <XCircle className={cn("w-5 h-5 shrink-0", isNight ? "text-red-400" : "text-red-700")} />
+            <span className={isNight ? "text-red-400" : "text-red-700"}>{isHindi ? 'क्या न खाएं' : 'What to Avoid'}</span>
           </h3>
           <p className={cn(
             "text-[1.05rem] leading-[1.5] font-medium",
@@ -228,8 +290,9 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
           "p-6 rounded-3xl border border-accent/40 shadow-sm",
           isNight ? "bg-accent/10" : "bg-accent/5"
         )}>
-          <h4 className={cn(headingClass, "text-accent mb-3")}>
-            <AlertTriangle className="w-5 h-5 shrink-0" /> {isHindi ? 'सुरक्षा सूचना' : 'Safety Info'}
+          <h4 className={headingClass}>
+            <AlertTriangle className="w-5 h-5 shrink-0 text-accent" /> 
+            <span className="text-accent">{isHindi ? 'सुरक्षा सूचना' : 'Safety Info'}</span>
           </h4>
           <p className={cn(
             "text-[1.05rem] leading-[1.5] font-bold",
@@ -244,6 +307,20 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
             "{remedy.disclaimer[lang]}"
           </p>
         </div>
+      </div>
+
+      {/* 9. Share Button */}
+      <div className="pt-4 pb-8 flex justify-center">
+        <Button
+          onClick={handleShare}
+          className={cn(
+            "w-full max-w-sm h-14 rounded-2xl flex items-center justify-center gap-3 font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl",
+            isNight ? "bg-white text-black hover:bg-white/90" : "bg-accent text-white hover:bg-accent/90"
+          )}
+        >
+          <Share2 className="w-5 h-5" />
+          {isHindi ? 'नुस्खा शेयर करें' : 'Share Remedy'}
+        </Button>
       </div>
     </div>
   );

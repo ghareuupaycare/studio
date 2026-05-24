@@ -9,12 +9,12 @@ interface TopBarProps {
   theme: Theme;
   onToggleLanguage: () => void;
   onToggleTheme: () => void;
+  onShowFavorites: () => void;
 }
 
-export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarProps) => {
+export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme, onShowFavorites }: TopBarProps) => {
   const isNight = theme === 'night';
 
-  // Premium interactive button styles: Deep amber highlight on active
   const headerBtnClass = "text-white/90 hover:bg-white/5 hover:text-[#FBBF24] active:text-[#B45309] active:scale-95 transition-all duration-200 border-none shadow-none focus-visible:ring-0";
 
   return (
@@ -55,7 +55,12 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarP
         <Button variant="ghost" size="icon" className={headerBtnClass}>
           <Search className="w-5 h-5" />
         </Button>
-        <Button variant="ghost" size="icon" className={headerBtnClass}>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={onShowFavorites}
+          className={headerBtnClass}
+        >
           <Heart className="w-5 h-5" />
         </Button>
       </div>

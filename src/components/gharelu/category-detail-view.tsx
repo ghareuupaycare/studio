@@ -12,9 +12,11 @@ interface CategoryDetailViewProps {
   lang: Language;
   theme: Theme;
   onBack: () => void;
+  favorites: string[];
+  onToggleFavorite: (id: string) => void;
 }
 
-export const CategoryDetailView = ({ categoryId, lang, theme, onBack }: CategoryDetailViewProps) => {
+export const CategoryDetailView = ({ categoryId, lang, theme, onBack, favorites, onToggleFavorite }: CategoryDetailViewProps) => {
   const [selectedIllnessId, setSelectedIllnessId] = useState<string | null>(null);
   const [selectedRemedy, setSelectedRemedy] = useState<Remedy | null>(null);
   
@@ -170,6 +172,8 @@ export const CategoryDetailView = ({ categoryId, lang, theme, onBack }: Category
           remedy={selectedRemedy} 
           theme={theme} 
           lang={lang} 
+          isFavorite={favorites.includes(selectedRemedy.id)}
+          onToggleFavorite={() => onToggleFavorite(selectedRemedy.id)}
         />
       )}
     </div>
