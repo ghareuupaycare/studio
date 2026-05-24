@@ -92,7 +92,7 @@ export const REMEDIES: Remedy[] = [
     },
     dietEat: {
       hi: 'मूंग की पतली खिचड़ी, दलिया, उबले हुए सेब का गूदा (बिना छिलके का), गुनगुना पानी। फायदेमंद फल: अनार और पपीता। फायदेमंद सलाद: खीरा (कम मात्रा में) और उबली हुई लौकी-तोरई।',
-      en: 'Thin Moong Dal Khichdi, porridge, boiled apple pulp (without skin), lukewarm water. Beneficial Fruits: Pomegranate and Papaya. Beneficial Salad: Cucumber (in small amounts) and boiled Bottle Gourd/Sponge Gourd.'
+      en: 'Thin Moong dal khichdi, porridge, boiled apple pulp (without skin), lukewarm water. Beneficial Fruits: Pomegranate and Papaya. Beneficial Salad: Cucumber (in small amounts) and boiled Bottle Gourd/Sponge Gourd.'
     },
     dietAvoid: {
       hi: 'ठंडा पानी, फ्रिज का खाना, तली-भुनी चीजें, मैदा, भारी भोजन और दूध।',
@@ -109,7 +109,7 @@ export const REMEDIES: Remedy[] = [
       },
       afternoon: {
         hi: 'दोपहर: अच्छी तरह पकी हुई मूंग की दाल की पतली खिचड़ी खाएं। साथ में थोड़ा सा अनार खाएं।',
-        en: 'Afternoon: Eat well-cooked thin Moong dal Khichdi along with some pomegranate.'
+        en: 'Afternoon: Eat well-cooked thin Moong dal khichdi along with some pomegranate.'
       },
       evening: {
         hi: 'शाम/रात: सूरज ढलने के आसपास हल्का दलिया या उबली हुई सब्जियों का सूप लें। रात को भारी खाना बिल्कुल न खाएं। शरीर को पूरा आराम दें।',
@@ -434,7 +434,7 @@ export const REMEDIES: Remedy[] = [
     },
     usage: {
       hi: 'इसे दिन में दो बार—सुबह और शाम को भोजन या हल्का नाश्ता करने के ठीक आधे घंटे बाद गुनगुने पानी के साथ निगल लें। खाली पेट इसका सेवन न करें।',
-      en: 'Swallow it twice a day, in the morning and evening, exactly half an hour after meals or a light breakfast with lukewarm water. Do not consume on an stomach.'
+      en: 'Swallow it twice a day, in the morning and evening, exactly half an hour after meals or a light breakfast with lukewarm water. Do not consume on an empty stomach.'
     },
     dietEat: {
       hi: 'परवल और लौकी का सूप, मूंग की पतली खिचड़ी (बिना घी की), उबला हुआ पानी। फायदेमंद फल: केवल अनार के दाने। फायदेमंद सलाद: उबली हुई तोरई या टिंडा।',
@@ -468,5 +468,73 @@ export const REMEDIES: Remedy[] = [
     },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || ""
+  },
+  {
+    id: 'gf-7',
+    serialNumber: '७',
+    name: {
+      hi: '७. मेथी, सोंठ और भुने जीरे का घरेलू ज्वरनाशक चूर्ण',
+      en: '7. Home Remedy Antipyretic Powder of Fenugreek, Dry Ginger, and Cumin'
+    },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "जब अचानक मौसम बदलने से शरीर में दर्द के साथ हल्का या मध्यम बुखार आ जाए, तो किचन में मौजूद मेथी दाना, सोंठ (सूखा अदरक) और जीरे का यह घरेलू मिश्रण रामबाण काम करता है। यह शरीर का तापमान सामान्य करता है, पसीना लाकर बुखार बाहर निकालता है और भूख को दोबारा खोलता है।",
+      en: "When sudden seasonal changes cause mild to moderate fever accompanied by body aches, this homemade blend of fenugreek seeds, dry ginger (Saunth), and cumin works wonders. It normalizes body temperature, induces sweating to break the fever, and restores appetite."
+    },
+    severity: 'moderate',
+    severityLabel: {
+      hi: '🟡 सामान्य से मध्यम बुखार (Mild to Moderate Fever)',
+      en: '🟡 Mild to Moderate Fever'
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "एक चौथाई (1/4) चम्मच चूर्ण सुबह और शाम (आधे चम्मच शहद के साथ)", en: "Quarter (1/4) teaspoon powder morning and evening (with half teaspoon honey)" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा चम्मच चूर्ण सुबह और आधा चम्मच शाम (गुनगुने पानी के साथ, भोजन के बाद)", en: "Half teaspoon powder in the morning and half teaspoon in the evening (with lukewarm water after meals)" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा चम्मच चूर्ण सुबह और आधा चम्मच शाम (भोजन के बाद, हल्के गुनगुने पानी से)", en: "Half teaspoon powder morning and evening (Total twice daily, strictly with lukewarm water after meals)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) चम्मच चूर्ण दिन में दो बार (केवल हल्के गुनगुने पानी के साथ, भोजन के बाद)", en: "Quarter (1/4) teaspoon powder twice a day (strictly with lukewarm water, after meals)" } }
+    ],
+    ingredients: {
+      hi: ['50 ग्राम मेथी दाना', '20 ग्राम सोंठ पाउडर (सूखा अदरक)', '20 ग्राम भुना हुआ जीरा', '1 चम्मच शहद या गुनगुना पानी'],
+      en: ['50 grams of fenugreek seeds', '20 grams of dry ginger powder (Saunth)', '20 grams of roasted cumin', '1 teaspoon of honey or lukewarm water']
+    },
+    preparation: {
+      hi: 'मेथी दाना और भुने हुए जीरे को मिक्सी में बारीक पीस लें। अब इसमें सोंठ का पाउडर अच्छी तरह मिलाकर एक साफ़ कांच के डिब्बे में सुरक्षित रख लें। घरेलू ज्वरनाशक चूर्ण तैयार है।',
+      en: 'Finely grind the fenugreek seeds and roasted cumin in a blender. Mix the dry ginger powder thoroughly into it and store it safely in a clean glass jar. Your kitchen antipyretic powder is ready.'
+    },
+    usage: {
+      hi: 'इसे दिन में दो बार—सुबह और शाम को भोजन या नाश्ता करने के ठीक २० मिनट बाद तय मात्रा के अनुसार लें। बच्चों को इसे शहद में मिलाकर चटाएं और बड़ों को गुनगुने पानी से दें।',
+      en: 'Consume it twice a day—morning and evening, exactly 20 minutes after meals or breakfast according to the age limit. Give it to children mixed with honey, and to adults with lukewarm water.'
+    },
+    dietEat: {
+      hi: 'गरम मूंग की दाल, सिका हुआ पापड़ (बिना तेल का), उबला हुआ पानी, सादा दलिया। फायदेमंद फल: सेब (छिलका हटाकर)। फायदेमंद सलाद: उबली हुई गाजर।',
+      en: 'Hot Moong dal, roasted poppadom (oil-free), boiled water, plain porridge. Beneficial Fruits: Apple (peeled). Beneficial Salad: Boiled carrots.'
+    },
+    dietAvoid: {
+      hi: 'चावल, दही, छाछ, ठंडी चीजें, चीनी या हैवी मिठाई, तला हुआ परांठा।',
+      en: 'Rice, curd, buttermilk, cold items, sugar or heavy sweets, fried paranthas.'
+    },
+    strictAvoid: {
+      hi: 'कोल्ड ड्रिंक्स, बाजार का समोसा-कचौड़ी, पैकेट बंद जूस और बासी भोजन।',
+      en: 'Cold drinks, market-fried snacks, packaged juices, and stale food.'
+    },
+    routine: {
+      morning: {
+        hi: 'सुबह: खाली पेट गुनगुने पानी में चुटकी भर सेंधा नमक डालकर कुल्ला करें।',
+        en: 'Morning: Rinse your mouth with lukewarm water mixed with a pinch of rock salt on an empty stomach.'
+      },
+      afternoon: {
+        hi: 'दोपहर: सादी खिचड़ी खाकर चादर ओढ़कर थोड़ी देर आराम करें ताकि पसीना आए।',
+        en: 'Afternoon: Eat plain khichdi and rest under a blanket to induce sweating.'
+      },
+      evening: {
+        hi: 'शाम/रात: गरम सूप या पतली लापसी लें। दिन में ठंडे पानी से हाथ-मुंह न धोएं।',
+        en: 'Evening/Night: Have hot soup or thin porridge. Avoid washing your face or hands with cold water during the day.'
+      }
+    },
+    safetyAdvice: {
+      hi: 'सुरक्षा सूचना: सोंठ और मेथी की तासीर गर्म होती है, इसलिए शरीर में अत्यधिक जलन होने पर इसकी मात्रा आधी कर दें।',
+      en: 'Safety Notice: Since dry ginger and fenugreek have a warm potency, reduce the dose to half if you experience an excessive burning sensation in the body.'
+    },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || ""
   }
 ];
