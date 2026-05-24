@@ -203,7 +203,10 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
           <h4 className={cn(headingClass, "text-accent mb-3")}>
             <AlertTriangle className="w-5 h-5 shrink-0" /> {isHindi ? 'सुरक्षा सूचना' : 'Safety Info'}
           </h4>
-          <p className={cn(bodyTextClass, "font-bold text-accent-foreground")}>
+          <p className={cn(
+            "text-[1.05rem] leading-[1.5] font-bold",
+            isNight ? "text-accent" : "text-[#9B2C2C]"
+          )}>
             {remedy.safetyAdvice}
           </p>
         </div>
