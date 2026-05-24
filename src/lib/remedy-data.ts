@@ -394,5 +394,73 @@ export const REMEDIES: Remedy[] = [
     },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || ""
+  },
+  {
+    id: 'gf-6',
+    serialNumber: '६',
+    name: {
+      hi: '६. सुदर्शन घनवटी और गिलोय सत्व का तीव्र ज्वरनाशक योग',
+      en: '6. Antipyretic Blend of Sudarshan Ghanvati and Giloy Satva'
+    },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "जब बुखार का वेग बहुत तेज होता है, शरीर का तापमान कम नहीं हो रहा हो, या हरारत बार-बार लौटकर आ रही हो, तब सुदर्शन घनवटी और गिलोय सत्व का यह योग अचूक काम करता है। यह शरीर की रोग प्रतिरोधक क्षमता (Immunity) को बढ़ाकर संक्रमण को जड़ से खत्म करता है और बुखार के बाद होने वाली शारीरिक कमजोरी को दूर करता है।",
+      en: "When the intensity of the fever is very high, the body temperature fails to drop, or the fever keeps recurring, this combination of Sudarshan Ghanvati and Giloy Satva works wonders. It boosts the body's immunity to eradicate the infection from its roots and eliminates the physical weakness that follows a fever."
+    },
+    severity: 'severe',
+    severityLabel: {
+      hi: '🔴 तेज या बार-बार आने वाला बुखार (Moderate to Severe)',
+      en: '🔴 High or Recurrent Fever'
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "आधा टैबलेट (बारीक पीसकर गुनगुने पानी या शहद के साथ)", en: "Half tablet (finely crushed with lukewarm water or honey)" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "1 से 2 टैबलेट (सुबह और शाम)", en: "1 to 2 tablets (Morning and Evening)" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "1 टैबलेट (दिन में दो बार, हल्के गुनगुने पानी से)", en: "1 tablet (Twice a day with mildly lukewarm water)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "1 टैबलेट (सीमित मात्रा में, केवल भोजन के बाद)", en: "1 tablet (Limited dose, strictly after meals)" } }
+    ],
+    ingredients: {
+      hi: ['आयुर्वेदिक सुदर्शन घनवटी (टैबलेट)', '500 मिलीग्राम शुद्ध गिलोय सत्व (पाउडर)', 'आधा गिलास गुनगुना पानी'],
+      en: ['Ayurvedic Sudarshan Ghanvati (Tablets)', '500 mg pure Giloy Satva (Powder)', 'half a glass of lukewarm water']
+    },
+    preparation: {
+      hi: 'सुदर्शन घनवटी की तय खुराक को लेकर गिलोय सत्व पाउडर के साथ मिलाकर रख लें। इसे गुनगुने पानी के साथ सेवन के लिए तैयार करें।',
+      en: 'Take the recommended dose of Sudarshan Ghanvati and mix it thoroughly with the Giloy Satva powder. Keep it ready to consume with lukewarm water.'
+    },
+    usage: {
+      hi: 'इसे दिन में दो बार—सुबह और शाम को भोजन या हल्का नाश्ता करने के ठीक आधे घंटे बाद गुनगुने पानी के साथ निगल लें। खाली पेट इसका सेवन न करें।',
+      en: 'Swallow it twice a day, in the morning and evening, exactly half an hour after meals or a light breakfast with lukewarm water. Do not consume on an empty stomach.'
+    },
+    dietEat: {
+      hi: 'परवल और लौकी का सूप, मूंग की पतली खिचड़ी (बिना घी की), उबला हुआ पानी। फायदेमंद फल: केवल अनार के दाने। फायदेमंद सलाद: उबली हुई तोरई या टिंडा।',
+      en: 'Pointed gourd and bottle gourd soup, thin Moong dal khichdi (without ghee), boiled water. Beneficial Fruits: Pomegranate seeds only. Beneficial Salad: Boiled sponge gourd or apple gourd (Tinda).'
+    },
+    dietAvoid: {
+      hi: 'तला-भुना खाना, भारी भोजन, मिठाई, चावल, मैदा, चाय और कॉफी।',
+      en: 'Fried food, heavy meals, sweets, rice, refined flour (Maida), tea, and coffee.'
+    },
+    strictAvoid: {
+      hi: 'बेकरी प्रोडक्ट्स (ब्रेड, खारी, टोस्ट), पैकेट बंद चिप्स, ठंडे प्रिजर्वेटिव वाले जूस और मांसाहार।',
+      en: 'Bakery products (bread, khari, toast), packaged chips, cold juices with preservatives, and non-vegetarian food.'
+    },
+    routine: {
+      morning: {
+        hi: 'सुबह: हल्के गुनगुने पानी के साथ गिलोय का पानी लें, नाश्ते में सिर्फ उबला दलिया खाएं।',
+        en: 'Morning: Take Giloy water with mildly lukewarm water, eat only boiled porridge for breakfast.'
+      },
+      afternoon: {
+        hi: 'दोपहर: अच्छी तरह पकी मूंग की दाल और एक पतली रोटी।',
+        en: 'Afternoon: Well-cooked Moong dal and one thin chapati.'
+      },
+      evening: {
+        hi: 'शाम/रात: सूरज ढलने के बाद केवल सब्जियों का गरम सूप लें। दिन में ठंडी हवा और पंखे के ठीक नीचे सोने से बचें। शरीर को गर्माहट में रखें।',
+        en: 'Evening/Night: Have only hot vegetable soup after sunset. Avoid sleeping directly under a fan or in cold air during the day. Keep the body warm.'
+      }
+    },
+    safetyAdvice: {
+      hi: 'सुरक्षा सूचना: गर्भवती महिलाएं और अत्यंत कमजोर व्यक्ति बिना नाड़ी परीक्षण के इसका सेवन न करें।',
+      en: 'Safety Notice: Pregnant women and extremely weak individuals should not consume this without a pulse examination (Nadi Parikshan).'
+    },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || ""
   }
 ];
