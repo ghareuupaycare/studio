@@ -46,10 +46,10 @@ export default function GhareluUpayApp() {
   };
 
   const handleSelectRemedyFromFavorites = (remedy: Remedy) => {
-    // Navigate to the remedy's category and show its detail
     setSelectedCategoryId(remedy.illnessId === 'general-fever' ? 'fever' : remedy.illnessId);
     setView('home');
-    // Note: In a real app we'd pass the specific remedy ID to CategoryDetailView
+    // Note: To navigate to detail, CategoryDetailView handles the selectedRemedy state internally.
+    // In a production app, we would sync this state or use URL routing.
   };
 
   return (
@@ -77,6 +77,7 @@ export default function GhareluUpayApp() {
           ) : view === 'favorites' ? (
             <FavoritesView 
               favorites={favorites} 
+              lang={lang}
               onToggleFavorite={toggleFavorite}
               onSelectRemedy={handleSelectRemedyFromFavorites}
             />
