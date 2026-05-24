@@ -71,7 +71,7 @@ export const CategoryDetailView = ({ categoryId, lang, theme, onBack }: Category
             "text-2xl sm:text-3xl font-black font-headline leading-tight",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
-            {selectedRemedy ? selectedRemedy.name : (selectedIllnessId ? currentIllness?.title : activeCategory.title)}
+            {selectedRemedy ? selectedRemedy.name[lang] : (selectedIllnessId ? currentIllness?.title : activeCategory.title)}
           </h2>
           {(selectedIllnessId || selectedRemedy) && (
             <span className={cn(
@@ -148,7 +148,7 @@ export const CategoryDetailView = ({ categoryId, lang, theme, onBack }: Category
                 {remedy.serialNumber}
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-lg leading-snug">{remedy.name}</h4>
+                <h4 className="font-bold text-lg leading-snug">{remedy.name[lang]}</h4>
                 <div className="flex items-center gap-2 mt-1">
                   <span className={cn(
                     "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider",
@@ -156,7 +156,7 @@ export const CategoryDetailView = ({ categoryId, lang, theme, onBack }: Category
                     remedy.severity === 'moderate' ? "bg-yellow-500/10 text-yellow-600" :
                     "bg-red-500/10 text-red-600"
                   )}>
-                    {remedy.severityLabel}
+                    {remedy.severityLabel[lang]}
                   </span>
                 </div>
               </div>

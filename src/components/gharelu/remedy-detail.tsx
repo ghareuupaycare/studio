@@ -28,13 +28,11 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
   const currentDose = remedy.doses.find(d => d.ageRange === selectedAgeRange);
 
   // GLOBAL TYPOGRAPHY REFACTOR & LOCK
-  // Section Headings: 16pt / 1.15rem (Bold), Deep high-contrast dark green or crisp white
   const headingClass = cn(
     "text-[1.15rem] font-bold mb-3 flex items-center gap-2",
     isNight ? "text-white" : "text-[#14532D]"
   );
 
-  // Body/Description Text: 12pt / 1.05rem (Medium/Regular), Line Height 1.5
   const bodyTextClass = cn(
     "text-[1.05rem] leading-[1.5] font-medium",
     isNight ? "text-white" : "text-[#2D3748]"
@@ -42,8 +40,6 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-20">
-      {/* 1. EMPTY IMAGE CONTAINER REMOVED AS PER REQUEST */}
-
       {/* 2. Introduction Section */}
       <div className={cn(
         "p-6 rounded-3xl border transition-colors",
@@ -53,7 +49,7 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
           <Info className="w-5 h-5 shrink-0" /> {isHindi ? 'बीमारी का परिचय' : 'Introduction'}
         </h3>
         <p className={bodyTextClass}>
-          {remedy.introduction}
+          {remedy.introduction[lang]}
         </p>
       </div>
 
@@ -89,10 +85,10 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
           isNight ? "bg-white/10" : "bg-accent/10"
         )}>
           <span className={cn(
-            "text-[1.15rem] font-bold", // Smart Dosage: 14pt approx 1.15rem
+            "text-[1.15rem] font-bold",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
-            {currentDose?.dose}
+            {currentDose?.dose[lang]}
           </span>
         </div>
       </div>
@@ -105,7 +101,7 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
         )}>
           <h3 className={cn(headingClass, "text-accent")}>{isHindi ? 'आवश्यक सामग्री' : 'Ingredients'}</h3>
           <ul className="space-y-3">
-            {remedy.ingredients.map((item, i) => (
+            {remedy.ingredients[lang].map((item, i) => (
               <li key={i} className={cn(bodyTextClass, "flex items-start gap-3")}>
                 <CheckCircle className="w-5 h-5 mt-1 text-accent shrink-0" />
                 <span>{item}</span>
@@ -118,7 +114,7 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
           isNight ? "bg-black border-white/20" : "bg-[#FDF6E2] border-primary/10"
         )}>
           <h3 className={cn(headingClass, "text-accent")}>{isHindi ? 'बनाने की विधि' : 'Preparation'}</h3>
-          <p className={bodyTextClass}>{remedy.preparation}</p>
+          <p className={bodyTextClass}>{remedy.preparation[lang]}</p>
         </div>
       </div>
 
@@ -131,7 +127,7 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
           {isHindi ? 'सेवन विधि' : 'Usage Instructions'}
         </h3>
         <p className="text-[1.15rem] font-bold leading-[1.5]">
-          "{remedy.usage}"
+          "{remedy.usage[lang]}"
         </p>
       </div>
 
@@ -144,7 +140,7 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
           <h3 className={cn(headingClass, "text-green-700")}>
             <CheckCircle className="w-5 h-5 shrink-0" /> {isHindi ? 'क्या खाएं' : 'What to Eat'}
           </h3>
-          <p className={cn(bodyTextClass, "text-green-900 dark:text-green-100")}>{remedy.dietEat}</p>
+          <p className={cn(bodyTextClass, "text-green-900 dark:text-green-100")}>{remedy.dietEat[lang]}</p>
         </div>
         <div className={cn(
           "p-6 rounded-3xl border border-red-500/20 shadow-sm",
@@ -153,10 +149,10 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
           <h3 className={cn(headingClass, "text-red-700")}>
             <XCircle className="w-5 h-5 shrink-0" /> {isHindi ? 'क्या न खाएं' : 'What to Avoid'}
           </h3>
-          <p className={cn(bodyTextClass, "text-red-900 dark:text-red-100")}>{remedy.dietAvoid}</p>
+          <p className={cn(bodyTextClass, "text-red-900 dark:text-red-100")}>{remedy.dietAvoid[lang]}</p>
           <div className="mt-4 pt-4 border-t border-red-200/30">
             <p className="text-[10px] font-black uppercase text-red-600 mb-2">{isHindi ? 'सख्त परहेज़' : 'Strict Avoid'}</p>
-            <p className="text-sm font-bold text-red-800 dark:text-red-200">{remedy.strictAvoid}</p>
+            <p className="text-sm font-bold text-red-800 dark:text-red-200">{remedy.strictAvoid[lang]}</p>
           </div>
         </div>
       </div>
@@ -174,21 +170,21 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
             <div className="p-3 rounded-full bg-accent/10 text-accent h-fit shrink-0"><Sun className="w-5 h-5" /></div>
             <div>
               <h4 className="text-xs font-black uppercase text-accent mb-1">{isHindi ? 'सुबह' : 'Morning'}</h4>
-              <p className={bodyTextClass}>{remedy.routine.morning}</p>
+              <p className={bodyTextClass}>{remedy.routine.morning[lang]}</p>
             </div>
           </div>
           <div className="flex gap-4">
             <div className="p-3 rounded-full bg-primary/10 text-primary h-fit shrink-0"><Coffee className="w-5 h-5" /></div>
             <div>
               <h4 className="text-xs font-black uppercase text-primary mb-1">{isHindi ? 'दोपहर' : 'Afternoon'}</h4>
-              <p className={bodyTextClass}>{remedy.routine.afternoon}</p>
+              <p className={bodyTextClass}>{remedy.routine.afternoon[lang]}</p>
             </div>
           </div>
           <div className="flex gap-4">
             <div className="p-3 rounded-full bg-slate-400/10 text-slate-500 h-fit shrink-0"><Moon className="w-5 h-5" /></div>
             <div>
               <h4 className="text-xs font-black uppercase text-slate-500 mb-1">{isHindi ? 'शाम/रात' : 'Evening/Night'}</h4>
-              <p className={bodyTextClass}>{remedy.routine.evening}</p>
+              <p className={bodyTextClass}>{remedy.routine.evening[lang]}</p>
             </div>
           </div>
         </div>
@@ -207,16 +203,13 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
             "text-[1.05rem] leading-[1.5] font-bold",
             isNight ? "text-accent" : "text-[#9B2C2C]"
           )}>
-            {remedy.safetyAdvice}
+            {remedy.safetyAdvice[lang]}
           </p>
-        </div>
-        
-        <div className="text-center px-8">
           <p className={cn(
-            "text-[9.5pt] uppercase tracking-widest opacity-60 leading-relaxed font-medium",
+            "text-[9.5pt] uppercase tracking-widest opacity-60 leading-relaxed font-medium mt-4 border-t border-accent/20 pt-4",
             isNight ? "text-white" : "text-primary"
           )}>
-            "{remedy.disclaimer}"
+            "{remedy.disclaimer[lang]}"
           </p>
         </div>
       </div>
