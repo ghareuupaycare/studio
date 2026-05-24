@@ -2,7 +2,6 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, ChevronRight, Clock, ShieldCheck } from "lucide-react";
 import { Remedy } from '@/lib/remedy-data';
-import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Language } from '@/app/page';
 
@@ -17,35 +16,36 @@ interface RemedyCardProps {
 export const RemedyCard = ({ remedy, isFavorite, lang, onToggleFavorite, onClick }: RemedyCardProps) => {
   return (
     <Card 
-      className="overflow-hidden border-primary/10 bg-card/50 backdrop-blur-sm hover:border-primary/40 transition-all cursor-pointer group remedy-card-hover"
+      className="overflow-hidden border-primary/10 bg-card/50 backdrop-blur-sm hover:border-primary/40 transition-all cursor-pointer group shadow-lg"
       onClick={onClick}
     >
-      <div className="relative h-40 w-full overflow-hidden">
-        <Image 
-          src={remedy.image} 
-          alt={remedy.name[lang]}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
-          data-ai-hint="ayurvedic remedy"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
+      <CardContent className="p-6 space-y-4 relative">
         <button 
           onClick={onToggleFavorite}
-          className="absolute top-3 right-3 p-2 rounded-full bg-background/50 backdrop-blur-md border border-white/10 text-white hover:text-primary transition-colors z-10"
+          className={cn(
+            "absolute top-4 right-4 p-2 rounded-full transition-all active:scale-90 z-10",
+            isFavorite ? "text-accent" : "text-muted-foreground hover:text-accent"
+          )}
         >
-          <Heart className={cn("w-5 h-5", isFavorite ? "fill-primary text-primary" : "text-white")} />
+          <Heart className={cn("w-6 h-6", isFavorite && "fill-current")} />
         </button>
-      </div>
-      <CardContent className="p-4 space-y-2">
-        <div className="flex justify-between items-start">
-          <h3 className="font-headline text-lg font-bold text-primary leading-tight">{remedy.name[lang]}</h3>
+
+        <div className="pr-10">
+          <h3 className="font-headline text-xl font-bold text-primary leading-tight group-hover:text-accent transition-colors">
+            {remedy.name[lang]}
+          </h3>
+          <p className="text-sm text-muted-foreground line-clamp-3 mt-3 leading-relaxed">
+            {remedy.introduction[lang]}
+          </p>
         </div>
-        <p className="text-sm text-muted-foreground line-clamp-2">{remedy.preparation[lang]}</p>
-        <div className="flex items-center gap-3 pt-2 text-[10px] uppercase font-bold tracking-widest text-primary/70">
-          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Quick</span>
-          <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3" /> Safe</span>
-          <div className="ml-auto">
-            <ChevronRight className="w-4 h-4 text-primary group-hover:translate-x-1 transition-transform" />
+
+        <div className="flex items-center justify-between pt-4 border-t border-primary/5">
+          <div className="flex items-center gap-4 text-[10px] uppercase font-black tracking-[0.15em] text-primary/60">
+            <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> Quick</span>
+            <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5" /> Safe</span>
+          </div>
+          <div className="p-2 rounded-full bg-primary/5 group-hover:bg-accent group-hover:text-white transition-all">
+            <ChevronRight className="w-5 h-5" />
           </div>
         </div>
       </CardContent>
