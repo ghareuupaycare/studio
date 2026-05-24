@@ -10,9 +10,10 @@ interface TopBarProps {
   onToggleLanguage: () => void;
   onToggleTheme: () => void;
   onShowFavorites: () => void;
+  hasFavorites: boolean;
 }
 
-export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme, onShowFavorites }: TopBarProps) => {
+export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme, onShowFavorites, hasFavorites }: TopBarProps) => {
   const isNight = theme === 'night';
 
   const headerBtnClass = "text-white/90 hover:bg-white/5 hover:text-[#FBBF24] active:text-[#B45309] active:scale-95 transition-all duration-200 border-none shadow-none focus-visible:ring-0";
@@ -59,9 +60,12 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme, onShowFav
           variant="ghost" 
           size="icon" 
           onClick={onShowFavorites}
-          className={headerBtnClass}
+          className={cn(
+            headerBtnClass,
+            hasFavorites && "text-[#FBBF24] hover:text-[#FBBF24]/80"
+          )}
         >
-          <Heart className="w-5 h-5" />
+          <Heart className={cn("w-5 h-5", hasFavorites && "fill-current")} />
         </Button>
       </div>
     </header>

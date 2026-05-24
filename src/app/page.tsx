@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -9,7 +8,7 @@ import { CategoryDetailView } from '@/components/gharelu/category-detail-view';
 import { AIConsultant } from '@/components/gharelu/ai-consultant';
 import { FavoritesView } from '@/components/gharelu/favorites-view';
 import { cn } from '@/lib/utils';
-import { Remedy } from '@/lib/remedy-data';
+import { Remedy, REMEDIES } from '@/lib/remedy-data';
 
 export type Language = 'hi' | 'en';
 export type Theme = 'cream' | 'night';
@@ -52,9 +51,9 @@ export default function GhareluUpayApp() {
 
   const handleSelectRemedyFromFavorites = (remedy: Remedy) => {
     // Map internal illness IDs to the main category IDs used by HomeView
+    // In our case, currently only 'general-fever' maps to 'fever'
     const categoryMap: Record<string, string> = {
       'general-fever': 'fever',
-      // Add more mappings here as new categories are added
     };
     
     setSelectedCategoryId(categoryMap[remedy.illnessId] || remedy.illnessId);
@@ -73,6 +72,7 @@ export default function GhareluUpayApp() {
         onToggleLanguage={toggleLanguage} 
         onToggleTheme={toggleTheme} 
         onShowFavorites={() => setView('favorites')}
+        hasFavorites={favorites.length > 0}
       />
       
       <main 
@@ -113,7 +113,7 @@ export default function GhareluUpayApp() {
       <BottomNav 
         lang={lang} 
         theme={theme} 
-        currentView={view === 'favorites' ? 'home' : view} 
+        currentView={view === 'favorites' ? 'home' : (view as any)} 
         onViewChange={handleViewChange} 
       />
     </div>
