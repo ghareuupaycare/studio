@@ -416,7 +416,7 @@ export const REMEDIES: Remedy[] = [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "आधा टैबलेट (बारीक पीसकर गुनगुने पानी या शहद के साथ)", en: "Half tablet (finely crushed with lukewarm water or honey)" } },
       { ageRange: AGE_BRACKETS.youth, dose: { hi: "1 से 2 टैबलेट (सुबह और शाम)", en: "1 to 2 tablets (Morning and Evening)" } },
       { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "1 टैबलेट (दिन में दो बार, हल्के गुनगुने पानी से)", en: "1 tablet (Twice a day with mildly lukewarm water)" } },
-      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "1 टैबलेट (सीमित मात्रा में, केवल भोजन के बाद)", en: "1 tablet (Limited dose, strictly after meals)" } }
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "आधी-आधी टैबलेट दिन में दो बार (कुल 1 टैबलेट प्रतिदिन, भोजन के बाद)", en: "Half tablet twice a day (total 1 tablet daily, after meals)" } }
     ],
     ingredients: {
       hi: ['आयुर्वेदिक सुदर्शन घनवटी (टैबलेट)', '500 मिलीग्राम शुद्ध गिलोय सत्व (पाउडर)', 'आधा गिलास गुनगुना पानी'],
