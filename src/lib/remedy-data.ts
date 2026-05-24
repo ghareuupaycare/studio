@@ -64,8 +64,8 @@ export const REMEDIES: Remedy[] = [
     },
     illnessId: 'general-fever',
     introduction: {
-      hi: "जब शरीर का तापमान सामान्य से अधिक हो जाता है, तो उसे सामान्य बुखार कहते हैं। आयुर्वेद में इसे 'ज्वर' कहा जाता है, जो मुख्य रूप से अनुचित खान-पान, मौसम के अचानक बदलाव या शरीर में संचित टॉक्सिंस (आमदोष) के कारण मंदाग्नि होने से होता है। यह शरीर की एक रक्षा प्रणाली है जो बाहरी संक्रमण से लड़ती है। सामान्य बुखार में शरीर में भारीपन, सुस्ती, भूख न लगना, अंगों में दर्द और हरारत जैसे लक्षण दिखाई देते हैं। सही समय पर सही घरेलू देखभाल और औषधीय काढ़े के सेवन से इसे बिना किसी दुष्प्रभाव के ठीक किया जा सकता है।",
-      en: "When the body temperature rises above normal, it is called a general fever. In Ayurveda, it is known as 'Jvara', primarily caused by improper diet, sudden weather changes, or accumulated toxins (Aamdosha) leading to weakened digestion (Mandagni). Fever is a defense mechanism fighting external infections. Symptoms include body heaviness, lethargy, loss of appetite, body aches, and mild shivering. With timely home care and medicinal decoctions, it can be cured effectively without side effects."
+      hi: "जब शरीर का तापमान सामान्य से अधिक हो जाता है, तो उसे सामान्य बुखार कहते हैं। आयुर्वेद में इसे 'ज्वर' कहा जाता है, जो मुख्य रूप से अनुचित खान-पान, मौसम के अचानक बदलाव या शरीर में संचित टॉक्सिंस (आमदोष) के कारण मंदाग्नि होने से होता है। यह शरीर की रक्षा प्रणाली है जो बाहरी संक्रमण से लड़ती है।",
+      en: "When the body temperature rises above normal, it is called a general fever. In Ayurveda, it is known as 'Jvara', primarily caused by improper diet, sudden weather changes, or accumulated toxins (Aamdosha) leading to weakened digestion (Mandagni)."
     },
     severity: 'moderate',
     severityLabel: {
@@ -493,7 +493,7 @@ export const REMEDIES: Remedy[] = [
       { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) चम्मच चूर्ण दिन में दो बार (केवल हल्के गुनगुने पानी के साथ, भोजन के बाद)", en: "Quarter (1/4) teaspoon powder twice a day (strictly with lukewarm water, after meals)" } }
     ],
     ingredients: {
-      hi: ['50 ग्राम मेथी दाना', '20 ग्राम सोंठ पाउडर (सूखा अदरक)', '20 ग्राम भुना हुआ जीरा', '1 चम्मच शहद या गुनगुना पानी'],
+      hi: ['500 मिलीग्राम मेथी दाना', '200 मिलीग्राम सोंठ पाउडर (सूखा अदरक)', '200 मिलीग्राम भुना हुआ जीरा', '1 चम्मच शहद या गुनगुना पानी'],
       en: ['50 grams of fenugreek seeds', '20 grams of dry ginger powder (Saunth)', '20 grams of roasted cumin', '1 teaspoon of honey or lukewarm water']
     },
     preparation: {
@@ -536,5 +536,73 @@ export const REMEDIES: Remedy[] = [
     },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || ""
+  },
+  {
+    id: 'gf-8',
+    serialNumber: '८',
+    name: {
+      hi: '८. काली मिर्च, अदरक और तुलसी पत्र का तीखा ज्वरनाशक काढ़ा',
+      en: '8. Antipyretic Decoction of Black Pepper, Ginger, and Basil Leaves'
+    },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "जब सर्दी-खांसी के साथ अचानक शरीर जकड़ जाए और बुखार चढ़ने लगे, तो दादी-नानी के जमाने का यह काली मिर्च और तुलसी का काढ़ा सबसे तेज असर करता है। काली मिर्च इन्फेक्शन को मारती है, अदरक शरीर का दर्द खींचता है, और तुलसी के पत्ते खून के तापमान को तुरंत नियंत्रित करने में मदद करते हैं।",
+      en: "When sudden fever strikes accompanied by cold, cough, and body stiffness, this traditional decoction of black pepper and basil works fastest. Black pepper fights infection, ginger relieves body aches, and basil leaves quickly help regulate core body temperature."
+    },
+    severity: 'moderate',
+    severityLabel: {
+      hi: '🟡 सामान्य से मध्यम बुखार (Mild to Moderate Fever)',
+      en: '🟡 Mild to Moderate Fever'
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "2 चम्मच काढ़ा सुबह और 2 चम्मच शाम को (बराबर मात्रा में शहद मिलाकर)", en: "2 teaspoons of decoction morning and evening (mixed with an equal amount of honey)" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा कप काढ़ा सुबह और आधा कप शाम (भोजन के आधे घंटे बाद, गुनगुना)", en: "Half a cup of decoction morning and evening (half an hour after meals, served lukewarm)" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप काढ़ा सुबह और आधा कप शाम (कुल दो बार प्रतिदिन, छानकर गुनगुना पिएं)", en: "Half a cup of decoction morning and evening (Total twice daily, strained and served lukewarm)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) कप काढ़ा दिन में दो बार (हल्का गुनगुना, केवल भोजन के बाद)", en: "Quarter (1/4) cup of decoction twice a day (mildly lukewarm, strictly after meals)" } }
+    ],
+    ingredients: {
+      hi: ['5 से ७ दाने साबुत काली मिर्च', '1 इंच अदरक का टुकड़ा (कुचला हुआ)', '१० से १२ ताजे तुलसी के पत्ते', '१.५ ग्लास साफ़ पानी', '१ चम्मच शहद'],
+      en: ['5 to 7 whole black peppercorns', '1-inch crushed ginger piece', '10 to 12 fresh basil leaves', '1.5 glasses of clean water', '1 teaspoon of honey']
+    },
+    preparation: {
+      hi: 'एक बर्तन में डेढ़ ग्लास पानी डालें। उसमें कुचली हुई काली मिर्च, अदरक और तुलसी के पत्ते डालकर धीमी आंच पर उबालें। जब पानी उबलकर आधा ग्लास रह जाए, तो गैस बंद कर दें और इसे छान लें।',
+      en: 'Pour 1.5 glasses of water into a vessel. Add the crushed black pepper, ginger, and basil leaves, and simmer on low heat. Once the water reduces to half a glass, turn off the heat and strain it.'
+    },
+    usage: {
+      hi: 'इसे दिन में दो बार—सुबह और शाम को भोजन या हल्का नाश्ता लेने के ३० मिनट बाद चाय की तरह घूंट-घूंट करके गुनगुना पिएं। इसे कभी भी एकदम ठंडा करके न पिएं।',
+      en: 'Sip it warm like tea twice a day—morning and evening, exactly 30 minutes after meals or a light breakfast. Never consume it completely cold.'
+    },
+    dietEat: {
+      hi: 'मूंग की पतली दाल का पानी, गरम पानी, उबला हुआ सादा दलिया, गरम सब्जियों का सूप। फायदेमंद फल: केवल पका पपीता। फायदेमंद सलाद: उबली हुई तोरई।',
+      en: 'Mutton-free hot vegetable soup, thin Moong dal water, warm water, boiled plain porridge. Beneficial Fruits: Ripe papaya only. Beneficial Salad: Boiled sponge gourd.'
+    },
+    dietAvoid: {
+      hi: 'ठंडा पानी, घी, तेल, मसालेदार सब्जी, दूध, केला, संतरा, बासी खाना।',
+      en: 'Cold water, ghee, oil, spicy vegetables, milk, bananas, oranges, stale food.'
+    },
+    strictAvoid: {
+      hi: 'फ्रिज की ठंडी चीजें, आइसक्रीम, डिब्बा बंद जूस और मैदे वाली चीजें।',
+      en: 'Cold items from the fridge, ice cream, canned juices, and refined flour products.'
+    },
+    routine: {
+      morning: {
+        hi: 'सुबह: उठकर गरम पानी में नमक डालकर गरारे करें।',
+        en: 'Morning: Wake up and gargle with warm salt water.'
+      },
+      afternoon: {
+        hi: 'दोपहर: काढ़ा पीने के बाद थोड़ी देर कंबल ओढ़कर सोएं ताकि पसीना आकर बुखार उतरे।',
+        en: 'Afternoon: After drinking the decoction, rest under a blanket for a while to sweat out the fever.'
+      },
+      evening: {
+        hi: 'शाम/रात: हल्का और सुपाच्य गरम भोजन लें। कूलर या सीधे पंखे की हवा से बचें।',
+        en: 'Evening/Night: Consume a light, easily digestible warm dinner. Avoid coolers or direct fan drafts.'
+      }
+    },
+    safetyAdvice: {
+      hi: 'सुरक्षा सूचना: यदि पेट में अल्सर या अत्यधिक एसिडिटी की समस्या हो, तो काली मिर्च की मात्रा कम कर दें।',
+      en: 'Safety Notice: If suffering from stomach ulcers or severe acidity, reduce the amount of black pepper.'
+    },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || ""
   }
 ];
