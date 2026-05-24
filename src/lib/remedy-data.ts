@@ -415,13 +415,7 @@ export const REMEDIES: Remedy[] = [
     doses: [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "आधा टैबलेट (बारीक पीसकर गुनगुने पानी या शहद के साथ)", en: "Half tablet (finely crushed with lukewarm water or honey)" } },
       { ageRange: AGE_BRACKETS.youth, dose: { hi: "1 से 2 टैबलेट (सुबह और शाम)", en: "1 to 2 tablets (Morning and Evening)" } },
-      { 
-        ageRange: AGE_BRACKETS.middleAge, 
-        dose: { 
-          hi: "1 टैबलेट सुबह and 1 टैबलेट शाम (कुल 2 टैबलेट प्रतिदिन, भोजन के बाद)", 
-          en: "1 tablet in the morning and 1 tablet in the evening (total 2 tablets daily, after meals)" 
-        } 
-      },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "1 टैबलेट सुबह और 1 टैबलेट शाम (कुल 2 टैबलेट प्रतिदिन, भोजन के बाद)", en: "1 tablet morning and 1 tablet evening (total 2 tablets daily, after meals)" } },
       { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "आधी-आधी टैबलेट दिन में दो बार (कुल 1 टैबलेट प्रतिदिन, भोजन के बाद)", en: "Half tablet twice a day (total 1 tablet daily, after meals)" } }
     ],
     ingredients: {
@@ -672,5 +666,73 @@ export const REMEDIES: Remedy[] = [
     },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || ""
+  },
+  {
+    id: 'gf-10',
+    serialNumber: '१०',
+    name: {
+      hi: '१०. बुखार के बाद की भयंकर कमजोरी मिटाकर शरीर में तुरंत ताकत लाने का घरेलू उपाय',
+      en: '10. Home Remedy to Eradicate Post-Fever Weakness and Restore Instant Body Strength'
+    },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "बुखार ठीक होने के बाद अक्सर शरीर में बहुत ज्यादा कमजोरी आ जाती है, चक्कर आते हैं और हाथ-पैर दुखते हैं। ऐसी स्थिति में किचन में मौजूद मखाने (जो कैल्शियम और प्रोटीन से भरपूर हैं) और मुनक्का (जो नया खून बनाता है) का यह मेल शरीर की खोई हुई ताकत को ३ से ५ दिनों में वापस लौटा देता है। यह कमजोरी को जड़ से मिटाता है।",
+      en: "After the fever subsides, the body often experiences extreme weakness, dizziness, and body aches. In such cases, this kitchen combination of foxnuts (rich in calcium and protein) and raisins (which build new blood) restores lost energy within 3 to 5 days and eradicates fatigue completely."
+    },
+    severity: 'mild',
+    severityLabel: {
+      hi: '🟢 बुखार के बाद की कमजोरी और थकान (Post-Fever Recovery & Fatigue)',
+      en: '🟢 Post-Fever Recovery & Fatigue'
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "2 भुने मखाने और 2 भीगे मुनक्के सुबह-शाम (चबाकर खाएं, ऊपर से हल्का गुनगुना दूध पिएं)", en: "2 roasted foxnuts and 2 soaked raisins morning-evening (chew well, followed by lukewarm milk)" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "एक छोटा कटोरा भुने मखाने और 5 भीगे मुनक्के सुबह और शाम (भोजन या नाश्ते के बाद)", en: "One small bowl of roasted foxnuts and 5 soaked raisins morning and evening (after meals or breakfast)" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "एक छोटा कटोरा भुने मखाने और 5 भीगे मुनक्के सुबह और शाम (कुल दो बार प्रतिदिन, कमजोरी दूर करने के लिए)", en: "One small bowl of roasted foxnuts and 5 soaked raisins morning and evening (Total twice daily for strength)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "4 से 5 मखाने (हल्के घी में भुने और पिसे हुए) और 3 भीगे मुनक्के दिन में दो बार (केवल गुनगुने पानी या दूध के साथ)", en: "4 to 5 foxnuts (roasted lightly in ghee and crushed) and 3 soaked raisins twice a day (with lukewarm water or milk)" } }
+    ],
+    ingredients: {
+      hi: ['50 gram मखाने', '20 पीस मुनक्का (रातभर पानी में भीगे हुए और बीज निकले हुए)', '10 gram धागे वाली मिश्री', 'आधा चम्मच गाय का शुद्ध घी'],
+      en: ['50 grams of foxnuts (Makhana)', '20 pieces of raisins (Munakka, soaked overnight and deseeded)', '10 grams of rock candy (Mishri)', 'half a teaspoon of pure cow ghee']
+    },
+    preparation: {
+      hi: 'एक कढ़ाई में आधा चम्मच गाय का घी डालें और मखानों को धीमी आंच पर कुरकुरा होने तक भून लें। भीगे हुए मुनक्कों के बीज निकालकर अलग रख लें। मिश्री को पीसकर मखानों के साथ मिला सकते हैं या अलग से खा सकते हैं।',
+      en: 'Lightly roast the foxnuts in a pan with half a teaspoon of cow ghee on low heat until crunchy. Separate the seeds from the overnight-soaked raisins. Keep them ready alongside the roasted foxnuts.'
+    },
+    usage: {
+      hi: 'सुबह नाश्ते के बाद और शाम को ४ से ५ बजे के आसपास, तय मात्रा के अनुसार भुने मखाने और भीगे हुए मुनक्के खूब चबा-चबा कर खाएं। इसे लेने के १० मिनट बाद एक कप हल्का गुनगुना दूध या गुनगुना पानी पीना बहुत फायदेमंद होता है।',
+      en: 'Consume the recommended quantity of roasted foxnuts and soaked raisins twice a day—after breakfast in the morning and around 4-5 PM in the evening. Chew thoroughly. Drinking a cup of lukewarm milk or water 10 minutes later is highly beneficial.'
+    },
+    dietEat: {
+      hi: 'मूंग की दाल की सुपाच्य खिचड़ी, दलिया, साबूदाना खीर (हल्की चीनी वाली), सेब का मुरब्बा, गुनगुना पानी। फायदेमंद फल: पका हुआ केला या चीकू। फायदेमंद सलाद: हल्का उबला हुआ चुकंदर।',
+      en: 'Easily digestible Moong dal khichdi, porridge, sago (Sabudana) pudding, apple murabba, lukewarm water. Beneficial Fruits: Ripe banana or chikoo. Beneficial Salad: Lightly boiled beetroot.'
+    },
+    dietAvoid: {
+      hi: 'लाल मिर्च, गरम मसाले, बहुत ज्यादा तेल में तली पूरियां, अचार, मैदा, बासी और ठंडा खाना।',
+      en: 'Red chili, hot spices, deep-fried pooris, pickles, refined flour, stale or cold food.'
+    },
+    strictAvoid: {
+      hi: 'बाजार के चिप्स, समोसे, कोल्ड ड्रिंक्स, मैदे के बिस्कुट और फ्रिज का ठंडा पानी।',
+      en: 'Market chips, samosas, cold drinks, white flour biscuits, and cold fridge water.'
+    },
+    routine: {
+      morning: {
+        hi: 'सुबह: उठकर खुली हवा में लंबी सांसें लें।',
+        en: 'Morning: Wake up and take deep breaths in fresh air.'
+      },
+      afternoon: {
+        hi: 'दोपहर: पौष्टिक भोजन करने के बाद कम से कम १ घंटे की गहरी नींद लें ताकि शरीर को आराम मिले।',
+        en: 'Afternoon: Take at least a 1-hour nap after a nutritious lunch to let the body recover.'
+      },
+      evening: {
+        hi: 'शाम/रात: सूरज ढलने के बाद हल्का सुपाच्य खाना खाएं। भारी वजन उठाने या ज्यादा पैदल चलने से अभी बचें।',
+        en: 'Evening/Night: Have a light digestible dinner. Avoid lifting heavy weights or walking long distances for now.'
+      }
+    },
+    safetyAdvice: {
+      hi: 'सुरक्षा सूचना: यदि यूज़र को डायबिटीज (शुगर) है, तो वे मुनक्का और मिश्री का कामना करें, केवल सादे भुने मखाने खाएं।',
+      en: 'Safety Notice: If the user is diabetic, avoid raisins and rock candy; consume only plain roasted foxnuts.'
+    },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || ""
   }
 ];
