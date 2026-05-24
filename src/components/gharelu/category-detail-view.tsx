@@ -3,7 +3,9 @@
 import React, { useState } from 'react';
 import { Language, Theme } from '@/app/page';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, Stethoscope, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ArrowRight, BookOpen } from 'lucide-react';
+import { REMEDIES, Remedy } from '@/lib/remedy-data';
+import { RemedyDetail } from './remedy-detail';
 
 interface CategoryDetailViewProps {
   categoryId: string;
@@ -13,7 +15,8 @@ interface CategoryDetailViewProps {
 }
 
 export const CategoryDetailView = ({ categoryId, lang, theme, onBack }: CategoryDetailViewProps) => {
-  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<string | null>(null);
+  const [selectedIllnessId, setSelectedIllnessId] = useState<string | null>(null);
+  const [selectedRemedy, setSelectedRemedy] = useState<Remedy | null>(null);
   
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
@@ -34,23 +37,25 @@ export const CategoryDetailView = ({ categoryId, lang, theme, onBack }: Category
   };
 
   const activeCategory = categoryContent[categoryId as keyof typeof categoryContent];
+  const illnessRemedies = REMEDIES.filter(r => r.illnessId === selectedIllnessId);
 
   if (!activeCategory) return null;
 
-  // Function to handle back button logic
   const handleInternalBack = () => {
-    if (selectedSubCategoryId) {
-      setSelectedSubCategoryId(null);
+    if (selectedRemedy) {
+      setSelectedRemedy(null);
+    } else if (selectedIllnessId) {
+      setSelectedIllnessId(null);
     } else {
       onBack();
     }
   };
 
-  const selectedSubCategory = activeCategory.illnesses.find(i => i.id === selectedSubCategoryId);
+  const currentIllness = activeCategory.illnesses.find(i => i.id === selectedIllnessId);
 
   return (
-    <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
-      {/* Header with Back Button */}
+    <div className="space-y-8 animate-in slide-in-from-right-4 duration-500 pb-32">
+      {/* Header */}
       <div className="flex items-center gap-4">
         <button 
           onClick={handleInternalBack}
@@ -66,26 +71,26 @@ export const CategoryDetailView = ({ categoryId, lang, theme, onBack }: Category
             "text-2xl sm:text-3xl font-black font-headline leading-tight",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
-            {selectedSubCategoryId ? selectedSubCategory?.title : activeCategory.title}
+            {selectedRemedy ? selectedRemedy.name : (selectedIllnessId ? currentIllness?.title : activeCategory.title)}
           </h2>
-          {selectedSubCategoryId && (
+          {(selectedIllnessId || selectedRemedy) && (
             <span className={cn(
               "text-xs font-bold uppercase tracking-widest opacity-60",
               isNight ? "text-white" : "text-[#14532D]"
             )}>
-              {activeCategory.title}
+              {selectedRemedy ? (isHindi ? 'नुस्खा विवरण' : 'Remedy Detail') : activeCategory.title}
             </span>
           )}
         </div>
       </div>
 
-      {!selectedSubCategoryId ? (
+      {!selectedIllnessId ? (
         /* Level 1: List of Illnesses */
         <div className="grid grid-cols-1 gap-4">
           {activeCategory.illnesses.map((illness) => (
             <button
               key={illness.id}
-              onClick={() => setSelectedSubCategoryId(illness.id)}
+              onClick={() => setSelectedIllnessId(illness.id)}
               className={cn(
                 "group relative w-full p-8 rounded-[2rem] border transition-all duration-300 text-left",
                 "flex items-center justify-between shadow-xl hover:-translate-y-1 active:scale-[0.98]",
@@ -122,21 +127,50 @@ export const CategoryDetailView = ({ categoryId, lang, theme, onBack }: Category
             </button>
           ))}
         </div>
-      ) : (
-        /* Level 2: Remedy List Placeholder */
-        <div className="space-y-6">
-          <div className={cn(
-            "p-10 rounded-[2.5rem] border-2 border-dashed flex flex-col items-center justify-center text-center space-y-4",
-            isNight ? "border-white/20 text-white/40" : "border-primary/10 text-[#1E293B]/40"
-          )}>
-            <Stethoscope className="w-12 h-12 opacity-20" />
-            <p className="font-bold text-lg">
-              {isHindi 
-                ? 'इस श्रेणी के लिए नुस्खे जल्द ही जोड़े जाएंगे।' 
-                : 'Remedies for this category will be added soon.'}
-            </p>
-          </div>
+      ) : !selectedRemedy ? (
+        /* Level 2: Remedy List */
+        <div className="space-y-4">
+          {illnessRemedies.map((remedy) => (
+            <button
+              key={remedy.id}
+              onClick={() => setSelectedRemedy(remedy)}
+              className={cn(
+                "w-full p-6 rounded-2xl border transition-all duration-200 text-left flex items-center gap-4 group",
+                isNight 
+                  ? "bg-black border-white/20 text-white hover:border-white" 
+                  : "bg-white border-primary/10 hover:border-primary/30 text-primary shadow-md"
+              )}
+            >
+              <div className={cn(
+                "w-12 h-12 rounded-xl flex items-center justify-center font-black text-xl shrink-0",
+                isNight ? "bg-white/10 text-white" : "bg-primary/5 text-primary"
+              )}>
+                {remedy.serialNumber}
+              </div>
+              <div className="flex-1">
+                <h4 className="font-bold text-lg leading-snug">{remedy.name}</h4>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={cn(
+                    "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider",
+                    remedy.severity === 'mild' ? "bg-green-500/10 text-green-600" :
+                    remedy.severity === 'moderate' ? "bg-yellow-500/10 text-yellow-600" :
+                    "bg-red-500/10 text-red-600"
+                  )}>
+                    {remedy.severityLabel}
+                  </span>
+                </div>
+              </div>
+              <BookOpen className="w-5 h-5 opacity-40 group-hover:opacity-100 transition-opacity" />
+            </button>
+          ))}
         </div>
+      ) : (
+        /* Level 3: Remedy Detail Matrix */
+        <RemedyDetail 
+          remedy={selectedRemedy} 
+          theme={theme} 
+          lang={lang} 
+        />
       )}
     </div>
   );
