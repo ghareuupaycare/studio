@@ -6,7 +6,7 @@ export type LocalizedString = {
 };
 
 export type DoseConfig = {
-  ageRange: string;
+  ageRange: LocalizedString;
   dose: LocalizedString;
 };
 
@@ -47,6 +47,13 @@ const GENERAL_DISCLAIMER: LocalizedString = {
   en: "This information is for educational purposes only, please consult your physician."
 };
 
+const AGE_BRACKETS = {
+  childhood: { hi: "5-12 वर्ष (बाल्यावस्था)", en: "5-12 Years (Childhood)" },
+  youth: { hi: "13-40 वर्ष (पूर्ण युवावस्था)", en: "13-40 Years (Youth)" },
+  middleAge: { hi: "41-60 वर्ष (प्रौढ़ावस्था)", en: "41-60 Years (Middle Age)" },
+  oldAge: { hi: "61-80 वर्ष (वृद्धावस्था)", en: "61-80 Years (Old Age)" }
+};
+
 export const REMEDIES: Remedy[] = [
   {
     id: 'gf-1',
@@ -66,10 +73,10 @@ export const REMEDIES: Remedy[] = [
       en: '🟡 Mild to Moderate Fever'
     },
     doses: [
-      { ageRange: "5-12 वर्ष (बाल्यावस्था)", dose: { hi: "5 से 10 मिलीलीटर", en: "5 to 10 ml" } },
-      { ageRange: "13-40 वर्ष (पूर्ण युवावस्था)", dose: { hi: "20 से 30 मिलीलीटर", en: "20 to 30 ml" } },
-      { ageRange: "41-60 वर्ष (प्रौढ़ावस्था)", dose: { hi: "15 से 20 मिलीलीटर", en: "15 to 20 ml" } },
-      { ageRange: "61-80 वर्ष (वृद्धावस्था)", dose: { hi: "10 से 15 मिलीलीटर (हल्के गुनगुने पानी के साथ)", en: "10 to 15 ml (with lukewarm water)" } }
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "5 से 10 मिलीलीटर", en: "5 to 10 ml" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "20 से 30 मिलीलीटर", en: "20 to 30 ml" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "15 से 20 मिलीलीटर", en: "15 to 20 ml" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "10 से 15 मिलीलीटर (हल्के गुनगुने पानी के साथ)", en: "10 to 15 ml (with lukewarm water)" } }
     ],
     ingredients: {
       hi: ['7-8 ताजी तुलसी की पत्तियां', '3-4 इंच गिलोय की डंडी (कुचली हुई)', '2-3 साबुत काली मिर्च', '1 छोटा टुकड़ा अदरक'],
@@ -134,33 +141,33 @@ export const REMEDIES: Remedy[] = [
       en: '🟢 Early or Very Mild Fever'
     },
     doses: [
-      { ageRange: "5-12 वर्ष (बाल्यावस्था)", dose: { hi: "2 से 3 चम्मच", en: "2 to 3 teaspoons" } },
-      { ageRange: "13-40 वर्ष (पूर्ण युवावस्था)", dose: { hi: "आधा कप (लगभग 50 मिलीलीटर)", en: "Half a cup (approx. 50 ml)" } },
-      { ageRange: "41-60 वर्ष (प्रौढ़ावस्था)", dose: { hi: "4 से 5 चम्मच (गुनगुने पानी में मिश्रित)", en: "4 to 5 teaspoons (mixed in lukewarm water)" } },
-      { ageRange: "61-80 वर्ष (वृद्धावस्था)", dose: { hi: "3 चम्मच (हल्का गुनगुना)", en: "3 teaspoons (mildly warm)" } }
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "2 से 3 चम्मच", en: "2 to 3 teaspoons" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा कप (लगभग 50 मिलीलीटर)", en: "Half a cup (approx. 50 ml)" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "4 से 5 चम्मच (गुनगुने पानी में मिश्रित)", en: "4 to 5 teaspoons (mixed in lukewarm water)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "3 चम्मच (हल्का गुनगुना)", en: "3 teaspoons (mildly warm)" } }
     ],
     ingredients: {
       hi: ['2 चम्मच खड़े धनिए के बीज (साबुत धनिया)', 'आधा चम्मच कद्दूकस किया हुआ अदरक', '2 गिलास पानी'],
       en: ['2 teaspoons whole coriander seeds', 'half a teaspoon grated ginger', '2 glasses of water']
     },
     preparation: {
-      hi: 'दो गिलास पानी में धनिया के बीज और अदरक डालकर उबालें। जब पानी उबलकर एक गिलास रह जाए, तो छानकर रख लें।',
+      hi: 'दो गिलास पानी में धनिया के बीज and अदरक डालकर उबालें। जब पानी उबलकर एक गिलास रह जाए, तो छानकर रख लें।',
       en: 'Boil coriander seeds and ginger in two glasses of water. When the water reduces to one glass, strain and store it.'
     },
     usage: {
-      hi: 'इसे दिन में तीन बार—सुबह, दोपहर और शाम को भोजन करने के आधे घंटे बाद (भरा पेट) थोड़ा-थोड़ा गुनगुना करके पिएं।',
+      hi: 'इसे दिन में तीन बार—सुबह, दोपहर and शाम को भोजन करने के आधे घंटे बाद (भरा पेट) थोड़ा-थोड़ा गुनगुना करके पिएं।',
       en: 'Drink this three times a day—morning, afternoon, and evening, half an hour after meals (full stomach), keeping it slightly warm.'
     },
     dietEat: {
-      hi: 'साबूदाना खिचड़ी, मूंग दाल का सूप। फायदेमंद फल: पका हुआ पपीता और मौसंबी का रस (बिना बर्फ और नमक के)। फायदेमंद सलाद: उबला हुआ चुकंदर और गाजर का हल्का सूप।',
+      hi: 'साबूदाना खिचड़ी, मूंग दाल का सूप। फायदेमंद फल: पका हुआ पपीता and मौसंबी का रस (बिना बर्फ and नमक के)। फायदेमंद सलाद: उबला हुआ चुकंदर and गाजर का हल्का सूप।',
       en: 'Sabudana Khichdi, Moong dal soup. Beneficial Fruits: Ripe papaya and sweet lime juice (without ice or salt). Beneficial Salad: Boiled beetroot and light carrot soup.'
     },
     dietAvoid: {
-      hi: 'खट्टे फल, दही, छाछ, आइसक्रीम और ठंडी चीजें।',
+      hi: 'खट्टे फल, दही, छाछ, आइसक्रीम and ठंडी चीजें।',
       en: 'Sour fruits, curd, buttermilk, ice cream, and cold things.'
     },
     strictAvoid: {
-      hi: 'पैकेट वाले नूडल्स, पास्ता, मैदा से बनी ब्रेड, बिस्कुट और नमकीन जैसी प्रोसेस्ड चीजें।',
+      hi: 'पैकेट वाले नूडल्स, पास्ता, मैदा से बनी ब्रेड, बिस्कुट and नमकीन जैसी प्रोसेस्ड चीजें।',
       en: 'Packaged noodles, pasta, white bread, biscuits, and processed salty snacks.'
     },
     routine: {
@@ -169,11 +176,11 @@ export const REMEDIES: Remedy[] = [
         en: 'Morning: Take a few soaked raisins (Munakka) with lukewarm water for breakfast.'
       },
       afternoon: {
-        hi: 'दोपहर: सादे उबले चावल और मूंग की पतली दाल लें। साथ में थोड़ा पपीता खाएं।',
+        hi: 'दोपहर: सादे उबले चावल and मूंग की पतली दाल लें। साथ में थोड़ा पपीता खाएं।',
         en: 'Afternoon: Have plain boiled rice and thin Moong dal along with some papaya.'
       },
       evening: {
-        hi: 'शाम/रात: लौकी या तोरई की सादी उबली सब्जी और एक पतली फुल्का रोटी (बिना घी की)। रात को जल्दी सोएं।',
+        hi: 'शाम/रात: लौकी या तोरई की सादी उबली सब्जी and एक पतली फुल्का रोटी (बिना घी की)। रात को जल्दी सोएं।',
         en: 'Evening/Night: Simple boiled bottle gourd or sponge gourd vegetable with one thin chapati (without ghee). Go to sleep early.'
       }
     },
@@ -202,10 +209,10 @@ export const REMEDIES: Remedy[] = [
       en: '🔴 Moderate to Severe Chronic Fever'
     },
     doses: [
-      { ageRange: "5-12 वर्ष (बाल्यावस्था)", dose: { hi: "1 चुटकी (लगभग 250 मिलीग्राम) शहद के साथ", en: "1 pinch (approx. 250 mg) with honey" } },
-      { ageRange: "13-40 वर्ष (पूर्ण युवावस्था)", dose: { hi: "2 से 3 ग्राम (आधा से 1 छोटा चम्मच)", en: "2 to 3 grams (half to 1 teaspoon)" } },
-      { ageRange: "41-60 वर्ष (प्रौढ़ावस्था)", dose: { hi: "1.5 से 2 ग्राम (आधा छोटा चम्मच)", en: "1.5 to 2 grams (half teaspoon)" } },
-      { ageRange: "61-80 वर्ष (वृद्धावस्था)", dose: { hi: "1 ग्राम (सीमित मात्रा में, गुनगुने पानी से)", en: "1 gram (limited dose, with lukewarm water)" } }
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "1 चुटकी (लगभग 250 मिलीग्राम) शहद के साथ", en: "1 pinch (approx. 250 mg) with honey" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "2 से 3 ग्राम (आधा से 1 छोटा चम्मच)", en: "2 to 3 grams (half to 1 teaspoon)" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "1.5 से 2 ग्राम (आधा छोटा चम्मच)", en: "1.5 to 2 grams (half teaspoon)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "1 ग्राम (सीमित मात्रा में, गुनगुने पानी से)", en: "1 gram (limited dose, with lukewarm water)" } }
     ],
     ingredients: {
       hi: ['आयुर्वेदिक महासुदर्शन चूर्ण', '1 चम्मच शुद्ध शहद'],
@@ -220,15 +227,15 @@ export const REMEDIES: Remedy[] = [
       en: 'Lick this paste twice a day, morning and evening, half an hour after meals (full stomach), and follow it with half a glass of lukewarm water.'
     },
     dietEat: {
-      hi: 'परवल की सब्जी, लौकी की सब्जी, सादा सुपाच्य भोजन। फायदेमंद फल: सेब (छिलका उतारकर कद्दूकस किया हुआ) और अनार के दाने। फायदेमंद सलाद: उबले हुए पत्तागोभी और टमाटर का हल्का सलाद (भाप में पका हुआ)।',
+      hi: 'परवल की सब्जी, लौकी की सब्जी, सादा सुपाच्य भोजन। फायदेमंद फल: सेब (छिलका उतारकर कद्दूकस किया हुआ) and अनार के दाने। फायदेमंद सलाद: उबले हुए पत्तागोभी and टमाटर का हल्का सलाद (भाप में पका हुआ)।',
       en: 'Pointed gourd (Parwal) vegetable, bottle gourd vegetable, simple easily digestible meals. Beneficial Fruits: Peeled and grated apple, and pomegranate seeds. Beneficial Salad: Light steamed cabbage and tomato salad.'
     },
     dietAvoid: {
-      hi: 'मिठाई, तेज मसाले, घी, तेल, नया चावल और ज्यादा नमक वाला खाना।',
+      hi: 'मिठाई, तेज मसाले, घी, तेल, नया चावल and ज्यादा नमक वाला खाना।',
       en: 'Sweets, hot spices, ghee, oil, newly harvested rice, and heavily salted food.'
     },
     strictAvoid: {
-      hi: 'पैकेट बंद नमकीन, रेडी-टू-ईट भोजन, इंस्टेंट सूप और प्रिजर्वेटिव वाले जूस।',
+      hi: 'पैकेट बंद नमकीन, रेडी-टू-ईट भोजन, इंस्टेंट सूप and प्रिजर्वेटिव वाले जूस।',
       en: 'Packaged savory snacks, ready-to-eat meals, instant commercial soups, and juices with preservatives.'
     },
     routine: {
@@ -237,7 +244,7 @@ export const REMEDIES: Remedy[] = [
         en: 'Morning: Have thin sweet porridge (Daliya) or a boiled apple for breakfast.'
       },
       afternoon: {
-        hi: 'दोपहर: मूंग की दाल और परवल की सादी सब्जी के साथ एक या दो पतली चपाती।',
+        hi: 'दोपहर: मूंग की दाल and परवल की सादी सब्जी के साथ एक या दो पतली चपाती।',
         en: 'Afternoon: One or two thin chapatis with Moong dal and simple pointed gourd vegetable.'
       },
       evening: {
@@ -246,7 +253,7 @@ export const REMEDIES: Remedy[] = [
       }
     },
     safetyAdvice: {
-      hi: 'सुरक्षा सूचना: यह चूर्ण स्वाद में बहुत कड़वा होता है। बुजुर्गों और बच्चों को देते समय शहद की मात्रा थोड़ी बढ़ाई जा सकती है।',
+      hi: 'सुरक्षा सूचना: यह चूर्ण स्वाद में बहुत कड़वा होता है। बुजुर्गों and बच्चों को देते समय शहद की मात्रा थोड़ी बढ़ाई जा सकती है।',
       en: 'Safety Notice: This powder is very bitter in taste. The quantity of honey can be slightly increased when giving it to children and the elderly.'
     },
     disclaimer: GENERAL_DISCLAIMER,
@@ -261,7 +268,7 @@ export const REMEDIES: Remedy[] = [
     },
     illnessId: 'general-fever',
     introduction: {
-      hi: "तेज बुखार या पित्त बढ़ने के कारण जब शरीर में बहुत तेज जलन होने लगती है, आँखें लाल हो जाती हैं, अत्यधिक प्यास लगती है और भयंकर कमजोरी महसूस होती है, तो यह उपाय शरीर की अत्यधिक गर्मी (पित्त) को तुरंत शांत करता है।",
+      hi: "तेज बुखार या पित्त बढ़ने के कारण जब शरीर में बहुत तेज जलन होने लगती है, आँखें लाल हो जाती हैं, अत्यधिक प्यास लगती है and भयंकर कमजोरी महसूस होती है, तो यह उपाय शरीर की अत्यधिक गर्मी (पित्त) को तुरंत शांत करता है।",
       en: "When high fever or elevated Pitta causes intense burning sensations in the body, red eyes, excessive thirst, and severe weakness, this remedy instantly calms down the body's excessive heat (Pitta)."
     },
     severity: 'moderate',
@@ -270,33 +277,33 @@ export const REMEDIES: Remedy[] = [
       en: '🟡 Moderate to High Fever'
     },
     doses: [
-      { ageRange: "5-12 वर्ष (बाल्यावस्था)", dose: { hi: "4 से 5 चम्मच", en: "4 to 5 teaspoons" } },
-      { ageRange: "13-40 वर्ष (पूर्ण युवावस्था)", dose: { hi: "आधा गिलास पानी (सामान्य तापमान पर)", en: "Half a glass of water (at room temperature)" } },
-      { ageRange: "41-60 वर्ष (प्रौढ़ावस्था)", dose: { hi: "आधा कप पानी", en: "Half a cup of water" } },
-      { ageRange: "61-80 वर्ष (वृद्धावस्था)", dose: { hi: "4 चम्मच पानी (बिना ठंडा किए)", en: "4 teaspoons of water (unrefrigerated)" } }
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "4 से 5 चम्मच", en: "4 to 5 teaspoons" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा गिलास पानी (सामान्य तापमान पर)", en: "Half a glass of water (at room temperature)" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप पानी", en: "Half a cup of water" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "4 चम्मच पानी (बिना ठंडा किए)", en: "4 teaspoons of water (unrefrigerated)" } }
     ],
     ingredients: {
       hi: ['10-12 पीस मुनक्का (बीज निकाले हुए)', '1 छोटा चम्मच सौंफ', '1 गिलास पानी'],
       en: ['10-12 pieces of Munakka (seeded)', '1 teaspoon fennel seeds', '1 glass of water']
     },
     preparation: {
-      hi: 'रात में एक गिलास साफ पानी में मुनक्का और सौंफ को भिगोकर रख दें। सुबह मुनक्के को उसी पानी में हाथ से अच्छी तरह मसल लें और फिर पानी को छान लें।',
+      hi: 'रात में एक गिलास साफ पानी में मुनक्का and सौंफ को भिगोकर रख दें। सुबह मुनक्के को उसी पानी में हाथ से अच्छी तरह मसल लें and फिर पानी को छान लें।',
       en: 'Soak Munakka and fennel seeds in a glass of clean water overnight. In the morning, mash the raisins thoroughly into the same water with clean hands and strain the water.'
     },
     usage: {
-      hi: 'इस पानी को बिना गर्म किए सामान्य तापमान पर सुबह खाली पेट और शाम को (चाय के समय, खाली पेट) पिएं।',
+      hi: 'इस पानी को बिना गर्म किए सामान्य तापमान पर सुबह खाली पेट and शाम को (चाय के समय, खाली पेट) पिएं।',
       en: 'Drink this infusion without heating it, at room temperature, in the morning on an empty stomach and in the evening (around tea time, empty stomach).'
     },
     dietEat: {
-      hi: 'नारियल पानी, जौ का सत्तू। फायदेमंद फल: मीठा अनार, पका हुआ केला (यदि खांसी न हो) और तरबूज-खरबूजा। फायदेमंद सलाद: कच्ची ककड़ी, खीरा और कद्दूकस की हुई गाजर।',
+      hi: 'नारियल पानी, जौ का सत्तू। फायदेमंद फल: मीठा अनार, पका हुआ केला (यदि खांसी न हो) and तरबूज-खरबूजा। फायदेमंद सलाद: कच्ची ककड़ी, खीरा and कद्दूकस की हुई गाजर।',
       en: 'Coconut water, barley Sattu. Beneficial Fruits: Sweet pomegranate, ripe banana (if no cough), and watermelon/muskmelon. Beneficial Salad: Raw snake cucumber, field cucumber, and grated carrot.'
     },
     dietAvoid: {
-      hi: 'गरम मसाले, लाल मिर्च, चाय, कॉफी, लहसुन और प्याज।',
+      hi: 'गरम मसाले, लाल मिर्च, चाय, कॉफी, लहसुन and प्याज।',
       en: 'Hot spices, red chili, tea, coffee, garlic, and onions.'
     },
     strictAvoid: {
-      hi: 'पैकेट वाले तीखे और मसालेदार चिप्स, कुरकुरे, तली हुई डिब्बाबंद पूरियां या कचौड़ी और अचार।',
+      hi: 'पैकेट वाले तीखे and मसालेदार चिप्स, कुरकुरे, तली हुई डिब्बाबंद पूरियां या कचौड़ी and अचार।',
       en: 'Packaged spicy and hot chips, snacks, deep-fried store-bought Puris or Kachoris, and pickles.'
     },
     routine: {
@@ -305,16 +312,16 @@ export const REMEDIES: Remedy[] = [
         en: 'Morning: Drink this Munakka water on an empty stomach. Eat light barley porridge an hour later.'
       },
       afternoon: {
-        hi: 'दोपहर: सादे चावल, मूंग की दाल और तोरई की सब्जी। साथ में ककड़ी-खीरे का सलाद खाएं।',
+        hi: 'दोपहर: सादे चावल, मूंग की दाल and तोरई की सब्जी। साथ में ककड़ी-खीरे का सलाद खाएं।',
         en: 'Afternoon: Plain rice, Moong dal, and sponge gourd vegetable along with cucumber salad.'
       },
       evening: {
-        hi: 'शाम/रात: कद्दू की सादी सब्जी और दो पतली रोटी। रात को सोने से पहले सिर पर सामान्य पानी की सूती पट्टी रखें।',
+        hi: 'शाम/रात: कद्दू की सादी सब्जी and दो पतली रोटी। रात को सोने से पहले सिर पर सामान्य पानी की सूती पट्टी रखें।',
         en: 'Evening/Night: Plain pumpkin vegetable and two thin chapatis. Place a wet cotton cloth strip on the forehead before sleeping.'
       }
     },
     safetyAdvice: {
-      hi: 'सुरक्षा सूचना: मुनक्का और सौंफ का पानी मीठा होता है, इसलिए डायबिटीज (शुगर) के रोगी मुनक्के की संख्या आधी रखें।',
+      hi: 'सुरक्षा सूचना: मुनक्का and सौंफ का पानी मीठा होता है, इसलिए डायबिटीज (शुगर) के रोगी मुनक्के की संख्या आधी रखें।',
       en: 'Safety Notice: Since Munakka and fennel water is naturally sweet, diabetes patients should reduce the number of raisins by half.'
     },
     disclaimer: GENERAL_DISCLAIMER,
@@ -329,7 +336,7 @@ export const REMEDIES: Remedy[] = [
     },
     illnessId: 'general-fever',
     introduction: {
-      hi: "जब बुखार ठंड लगकर आता है, पूरा शरीर थर-थर कांप रहा हो या जोड़ों में भयंकर जकड़न हो, तब यह गरम तासीर का उपाय शरीर के भीतर तुरंत अग्नि पैदा करता है, रोम-छिद्रों को खोलता है और भरपूर पसीना लाकर बुखार को शरीर से बाहर ढकेलता है।",
+      hi: "जब बुखार ठंड लगकर आता है, पूरा शरीर थर-थर कांप रहा हो या जोड़ों में भयंकर जकड़न हो, तब यह गरम तासीर का उपाय शरीर के भीतर तुरंत अग्नि पैदा करता है, रोम-छिद्रों को खोलता है and भरपूर पसीना लाकर बुखार को शरीर से बाहर ढकेलता है।",
       en: "When fever sets in with shivering chills, severe body shaking, or extreme joint stiffness, this warm-potency tea immediately generates internal heat, opens skin pores, and induces sweating to drive the fever out of the body."
     },
     severity: 'moderate',
@@ -338,34 +345,34 @@ export const REMEDIES: Remedy[] = [
       en: '🟡 Mild to Moderate Fever with Chills'
     },
     doses: [
-      { ageRange: "5-12 वर्ष (बाल्यावस्था)", dose: { hi: "5 मिलीलीटर (1 छोटा चम्मच)", en: "5 ml (1 teaspoon)" } },
-      { ageRange: "13-40 वर्ष (पूर्ण युवावस्था)", dose: { hi: "आधा कप (चाय की तरह गरम-गरम)", en: "Half a cup (piping hot like tea)" } },
-      { ageRange: "41-60 वर्ष (प्रौढ़ावस्था)", dose: { hi: "30 मिलीलीटर (गुनगुनी हालत में)", en: "30 ml (in warm state)" } },
-      { ageRange: "61-80 वर्ष (वृद्धावस्था)", dose: { hi: "15 से 20 मिलीलीटर (हल्का गुनगुना)", en: "15 to 20 ml (mildly warm)" } }
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "5 मिलीलीटर (1 छोटा चम्मच)", en: "5 ml (1 teaspoon)" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा कप (चाय की तरह गरम-गरम)", en: "Half a cup (piping hot like tea)" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "30 मिलीलीटर (गुनगुनी हालत में)", en: "30 ml (in warm state)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "15 से 20 मिलीलीटर (हल्का गुनगुना)", en: "15 to 20 ml (mildly warm)" } }
     ],
     ingredients: {
       hi: ['1 छोटा टुकड़ा दालचीनी', '2 पीस लौंग', '2 छोटी इलायची', '1 गिलास पानी'],
       en: ['1 small piece of cinnamon', '2 cloves', '2 green cardamoms', '1 glass of water']
     },
     preparation: {
-      hi: 'पानी में दालचीनी, लौंग और इलायची को कूटकर डालें। इसे तब तक उबालें जब तक पानी उबलकर आधा न रह जाए।',
+      hi: 'पानी में दालचीनी, लौंग and इलायची को कूटकर डालें। इसे तब तक उबालें जब तक पानी उबलकर आधा न रह जाए।',
       en: 'Crush the cinnamon, cloves, and cardamom and add them to water. Boil until the liquid reduces to half.'
     },
     usage: {
-      hi: 'इसे छानकर सुबह नाश्ते के आधे घंटे बाद (भरा पेट) और रात को सोते समय (भोजन के 1 घंटे बाद) गरम-गरम ही चाय की तरह धीरे-धीरे पिएं।',
+      hi: 'इसे छानकर सुबह नाश्ते के आधे घंटे बाद (भरा पेट) and रात को सोते समय (भोजन के 1 घंटे बाद) गरम-गरम ही चाय की तरह धीरे-धीरे पिएं।',
       en: 'Strain and drink it hot like tea, sipping slowly, half an hour after breakfast (full stomach) and at bedtime (1 hour after dinner).'
     },
     dietEat: {
-      hi: 'गरम राब या सूप, बाजरे की कांजी। फायदेमंद फल: चीकू और खजूर। फायदेमंद सलाद: हल्का भुना हुआ चुकंदर (कच्चा और ठंडा सलाद बिल्कुल न खाएं)।',
+      hi: 'गरम राब या सूप, बाजरे की कांजी। फायदेमंद फल: चीकू and खजूर। फायदेमंद सलाद: हल्का भुना हुआ चुकंदर (कच्चा and ठंडा सलाद बिल्कुल न खाएं)।',
       en: 'Warm liquid gruel (Raab) or hot soup, pearl millet (Bajra) Kanji. Beneficial Fruits: Sapodilla (Chiku) and dates. Beneficial Salad: Lightly roasted beetroot (strictly avoid raw and cold salads).'
     },
     dietAvoid: {
-      hi: 'आइसक्रीम, कोल्ड ड्रिंक, खट्टा खाना, ठंडा पानी और दही।',
+      hi: 'आइसक्रीम, कोल्ड ड्रिंक, खट्टा खाना, ठंडा पानी and दही।',
       en: 'Ice cream, cold drinks, sour food, cold water, and curd.'
     },
     strictAvoid: {
-      hi: 'पैकेट बंद सॉस, डिब्बा बंद पनीर, फ्रीजर में रखा हुआ प्रोसेस्ड मीट।',
-      en: 'Packaged chemical sauces, commercial paneer stored in freezers, frozen processed meats.'
+      hi: 'फ्रीजर में रखा हुआ प्रोसेस्ड मीट, पैकेट बंद सॉस, डिब्बा बंद पनीर।',
+      en: 'Frozen processed meats, packaged chemical sauces, and commercial paneer stored in freezers.'
     },
     routine: {
       morning: {
@@ -373,7 +380,7 @@ export const REMEDIES: Remedy[] = [
         en: 'Morning: Eat hot semolina Upma or porridge for breakfast.'
       },
       afternoon: {
-        hi: 'दोपहर: गरम-गरम अरहर या मूंग की दाल, चावल और भुनी हुई सब्जियों का सेवन करें।',
+        hi: 'दोपहर: गरम-गरम अरहर या मूंग की दाल, चावल and भुनी हुई सब्जियों का सेवन करें।',
         en: 'Afternoon: Consume hot pigeon pea (Arhar) or Moong dal, rice, and roasted vegetables.'
       },
       evening: {

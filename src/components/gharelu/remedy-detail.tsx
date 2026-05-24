@@ -21,11 +21,12 @@ interface RemedyDetailProps {
 }
 
 export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
-  const [selectedAgeRange, setSelectedAgeRange] = useState(remedy.doses[1].ageRange);
+  // Use the Hindi version of the age range as a stable state key
+  const [selectedAgeRangeKey, setSelectedAgeRangeKey] = useState(remedy.doses[1].ageRange.hi);
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
 
-  const currentDose = remedy.doses.find(d => d.ageRange === selectedAgeRange);
+  const currentDose = remedy.doses.find(d => d.ageRange.hi === selectedAgeRangeKey);
 
   // GLOBAL TYPOGRAPHY REFACTOR & LOCK
   const headingClass = cn(
@@ -66,16 +67,16 @@ export const RemedyDetail = ({ remedy, theme, lang }: RemedyDetailProps) => {
         <div className="flex flex-wrap gap-2 mb-6">
           {remedy.doses.map((dose) => (
             <button
-              key={dose.ageRange}
-              onClick={() => setSelectedAgeRange(dose.ageRange)}
+              key={dose.ageRange.hi}
+              onClick={() => setSelectedAgeRangeKey(dose.ageRange.hi)}
               className={cn(
                 "px-4 py-2 rounded-xl text-sm font-bold transition-all border",
-                selectedAgeRange === dose.ageRange
+                selectedAgeRangeKey === dose.ageRange.hi
                   ? (isNight ? "bg-white text-black" : "bg-accent text-white border-accent shadow-md")
                   : (isNight ? "bg-black text-white border-white/20" : "bg-transparent text-primary border-primary/20")
               )}
             >
-              {dose.ageRange}
+              {dose.ageRange[lang]}
             </button>
           ))}
         </div>
