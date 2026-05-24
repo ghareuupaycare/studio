@@ -34,7 +34,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const currentDose = remedy.doses.find(d => d.ageRange.hi === selectedAgeRangeKey);
 
-  // GLOBAL TYPOGRAPHY REFACTOR & LOCK
   const headingClass = cn(
     "text-[1.15rem] font-bold mb-3 flex items-center gap-2",
     isNight ? "text-white" : "text-[#14532D]"
@@ -45,34 +44,39 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     isNight ? "text-white" : "text-[#2D3748]"
   );
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: isHindi ? 'कॉपी हो गया!' : 'Copied!',
+      description: isHindi 
+        ? 'नुस्खा कॉपी हो गया है, अब आप कहीं भी शेयर कर सकते हैं!' 
+        : 'Remedy copied to clipboard, you can now share it anywhere!',
+    });
+  };
+
   const handleShare = async () => {
-    const shareText = `
-${remedy.name[lang]}
----
-${isHindi ? 'सामग्री' : 'Ingredients'}:
-${remedy.ingredients[lang].join(', ')}
-
-${isHindi ? 'उपयोग' : 'Usage'}:
-${remedy.usage[lang]}
-
-${isHindi ? 'घरेलू उपाय केयर ऐप से साझा किया गया' : 'Shared from Gharelu Upay Care App'}
-    `.trim();
+    const title = remedy.name[lang];
+    const ingredients = remedy.ingredients[lang].join(', ');
+    const prep = remedy.preparation[lang];
+    
+    const shareText = isHindi 
+      ? `*घरेलू उपाय केयर - पसंदीदा नुस्खा*\n🌿 *${title}*\n\n📦 *आवश्यक सामग्री:*\n${ingredients}\n\n🥣 *बनाने की विधि:*\n${prep}\n\n📌 *पूरा विवरण देखने के लिए हमारी ऐप पर आएं!*`
+      : `*Gharelu Upay Care - Favorite Remedy*\n🌿 *${title}*\n\n📦 *Ingredients:*\n${ingredients}\n\n🥣 *Preparation:*\n${prep}\n\n📌 *Visit our app for full details!*`;
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: remedy.name[lang],
+          title: title,
           text: shareText,
         });
       } catch (error) {
-        console.error('Error sharing:', error);
+        // If sharing is cancelled or fails, don't necessarily show an error, but we can fallback
+        if ((error as any).name !== 'AbortError') {
+          copyToClipboard(shareText);
+        }
       }
     } else {
-      navigator.clipboard.writeText(shareText);
-      toast({
-        title: isHindi ? 'कॉपी किया गया' : 'Copied to clipboard',
-        description: isHindi ? 'नुस्खा विवरण आपके क्लिपबोर्ड पर कॉपी हो गया है।' : 'Remedy details copied to your clipboard.',
-      });
+      copyToClipboard(shareText);
     }
   };
 
@@ -188,13 +192,13 @@ ${isHindi ? 'घरेलू उपाय केयर ऐप से साझ�
       )}>
         <h3 className={cn(
           "text-xs font-black uppercase tracking-[0.3em] mb-4",
-          isNight ? "text-accent brightness-125" : "text-white/80"
+          isNight ? "text-white" : "text-white/80"
         )}>
           {isHindi ? 'सेवन विधि' : 'Usage Instructions'}
         </h3>
         <p className={cn(
-          "text-[1.15rem] font-bold leading-[1.5]",
-          isNight ? "text-white opacity-100" : "text-white"
+          "text-[1.15rem] font-bold leading-[1.5] text-white",
+          isNight ? "opacity-100" : ""
         )}>
           "{remedy.usage[lang]}"
         </p>
@@ -292,7 +296,7 @@ ${isHindi ? 'घरेलू उपाय केयर ऐप से साझ�
         )}>
           <h4 className={headingClass}>
             <AlertTriangle className="w-5 h-5 shrink-0 text-accent" /> 
-            <span className="text-accent">{isHindi ? 'सुरक्षा सूचना' : 'Safety Info'}</span>
+            <span className={cn("font-bold", isNight ? "text-accent" : "text-[#9B2C2C]")}>{isHindi ? 'सुरक्षा सूचना' : 'Safety Info'}</span>
           </h4>
           <p className={cn(
             "text-[1.05rem] leading-[1.5] font-bold",
