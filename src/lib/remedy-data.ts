@@ -493,7 +493,7 @@ export const REMEDIES: Remedy[] = [
       { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) चम्मच चूर्ण दिन में दो बार (केवल हल्के गुनगुने पानी के साथ, भोजन के बाद)", en: "Quarter (1/4) teaspoon powder twice a day (strictly with lukewarm water, after meals)" } }
     ],
     ingredients: {
-      hi: ['500 मिलीग्राम मेथी दाना', '200 मिलीग्राम सोंठ पाउडर (सूखा अदरक)', '200 मिलीग्राम भुना हुआ जीरा', '1 चम्मच शहद या गुनगुना पानी'],
+      hi: ['50 ग्राम मेथी दाना', '20 ग्राम सोंठ पाउडर (सूखा अदरक)', '20 ग्राम भुना हुआ जीरा', '1 चम्मच शहद या गुनगुना पानी'],
       en: ['50 grams of fenugreek seeds', '20 grams of dry ginger powder (Saunth)', '20 grams of roasted cumin', '1 teaspoon of honey or lukewarm water']
     },
     preparation: {
@@ -604,5 +604,73 @@ export const REMEDIES: Remedy[] = [
     },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || ""
+  },
+  {
+    id: 'gf-9',
+    serialNumber: '९',
+    name: {
+      hi: '९. खस, धनिया और सोंठ का शीतल ज्वरनाशक हिम (Cold Infusion)',
+      en: '9. Cooling Antipyretic Infusion of Vetiver, Coriander, and Dry Ginger'
+    },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "जब बुखार के कारण शरीर में तेज जलन हो, हाथ-पैरों से आग निकल रही हो और बार-बार प्यास लग रही हो, तब धनिया और सोंठ का यह पानी (आयुर्वेद में जिसे 'हिम' कहते हैं) शरीर की अंदरूनी गर्मी को शांत करता है। यह लीवर को ठंडा करता है, पेशाब के रास्ते बुखार की गर्मी को बाहर निकालता है और पाचन को दुरुस्त करता है।",
+      en: "When fever causes an intense burning sensation in the body, burning palms or soles, and excessive thirst, this coriander and dry ginger infusion (known as 'Him' in Ayurveda) calms the internal heat. It cools the liver, flushes out fever toxins through urine, and restores digestion."
+    },
+    severity: 'moderate',
+    severityLabel: {
+      hi: '🟡 सामान्य से मध्यम बुखार (Mild to Moderate Fever)',
+      en: '🟡 Mild to Moderate Fever'
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "2 चम्मच पानी सुबह और 2 चम्मच शाम को (हल्का गुनगुना करके, थोड़े से शहद के साथ)", en: "2 teaspoons of infusion morning and evening (mildly warmed, with a little honey)" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा कप पानी सुबह और आधा कप शाम (भोजन के २० मिनट बाद, सामान्य तापमान पर)", en: "Half a cup of infusion morning and evening (20 minutes after meals, at room temperature)" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप पानी सुबह और आधा कप शाम (कुल दो बार प्रतिदिन, छानकर सामान्य तापमान पर पिएं)", en: "Half a cup of infusion morning and evening (Total twice daily, strained and served at room temperature)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) कप पानी दिन में दो बार (बिना फ्रिज का सामान्य पानी, केवल भोजन के बाद)", en: "Quarter (1/4) cup of infusion twice a day (at room temperature, strictly after meals)" } }
+    ],
+    ingredients: {
+      hi: ['1 चम्मच साबुत धनिया दाना', 'आधा चम्मच सूखी सोंठ का टुकड़ा या पाउडर', 'थोड़ा सा खस (यदि उपलब्ध हो)', '1 ग्लास साफ़ पानी', 'आधा चम्मच मिश्री या शहद'],
+      en: ['1 teaspoon of whole coriander seeds', 'half a teaspoon of dry ginger piece or powder', 'a small pinch of vetiver (Khus, optional)', '1 glass of clean water', 'half a teaspoon of rock candy (Mishri) or honey']
+    },
+    preparation: {
+      hi: 'एक मिट्टी के बर्तन या कांच के ग्लास में एक ग्लास पानी लें। उसमें धनिया दाना और सोंठ को हल्का कूटकर डाल दें। इसे रातभर के लिए ढककर छोड़ दें। सुबह उठकर इसे अच्छी तरह हाथ से मसल लें और कपड़े से छान लें।',
+      en: 'Take a glass of water in an earthen pot or glass jar. Lightly crush the coriander seeds and dry ginger, then add them to the water. Leave it covered overnight. In the morning, mash it well with clean hands and strain through a cloth.'
+    },
+    usage: {
+      hi: 'इसे दिन में दो बार—सुबह और शाम को भोजन या नाश्ता करने के २० से ३० मिनट बाद तय मात्रा के अनुसार लें। ध्यान रखें कि इस पानी को न तो उबालना है और न ही फ्रिज में रखकर ठंडा करना है, इसे कमरे के सामान्य तापमान पर ही लेना है।',
+      en: 'Consume it twice a day—morning and evening, exactly 20 to 30 minutes after meals or breakfast according to the age limit. Note that this infusion must neither be boiled nor refrigerated; it must be taken at standard room temperature.'
+    },
+    dietEat: {
+      hi: 'मूंग की दाल की पतली खिचड़ी, सादा पानी, उबला हुआ दलिया। फायदेमंद फल: केवल पका हुआ मीठा अनार। फायदेमंद सलाद: उबली हुई तोरई या पेठा (ऐशगार्ड)।',
+      en: 'Thin Moong dal khichdi, plain water, boiled porridge. Beneficial Fruits: Sweet ripe pomegranate only. Beneficial Salad: Boiled sponge gourd or ash gourd.'
+    },
+    dietAvoid: {
+      hi: 'चाय, कॉफी, अचार, गरम मसाले, लहसुन, प्याज, तला हुआ भोजन, गुड़।',
+      en: 'Tea, coffee, pickles, hot spices, garlic, onions, fried food, jaggery.'
+    },
+    strictAvoid: {
+      hi: 'मिर्च-मसालेदार चाट, समोसे, डिब्बा बंद तीखी नमकीन और फ्रिज का एकदम चिल्ड पानी।',
+      en: 'Spicy street food, samosas, packaged hot savories, and chilled fridge water.'
+    },
+    routine: {
+      morning: {
+        hi: 'सुबह: खाली पेट सादे पानी से कुल्ला करें।',
+        en: 'Morning: Rinse your mouth with plain water on an empty stomach.'
+      },
+      afternoon: {
+        hi: 'दोपहर: सुपाच्य भोजन के बाद खुली और साफ हवा वाले कमरे में आराम करें।',
+        en: 'Afternoon: After an easily digestible lunch, rest in a well-ventilated, clean room.'
+      },
+      evening: {
+        hi: 'शाम/रात: हल्का सूप या पतली लापसी लें। धूप में जाने या भारी मेहनत करने से पूरी तरह बचें।',
+        en: 'Evening/Night: Have light soup or thin porridge. Avoid going out in the sun or doing heavy physical work.'
+      }
+    },
+    safetyAdvice: {
+      hi: 'सुरक्षा सूचना: यह नुस्खा शरीर को शीतलता देता है, इसलिए यदि बुखार के साथ अत्यधिक ठंड या कंपकंपी लग रही हो, तो इसका सेवन न करें।',
+      en: 'Safety Notice: This remedy provides a cooling effect; do not consume it if the fever is accompanied by severe chills or shivering.'
+    },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || ""
   }
 ];
