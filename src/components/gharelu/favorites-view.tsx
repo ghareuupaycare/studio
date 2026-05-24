@@ -23,14 +23,19 @@ export const FavoritesView = ({ favorites, lang, theme, onToggleFavorite, onSele
   const isNight = theme === 'night';
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 pb-20">
+    <div className={cn(
+      "space-y-8 animate-in fade-in duration-500 pb-20 min-h-screen transition-colors duration-500",
+      isNight ? "bg-black" : ""
+    )}>
       {/* Header with Back Button */}
       <div className="flex items-center gap-4">
         <button 
           onClick={onBack}
           className={cn(
             "p-3 rounded-full transition-all active:scale-95",
-            isNight ? "bg-white/10 text-white hover:bg-white/20" : "bg-primary/5 text-primary hover:bg-primary/10"
+            isNight 
+              ? "bg-white/10 text-white hover:bg-white/20 border border-white/20" 
+              : "bg-primary/5 text-primary hover:bg-primary/10"
           )}
           aria-label={isHindi ? 'पीछे जाएं' : 'Go back'}
         >
@@ -43,13 +48,19 @@ export const FavoritesView = ({ favorites, lang, theme, onToggleFavorite, onSele
           )}>
             {isHindi ? 'पसंदीदा नुस्खे' : 'Favorite Remedies'}
           </h2>
-          <p className="text-xs font-bold uppercase tracking-widest opacity-60">
+          <p className={cn(
+            "text-xs font-bold uppercase tracking-widest opacity-60",
+            isNight ? "text-white" : "text-primary"
+          )}>
             {isHindi ? 'आपके सहेजे गए उपाय' : 'Your saved remedies'}
           </p>
         </div>
       </div>
 
-      <p className="text-muted-foreground text-sm text-center sm:text-left px-2">
+      <p className={cn(
+        "text-sm text-center sm:text-left px-2 font-medium transition-colors",
+        isNight ? "text-[#E5E7EB]" : "text-muted-foreground"
+      )}>
         {isHindi ? 'आपके द्वारा सहेजे गए बेहतरीन घरेलू उपाय।' : 'Best home remedies saved by you.'}
       </p>
 
@@ -61,6 +72,7 @@ export const FavoritesView = ({ favorites, lang, theme, onToggleFavorite, onSele
               remedy={remedy} 
               isFavorite={true}
               lang={lang}
+              theme={theme}
               onToggleFavorite={(e) => {
                 e.stopPropagation();
                 onToggleFavorite(remedy.id);
@@ -70,11 +82,20 @@ export const FavoritesView = ({ favorites, lang, theme, onToggleFavorite, onSele
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-24 text-center space-y-6 opacity-60">
-          <div className="p-6 rounded-full bg-primary/5 border border-primary/10">
-            <HeartOff className="w-16 h-16 text-primary/30" />
+        <div className="flex flex-col items-center justify-center py-24 text-center space-y-6">
+          <div className={cn(
+            "p-6 rounded-full border transition-colors",
+            isNight ? "bg-white/5 border-white/10" : "bg-primary/5 border-primary/10"
+          )}>
+            <HeartOff className={cn(
+              "w-16 h-16",
+              isNight ? "text-white/40" : "text-primary/30"
+            )} />
           </div>
-          <p className="text-muted-foreground font-headline text-lg max-w-[280px] leading-relaxed">
+          <p className={cn(
+            "font-headline text-lg max-w-[280px] leading-relaxed transition-colors",
+            isNight ? "text-white/60" : "text-muted-foreground"
+          )}>
             {isHindi 
               ? 'अभी तक कोई नुस्खा पसंदीदा सूची में नहीं जोड़ा गया है।' 
               : 'No remedies added to favorites yet.'}
