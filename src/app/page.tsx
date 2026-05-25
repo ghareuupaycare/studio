@@ -6,7 +6,9 @@ import { BottomNav } from '@/components/gharelu/bottom-nav';
 import { HomeView } from '@/components/gharelu/home-view';
 import { CategoryDetailView } from '@/components/gharelu/category-detail-view';
 import { FavoritesOverlay } from '@/components/gharelu/favorites-overlay';
+import { NotificationsOverlay } from '@/components/gharelu/notifications-overlay';
 import { cn } from '@/lib/utils';
+import { REMEDIES } from '@/lib/remedy-data';
 
 export type Language = 'hi' | 'en';
 export type Theme = 'cream' | 'night';
@@ -19,16 +21,27 @@ export default function GhareluUpayApp() {
   const [theme, setTheme] = useState<Theme>('cream');
   const [favorites, setFavorites] = useState<string[]>([]);
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [hasNewNotifications, setHasNewNotifications] = useState(false);
 
-  // Load favorites from local storage
+  // Load favorites and check for new remedies
   useEffect(() => {
-    const saved = localStorage.getItem('gharelu-favorites');
-    if (saved) {
+    // Favorites
+    const savedFavs = localStorage.getItem('gharelu-favorites');
+    if (savedFavs) {
       try {
-        setFavorites(JSON.parse(saved));
+        setFavorites(JSON.parse(savedFavs));
       } catch (e) {
         console.error("Failed to load favorites", e);
       }
+    }
+
+    // Notification Logic: Check if remedy count has increased
+    const lastCount = localStorage.getItem('gharelu-remedy-count');
+    const currentCount = REMEDIES.length;
+    
+    if (!lastCount || parseInt(lastCount) < currentCount) {
+      setHasNewNotifications(true);
     }
   }, []);
 
@@ -53,6 +66,7 @@ export default function GhareluUpayApp() {
     setSelectedRemedyId(remedyId);
     setIsDetailView(true);
     setIsFavoritesOpen(false);
+    setIsNotificationsOpen(false);
     // Smooth scroll to top when selecting a remedy
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -63,6 +77,12 @@ export default function GhareluUpayApp() {
         ? prev.filter(id => id !== remedyId) 
         : [...prev, remedyId]
     );
+  };
+
+  const handleOpenNotifications = () => {
+    setIsNotificationsOpen(true);
+    setHasNewNotifications(false);
+    localStorage.setItem('gharelu-remedy-count', REMEDIES.length.toString());
   };
 
   const handleBackToCategories = () => {
@@ -91,7 +111,9 @@ export default function GhareluUpayApp() {
         onToggleTheme={toggleTheme} 
         onSelectRemedy={handleSelectRemedy}
         onOpenFavorites={() => setIsFavoritesOpen(true)}
+        onOpenNotifications={handleOpenNotifications}
         hasFavorites={favorites.length > 0}
+        hasNotifications={hasNewNotifications}
       />
       
       <main 
@@ -126,6 +148,14 @@ export default function GhareluUpayApp() {
         lang={lang}
         theme={theme}
         favorites={favorites}
+        onSelectRemedy={handleSelectRemedy}
+      />
+
+      <NotificationsOverlay
+        isOpen={isNotificationsOpen}
+        onClose={() => setIsNotificationsOpen(false)}
+        lang={lang}
+        theme={theme}
         onSelectRemedy={handleSelectRemedy}
       />
 

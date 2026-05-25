@@ -28,7 +28,9 @@ interface TopBarProps {
   onToggleTheme: () => void;
   onSelectRemedy?: (remedyId: string, categoryId: string) => void;
   onOpenFavorites?: () => void;
+  onOpenNotifications?: () => void;
   hasFavorites?: boolean;
+  hasNotifications?: boolean;
 }
 
 export const TopBar = ({ 
@@ -38,7 +40,9 @@ export const TopBar = ({
   onToggleTheme, 
   onSelectRemedy, 
   onOpenFavorites,
-  hasFavorites 
+  onOpenNotifications,
+  hasFavorites,
+  hasNotifications
 }: TopBarProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const isNight = theme === 'night';
@@ -60,7 +64,7 @@ export const TopBar = ({
       icon: <Mail className="w-5 h-5" />,
       title: isHindi ? 'हमसे संपर्क करें' : 'Contact Us',
       content: isHindi
-        ? "हम अपने पाठकों और दर्शकों की मदद के लिए हमेशा तत्पर हैं। यदि आपके पास हमारे घरेलू नुस्खों, स्वास्थ्य युक्तियों या हमारी वेबसाइट से जुड़ा कोई भी सवाल, सुझाव या प्रतिक्रिया है, तो आप हमसे बेझिझक संपर्क कर सकते हैं। आप हमें हमारे आधिकारिक ईमेल या सोशल मीडिया हैंडल के ज़रिए जुड़ सकते हैं। हम आपके संदेश का जवाब 24 से 48 घंटों के भीतर देने का पूरा प्रयास करेंगे।"
+        ? "हम अपने पाठकों और दर्शकों की मदद के लिए हमेशा तत्पर हैं। यदि आपके पास हमारे घरेलू नुस्खों, स्वास्थ्य युक्तियों या हमारी वेबसाइट से जुड़ा कोई भी सवाल, सुझाव या प्रतिक्रिया है, तो आप हमसे बेझिझक संपर्क कर सकते हैं। आप हमें हमारे आधिकारिक ईमेल या सोशल मीडिया हैंडल के ज़रie जुड़ सकते हैं। हम आपके संदेश का जवाब 24 से 48 घंटों के भीतर देने का पूरा प्रयास करेंगे।"
         : "We are always ready to help our readers. If you have any questions or suggestions regarding our remedies or website, please feel free to contact us. We strive to respond within 24-48 hours."
     },
     {
@@ -222,9 +226,20 @@ export const TopBar = ({
           {isNight ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </Button>
 
-        <Button variant="ghost" size="icon" className={headerBtnClass}>
-          <Bell className="w-5 h-5" />
-        </Button>
+        <div className="relative">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className={headerBtnClass}
+            onClick={onOpenNotifications}
+          >
+            <Bell className="w-5 h-5" />
+          </Button>
+          {hasNotifications && (
+            <span className="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse pointer-events-none" />
+          )}
+        </div>
+
         <Button 
           variant="ghost" 
           size="icon" 
