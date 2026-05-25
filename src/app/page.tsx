@@ -52,18 +52,20 @@ export default function GhareluUpayApp() {
           isNight ? "bg-black" : "bg-[#FDFBF7]"
         )}
       >
-        <div className="max-w-2xl mx-auto px-6 py-12 pb-32">
+        <div className="w-full py-8 pb-40">
           {selectedCategoryId ? (
-            <CategoryDetailView 
-              categoryId={selectedCategoryId} 
-              lang={lang} 
-              theme={theme} 
-              onBack={handleBackToCategories} 
-              favorites={[]}
-              onToggleFavorite={() => {}}
-              initialRemedyId={selectedRemedyId}
-              onLevelChange={(level) => setIsDetailView(level === 3)}
-            />
+            <div className="max-w-2xl mx-auto px-6">
+              <CategoryDetailView 
+                categoryId={selectedCategoryId} 
+                lang={lang} 
+                theme={theme} 
+                onBack={handleBackToCategories} 
+                favorites={[]}
+                onToggleFavorite={() => {}}
+                initialRemedyId={selectedRemedyId}
+                onLevelChange={(level) => setIsDetailView(level === 3)}
+              />
+            </div>
           ) : (
             <HomeView lang={lang} theme={theme} onSelectCategory={handleSelectCategory} />
           )}

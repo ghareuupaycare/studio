@@ -15,14 +15,14 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
   const isNight = theme === 'night';
 
   const bannerContent = {
-    line1: isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions',
-    line2: isHindi 
-      ? 'भारतीय घरेलू उपाय' 
-      : 'Indian Home Remedies',
-    line3: isHindi 
-      ? 'शास्त्रों पर आधारित पारंपरिक घरेलू उपाय' 
-      : 'Traditional shastra-based remedies',
-    line4: isHindi ? 'बिना दवा घर बैठे स्वास्थ्य' : 'Health at Home'
+    title: isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions',
+    sub1: isHindi 
+      ? 'भारतीय घरेलू उपाय और वैद्य जी द्वारा संचालित आयुर्वेदिक स्वास्थ्य' 
+      : 'Indian Home Remedies & Ayurvedic Health directed by Vaidya Ji',
+    sub2: isHindi 
+      ? 'शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो आपकी रसोई में छिपे स्वस्थ्य रहने का खज़ाना हैं' 
+      : 'Traditional shastra-based remedies, the hidden treasure of health in your kitchen',
+    tagline: isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Complete health at home without medicine'
   };
 
   const categories = [
@@ -42,41 +42,45 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
   ];
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-700 w-full">
-      {/* Top Green Banner */}
+    <div className="space-y-12 animate-in fade-in duration-700 w-full max-w-2xl mx-auto px-4 sm:px-0">
+      {/* Top Premium Brand Banner */}
       <section className={cn(
-        "w-full aspect-[2/1] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-start justify-center p-8 sm:p-12 text-left transition-all duration-500",
+        "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-start justify-center p-8 sm:p-12 text-left transition-all duration-500 border-2",
         isNight 
-          ? "bg-black border-2 border-white" 
-          : "herbal-gradient border-2 border-[#14532D]"
+          ? "bg-black border-white" 
+          : "bg-[#14532D] border-[#14532D]"
       )}>
         
-        <p className={cn(
-          "text-sm sm:text-base font-black tracking-[0.2em] uppercase mb-2 transition-colors duration-500 text-white opacity-80"
-        )}>
-          {bannerContent.line1}
-        </p>
-
         <h2 className={cn(
-          "text-2xl sm:text-4xl font-black leading-tight max-w-xl mb-3 transition-colors duration-500 text-white"
+          "text-3xl sm:text-5xl font-black leading-tight mb-4 transition-colors duration-500",
+          isNight ? "text-white" : "text-white"
         )}>
-          {bannerContent.line2}
+          {bannerContent.title}
         </h2>
 
         <p className={cn(
-          "text-base sm:text-lg font-bold max-w-md leading-relaxed mb-4 italic transition-colors duration-500 text-white/90"
+          "text-lg sm:text-xl font-bold mb-4 transition-colors duration-500",
+          isNight ? "text-accent" : "text-accent"
         )}>
-          {bannerContent.line3}
+          {bannerContent.sub1}
         </p>
 
         <p className={cn(
-          "text-lg sm:text-xl font-black transition-colors duration-500 text-accent"
+          "text-base sm:text-lg font-medium leading-relaxed mb-6 transition-colors duration-500",
+          isNight ? "text-white/80" : "text-white/90"
         )}>
-          {bannerContent.line4}
+          {bannerContent.sub2}
         </p>
+
+        <div className={cn(
+          "px-6 py-3 rounded-full font-black text-lg sm:text-xl transition-all shadow-lg",
+          isNight ? "bg-white text-black" : "bg-accent text-white"
+        )}>
+          {bannerContent.tagline}
+        </div>
       </section>
 
-      {/* Categories List - Left Aligned */}
+      {/* Categories List - Strictly Left Aligned */}
       <div className="space-y-8 w-full">
         <div className="grid grid-cols-1 gap-6 w-full">
           {categories.map((category) => {
