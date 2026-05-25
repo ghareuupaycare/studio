@@ -83,7 +83,7 @@ export const REMEDIES: Remedy[] = [
       en: ['7-8 fresh Tulsi leaves', '3-4 inches Giloy stick (crushed)', '2-3 whole black peppercorns', '1 small piece of ginger']
     },
     preparation: {
-      hi: 'एक गिलास पानी में कुचली हुई गिलोय, तुलसी, काली मिर्च और अदरक डालकर धीमी आंच पर तब तक उबालें जब तक पानी आधा गिलास न रह जाए। फिर इसे छान लें।',
+      hi: '1 गिलास पानी में कुचली हुई गिलोय, तुलसी, काली मिर्च और अदरक डालकर धीमी आंच पर तब तक उबालें जब तक पानी आधा गिलास न रह जाए। फिर इसे छान लें।',
       en: 'Add crushed Giloy, Tulsi, black pepper, and ginger into a glass of water. Boil it on low heat until the water reduces to half a glass. Strain it.'
     },
     usage: {
@@ -151,7 +151,7 @@ export const REMEDIES: Remedy[] = [
       en: ['2 teaspoons whole coriander seeds', 'half a teaspoon grated ginger', '2 glasses of water']
     },
     preparation: {
-      hi: 'दो गिलास पानी में धनिया के बीज और अदरक डालकर उबालें। जब पानी उबलकर एक गिलास रह जाए, तो छानकर रख लें।',
+      hi: '2 गिलास पानी में धनिया के बीज और अदरक डालकर उबालें। जब पानी उबलकर 1 गिलास रह जाए, तो छानकर रख लें।',
       en: 'Boil coriander seeds and ginger in two glasses of water. When the water reduces to one glass, strain and store it.'
     },
     usage: {
@@ -180,7 +180,7 @@ export const REMEDIES: Remedy[] = [
         en: 'Afternoon: Have plain boiled rice and thin Moong dal along with some papaya.'
       },
       evening: {
-        hi: 'शाम/रात: लौकी या तोरई की सादी उबली सब्जी और एक पतली फुल्का रोटी (बिना घी की)। रात को जल्दी सोएं।',
+        hi: 'शाम/रात: लौकी या तोरई की सादी उबली सब्जी और 1 पतली फुल्का रोटी (बिना घी की)। रात को जल्दी सोएं।',
         en: 'Evening/Night: Simple boiled bottle gourd or sponge gourd vegetable with one thin chapati (without ghee). Go to sleep early.'
       }
     },
@@ -219,7 +219,7 @@ export const REMEDIES: Remedy[] = [
       en: ['Ayurvedic Mahasudarshan Churna', '1 teaspoon pure honey']
     },
     preparation: {
-      hi: 'तय मात्रा के अनुसार चूर्ण को एक चम्मच शहद में अच्छी तरह मिलाकर पेस्ट बना लें।',
+      hi: 'तय मात्रा के अनुसार चूर्ण को 1 चम्मच शहद में अच्छी तरह मिलाकर पेस्ट बना लें।',
       en: 'Mix the recommended quantity of churna thoroughly into a teaspoon of honey to form a smooth paste.'
     },
     usage: {
@@ -244,7 +244,7 @@ export const REMEDIES: Remedy[] = [
         en: 'Morning: Have thin sweet porridge (Daliya) or a boiled apple for breakfast.'
       },
       afternoon: {
-        hi: 'दोपहर: मूंग की दाल और परवल की सादी सब्जी के साथ एक या दो पतली चपाती।',
+        hi: 'दोपहर: मूंग की दाल और परवल की सादी सब्जी के साथ 1 या 2 पतली चपाती।',
         en: 'Afternoon: One or two thin chapatis with Moong dal and simple pointed gourd vegetable.'
       },
       evening: {
@@ -287,7 +287,7 @@ export const REMEDIES: Remedy[] = [
       en: ['10-12 pieces of Munakka (seeded)', '1 teaspoon fennel seeds', '1 glass of water']
     },
     preparation: {
-      hi: 'रात में एक गिलास साफ पानी में मुनक्का और सौंफ को भिगोकर रख दें। सुबह मुनक्के को उसी पानी में हाथ से अच्छी तरह मसल लें और फिर पानी को छान लें।',
+      hi: 'रात में 1 गिलास साफ पानी में मुनक्का और सौंफ को भिगोकर रख दें। सुबह मुनक्के को उसी पानी में हाथ से अच्छी तरह मसल लें और फिर पानी को छान लें।',
       en: 'Soak Munakka and fennel seeds in a glass of clean water overnight. In the morning, mash the raisins thoroughly into the same water with clean hands and strain the water.'
     },
     usage: {
@@ -308,7 +308,7 @@ export const REMEDIES: Remedy[] = [
     },
     routine: {
       morning: {
-        hi: 'सुबह: खाली पेट यह मुनक्के का पानी पिएं। एक घंटे बाद जौ का हल्का दलिया लें।',
+        hi: 'सुबह: खाली पेट यह मुनक्के का पानी पिएं। 1 घंटे बाद जौ का हल्का दलिया लें।',
         en: 'Morning: Drink this Munakka water on an empty stomach. Eat light barley porridge an hour later.'
       },
       afternoon: {
@@ -316,7 +316,7 @@ export const REMEDIES: Remedy[] = [
         en: 'Afternoon: Plain rice, Moong dal, and sponge gourd vegetable along with cucumber salad.'
       },
       evening: {
-        hi: 'शााम/रात: कद्दू की सादी सब्जी और दो पतली रोटी। रात को सोने से पहले सिर पर सामान्य पानी की सूती पट्टी रखें।',
+        hi: 'शाम/रात: कद्दू की सादी सब्जी और 2 पतली रोटी। रात को सोने से पहले सिर पर सामान्य पानी की सूती पट्टी रखें।',
         en: 'Evening/Night: Plain pumpkin vegetable and two thin chapatis. Place a wet cotton cloth strip on the forehead before sleeping.'
       }
     },
@@ -415,19 +415,19 @@ export const REMEDIES: Remedy[] = [
     doses: [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "2 चम्मच काढ़ा सुबह और 2 चम्मच शाम को (बराबर मात्रा में गुनगुने पानी के साथ)", en: "2 teaspoons of decoction morning and evening (mixed with an equal amount of lukewarm water)" } },
       { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा कप काढ़ा सुबह और आधा कप शाम (भोजन के आधे घंटे बाद, गुनगुना)", en: "Half a cup of decoction morning and evening (half an hour after meals, served lukewarm)" } },
-      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप काढ़ा सुबह... आधा कप शाम (कुल दो बार प्रतिदिन, छानकर गुनगुना पिएं)", en: "Half a cup of decoction morning and evening (Total twice daily, strained and served lukewarm)" } },
-      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) चम्मच काढ़ा दिन में दो बार (हल्का गुनगुना, केवल भोजन के बाद)", en: "Quarter (1/4) cup of decoction twice a day (mildly lukewarm, strictly after meals)" } }
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप काढ़ा सुबह... आधा कप शाम (कुल 2 बार प्रतिदिन, छानकर गुनगुना पिएं)", en: "Half a cup of decoction morning and evening (Total twice daily, strained and served lukewarm)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) कप काढ़ा दिन में 2 बार (हल्का गुनगुना, केवल भोजन के बाद)", en: "Quarter (1/4) cup of decoction twice a day (mildly lukewarm, strictly after meals)" } }
     ],
     ingredients: {
       hi: ['आधा चम्मच अजवाइन', 'एक चौथाई चम्मच सोंठ का पाउडर (सूखा अदरक)', 'एक छोटा टुकड़ा पुराना गुड़', '1.5 ग्लास साफ़ पानी'],
       en: ['Half a teaspoon of carom seeds (Ajwain)', 'a quarter teaspoon of dry ginger powder (Saunth)', 'a small piece of old jaggery', '1.5 glasses of clean water']
     },
     preparation: {
-      hi: 'एक बर्तन में डेढ़ ग्लास पानी डालें। उसमें अजवाइन और सोंठ का पाउडर डालकर धीमी आंच पर उबालें। जब पानी उबलकर आधा ग्लास रह जाए, तब उसमें गुड़ का टुकड़ा डालें और गुड़ पिघलने तक पकाकर गैस बंद कर दें। इसे छान लें।',
+      hi: 'एक बर्तन में 1.5 ग्लास पानी डालें। उसमें अजवाइन और सोंठ का पाउडर डालकर धीमी आंच पर उबालें। जब पानी उबलकर आधा ग्लास रह जाए, तब उसमें गुड़ का टुकड़ा डालें और गुड़ पिघलने तक पकाकर गैस बंद कर दें। इसे छान लें।',
       en: 'Pour 1.5 glasses of water into a vessel. Add the carom seeds and dry ginger powder, and simmer on low heat. When the water reduces to half a glass, add the jaggery piece, cook until dissolved, then turn off the heat and strain.'
     },
     usage: {
-      hi: 'इसे दिन में दो बार—सुबह और शाम को भोजन या हल्का नाश्ता लेने के ठीक ३० मिनट बाद चाय की तरह गरम-गरम घूंट लेकर पिएं। इसे पीने के तुरंत बाद चादर ओढ़कर थोड़ी देर आराम करें ताकि पसीना आ सके।',
+      hi: 'इसे दिन में 2 बार—सुबह और शाम को भोजन या हल्का नाश्ता लेने के ठीक 30 मिनट बाद चाय की तरह गरम-गरम घूंट लेकर पिएं। इसे पीने के तुरंत बाद चादर ओढ़कर थोड़ी देर आराम करें ताकि पसीना आ सके।',
       en: 'Sip it warm like tea twice a day—morning and evening, exactly 30 minutes after meals or a light breakfast. Wrap yourself in a blanket immediately after drinking to allow the body to sweat out the fever.'
     },
     dietEat: {
@@ -484,7 +484,7 @@ export const REMEDIES: Remedy[] = [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "एक चौथाई (1/4) चम्मच चूर्ण सुबह और शाम (आधे चम्मच शहद के साथ)", en: "Quarter (1/4) teaspoon powder morning and evening (with half teaspoon honey)" } },
       { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा चम्मच चूर्ण सुबह और आधा चम्मच शाम (गुनगुने पानी के साथ, भोजन के बाद)", en: "Half teaspoon powder in the morning and half teaspoon in the evening (with lukewarm water after meals)" } },
       { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा चम्मच चूर्ण सुबह और आधा चम्मच शाम (भोजन के बाद, हल्के गुनगुने पानी से)", en: "Half teaspoon powder morning and evening (Total twice daily, strictly with lukewarm water after meals)" } },
-      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) चम्मच चूर्ण दिन में दो बार (केवल हल्के गुनगुने पानी के साथ, भोजन के बाद)", en: "Quarter (1/4) teaspoon powder twice a day (strictly with lukewarm water, after meals)" } }
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) चम्मच चूर्ण दिन में 2 बार (केवल हल्के गुनगुने पानी के साथ, भोजन के बाद)", en: "Quarter (1/4) teaspoon powder twice a day (strictly with lukewarm water, after meals)" } }
     ],
     ingredients: {
       hi: ['50 ग्राम मेथी दाना', '20 ग्राम सोंठ पाउडर (सूखा अदरक)', '20 ग्राम भुना हुआ जीरा', '1 चम्मच शहद या गुनगुना पानी'],
@@ -495,7 +495,7 @@ export const REMEDIES: Remedy[] = [
       en: 'Finely grind the fenugreek seeds and roasted cumin in a blender. Mix the dry ginger powder thoroughly into it and store it safely in a clean glass jar. Your kitchen antipyretic powder is ready.'
     },
     usage: {
-      hi: 'इसे दिन में दो बार—सुबह और शाम को भोजन या नाश्ता करने के ठीक २० मिनट बाद तय मात्रा के अनुसार लें। बच्चों को इसे शहद में मिलाकर चटाएं और बड़ों को गुनगुने पानी से दें।',
+      hi: 'इसे दिन में 2 बार—सुबह और शाम को भोजन या नाश्ता करने के ठीक 20 मिनट बाद तय मात्रा के अनुसार लें। बच्चों को इसे शहद में मिलाकर चटाएं और बड़ों को गुनगुने पानी से दें।',
       en: 'Consume it twice a day—morning and evening, exactly 20 minutes after meals or breakfast according to the age limit. Give it to children mixed with honey, and to adults with lukewarm water.'
     },
     dietEat: {
@@ -551,19 +551,19 @@ export const REMEDIES: Remedy[] = [
     doses: [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "2 चम्मच काढ़ा सुबह और 2 चम्मच शाम को (बराबर मात्रा में शहद मिलाकर)", en: "2 teaspoons of decoction morning and evening (mixed with an equal amount of honey)" } },
       { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा कप काढ़ा सुबह और आधा कप शाम (भोजन के आधे घंटे बाद, गुनगुना)", en: "Half a cup of decoction morning and evening (half an hour after meals, served lukewarm)" } },
-      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप काढ़ा सुबह और आधा कप शाम (कुल दो बार प्रतिदिन, छानकर गुनगुना पिएं)", en: "Half a cup of decoction morning and evening (Total twice daily, strained and served lukewarm)" } },
-      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) कप काढ़ा दिन में दो बार (हल्का गुनगुना, केवल भोजन के बाद)", en: "Quarter (1/4) cup of decoction twice a day (mildly lukewarm, strictly after meals)" } }
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप काढ़ा सुबह और आधा कप शाम (कुल 2 बार प्रतिदिन, छानकर गुनगुना पिएं)", en: "Half a cup of decoction morning and evening (Total twice daily, strained and served lukewarm)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) कप काढ़ा दिन में 2 बार (हल्का गुनगुना, केवल भोजन के बाद)", en: "Quarter (1/4) cup of decoction twice a day (mildly lukewarm, strictly after meals)" } }
     ],
     ingredients: {
-      hi: ['5 से ७ दाने साबुत काली मिर्च', '1 इंच अदरक का टुकड़ा (कुचला हुआ)', '१० से १२ ताजे तुलसी के पत्ते', '१.५ ग्लास साफ़ पानी', '१ चम्मच शहद'],
+      hi: ['5 से 7 दाने साबुत काली मिर्च', '1 इंच अदरक का टुकड़ा (कुचला हुआ)', '10 से 12 ताजे तुलसी के पत्ते', '1.5 ग्लास साफ़ पानी', '1 चम्मच शहद'],
       en: ['5 to 7 whole black peppercorns', '1-inch crushed ginger piece', '10 to 12 fresh basil leaves', '1.5 glasses of clean water', '1 teaspoon of honey']
     },
     preparation: {
-      hi: 'एक बर्तन में डेढ़ ग्लास पानी डालें। उसमें कुचली हुई काली मिर्च, अदरक और तुलसी के पत्ते डालकर धीमी आंच पर उबालें। जब पानी उबलकर आधा ग्लास रह जाए, तो गैस बंद कर दें और इसे छान लें।',
+      hi: 'एक बर्तन में 1.5 ग्लास पानी डालें। उसमें कुचली हुई काली मिर्च, अदरक और तुलसी के पत्ते डालकर धीमी आंच पर उबालें। जब पानी उबलकर आधा ग्लास रह जाए, तो गैस बंद कर दें और इसे छान लें।',
       en: 'Pour 1.5 glasses of water into a vessel. Add the crushed black pepper, ginger, and basil leaves, and simmer on low heat. Once the water reduces to half a glass, turn off the heat and strain it.'
     },
     usage: {
-      hi: 'इसे दिन में दो बार—सुबह और शाम को भोजन या हल्का नाश्ता लेने के ३० मिनट बाद चाय की तरह घूंट-घूंट करके गुनगुना पिएं। इसे कभी भी एकदम ठंडा करके न पिएं।',
+      hi: 'इसे दिन में 2 बार—सुबह और शाम को भोजन या हल्का नाश्ता लेने के 30 मिनट बाद चाय की तरह घूंट-घूंट करके गुनगुना पिएं। इसे कभी भी एकदम ठंडा करके न पिएं।',
       en: 'Sip it warm like tea twice a day—morning and evening, exactly 30 minutes after meals or a light breakfast. Never consume it completely cold.'
     },
     dietEat: {
@@ -618,20 +618,20 @@ export const REMEDIES: Remedy[] = [
     },
     doses: [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "2 चम्मच पानी सुबह और 2 चम्मच शाम को (हल्का गुनगुना करके, थोड़े से शहद के साथ)", en: "2 teaspoons of infusion morning and evening (mildly warmed, with a little honey)" } },
-      { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा कप पानी सुबह और आधा कप शाम (भोजन के २० मिनट बाद, सामान्य तापमान पर)", en: "Half a cup of infusion morning and evening (20 minutes after meals, at room temperature)" } },
-      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप पानी सुबह और आधा कप शाम (कुल दो बार प्रतिदिन, छानकर सामान्य तापमान पर पिएं)", en: "Half a cup of infusion morning and evening (Total twice daily, strained and served at room temperature)" } },
-      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) कप पानी दिन में दो बार (बिना फ्रिज का सामान्य पानी, केवल भोजन के बाद)", en: "Quarter (1/4) cup of infusion twice a day (at room temperature, strictly after meals)" } }
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा कप पानी सुबह और आधा कप शाम (भोजन के 20 मिनट बाद, सामान्य तापमान पर)", en: "Half a cup of infusion morning and evening (20 minutes after meals, at room temperature)" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप पानी सुबह और आधा कप शाम (कुल 2 बार प्रतिदिन, छानकर सामान्य तापमान पर पिएं)", en: "Half a cup of infusion morning and evening (Total twice daily, strained and served at room temperature)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) कप पानी दिन में 2 बार (बिना फ्रिज का सामान्य पानी, केवल भोजन के बाद)", en: "Quarter (1/4) cup of infusion twice a day (at room temperature, strictly after meals)" } }
     ],
     ingredients: {
       hi: ['1 चम्मच साबुत धनिया दाना', 'आधा चम्मच सूखी सोंठ का टुकड़ा या पाउडर', 'थोड़ा सा खस (यदि उपलब्ध हो)', '1 ग्लास साफ़ पानी', 'आधा चम्मच मिश्री या शहद'],
       en: ['1 teaspoon of whole coriander seeds', 'half a teaspoon of dry ginger piece or powder', 'a small pinch of vetiver (Khus, optional)', '1 glass of clean water', 'half a teaspoon of rock candy (Mishri) or honey']
     },
     preparation: {
-      hi: 'एक मिट्टी के बर्तन या कांच के ग्लास में एक ग्लास पानी लें। उसमें धनिया दाना और सोंठ को हल्का कूटकर डाल दें। इसे रातभर के लिए ढककर छोड़ दें। सुबह उठकर इसे अच्छी तरह हाथ से मसल लें और कपड़े से छान लें।',
+      hi: 'एक मिट्टी के बर्तन या कांच के ग्लास में 1 ग्लास पानी लें। उसमें धनिया दाना और सोंठ को हल्का कूटकर डाल दें। इसे रातभर के लिए ढककर छोड़ दें। सुबह उठकर इसे अच्छी तरह हाथ से मसल लें और कपड़े से छान लें।',
       en: 'Take a glass of water in an earthen pot or glass jar. Lightly crush the coriander seeds and dry ginger, then add them to the water. Leave it covered overnight. In the morning, mash it well with clean hands and strain through a cloth.'
     },
     usage: {
-      hi: 'इसे दिन में दो बार—सुबह और शाम को भोजन या नाश्ता करने के २० से ३० मिनट बाद तय मात्रा के अनुसार लें। ध्यान रखें कि इस पानी को न तो उबालना है और न ही फ्रिज में रखकर ठंडा करना है, इसे कमरे के सामान्य तापमान पर ही लेना है।',
+      hi: 'इसे दिन में 2 बार—सुबह और शाम को भोजन या नाश्ता करने के 20 से 30 मिनट बाद तय मात्रा के अनुसार लें। ध्यान रखें कि इस पानी को न तो उबालना है और न ही फ्रिज में रखकर ठंडा करना है, इसे कमरे के सामान्य तापमान पर ही लेना है।',
       en: 'Consume it twice a day—morning and evening, exactly 20 to 30 minutes after meals or breakfast according to the age limit. Note that this infusion must neither be boiled nor refrigerated; it must be taken at standard room temperature.'
     },
     dietEat: {
@@ -672,12 +672,12 @@ export const REMEDIES: Remedy[] = [
     serialNumber: '10',
     name: {
       hi: 'बुखार के बाद की भयंकर कमजोरी मिटाकर शरीर में तुरंत ताकत लाने का घरेलू उपाय',
-      en: 'Home Remedy to Eradicate Post-Fever Weakness and Restore Instant Body Strength'
+      en: '10. Home Remedy to Eradicate Post-Fever Weakness and Restore Instant Body Strength'
     },
     illnessId: 'general-fever',
     introduction: {
-      hi: "बुखार ठीक होने के बाद अक्सर शरीर में बहुत ज्यादा कमजोरी आ जाती है, चक्कर आते हैं और हाथ-पैरों में दर्द बना रहता है। ऐसी स्थिति में किचन में मौजूद मखाने और मुनक्के का यह मेल शरीर की खोई हुई ताकत को वापस लौटा देता है।",
-      en: "After the fever subsides, the body often experiences extreme weakness, dizziness, and body aches. In such cases, this kitchen combination of foxnuts and raisins restores lost energy."
+      hi: "बुखार ठीक होने के बाद अक्सर शरीर में बहुत ज्यादा कमजोरी आ जाती है, चक्कर आते हैं और हाथ-पैर दुखते हैं। ऐसी स्थिति में किचन में मौजूद मखाने (जो कैल्शियम और प्रोटीन से भरपूर हैं) और मुनक्का (जो नया खून बनाता है) का यह मेल शरीर की खोई हुई ताकत को 3 से 5 दिनों में वापस लौटा देता है। यह कमजोरी को जड़ से मिटाता है।",
+      en: "After the fever subsides, the body often experiences extreme weakness, dizziness, and body aches. In such cases, this kitchen combination of foxnuts (rich in calcium and protein) and raisins (which build new blood) restores lost energy within 3 to 5 days and eradicates fatigue completely."
     },
     severity: 'mild',
     severityLabel: {
@@ -687,8 +687,8 @@ export const REMEDIES: Remedy[] = [
     doses: [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "2 भुने मखाने और 2 भीगे मुनक्के सुबह-शाम (चबाकर खाएं, ऊपर से हल्का गुनगुना दूध पिएं)", en: "2 roasted foxnuts and 2 soaked raisins morning-evening (chew well, followed by lukewarm milk)" } },
       { ageRange: AGE_BRACKETS.youth, dose: { hi: "एक छोटा कटोरा भुने मखाने और 5 भीगे मुनक्के सुबह और शाम (भोजन या नाश्ते के बाद)", en: "One small bowl of roasted foxnuts and 5 soaked raisins morning and evening (after meals or breakfast)" } },
-      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "एक छोटा कटोरा भुने मखाने और 5 भीगे मुनक्के सुबह और शाम (कुल दो बार प्रतिदिन, कमजोरी दूर करने के लिए)", en: "One small bowl of roasted foxnuts and 5 soaked raisins morning and evening (Total twice daily for strength)" } },
-      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "4 से 5 मखाने (हल्के घी में भुने और पिसे हुए) और 3 भीगे मुनक्के दिन में दो बार (केवल गुनगुने पानी या दूध के साथ)", en: "4 to 5 foxnuts (roasted lightly in ghee and crushed) and 3 soaked raisins twice a day (with lukewarm water or milk)" } }
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "एक छोटा कटोरा भुने मखाने और 5 भीगे मुनक्के सुबह और शाम (कुल 2 बार प्रतिदिन, कमजोरी दूर करने के लिए)", en: "One small bowl of roasted foxnuts and 5 soaked raisins morning and evening (Total twice daily for strength)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "4 से 5 मखाने (हल्के घी में भुने और पिसे हुए) और 3 भीगे मुनक्के दिन में 2 बार (केवल गुनगुने पानी या दूध के साथ)", en: "4 to 5 foxnuts (roasted lightly in ghee and crushed) and 3 soaked raisins twice a day (with lukewarm water or milk)" } }
     ],
     ingredients: {
       hi: ['50 gram मखाने', '20 पीस मुनक्का (रातभर पानी में भीगे हुए और बीज निकले हुए)', '10 gram धागे वाली मिश्री', 'आधा चम्मच गाय का शुद्ध घी'],
@@ -699,7 +699,7 @@ export const REMEDIES: Remedy[] = [
       en: 'Lightly roast the foxnuts in a pan with half a teaspoon of cow ghee on low heat until crunchy. Separate the seeds from the overnight-soaked raisins. Keep them ready alongside the roasted foxnuts.'
     },
     usage: {
-      hi: 'सुबह नाश्ते के बाद और शाम को ४ से ५ बजे के आसपास, तय मात्रा के अनुसार भुने मखाने और भीगे हुए मुनक्के खूब चबा-चबा कर खाएं। इसे लेने के १० मिनट बाद एक कप हल्का गुनगुना दूध या गुनगुना पानी पीना बहुत फायदेमंद होता है।',
+      hi: 'सुबह नाश्ते के बाद और शाम को 4 से 5 बजे के आसपास, तय मात्रा के अनुसार भुने मखाने और भीगे हुए मुनक्के खूब चबा-चबा कर खाएं। इसे लेने के 10 मिनट बाद एक कप हल्का गुनगुना दूध या गुनगुना पानी पीना बहुत फायदेमंद होता है।',
       en: 'Consume the recommended quantity of roasted foxnuts and soaked raisins twice a day—after breakfast in the morning and around 4-5 PM in the evening. Chew thoroughly. Drinking a cup of lukewarm milk or water 10 minutes later is highly beneficial.'
     },
     dietEat: {
@@ -720,7 +720,7 @@ export const REMEDIES: Remedy[] = [
         en: 'Morning: Wake up and take deep breaths in fresh air.'
       },
       afternoon: {
-        hi: 'दोपहर: पौष्टिक भोजन करने के बाद कम से कम १ घंटे की गहरी नींद लें ताकि शरीर को आराम मिले।',
+        hi: 'दोपहर: पौष्टिक भोजन करने के बाद कम से कम 1 घंटे की गहरी नींद लें ताकि शरीर को आराम मिले।',
         en: 'Afternoon: Take at least a 1-hour nap after a nutritious lunch to let the body recover.'
       },
       evening: {
