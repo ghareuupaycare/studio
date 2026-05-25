@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Home, Sparkles } from 'lucide-react';
+import { Home, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Language, Theme } from '@/app/page';
 
 interface BottomNavProps {
   lang: Language;
   theme: Theme;
-  currentView: 'home' | 'ai';
-  onViewChange: (view: 'home' | 'ai') => void;
+  currentView: 'home' | 'favorites';
+  onViewChange: (view: 'home' | 'favorites') => void;
+  enableScrollHide?: boolean;
 }
 
-export const BottomNav = ({ lang, theme, currentView, onViewChange }: BottomNavProps) => {
+export const BottomNav = ({ lang, theme, currentView, onViewChange, enableScrollHide = false }: BottomNavProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   
@@ -18,6 +19,11 @@ export const BottomNav = ({ lang, theme, currentView, onViewChange }: BottomNavP
   const isHindi = lang === 'hi';
 
   useEffect(() => {
+    if (!enableScrollHide) {
+      setIsVisible(true);
+      return;
+    }
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
@@ -35,11 +41,11 @@ export const BottomNav = ({ lang, theme, currentView, onViewChange }: BottomNavP
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, [lastScrollY, enableScrollHide]);
 
   return (
     <nav className={cn(
-      "fixed bottom-0 left-0 right-0 z-50 h-20 w-full flex items-center justify-center gap-12 px-8 border-t transition-all duration-300 shadow-[0_-10px_30px_rgba(0,0,0,0.15)]",
+      "fixed bottom-0 left-0 right-0 z-50 h-20 w-full flex items-center justify-center gap-16 px-8 border-t transition-all duration-300 shadow-[0_-10px_30px_rgba(0,0,0,0.15)]",
       isNight ? "bg-[#0A0A0A] border-white/10" : "bg-[#0F2F1D] border-white/5",
       isVisible ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
     )}>
@@ -64,22 +70,22 @@ export const BottomNav = ({ lang, theme, currentView, onViewChange }: BottomNavP
       </button>
 
       <button
-        onClick={() => onViewChange('ai')}
+        onClick={() => onViewChange('favorites')}
         className={cn(
           "flex flex-col items-center gap-1 transition-all duration-200 group outline-none",
-          currentView === 'ai' ? "text-accent" : "text-white/60 hover:text-white"
+          currentView === 'favorites' ? "text-accent" : "text-white/60 hover:text-white"
         )}
       >
         <div className={cn(
           "p-2 rounded-xl transition-all duration-200",
-          currentView === 'ai' 
+          currentView === 'favorites' 
             ? "bg-accent/20 text-accent" 
             : "bg-white/5 hover:bg-white/10"
         )}>
-          <Sparkles className="w-6 h-6" />
+          <Heart className="w-6 h-6" />
         </div>
         <span className="text-[10px] font-bold uppercase tracking-widest transition-colors">
-          {isHindi ? 'वैद्य जी' : 'AI Vaidya'}
+          {isHindi ? 'पसंदीदा' : 'Favorites'}
         </span>
       </button>
     </nav>

@@ -51,8 +51,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
       )}>
         
         <p className={cn(
-          "text-xl sm:text-2xl font-black tracking-[0.2em] uppercase mb-4 transition-colors duration-500",
-          "text-white"
+          "text-xl sm:text-2xl font-black tracking-[0.2em] uppercase mb-4 transition-colors duration-500 text-white"
         )}>
           {bannerContent.line1}
         </p>
@@ -72,8 +71,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
         </p>
 
         <p className={cn(
-          "text-2xl sm:text-4xl font-black [word-spacing:0.25rem] transition-colors duration-500",
-          "text-white"
+          "text-2xl sm:text-4xl font-black [word-spacing:0.25rem] transition-colors duration-500 text-white"
         )}>
           {bannerContent.line4}
         </p>
@@ -89,20 +87,20 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
                 onClick={() => onSelectCategory(category.id)}
                 className={cn(
                   "group relative w-full p-10 rounded-[2.5rem] border transition-all duration-500",
-                  "flex flex-col items-center justify-center text-center space-y-5 shadow-2xl hover:-translate-y-1 active:scale-[0.98]",
+                  "flex flex-col items-start justify-center text-left space-y-4 shadow-2xl hover:-translate-y-1 active:scale-[0.98]",
                   isNight 
                     ? "bg-black border-white text-white active:bg-white active:text-black" 
                     : "bg-[#FDF6E2] border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
                 )}
               >
                 <h3 className={cn(
-                  "text-3xl sm:text-4xl font-black transition-colors leading-tight",
+                  "text-3xl font-black transition-colors leading-tight",
                   isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
                 )}>
                   {content.title}
                 </h3>
                 <p className={cn(
-                  "text-lg sm:text-xl font-bold tracking-tight leading-relaxed max-w-[90%] mx-auto transition-colors",
+                  "text-lg font-bold tracking-tight leading-relaxed max-w-[95%] transition-colors",
                   isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
                 )}>
                   {content.subtitle}

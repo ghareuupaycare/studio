@@ -5,18 +5,18 @@ import { TopBar } from '@/components/gharelu/top-bar';
 import { BottomNav } from '@/components/gharelu/bottom-nav';
 import { HomeView } from '@/components/gharelu/home-view';
 import { CategoryDetailView } from '@/components/gharelu/category-detail-view';
-import { AIConsultant } from '@/components/gharelu/ai-consultant';
 import { FavoritesView } from '@/components/gharelu/favorites-view';
 import { cn } from '@/lib/utils';
-import { Remedy, REMEDIES } from '@/lib/remedy-data';
+import { Remedy } from '@/lib/remedy-data';
 
 export type Language = 'hi' | 'en';
 export type Theme = 'cream' | 'night';
 
 export default function GhareluUpayApp() {
-  const [view, setView] = useState<'home' | 'ai' | 'favorites'>('home');
+  const [view, setView] = useState<'home' | 'favorites'>('home');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [selectedRemedyId, setSelectedRemedyId] = useState<string | null>(null);
+  const [isDetailView, setIsDetailView] = useState(false);
   const [lang, setLang] = useState<Language>('hi');
   const [theme, setTheme] = useState<Theme>('cream');
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -35,18 +35,21 @@ export default function GhareluUpayApp() {
   const handleSelectCategory = (id: string) => {
     setSelectedCategoryId(id);
     setSelectedRemedyId(null);
+    setIsDetailView(false);
     setView('home'); 
   };
 
   const handleBackToCategories = () => {
     setSelectedCategoryId(null);
     setSelectedRemedyId(null);
+    setIsDetailView(false);
   };
 
-  const handleViewChange = (v: 'home' | 'ai') => {
+  const handleViewChange = (v: 'home' | 'favorites') => {
     setView(v);
     setSelectedCategoryId(null); 
     setSelectedRemedyId(null);
+    setIsDetailView(false);
   };
 
   const handleSelectRemedyFromFavorites = (remedy: Remedy) => {
@@ -56,6 +59,7 @@ export default function GhareluUpayApp() {
     
     setSelectedCategoryId(categoryMap[remedy.illnessId] || remedy.illnessId);
     setSelectedRemedyId(remedy.id);
+    setIsDetailView(true);
     setView('home');
   };
 
@@ -79,10 +83,8 @@ export default function GhareluUpayApp() {
           isNight ? "bg-black" : "bg-[#FDFBF7]"
         )}
       >
-        <div className="max-w-2xl mx-auto px-6 py-12">
-          {view === 'ai' ? (
-            <AIConsultant />
-          ) : view === 'favorites' ? (
+        <div className="max-w-2xl mx-auto px-6 py-12 pb-32">
+          {view === 'favorites' ? (
             <FavoritesView 
               favorites={favorites} 
               lang={lang}
@@ -100,24 +102,20 @@ export default function GhareluUpayApp() {
               favorites={favorites}
               onToggleFavorite={toggleFavorite}
               initialRemedyId={selectedRemedyId}
+              onLevelChange={(level) => setIsDetailView(level === 3)}
             />
           ) : (
             <HomeView lang={lang} theme={theme} onSelectCategory={handleSelectCategory} />
           )}
         </div>
-
-        {/* Mega Footer Section - Pure Placeholder moved here to naturally follow scrollable content */}
-        <div className={cn(
-          "h-80 w-full border-t transition-colors duration-500",
-          isNight ? "bg-black border-white/10" : "bg-[#14532D] border-white/5"
-        )} />
       </main>
 
       <BottomNav 
         lang={lang} 
         theme={theme} 
-        currentView={view === 'favorites' ? 'home' : (view as any)} 
+        currentView={view} 
         onViewChange={handleViewChange} 
+        enableScrollHide={isDetailView}
       />
     </div>
   );

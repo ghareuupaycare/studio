@@ -1,7 +1,6 @@
-
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { ChevronLeft, ArrowRight, BookOpen } from 'lucide-react';
@@ -16,6 +15,7 @@ interface CategoryDetailViewProps {
   favorites: string[];
   onToggleFavorite: (id: string) => void;
   initialRemedyId?: string | null;
+  onLevelChange?: (level: 1 | 2 | 3) => void;
 }
 
 export const CategoryDetailView = ({ 
@@ -25,7 +25,8 @@ export const CategoryDetailView = ({
   onBack, 
   favorites, 
   onToggleFavorite,
-  initialRemedyId
+  initialRemedyId,
+  onLevelChange
 }: CategoryDetailViewProps) => {
   const [selectedIllnessId, setSelectedIllnessId] = useState<string | null>(() => {
     if (initialRemedyId) {
@@ -44,6 +45,14 @@ export const CategoryDetailView = ({
   
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
+
+  useEffect(() => {
+    if (onLevelChange) {
+      if (selectedRemedy) onLevelChange(3);
+      else if (selectedIllnessId) onLevelChange(2);
+      else onLevelChange(1);
+    }
+  }, [selectedRemedy, selectedIllnessId, onLevelChange]);
 
   const categoryContent = {
     fever: {
@@ -90,7 +99,7 @@ export const CategoryDetailView = ({
         >
           <ChevronLeft className="w-7 h-7" />
         </button>
-        <div className="flex flex-col">
+        <div className="flex flex-col text-left">
           <h2 className={cn(
             "font-black font-headline leading-tight tracking-wide text-3xl sm:text-4xl",
             isNight ? "text-white" : "text-[#14532D]"
@@ -116,35 +125,35 @@ export const CategoryDetailView = ({
               key={illness.id}
               onClick={() => setSelectedIllnessId(illness.id)}
               className={cn(
-                "group relative w-full p-10 rounded-[2.5rem] border transition-all duration-300 text-left",
+                "group relative w-full p-8 rounded-[2.5rem] border transition-all duration-300 text-left",
                 "flex items-center justify-between shadow-xl hover:-translate-y-1 active:scale-[0.98]",
                 isNight 
                   ? "bg-black border-white text-white active:bg-white active:text-black" 
                   : "bg-[#FDF6E2] border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
               )}
             >
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <h3 className={cn(
-                  "text-3xl font-black transition-colors leading-tight",
+                  "text-2xl font-black transition-colors leading-tight",
                   isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
                 )}>
                   {toEnglishDigits(illness.title)}
                 </h3>
                 <p className={cn(
-                  "text-lg font-bold opacity-70 transition-colors leading-relaxed",
+                  "text-base font-bold opacity-70 transition-colors leading-relaxed",
                   isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
                 )}>
                   {toEnglishDigits(illness.description)}
                 </p>
               </div>
               <div className={cn(
-                "p-5 rounded-full transition-all shadow-md",
+                "p-4 rounded-full transition-all shadow-md ml-4 shrink-0",
                 isNight 
                   ? "bg-white/10 group-active:bg-black/20" 
                   : "bg-accent/10 group-active:bg-white/20"
               )}>
                 <ArrowRight className={cn(
-                  "w-8 h-8",
+                  "w-6 h-6",
                   isNight ? "text-white group-active:text-black" : "text-accent group-active:text-white"
                 )} />
               </div>
@@ -153,29 +162,29 @@ export const CategoryDetailView = ({
         </div>
       ) : !selectedRemedy ? (
         /* Level 2: Remedy List */
-        <div className="space-y-6">
+        <div className="space-y-4">
           {illnessRemedies.map((remedy) => (
             <button
               key={remedy.id}
               onClick={() => setSelectedRemedy(remedy)}
               className={cn(
-                "w-full p-8 rounded-3xl border transition-all duration-200 text-left flex items-center gap-6 group",
+                "w-full p-6 rounded-3xl border transition-all duration-200 text-left flex items-center gap-5 group",
                 isNight 
                   ? "bg-black border-white/20 text-white hover:border-white shadow-none" 
                   : "bg-white border-primary/10 hover:border-primary/30 text-primary shadow-xl"
               )}
             >
               <div className={cn(
-                "w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl shrink-0 shadow-inner",
+                "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shrink-0 shadow-inner",
                 isNight ? "bg-white/10 text-white" : "bg-primary/5 text-primary"
               )}>
                 {remedy.serialNumber}
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-xl leading-snug">{toEnglishDigits(remedy.name[lang])}</h4>
-                <div className="flex items-center gap-3 mt-2">
+                <h4 className="font-bold text-lg leading-snug">{toEnglishDigits(remedy.name[lang])}</h4>
+                <div className="flex items-center gap-3 mt-1">
                   <span className={cn(
-                    "px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider",
+                    "px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider",
                     remedy.severity === 'mild' ? "bg-green-500/10 text-green-600" :
                     remedy.severity === 'moderate' ? "bg-yellow-500/10 text-yellow-600" :
                     "bg-red-500/10 text-red-600"
@@ -184,7 +193,7 @@ export const CategoryDetailView = ({
                   </span>
                 </div>
               </div>
-              <BookOpen className="w-7 h-7 opacity-40 group-hover:opacity-100 transition-opacity" />
+              <BookOpen className="w-6 h-6 opacity-40 group-hover:opacity-100 transition-opacity" />
             </button>
           ))}
         </div>
