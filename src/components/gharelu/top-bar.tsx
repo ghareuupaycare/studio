@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Bell, Search, Languages, Moon, Sun, Menu, X, Info, Mail, ShieldCheck, FileText, AlertTriangle } from 'lucide-react';
+import { Bell, Search, Languages, Moon, Sun, Menu, Heart, Info, Mail, ShieldCheck, FileText, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Language, Theme } from '@/app/page';
 import { cn } from '@/lib/utils';
@@ -27,9 +27,19 @@ interface TopBarProps {
   onToggleLanguage: () => void;
   onToggleTheme: () => void;
   onSelectRemedy?: (remedyId: string, categoryId: string) => void;
+  onOpenFavorites?: () => void;
+  hasFavorites?: boolean;
 }
 
-export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme, onSelectRemedy }: TopBarProps) => {
+export const TopBar = ({ 
+  lang, 
+  theme, 
+  onToggleLanguage, 
+  onToggleTheme, 
+  onSelectRemedy, 
+  onOpenFavorites,
+  hasFavorites 
+}: TopBarProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
@@ -182,6 +192,18 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme, onSelectR
       <div className="flex-1" />
       
       <div className="flex items-center gap-1 sm:gap-2">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={onOpenFavorites}
+          className={cn(
+            headerBtnClass,
+            hasFavorites && "text-accent fill-accent"
+          )}
+        >
+          <Heart className={cn("w-5 h-5", hasFavorites && "fill-current")} />
+        </Button>
+
         <Button 
           variant="ghost" 
           size="icon" 
