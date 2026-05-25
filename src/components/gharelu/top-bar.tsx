@@ -87,9 +87,18 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarP
               <Menu className="w-6 h-6" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[85%] sm:w-[400px] bg-[#FDFBF7] border-r-primary/10 p-0 overflow-hidden">
+          <SheetContent 
+            side="left" 
+            className={cn(
+              "w-[85%] sm:w-[400px] p-0 overflow-hidden border-none transition-colors duration-500",
+              isNight ? "bg-[#121b15] shadow-[5px_0_30px_rgba(0,0,0,0.8)]" : "bg-[#FDFBF7] shadow-[5px_0_30px_rgba(0,0,0,0.1)]"
+            )}
+          >
             <div className="flex flex-col h-full">
-              <SheetHeader className="p-8 bg-primary text-white">
+              <SheetHeader className={cn(
+                "p-8 text-white transition-colors duration-500",
+                isNight ? "bg-black border-b border-white/10" : "bg-primary"
+              )}>
                 <SheetTitle className="text-2xl font-headline font-black text-white">
                   {isHindi ? 'घरेलू उपाय केयर' : 'Gharelu Upay Care'}
                 </SheetTitle>
@@ -101,27 +110,57 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarP
               <ScrollArea className="flex-1 p-6">
                 <Accordion type="single" collapsible className="w-full space-y-4">
                   {legalPages.map((page) => (
-                    <AccordionItem key={page.id} value={page.id} className="border-b-primary/10">
-                      <AccordionTrigger className="hover:no-underline hover:text-primary transition-colors py-4">
+                    <AccordionItem 
+                      key={page.id} 
+                      value={page.id} 
+                      className={cn(
+                        "transition-colors duration-500",
+                        isNight ? "border-b-white/10" : "border-b-primary/10"
+                      )}
+                    >
+                      <AccordionTrigger className={cn(
+                        "hover:no-underline transition-colors py-4",
+                        isNight ? "hover:text-white" : "hover:text-primary"
+                      )}>
                         <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-xl bg-primary/5 text-primary">
+                          <div className={cn(
+                            "p-2 rounded-xl transition-colors duration-500",
+                            isNight ? "bg-white/10 text-white" : "bg-primary/5 text-primary"
+                          )}>
                             {page.icon}
                           </div>
-                          <span className="font-bold text-lg">{page.title}</span>
+                          <span className={cn(
+                            "font-bold text-lg transition-colors duration-500",
+                            isNight ? "text-zinc-100" : "text-foreground"
+                          )}>
+                            {page.title}
+                          </span>
                         </div>
                       </AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground leading-relaxed text-base pt-2 pb-6 px-2">
+                      <AccordionContent className={cn(
+                        "leading-relaxed text-base pt-2 pb-6 px-2 transition-colors duration-500",
+                        isNight ? "text-zinc-400" : "text-muted-foreground"
+                      )}>
                         {page.content}
                       </AccordionContent>
                     </AccordionItem>
                   ))}
                 </Accordion>
                 
-                <div className="mt-12 p-6 rounded-[2rem] bg-accent/5 border border-accent/10">
-                  <p className="text-xs font-black text-accent uppercase tracking-widest text-center mb-2">
+                <div className={cn(
+                  "mt-12 p-6 rounded-[2rem] border transition-colors duration-500",
+                  isNight ? "bg-white/5 border-white/10" : "bg-accent/5 border-accent/10"
+                )}>
+                  <p className={cn(
+                    "text-xs font-black uppercase tracking-widest text-center mb-2",
+                    isNight ? "text-white/60" : "text-accent"
+                  )}>
                     {isHindi ? 'शुद्ध एवं सात्विक' : 'Pure & Holistic'}
                   </p>
-                  <p className="text-[10px] text-muted-foreground text-center uppercase tracking-[0.2em]">
+                  <p className={cn(
+                    "text-[10px] text-center uppercase tracking-[0.2em]",
+                    isNight ? "text-white/40" : "text-muted-foreground"
+                  )}>
                     © 2024 GHARELU UPAY CARE
                   </p>
                 </div>
