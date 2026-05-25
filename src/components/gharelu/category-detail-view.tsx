@@ -77,30 +77,30 @@ export const CategoryDetailView = ({
   const currentIllness = activeCategory.illnesses.find(i => i.id === selectedIllnessId);
 
   return (
-    <div className="space-y-8 animate-in slide-in-from-right-4 duration-500 pb-32">
+    <div className="space-y-10 animate-in slide-in-from-right-4 duration-500 pb-32">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-5">
         <button 
           onClick={handleInternalBack}
           className={cn(
-            "p-3 rounded-full transition-all active:scale-95",
+            "p-4 rounded-full transition-all active:scale-95 shadow-lg",
             isNight ? "bg-white text-black hover:bg-white/90" : "bg-[#14532D] text-white hover:bg-[#166534]"
           )}
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-7 h-7" />
         </button>
         <div className="flex flex-col">
-          {/* MAIN TITLE (selectedRemedy.name): 22pt, Bold */}
+          {/* MAIN TITLE: text-3xl, font-black, tracking-wide */}
           <h2 className={cn(
-            "font-black font-headline leading-tight",
-            selectedRemedy ? "text-[22px]" : "text-2xl sm:text-3xl",
+            "font-black font-headline leading-tight tracking-wide",
+            selectedRemedy ? "text-3xl" : "text-3xl sm:text-4xl",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
             {selectedRemedy ? selectedRemedy.name[lang] : (selectedIllnessId ? currentIllness?.title : activeCategory.title)}
           </h2>
           {(selectedIllnessId || selectedRemedy) && (
             <span className={cn(
-              "text-[12px] font-bold uppercase tracking-widest opacity-60",
+              "text-[14px] font-bold uppercase tracking-[0.2em] opacity-60 mt-1",
               isNight ? "text-white" : "text-[#14532D]"
             )}>
               {selectedRemedy ? (isHindi ? 'नुस्खा विवरण' : 'Remedy Detail') : activeCategory.title}
@@ -111,41 +111,41 @@ export const CategoryDetailView = ({
 
       {!selectedIllnessId ? (
         /* Level 1: List of Illnesses */
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-6">
           {activeCategory.illnesses.map((illness) => (
             <button
               key={illness.id}
               onClick={() => setSelectedIllnessId(illness.id)}
               className={cn(
-                "group relative w-full p-8 rounded-[2rem] border transition-all duration-300 text-left",
+                "group relative w-full p-10 rounded-[2.5rem] border transition-all duration-300 text-left",
                 "flex items-center justify-between shadow-xl hover:-translate-y-1 active:scale-[0.98]",
                 isNight 
                   ? "bg-black border-white text-white active:bg-white active:text-black" 
                   : "bg-[#FDF6E2] border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
               )}
             >
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <h3 className={cn(
-                  "text-2xl font-black transition-colors leading-tight",
+                  "text-3xl font-black transition-colors leading-tight",
                   isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
                 )}>
                   {illness.title}
                 </h3>
                 <p className={cn(
-                  "text-[15px] font-bold opacity-70 transition-colors",
+                  "text-lg font-bold opacity-70 transition-colors leading-relaxed",
                   isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
                 )}>
                   {illness.description}
                 </p>
               </div>
               <div className={cn(
-                "p-4 rounded-full transition-all",
+                "p-5 rounded-full transition-all shadow-md",
                 isNight 
                   ? "bg-white/10 group-active:bg-black/20" 
                   : "bg-accent/10 group-active:bg-white/20"
               )}>
                 <ArrowRight className={cn(
-                  "w-6 h-6",
+                  "w-8 h-8",
                   isNight ? "text-white group-active:text-black" : "text-accent group-active:text-white"
                 )} />
               </div>
@@ -154,29 +154,29 @@ export const CategoryDetailView = ({
         </div>
       ) : !selectedRemedy ? (
         /* Level 2: Remedy List */
-        <div className="space-y-4">
+        <div className="space-y-6">
           {illnessRemedies.map((remedy) => (
             <button
               key={remedy.id}
               onClick={() => setSelectedRemedy(remedy)}
               className={cn(
-                "w-full p-6 rounded-2xl border transition-all duration-200 text-left flex items-center gap-4 group",
+                "w-full p-8 rounded-3xl border transition-all duration-200 text-left flex items-center gap-6 group",
                 isNight 
-                  ? "bg-black border-white/20 text-white hover:border-white" 
-                  : "bg-white border-primary/10 hover:border-primary/30 text-primary shadow-md"
+                  ? "bg-black border-white/20 text-white hover:border-white shadow-none" 
+                  : "bg-white border-primary/10 hover:border-primary/30 text-primary shadow-xl"
               )}
             >
               <div className={cn(
-                "w-12 h-12 rounded-xl flex items-center justify-center font-black text-xl shrink-0",
+                "w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl shrink-0 shadow-inner",
                 isNight ? "bg-white/10 text-white" : "bg-primary/5 text-primary"
               )}>
                 {remedy.serialNumber}
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-lg leading-snug">{remedy.name[lang]}</h4>
-                <div className="flex items-center gap-2 mt-1">
+                <h4 className="font-bold text-xl leading-snug">{remedy.name[lang]}</h4>
+                <div className="flex items-center gap-3 mt-2">
                   <span className={cn(
-                    "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider",
+                    "px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider",
                     remedy.severity === 'mild' ? "bg-green-500/10 text-green-600" :
                     remedy.severity === 'moderate' ? "bg-yellow-500/10 text-yellow-600" :
                     "bg-red-500/10 text-red-600"
@@ -185,7 +185,7 @@ export const CategoryDetailView = ({
                   </span>
                 </div>
               </div>
-              <BookOpen className="w-5 h-5 opacity-40 group-hover:opacity-100 transition-opacity" />
+              <BookOpen className="w-7 h-7 opacity-40 group-hover:opacity-100 transition-opacity" />
             </button>
           ))}
         </div>
