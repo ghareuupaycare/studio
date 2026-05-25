@@ -110,6 +110,7 @@ export const TopBar = ({
             side="left" 
             className={cn(
               "w-[70%] sm:w-[350px] p-0 overflow-hidden border-none transition-colors duration-500",
+              "[&>button]:text-amber-400 [&>button]:opacity-100 [&>button]:scale-125 [&>button]:transition-all [&>button]:duration-200",
               isNight ? "bg-[#121b15] shadow-[5px_0_30px_rgba(0,0,0,0.8)]" : "bg-[#FDFBF7] shadow-[5px_0_30px_rgba(0,0,0,0.1)]"
             )}
           >
