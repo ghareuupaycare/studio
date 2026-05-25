@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Remedy } from '@/lib/remedy-data';
 import { Language, Theme } from '@/app/page';

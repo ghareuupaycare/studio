@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -76,7 +75,7 @@ export default function GhareluUpayApp() {
       
       <main 
         className={cn(
-          "flex-1 w-full transition-colors duration-500",
+          "flex-1 w-full transition-colors duration-500 relative",
           isNight ? "bg-black" : "bg-[#FDFBF7]"
         )}
       >
