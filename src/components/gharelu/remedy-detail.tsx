@@ -107,7 +107,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   };
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-500 pb-10 relative overflow-y-auto h-auto">
+    <div className="space-y-10 animate-in fade-in duration-500 pb-24 relative overflow-y-auto h-auto">
       <div className="flex items-center justify-between mb-4">
         <div className={cn(
           "px-5 py-2 rounded-full text-sm font-black uppercase tracking-widest",
@@ -353,7 +353,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       </div>
 
       {/* Action Buttons Container */}
-      <div className="pt-8 pb-10 flex flex-col items-center justify-center gap-4 px-6 w-full mx-auto">
+      <div className="pt-8 flex flex-col items-center justify-center gap-4 px-6 w-full mx-auto">
         <Button
           onClick={handleShare}
           className={cn(

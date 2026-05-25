@@ -51,7 +51,6 @@ export default function GhareluUpayApp() {
   };
 
   const handleSelectRemedyFromFavorites = (remedy: Remedy) => {
-    // Map internal illness IDs to the main category IDs used by HomeView
     const categoryMap: Record<string, string> = {
       'general-fever': 'fever',
     };
@@ -107,6 +106,12 @@ export default function GhareluUpayApp() {
             <HomeView lang={lang} theme={theme} onSelectCategory={handleSelectCategory} />
           )}
         </div>
+
+        {/* Mega Footer Section - Pure Placeholder moved here to naturally follow scrollable content */}
+        <div className={cn(
+          "h-80 w-full border-t transition-colors duration-500",
+          isNight ? "bg-black border-white/10" : "bg-[#14532D] border-white/5"
+        )} />
       </main>
 
       <BottomNav 
