@@ -36,7 +36,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const currentDose = remedy.doses.find(d => d.ageRange.hi === selectedAgeRangeKey);
 
   const headingClass = cn(
-    "text-xl font-bold mb-4 flex items-center gap-3 leading-[1.6]",
+    "text-2xl font-bold mb-4 flex items-center gap-3 leading-[1.6]",
     isNight ? "text-white" : "text-[#14532D]"
   );
 
@@ -50,8 +50,19 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     isNight ? "text-[#E5E7EB]" : "text-[#1E293B]"
   );
 
+  const getPromoFooter = () => {
+    const baseUrl = "https://ghareluupaycare.app";
+    const deepLink = `${baseUrl}/remedy/${remedy.id}`;
+    
+    if (isHindi) {
+      return `\n\n📄 पूरा नुस्खा, उचित खुराक और परहेज़ देखने के लिए हमारी साइट पर जाएँ:\n👉 ${deepLink}`;
+    }
+    return `\n\n📄 To view the full remedy, dosage, and precautions, visit our site:\n👉 ${deepLink}`;
+  };
+
   const handleShare = async () => {
     if (typeof navigator === 'undefined' || !navigator.share) {
+      handleCopy();
       return;
     }
 
@@ -59,9 +70,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     const ingredients = remedy.ingredients[lang].map(toEnglishDigits).join(', ');
     const prep = toEnglishDigits(remedy.preparation[lang]);
     
-    const shareText = isHindi 
-      ? `*घरेलू उपाय केयर - पसंदीदा नुस्खा*\n🌿 *${title}*\n\n📦 *आवश्यक सामग्री:*\n${ingredients}\n\n🥣 *बनाने की विधि:*\n${prep}\n\n📌 *पूरा विवरण देखने के लिए हमारी ऐप पर आएं!*`
-      : `*Gharelu Upay Care - Favorite Remedy*\n🌿 *${title}*\n\n📦 *Ingredients:*\n${ingredients}\n\n🥣 *Preparation:*\n${prep}\n\n📌 *Visit our app for full details!*`;
+    const shareText = (isHindi 
+      ? `*घरेलू उपाय केयर*\n🌿 *${title}*\n\n📦 *आवश्यक सामग्री:*\n${ingredients}\n\n🥣 *बनाने की विधि:*\n${prep}`
+      : `*Gharelu Upay Care*\n🌿 *${title}*\n\n📦 *Ingredients:*\n${ingredients}\n\n🥣 *Preparation:*\n${prep}`) + getPromoFooter();
 
     try {
       await navigator.share({
@@ -80,9 +91,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     const ingredients = remedy.ingredients[lang].map(toEnglishDigits).join(', ');
     const prep = toEnglishDigits(remedy.preparation[lang]);
 
-    const textToCopy = isHindi
+    const textToCopy = (isHindi
       ? `🌿 ${title}\n\n📦 आवश्यक सामग्री:\n${ingredients}\n\n🥣 बनाने की विधि:\n${prep}`
-      : `🌿 ${title}\n\n📦 Required Ingredients:\n${ingredients}\n\n🥣 Preparation:\n${prep}`;
+      : `🌿 ${title}\n\n📦 Required Ingredients:\n${ingredients}\n\n🥣 Preparation:\n${prep}`) + getPromoFooter();
 
     try {
       await navigator.clipboard.writeText(textToCopy);
@@ -98,7 +109,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     <div className="space-y-10 animate-in fade-in duration-500 pb-32 relative overflow-y-auto h-auto">
       <div className="flex items-center justify-between mb-4">
         <div className={cn(
-          "px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest",
+          "px-5 py-2 rounded-full text-sm font-black uppercase tracking-widest",
           remedy.severity === 'mild' ? "bg-green-500/10 text-green-600" :
           remedy.severity === 'moderate' ? "bg-yellow-500/10 text-yellow-600" :
           "bg-red-500/10 text-red-600"
@@ -123,7 +134,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         isNight ? "bg-white/5 border-white/10" : "bg-primary/5 border-primary/10"
       )}>
         <h3 className={headingClass}>
-          <Info className="w-7 h-7 shrink-0" /> {isHindi ? 'बीमारी का परिचय' : 'Introduction'}
+          <Info className="w-8 h-8 shrink-0" /> {isHindi ? 'बीमारी का परिचय' : 'Introduction'}
         </h3>
         <p className={bodyTextClass}>
           {remedy.introduction[lang]}
@@ -140,7 +151,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             <Stethoscope className="w-8 h-8 opacity-40 shrink-0" />
           </div>
           <p className={cn(
-            "text-sm font-bold opacity-70 leading-relaxed",
+            "text-base font-bold opacity-80 leading-relaxed mb-4",
             isNight ? "text-white/80" : "text-primary/70"
           )}>
             {isHindi 
@@ -171,7 +182,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           isNight ? "bg-white/10" : "bg-accent/10"
         )}>
           <span className={cn(
-            "text-lg font-semibold leading-[1.6]",
+            "text-xl font-semibold leading-[1.6]",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
             {toEnglishDigits(currentDose?.dose[lang] || '')}
@@ -190,7 +201,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           <ul className="space-y-5">
             {remedy.ingredients[lang].map((item, i) => (
               <li key={i} className={cn(listTextClass, "flex items-start gap-3")}>
-                <CheckCircle className="w-6 h-6 mt-1 text-accent shrink-0" />
+                <CheckCircle className="w-7 h-7 mt-1 text-accent shrink-0" />
                 <span>{toEnglishDigits(item)}</span>
               </li>
             ))}
@@ -232,7 +243,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           isNight ? "bg-green-950/50 border-green-500/30" : "bg-green-50"
         )}>
           <h3 className={headingClass}>
-            <CheckCircle className={cn("w-7 h-7 shrink-0", isNight ? "text-[#A7F3D0]" : "text-green-700")} /> 
+            <CheckCircle className={cn("w-8 h-8 shrink-0", isNight ? "text-[#A7F3D0]" : "text-green-700")} /> 
             <span className={isNight ? "text-[#A7F3D0]" : "text-green-700"}>{isHindi ? 'क्या खाएं' : 'What to Eat'}</span>
           </h3>
           <p className={cn(
@@ -247,7 +258,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           isNight ? "bg-red-950/50 border-red-500/30" : "bg-red-50"
         )}>
           <h3 className={headingClass}>
-            <XCircle className={cn("w-7 h-7 shrink-0", isNight ? "text-[#FECDD3]" : "text-red-700")} />
+            <XCircle className={cn("w-8 h-8 shrink-0", isNight ? "text-[#FECDD3]" : "text-red-700")} />
             <span className={isNight ? "text-[#FECDD3]" : "text-red-700"}>{isHindi ? 'क्या न खाएं' : 'What to Avoid'}</span>
           </h3>
           <p className={cn(
@@ -261,7 +272,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             isNight ? "border-red-500/20" : "border-red-200/30"
           )}>
             <p className={cn(
-              "text-xs font-black uppercase mb-3",
+              "text-base font-black uppercase mb-3",
               isNight ? "text-[#FEF08A]" : "text-red-600"
             )}>
               {isHindi ? 'सख्त परहेज़' : 'Strict Avoid'}
@@ -281,27 +292,27 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         isNight ? "bg-black border-white/20" : "bg-[#FDF6E2] border-primary/10"
       )}>
         <h3 className={headingClass}>
-          <Utensils className="w-7 h-7 shrink-0" /> {isHindi ? 'दिनचर्या' : 'Daily Routine'}
+          <Utensils className="w-8 h-8 shrink-0" /> {isHindi ? 'दिनचर्या' : 'Daily Routine'}
         </h3>
         <div className="space-y-10">
           <div className="flex gap-6">
-            <div className="p-5 rounded-full bg-accent/10 text-accent h-fit shrink-0"><Sun className="w-7 h-7" /></div>
+            <div className="p-5 rounded-full bg-accent/10 text-accent h-fit shrink-0"><Sun className="w-8 h-8" /></div>
             <div>
-              <h4 className="text-xs font-black uppercase text-accent mb-2">{isHindi ? 'सुबह' : 'Morning'}</h4>
+              <h4 className="text-sm font-black uppercase text-accent mb-2">{isHindi ? 'सुबह' : 'Morning'}</h4>
               <p className={bodyTextClass}>{toEnglishDigits(remedy.routine.morning[lang])}</p>
             </div>
           </div>
           <div className="flex gap-6">
-            <div className="p-5 rounded-full bg-primary/10 text-primary h-fit shrink-0"><Coffee className="w-7 h-7" /></div>
+            <div className="p-5 rounded-full bg-primary/10 text-primary h-fit shrink-0"><Coffee className="w-8 h-8" /></div>
             <div>
-              <h4 className="text-xs font-black uppercase text-primary mb-2">{isHindi ? 'दोपहर' : 'Afternoon'}</h4>
+              <h4 className="text-sm font-black uppercase text-primary mb-2">{isHindi ? 'दोपहर' : 'Afternoon'}</h4>
               <p className={bodyTextClass}>{toEnglishDigits(remedy.routine.afternoon[lang])}</p>
             </div>
           </div>
           <div className="flex gap-6">
-            <div className="p-5 rounded-full bg-slate-400/10 text-slate-500 h-fit shrink-0"><Moon className="w-7 h-7" /></div>
+            <div className="p-5 rounded-full bg-slate-400/10 text-slate-500 h-fit shrink-0"><Moon className="w-8 h-8" /></div>
             <div>
-              <h4 className="text-xs font-black uppercase text-slate-500 mb-2">{isHindi ? 'शाम/रात' : 'Evening/Night'}</h4>
+              <h4 className="text-sm font-black uppercase text-slate-500 mb-2">{isHindi ? 'शाम/रात' : 'Evening/Night'}</h4>
               <p className={bodyTextClass}>{toEnglishDigits(remedy.routine.evening[lang])}</p>
             </div>
           </div>
@@ -314,7 +325,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           isNight ? "bg-accent/10" : "bg-accent/5"
         )}>
           <h4 className={headingClass}>
-            <AlertTriangle className="w-7 h-7 shrink-0 text-accent" /> 
+            <AlertTriangle className="w-8 h-8 shrink-0 text-accent" /> 
             <span className={cn("font-bold", isNight ? "text-accent" : "text-[#9B2C2C]")}>{isHindi ? 'सुरक्षा सूचना' : 'Safety Info'}</span>
           </h4>
           <p className={cn(
@@ -324,7 +335,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             {toEnglishDigits(remedy.safetyAdvice[lang])}
           </p>
           <p className={cn(
-            "text-xs uppercase tracking-widest opacity-60 leading-loose font-medium mt-8 border-t border-accent/20 pt-8 italic",
+            "text-sm uppercase tracking-widest opacity-60 leading-loose font-medium mt-8 border-t border-accent/20 pt-8 italic",
             isNight ? "text-white" : "text-primary"
           )}>
             "{toEnglishDigits(remedy.disclaimer[lang])}"
@@ -336,23 +347,23 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         <Button
           onClick={handleShare}
           className={cn(
-            "w-full max-w-sm h-18 py-6 rounded-[2rem] flex items-center justify-center gap-4 font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl text-lg",
+            "w-full max-w-sm h-18 py-8 rounded-[2rem] flex items-center justify-center gap-4 font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl text-xl",
             isNight ? "bg-white text-black hover:bg-white/90" : "bg-accent text-white hover:bg-accent/90"
           )}
         >
-          <Share2 className="w-7 h-7" />
+          <Share2 className="w-8 h-8" />
           {isHindi ? 'नुस्खा शेयर करें' : 'Share Remedy'}
         </Button>
         <Button
           onClick={handleCopy}
           className={cn(
-            "w-full max-w-sm h-18 py-6 rounded-[2rem] flex items-center justify-center gap-4 font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl text-lg border-2",
+            "w-full max-w-sm h-18 py-8 rounded-[2rem] flex items-center justify-center gap-4 font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl text-xl border-2",
             isNight 
               ? "bg-transparent border-white text-white hover:bg-white/10" 
               : "bg-transparent border-[#14532D] text-[#14532D] hover:bg-primary/5"
           )}
         >
-          <Copy className="w-7 h-7" />
+          <Copy className="w-8 h-8" />
           {isHindi ? 'नुस्खा कॉपी करें' : 'Copy'}
         </Button>
       </div>
