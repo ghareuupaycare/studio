@@ -30,6 +30,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
   const isHindi = lang === 'hi';
   const db = useFirestore();
   const logTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
@@ -50,7 +51,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
     });
   }, [query]);
 
-  // Automatic logging logic for analytics
+  // Automatic logging logic for analytics (unresolved searches)
   useEffect(() => {
     if (logTimeoutRef.current) clearTimeout(logTimeoutRef.current);
 
@@ -88,25 +89,30 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
   const handleManualRequest = () => {
     if (!manualRequest.trim() || !db) return;
 
-    const sanitizedQuery = manualRequest.toLowerCase().trim().replace(/[/\\#?]/g, '');
+    const currentRequest = manualRequest.trim();
+    const sanitizedQuery = currentRequest.toLowerCase().replace(/[/\\#?]/g, '');
     const docRef = doc(db, 'requested_remedies', sanitizedQuery);
 
+    // Reset input immediately for fast feedback
+    setManualRequest('');
+
     setDoc(docRef, {
-      searchQuery: manualRequest.trim(),
+      searchQuery: currentRequest,
       count: increment(1),
       timestamp: serverTimestamp(),
       isManualRequest: true
     }, { merge: true })
       .then(() => {
         setShowSuccessAlert(true);
-        setManualRequest('');
-        setTimeout(() => setShowSuccessAlert(false), 4000);
+        // Scroll to top to ensure visibility
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => setShowSuccessAlert(false), 5000);
       })
       .catch(async (error) => {
         const permissionError = new FirestorePermissionError({
           path: docRef.path,
           operation: 'write',
-          requestResourceData: { searchQuery: manualRequest.trim() }
+          requestResourceData: { searchQuery: currentRequest }
         } satisfies SecurityRuleContext);
         errorEmitter.emit('permission-error', permissionError);
       });
@@ -194,16 +200,17 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
 
         <ScrollArea className="flex-1 w-full bg-transparent">
           <div className="p-4 w-full max-w-2xl mx-auto">
-            {/* Inline Success Banner */}
+            
+            {/* INLINE SUCCESS BANNER - Highest visibility spot */}
             {showSuccessAlert && (
-              <div className="mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
-                <div className="bg-emerald-600 text-white p-4 rounded-2xl shadow-xl flex items-start gap-3 border border-emerald-400/20">
-                  <CheckCircle2 className="w-6 h-6 shrink-0 mt-0.5" />
+              <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="bg-emerald-600 text-white p-5 rounded-2xl shadow-[0_10px_40px_rgba(5,150,105,0.4)] flex items-start gap-4 border-2 border-emerald-400/30">
+                  <CheckCircle2 className="w-8 h-8 shrink-0 mt-0.5 text-emerald-100" />
                   <div className="space-y-1">
-                    <p className="font-black text-sm uppercase tracking-wider">
+                    <p className="font-black text-lg uppercase tracking-wider">
                       {isHindi ? 'सफलतापूर्वक भेजा गया!' : 'Successfully Sent!'}
                     </p>
-                    <p className="text-xs font-medium leading-relaxed opacity-90">
+                    <p className="text-sm font-bold leading-relaxed opacity-95">
                       {isHindi 
                         ? 'आपका संदेश वैद्य जी के पास सुरक्षित पहुंच गया है। जल्द ही इसका प्रामाणिक नुस्खा ऐप में जोड़ दिया जाएगा।' 
                         : 'Your request has reached Vaidya Ji securely. The authentic remedy will be added to the app soon.'}
@@ -255,7 +262,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-10 text-center space-y-6 max-w-sm mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex flex-col items-center justify-center py-6 text-center space-y-6 max-w-sm mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className={cn(
                   "p-5 rounded-full",
                   isNight ? "bg-emerald-900/20 text-emerald-400" : "bg-emerald-50 text-emerald-600"
