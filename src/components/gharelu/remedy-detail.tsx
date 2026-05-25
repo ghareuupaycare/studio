@@ -36,12 +36,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const currentDose = remedy.doses.find(d => d.ageRange.hi === selectedAgeRangeKey);
 
   const headingClass = cn(
-    "text-2xl font-bold mb-4 flex items-center gap-3 leading-[1.6]",
+    "text-xl font-bold mb-3 flex items-center gap-3 leading-[1.6]",
     isNight ? "text-white" : "text-[#14532D]"
   );
 
   const bodyTextClass = cn(
-    "text-lg leading-[1.6] font-medium",
+    "text-lg leading-loose font-medium",
     isNight ? "text-[#E5E7EB]" : "text-[#1E293B]"
   );
 
@@ -129,6 +129,14 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </Button>
       </div>
 
+      {/* Title */}
+      <h2 className={cn(
+        "text-3xl font-black tracking-wide leading-tight mb-8",
+        isNight ? "text-white" : "text-[#14532D]"
+      )}>
+        {toEnglishDigits(remedy.name[lang])}
+      </h2>
+
       <div className={cn(
         "p-8 rounded-[2.5rem] border transition-colors shadow-sm",
         isNight ? "bg-white/5 border-white/10" : "bg-primary/5 border-primary/10"
@@ -182,7 +190,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           isNight ? "bg-white/10" : "bg-accent/10"
         )}>
           <span className={cn(
-            "text-xl font-semibold leading-[1.6]",
+            "text-lg font-semibold leading-loose",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
             {toEnglishDigits(currentDose?.dose[lang] || '')}
@@ -247,7 +255,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             <span className={isNight ? "text-[#A7F3D0]" : "text-green-700"}>{isHindi ? 'क्या खाएं' : 'What to Eat'}</span>
           </h3>
           <p className={cn(
-            "text-lg leading-[1.6] font-medium transition-colors",
+            "text-lg leading-loose font-medium transition-colors",
             isNight ? "text-[#A7F3D0]" : "text-green-900"
           )}>
             {toEnglishDigits(remedy.dietEat[lang])}
@@ -262,7 +270,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             <span className={isNight ? "text-[#FECDD3]" : "text-red-700"}>{isHindi ? 'क्या न खाएं' : 'What to Avoid'}</span>
           </h3>
           <p className={cn(
-            "text-lg leading-[1.6] font-medium transition-colors",
+            "text-lg leading-loose font-medium transition-colors",
             isNight ? "text-[#FECDD3]" : "text-red-900"
           )}>
             {toEnglishDigits(remedy.dietAvoid[lang])}
@@ -278,7 +286,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               {isHindi ? 'सख्त परहेज़' : 'Strict Avoid'}
             </p>
             <p className={cn(
-              "text-lg font-bold leading-[1.6] transition-colors",
+              "text-lg font-bold leading-loose transition-colors",
               isNight ? "text-[#FECDD3]" : "text-red-800"
             )}>
               {toEnglishDigits(remedy.strictAvoid[lang])}
@@ -329,7 +337,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             <span className={cn("font-bold", isNight ? "text-accent" : "text-[#9B2C2C]")}>{isHindi ? 'सुरक्षा सूचना' : 'Safety Info'}</span>
           </h4>
           <p className={cn(
-            "text-lg leading-[1.6] font-bold",
+            "text-lg leading-loose font-bold",
             isNight ? "text-accent brightness-110" : "text-[#9B2C2C]"
           )}>
             {toEnglishDigits(remedy.safetyAdvice[lang])}
@@ -348,7 +356,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           onClick={handleShare}
           className={cn(
             "w-full max-w-sm h-18 py-8 rounded-[2rem] flex items-center justify-center gap-4 font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl text-xl",
-            isNight ? "bg-white text-black hover:bg-white/90" : "bg-accent text-white hover:bg-accent/90"
+            isNight 
+              ? "bg-transparent border-2 border-white text-white hover:bg-white/10" 
+              : "bg-accent text-white hover:bg-accent/90"
           )}
         >
           <Share2 className="w-8 h-8" />
@@ -359,7 +369,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           className={cn(
             "w-full max-w-sm h-18 py-8 rounded-[2rem] flex items-center justify-center gap-4 font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl text-xl border-2",
             isNight 
-              ? "bg-transparent border-white text-white hover:bg-white/10" 
+              ? "bg-transparent border-2 border-white text-white hover:bg-white/10" 
               : "bg-transparent border-[#14532D] text-[#14532D] hover:bg-primary/5"
           )}
         >
