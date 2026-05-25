@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -91,15 +90,17 @@ export const CategoryDetailView = ({
           <ChevronLeft className="w-6 h-6" />
         </button>
         <div className="flex flex-col">
+          {/* MAIN TITLE (selectedRemedy.name): 22pt, Bold */}
           <h2 className={cn(
-            "text-2xl sm:text-3xl font-black font-headline leading-tight",
+            "font-black font-headline leading-tight",
+            selectedRemedy ? "text-[22px]" : "text-2xl sm:text-3xl",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
             {selectedRemedy ? selectedRemedy.name[lang] : (selectedIllnessId ? currentIllness?.title : activeCategory.title)}
           </h2>
           {(selectedIllnessId || selectedRemedy) && (
             <span className={cn(
-              "text-xs font-bold uppercase tracking-widest opacity-60",
+              "text-[12px] font-bold uppercase tracking-widest opacity-60",
               isNight ? "text-white" : "text-[#14532D]"
             )}>
               {selectedRemedy ? (isHindi ? 'नुस्खा विवरण' : 'Remedy Detail') : activeCategory.title}
@@ -131,7 +132,7 @@ export const CategoryDetailView = ({
                   {illness.title}
                 </h3>
                 <p className={cn(
-                  "text-sm font-bold opacity-70 transition-colors",
+                  "text-[15px] font-bold opacity-70 transition-colors",
                   isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
                 )}>
                   {illness.description}
