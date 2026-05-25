@@ -3,8 +3,8 @@
 import React, { useState, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Search, X, ChevronRight, BookOpen } from 'lucide-react';
-import { REMEDIES, Remedy, CATEGORIES } from '@/lib/remedy-data';
+import { Search, X, ChevronRight } from 'lucide-react';
+import { REMEDIES } from '@/lib/remedy-data';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -32,21 +32,60 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
         remedy.name.en,
         remedy.keywords,
         remedy.introduction.hi,
-        remedy.introduction.en
+        remedy.introduction.en,
+        toEnglishDigits(remedy.name.hi),
+        toEnglishDigits(remedy.introduction.hi)
       ].join(' ').toLowerCase();
 
       return searchableText.includes(normalizedQuery);
     });
   }, [query]);
 
+  /**
+   * Helper function to highlight matching text query within a string.
+   * Supports Light and Night mode themes.
+   */
+  const highlightMatchText = (text: string, currentQuery: string) => {
+    if (!currentQuery.trim()) return toEnglishDigits(text);
+
+    // Convert text to English digits first to ensure consistency in matching
+    const displayStr = toEnglishDigits(text);
+    
+    // Escape special characters for regex
+    const escapedQuery = currentQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const parts = displayStr.split(new RegExp(`(${escapedQuery})`, 'gi'));
+
+    return (
+      <>
+        {parts.map((part, i) => 
+          part.toLowerCase() === currentQuery.toLowerCase().trim() ? (
+            <span 
+              key={i} 
+              className={cn(
+                "px-0.5 rounded font-bold transition-colors duration-300",
+                isNight 
+                  ? "bg-yellow-500/30 text-yellow-300 border border-yellow-500/20" 
+                  : "bg-yellow-200 text-black"
+              )}
+            >
+              {part}
+            </span>
+          ) : (
+            <span key={i}>{part}</span>
+          )
+        )}
+      </>
+    );
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={cn(
-        "max-w-2xl w-[95vw] h-[80vh] flex flex-col p-0 border-none overflow-hidden",
+        "max-w-2xl w-[95vw] h-[80vh] flex flex-col p-0 border-none overflow-hidden transition-colors duration-500",
         isNight ? "bg-[#121b15] text-white" : "bg-[#FDFBF7] text-foreground"
       )}>
         <DialogHeader className={cn(
-          "p-6 border-b transition-colors",
+          "p-6 border-b transition-colors duration-500",
           isNight ? "bg-black border-white/10" : "bg-primary border-white/10"
         )}>
           <DialogTitle className="text-white text-xl font-headline font-black mb-4">
@@ -59,7 +98,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
               placeholder={isHindi ? "जैसे: बुखार, fever, bukhar..." : "e.g., fever, cold, acidity..."}
               className={cn(
                 "pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-white/40 focus-visible:ring-accent text-lg",
-                "rounded-2xl"
+                "rounded-2xl transition-all"
               )}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -92,7 +131,9 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                 <button
                   key={remedy.id}
                   onClick={() => {
-                    onSelectRemedy(remedy.id, remedy.illnessId.split('-')[0] === 'general' ? 'fever' : remedy.illnessId);
+                    // Logic to find category based on ID prefix or explicit mapping
+                    const catId = remedy.illnessId.includes('fever') ? 'fever' : 'fever'; 
+                    onSelectRemedy(remedy.id, catId);
                     onClose();
                   }}
                   className={cn(
@@ -103,17 +144,17 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                   )}
                 >
                   <div className={cn(
-                    "w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg shrink-0",
+                    "w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg shrink-0 transition-colors duration-500",
                     isNight ? "bg-white/5 text-accent" : "bg-accent/5 text-accent"
                   )}>
                     {toEnglishDigits(remedy.serialNumber)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-bold text-lg leading-tight truncate">
-                      {toEnglishDigits(remedy.name[lang])}
+                      {highlightMatchText(remedy.name[lang], query)}
                     </h4>
                     <p className="text-sm opacity-60 truncate mt-0.5">
-                      {toEnglishDigits(remedy.introduction[lang])}
+                      {highlightMatchText(remedy.introduction[lang], query)}
                     </p>
                   </div>
                   <ChevronRight className="w-5 h-5 opacity-40 group-hover:opacity-100 group-hover:text-accent transition-all" />
