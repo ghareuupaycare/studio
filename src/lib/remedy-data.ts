@@ -33,6 +33,8 @@ export type Remedy = {
   safetyAdvice: LocalizedString;
   disclaimer: LocalizedString;
   image: string;
+  /** Search keywords in Hindi, English, and Hinglish */
+  keywords: string;
 };
 
 export const CATEGORIES = [
@@ -103,7 +105,8 @@ export const REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'सुरक्षा सूचना: यदि बुखार 3 दिन से अधिक रहे या तापमान 102°F से ऊपर चला जाए, तो तुरंत डॉक्टर से संपर्क करें।', en: 'Safety Notice: If the fever persists for more than 3 days or the temperature exceeds 102°F, consult a doctor immediately.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || ""
+    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || "",
+    keywords: "bukhar fever jwar tulsi giloy kadha immunity shakti thand cold cough sardi khansi"
   },
   {
     id: 'gf-2',
@@ -153,7 +156,8 @@ export const REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'सुरक्षा सूचना: शुगर के मरीज बिना डॉक्टर की सलाह के अत्यधिक अदरक का सेवन न करें।', en: 'Safety Notice: Diabetic patients should not consume excessive ginger without consulting a doctor.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'digestion')?.imageUrl || ""
+    image: PlaceHolderImages.find(i => i.id === 'digestion')?.imageUrl || "",
+    keywords: "pachan digestion bhookh appetite acidity gas pet dard stomach ache ginger adrak dhaniya digestion acidity bukhar jwar"
   },
   {
     id: 'gf-3',
@@ -170,7 +174,7 @@ export const REMEDIES: Remedy[] = [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "1 चुटकी (लगभग 250 मिलीग्राम) शहद के साथ", en: "1 pinch (approx. 250 mg) with honey" } },
       { ageRange: AGE_BRACKETS.youth, dose: { hi: "2 से 3 ग्राम (आधा से 1 छोटा चम्मच)", en: "2 to 3 grams (half to 1 teaspoon)" } },
       { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "1.5 से 2 ग्राम (आधा छोटा चम्मच)", en: "1.5 to 2 grams (half teaspoon)" } },
-      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "1 ग्राम (सीमित मात्रा में, गुनगुने पानी से)", en: "1 gram (limited dose, with lukewarm water)" } }
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "1 gram (सीमित मात्रा में, गुनगुने पानी से)", en: "1 gram (limited dose, with lukewarm water)" } }
     ],
     ingredients: {
       hi: ['आयुर्वेदिक महासुदर्शन चूर्ण', '1 चम्मच शुद्ध शहद'],
@@ -203,7 +207,8 @@ export const REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'सुरक्षा सूचना: यह चूर्ण स्वाद में बहुत कड़वा होता है। बुजुर्गों और बच्चों को देते समय शहद की मात्रा थोड़ी बढ़ाई जा सकती है।', en: 'Safety Notice: This powder is very bitter in taste. The quantity of honey can be slightly increased when giving it to children and the elderly.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || ""
+    image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || "",
+    keywords: "purana bukhar chronic fever weakness kamzori thakan tired body pain badan dard kadwa mahasudarshan churna"
   },
   {
     id: 'gf-4',
@@ -253,7 +258,8 @@ export const REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'सुरक्षा सूचना: मुनक्का और सौंफ का पानी मीठा होता है, इसलिए डायबिटीज (शुगर) के रोगी मुनक्के की संख्या आधी रखें।', en: 'Safety Notice: Since Munakka and fennel water is naturally sweet, diabetes patients should reduce the number of raisins by half.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || ""
+    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || "",
+    keywords: "jalan burning eyes heat pitta thandak cool munakka kishmish weak pyas thirst pitta shanti fever bukhar"
   },
   {
     id: 'gf-5',
@@ -303,7 +309,8 @@ export const REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'सुरक्षा सूचना: इस नुस्खे की तासीर बहुत गर्म होती है, इसलिए जिन लोगों के शरीर में जलन रहती हो या बवासीर की शिकायत हो, वे इसका उपयोग बिल्कुल न करें।', en: 'Safety Notice: The potency of this remedy is highly heating. Individuals suffering from burning sensations in the body or piles must strictly avoid its use.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || ""
+    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
+    keywords: "thand chills shivering kampkapni cold flu dalchini laung tea kadha sardi khansi bukhar fever jwar"
   },
   {
     id: 'gf-6',
@@ -353,7 +360,8 @@ export const REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'सुरक्षा सूचना: इसकी तासीर काफी गर्म होती है, इसलिए यदि पेट में बवासीर या अल्सर के कारण खून आने की समस्या हो, तो इसका सेवन न करें।', en: 'Safety Notice: Due to its highly warm potency, avoid consumption if suffering from bleeding piles or stomach ulcers.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || ""
+    image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || "",
+    keywords: "pasina sweat fever chills ajwain saunth gud jaggery pet pain cold sardi bukhar jwar shivering"
   },
   {
     id: 'gf-7',
@@ -403,7 +411,8 @@ export const REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'सुरक्षा सूचना: सोंठ और मेथी की तासीर गर्म होती है, इसलिए शरीर में अत्यधिक जलन होने पर इसकी मात्रा आधी कर दें।', en: 'Safety Notice: Since dry ginger and fenugreek have a warm potency, reduce the dose to half if you experience an excessive burning sensation in the body.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || ""
+    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || "",
+    keywords: "mausam change seasonal fever body pain methi saunth jeera appetite bhookh bukhar jwar badla mausam"
   },
   {
     id: 'gf-8',
@@ -453,7 +462,8 @@ export const REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'सुरक्षा सूचना: यदि पेट में अल्सर या अत्यधिक एसिडिटी की समस्या हो, तो काली मिर्च की मात्रा कम कर दें।', en: 'Safety Notice: If suffering from stomach ulcers or severe acidity, reduce the amount of black pepper.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || ""
+    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
+    keywords: "sardi khansi cold cough sore throat infection kali mirch ginger tulsi bukhar fever jwar gale me dard throat pain"
   },
   {
     id: 'gf-9',
@@ -503,7 +513,8 @@ export const REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'सुरक्षा सूचना: यह नुस्खा शरीर को शीतलता देता है, इसलिए यदि बुखार के साथ अत्यधिक ठंड या कंपकंपी लग रही हो, तो इसका सेवन न करें।', en: 'Safety Notice: This remedy provides a cooling effect; do not consume it if the fever is accompanied by severe chills or shivering.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || ""
+    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || "",
+    keywords: "jalan heat liver cool pitta dhaniya khus thirst pyas peshab urine bukhar fever jwar cooling"
   },
   {
     id: 'gf-10',
@@ -553,6 +564,7 @@ export const REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'सुरक्षा सूचना: यदि यूज़र को डायबिटीज (शुगर) है, तो वे मुनक्का और मिश्री का कामना करें, केवल सादे भुने मखाने खाएं।', en: 'Safety Notice: If the user is diabetic, avoid raisins and rock candy; consume only plain roasted foxnuts.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || ""
+    image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || "",
+    keywords: "kamzori weakness strength takat energy makhana munakka milk dudh post fever recovery recovery thakan tired chakkar"
   }
 ];

@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { Bell, Search, Languages, Moon, Sun, Menu, X, Info, Mail, ShieldCheck, FileText, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Language, Theme } from '@/app/page';
@@ -17,15 +19,18 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SearchOverlay } from './search-overlay';
 
 interface TopBarProps {
   lang: Language;
   theme: Theme;
   onToggleLanguage: () => void;
   onToggleTheme: () => void;
+  onSelectRemedy?: (remedyId: string, categoryId: string) => void;
 }
 
-export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarProps) => {
+export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme, onSelectRemedy }: TopBarProps) => {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
 
@@ -198,10 +203,23 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarP
         <Button variant="ghost" size="icon" className={headerBtnClass}>
           <Bell className="w-5 h-5" />
         </Button>
-        <Button variant="ghost" size="icon" className={headerBtnClass}>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className={headerBtnClass}
+          onClick={() => setIsSearchOpen(true)}
+        >
           <Search className="w-5 h-5" />
         </Button>
       </div>
+
+      <SearchOverlay 
+        isOpen={isSearchOpen} 
+        onClose={() => setIsSearchOpen(false)} 
+        lang={lang} 
+        theme={theme}
+        onSelectRemedy={(rId, cId) => onSelectRemedy?.(rId, cId)}
+      />
     </header>
   );
 };

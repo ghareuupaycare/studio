@@ -28,6 +28,14 @@ export default function GhareluUpayApp() {
     setIsDetailView(false);
   };
 
+  const handleSelectRemedy = (remedyId: string, categoryId: string) => {
+    setSelectedCategoryId(categoryId);
+    setSelectedRemedyId(remedyId);
+    setIsDetailView(true);
+    // Smooth scroll to top when selecting a remedy from search
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleBackToCategories = () => {
     setSelectedCategoryId(null);
     setSelectedRemedyId(null);
@@ -52,6 +60,7 @@ export default function GhareluUpayApp() {
         theme={theme} 
         onToggleLanguage={toggleLanguage} 
         onToggleTheme={toggleTheme} 
+        onSelectRemedy={handleSelectRemedy}
       />
       
       <main 
