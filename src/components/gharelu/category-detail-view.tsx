@@ -28,23 +28,29 @@ export const CategoryDetailView = ({
   initialRemedyId,
   onLevelChange
 }: CategoryDetailViewProps) => {
-  const [selectedIllnessId, setSelectedIllnessId] = useState<string | null>(() => {
-    if (initialRemedyId) {
-      const remedy = REMEDIES.find(r => r.id === initialRemedyId);
-      return remedy ? remedy.illnessId : null;
-    }
-    return null;
-  });
-  
-  const [selectedRemedy, setSelectedRemedy] = useState<Remedy | null>(() => {
-    if (initialRemedyId) {
-      return REMEDIES.find(r => r.id === initialRemedyId) || null;
-    }
-    return null;
-  });
+  const [selectedIllnessId, setSelectedIllnessId] = useState<string | null>(null);
+  const [selectedRemedy, setSelectedRemedy] = useState<Remedy | null>(null);
   
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
+
+  /**
+   * Arrest Sub-Page Routing Conflicts:
+   * Reactively updates the view when initialRemedyId changes from the search overlay.
+   * This ensures absolute navigation works even if the component is already mounted.
+   */
+  useEffect(() => {
+    if (initialRemedyId) {
+      const remedy = REMEDIES.find(r => r.id === initialRemedyId);
+      if (remedy) {
+        setSelectedRemedy(remedy);
+        setSelectedIllnessId(remedy.illnessId);
+      }
+    } else {
+      setSelectedRemedy(null);
+      setSelectedIllnessId(null);
+    }
+  }, [initialRemedyId, categoryId]);
 
   useEffect(() => {
     if (onLevelChange) {
@@ -66,6 +72,18 @@ export const CategoryDetailView = ({
             : 'Natural treatments for mild fever and physical fatigue'
         }
       ]
+    },
+    joints: {
+      title: isHindi ? '2. घुटनों का दर्द' : '2. Joint Pain',
+      illnesses: [] // Add future illnesses here
+    },
+    respiratory: {
+      title: isHindi ? '3. खांसी और सर्दी' : '3. Cough & Cold',
+      illnesses: []
+    },
+    digestion: {
+      title: isHindi ? '4. पाचन' : '4. Digestion',
+      illnesses: []
     }
   };
 
@@ -93,7 +111,7 @@ export const CategoryDetailView = ({
         <button 
           onClick={handleInternalBack}
           className={cn(
-            "p-4 rounded-full transition-all active:scale-95 shadow-lg",
+            "p-4 rounded-full transition-all active:scale-95 shadow-lg cursor-pointer",
             isNight ? "bg-white text-black hover:bg-white/90" : "bg-[#14532D] text-white hover:bg-[#166534]"
           )}
         >
@@ -120,45 +138,51 @@ export const CategoryDetailView = ({
       {!selectedIllnessId ? (
         /* Level 1: List of Illnesses */
         <div className="grid grid-cols-1 gap-6">
-          {activeCategory.illnesses.map((illness) => (
-            <button
-              key={illness.id}
-              onClick={() => setSelectedIllnessId(illness.id)}
-              className={cn(
-                "group relative w-full p-8 rounded-[2.5rem] border transition-all duration-300 text-left",
-                "flex items-center justify-between shadow-xl hover:-translate-y-1 active:scale-[0.98]",
-                isNight 
-                  ? "bg-black border-white text-white active:bg-white active:text-black" 
-                  : "bg-[#FDF6E2] border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
-              )}
-            >
-              <div className="space-y-2">
-                <h3 className={cn(
-                  "text-2xl font-black transition-colors leading-tight",
-                  isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
+          {activeCategory.illnesses.length > 0 ? (
+            activeCategory.illnesses.map((illness) => (
+              <button
+                key={illness.id}
+                onClick={() => setSelectedIllnessId(illness.id)}
+                className={cn(
+                  "group relative w-full p-8 rounded-[2.5rem] border transition-all duration-300 text-left cursor-pointer",
+                  "flex items-center justify-between shadow-xl hover:-translate-y-1 active:scale-[0.98]",
+                  isNight 
+                    ? "bg-black border-white text-white active:bg-white active:text-black" 
+                    : "bg-[#FDF6E2] border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
+                )}
+              >
+                <div className="space-y-2">
+                  <h3 className={cn(
+                    "text-2xl font-black transition-colors leading-tight",
+                    isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
+                  )}>
+                    {toEnglishDigits(illness.title)}
+                  </h3>
+                  <p className={cn(
+                    "text-base font-bold opacity-70 transition-colors leading-relaxed",
+                    isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
+                  )}>
+                    {toEnglishDigits(illness.description)}
+                  </p>
+                </div>
+                <div className={cn(
+                  "p-4 rounded-full transition-all shadow-md ml-4 shrink-0",
+                  isNight 
+                    ? "bg-white/10 group-active:bg-black/20" 
+                    : "bg-accent/10 group-active:bg-white/20"
                 )}>
-                  {toEnglishDigits(illness.title)}
-                </h3>
-                <p className={cn(
-                  "text-base font-bold opacity-70 transition-colors leading-relaxed",
-                  isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
-                )}>
-                  {toEnglishDigits(illness.description)}
-                </p>
-              </div>
-              <div className={cn(
-                "p-4 rounded-full transition-all shadow-md ml-4 shrink-0",
-                isNight 
-                  ? "bg-white/10 group-active:bg-black/20" 
-                  : "bg-accent/10 group-active:bg-white/20"
-              )}>
-                <ArrowRight className={cn(
-                  "w-6 h-6",
-                  isNight ? "text-white group-active:text-black" : "text-accent group-active:text-white"
-                )} />
-              </div>
-            </button>
-          ))}
+                  <ArrowRight className={cn(
+                    "w-6 h-6",
+                    isNight ? "text-white group-active:text-black" : "text-accent group-active:text-white"
+                  )} />
+                </div>
+              </button>
+            ))
+          ) : (
+            <div className="p-12 text-center rounded-[2.5rem] border border-dashed border-muted-foreground/30 opacity-50">
+              {isHindi ? 'जल्द आ रहा है...' : 'Coming soon...'}
+            </div>
+          )}
         </div>
       ) : !selectedRemedy ? (
         /* Level 2: Remedy List */
@@ -168,7 +192,7 @@ export const CategoryDetailView = ({
               key={remedy.id}
               onClick={() => setSelectedRemedy(remedy)}
               className={cn(
-                "w-full p-6 rounded-3xl border transition-all duration-200 text-left flex items-center gap-5 group",
+                "w-full p-6 rounded-3xl border transition-all duration-200 text-left flex items-center gap-5 group cursor-pointer active:scale-[0.98]",
                 isNight 
                   ? "bg-black border-white/20 text-white hover:border-white shadow-none" 
                   : "bg-white border-primary/10 hover:border-primary/30 text-primary shadow-xl"

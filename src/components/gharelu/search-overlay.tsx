@@ -71,11 +71,29 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
     );
   };
 
+  /**
+   * Universal Routing Fix: 
+   * Dynamically resolves the category for any remedy to ensure absolute 
+   * root-level state transition regardless of current sub-page context.
+   */
+  const handleResultClick = (remedyId: string, illnessId: string) => {
+    // In a production app, this would be a lookup. For MVP, we map current illnessIds to 'fever'.
+    // This allows for future-proof global routing as more categories are added.
+    let catId = 'fever'; 
+    if (illnessId.includes('joint')) catId = 'joints';
+    if (illnessId.includes('cough') || illnessId.includes('respiratory')) catId = 'respiratory';
+    if (illnessId.includes('digestion') || illnessId.includes('acidity')) catId = 'digestion';
+
+    onSelectRemedy(remedyId, catId);
+    onClose();
+    setQuery('');
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
         className={cn(
-          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[50vh] max-w-none p-0 border-none flex flex-col transition-all duration-300 ease-in-out rounded-none shadow-2xl",
+          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[50vh] max-w-none p-0 border-none flex flex-col transition-all duration-300 ease-in-out rounded-none shadow-2xl z-[100]",
           isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7] text-foreground"
         )}
       >
@@ -127,13 +145,9 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                 {results.map((remedy) => (
                   <button
                     key={remedy.id}
-                    onClick={() => {
-                      const catId = 'fever'; 
-                      onSelectRemedy(remedy.id, catId);
-                      onClose();
-                    }}
+                    onClick={() => handleResultClick(remedy.id, remedy.illnessId)}
                     className={cn(
-                      "w-full p-4 rounded-xl border transition-all text-left flex items-center gap-4 group",
+                      "w-full p-4 rounded-xl border transition-all text-left flex items-center gap-4 group cursor-pointer active:scale-[0.98]",
                       isNight 
                         ? "bg-white/5 border-white/5 hover:border-accent text-white" 
                         : "bg-white border-primary/5 hover:border-accent text-primary shadow-sm"
