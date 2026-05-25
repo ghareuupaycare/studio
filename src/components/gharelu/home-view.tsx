@@ -43,15 +43,15 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
         {/* ROW 1 - MAIN TITLE */}
         <h2 className={cn(
           "text-4xl sm:text-5xl font-black leading-tight mb-6 transition-colors duration-500 whitespace-nowrap",
-          isNight ? "text-white" : "text-white"
+          "text-white"
         )}>
           {isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions'}
         </h2>
 
         {/* ROW 2 - SUBTITLE 1 */}
         <p className={cn(
-          "text-xl sm:text-2xl font-bold mb-4 transition-colors duration-500 text-amber-400",
-          "max-w-[18ch] sm:max-w-none"
+          "text-xl sm:text-2xl font-bold mb-4 transition-colors duration-500 text-amber-400 text-center",
+          "max-w-prose"
         )}>
           {isHindi ? (
             <>
@@ -65,14 +65,14 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
 
         {/* ROW 3 - SUBTITLE 2 */}
         <p className={cn(
-          "text-base sm:text-lg font-bold leading-relaxed mb-8 transition-colors duration-500",
+          "text-base sm:text-lg font-bold leading-relaxed mb-8 transition-colors duration-500 text-center",
           isNight ? "text-white/80" : "text-white/90",
-          "max-w-[30ch] sm:max-w-none"
+          "max-w-prose"
         )}>
           {isHindi ? (
             <>
               शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो <br />
-              आपकी रसोई में छिपा स्वस्थ्य रहने का खज़ाना हैं
+              आपकी रसोई में छिपे स्वस्थ्य रहने का खज़ाना हैं
             </>
           ) : (
             'Traditional shastra-based remedies, the hidden treasure of health in your kitchen'
