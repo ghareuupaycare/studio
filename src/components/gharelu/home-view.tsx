@@ -14,17 +14,6 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
 
-  const bannerContent = {
-    title: isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions',
-    sub1: isHindi 
-      ? 'भारतीय घरेलू उपाय और वैद्य जी द्वारा संचालित आयुर्वेदिक स्वास्थ्य' 
-      : 'Indian Home Remedies & Ayurvedic Health directed by Vaidya Ji',
-    sub2: isHindi 
-      ? 'शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो आपकी रसोई में छिपे स्वस्थ्य रहने का खज़ाना हैं' 
-      : 'Traditional shastra-based remedies, the hidden treasure of health in your kitchen',
-    tagline: isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Complete health at home without medicine'
-  };
-
   const categories = [
     {
       id: 'fever',
@@ -42,46 +31,65 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
   ];
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-700 w-full max-w-2xl px-4 sm:px-6 text-left">
+    <div className="space-y-12 animate-in fade-in duration-700 w-full max-w-2xl px-4 sm:px-6">
       {/* Top Premium Brand Banner */}
       <section className={cn(
-        "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-start justify-center p-8 sm:p-12 text-left transition-all duration-500 border-2",
+        "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-center justify-center p-8 sm:p-12 text-center transition-all duration-500 border-2",
         isNight 
           ? "bg-black border-white" 
           : "bg-[#14532D] border-[#14532D]"
       )}>
         
+        {/* ROW 1 - MAIN TITLE */}
         <h2 className={cn(
-          "text-4xl sm:text-6xl font-black leading-tight mb-6 transition-colors duration-500",
+          "text-4xl sm:text-5xl font-black leading-tight mb-6 transition-colors duration-500 whitespace-nowrap",
           isNight ? "text-white" : "text-white"
         )}>
-          {bannerContent.title}
+          {isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions'}
         </h2>
 
+        {/* ROW 2 - SUBTITLE 1 */}
         <p className={cn(
-          "text-xl sm:text-2xl font-bold mb-4 transition-colors duration-500",
-          isNight ? "text-accent" : "text-accent"
+          "text-xl sm:text-2xl font-bold mb-4 transition-colors duration-500 text-amber-400",
+          "max-w-[18ch] sm:max-w-none"
         )}>
-          {bannerContent.sub1}
+          {isHindi ? (
+            <>
+              भारतीय घरेलू उपाय और वैद्य जी <br />
+              द्वारा संचालित आयुर्वेदिक स्वास्थ्य
+            </>
+          ) : (
+            'Indian Home Remedies & Ayurvedic Health directed by Vaidya Ji'
+          )}
         </p>
 
+        {/* ROW 3 - SUBTITLE 2 */}
         <p className={cn(
-          "text-lg sm:text-xl font-bold leading-loose mb-8 transition-colors duration-500",
-          isNight ? "text-white/80" : "text-white/90"
+          "text-base sm:text-lg font-bold leading-relaxed mb-8 transition-colors duration-500",
+          isNight ? "text-white/80" : "text-white/90",
+          "max-w-[30ch] sm:max-w-none"
         )}>
-          {bannerContent.sub2}
+          {isHindi ? (
+            <>
+              शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो <br />
+              आपकी रसोई में छिपा स्वस्थ्य रहने का खज़ाना हैं
+            </>
+          ) : (
+            'Traditional shastra-based remedies, the hidden treasure of health in your kitchen'
+          )}
         </p>
 
+        {/* ROW 4 - TAGLINE BADGE */}
         <div className={cn(
-          "px-8 py-4 rounded-full font-black text-xl sm:text-2xl transition-all shadow-lg",
+          "px-10 py-5 rounded-full font-black text-2xl sm:text-3xl transition-all shadow-lg whitespace-nowrap",
           isNight ? "bg-white text-black" : "bg-accent text-white"
         )}>
-          {bannerContent.tagline}
+          {isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Complete health at home without medicine'}
         </div>
       </section>
 
       {/* Categories List - Strictly Left Aligned */}
-      <div className="space-y-8 w-full">
+      <div className="space-y-8 w-full text-left">
         <div className="grid grid-cols-1 gap-6 w-full">
           {categories.map((category) => {
             const content = category.translations[lang];
