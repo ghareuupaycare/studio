@@ -90,7 +90,7 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarP
           <SheetContent 
             side="left" 
             className={cn(
-              "w-[85%] sm:w-[400px] p-0 overflow-hidden border-none transition-colors duration-500",
+              "w-[70%] sm:w-[350px] p-0 overflow-hidden border-none transition-colors duration-500",
               isNight ? "bg-[#121b15] shadow-[5px_0_30px_rgba(0,0,0,0.8)]" : "bg-[#FDFBF7] shadow-[5px_0_30px_rgba(0,0,0,0.1)]"
             )}
           >
@@ -120,12 +120,12 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarP
                     >
                       <AccordionTrigger className={cn(
                         "hover:no-underline transition-colors py-4",
-                        isNight ? "hover:text-white" : "hover:text-primary"
+                        isNight ? "hover:text-white dark:text-zinc-100" : "hover:text-primary"
                       )}>
                         <div className="flex items-center gap-3">
                           <div className={cn(
                             "p-2 rounded-xl transition-colors duration-500",
-                            isNight ? "bg-white/10 text-white" : "bg-primary/5 text-primary"
+                            isNight ? "bg-white/10 text-white dark:text-zinc-400" : "bg-primary/5 text-primary"
                           )}>
                             {page.icon}
                           </div>
