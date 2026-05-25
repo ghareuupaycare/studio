@@ -104,15 +104,15 @@ ${window.location.origin}`;
         </span>
       </button>
 
-      {/* Share Button (Right Aligned) */}
+      {/* Share Button (Right Aligned) - Styled with Premium Golden/Amber Color */}
       <button
         onClick={handleShare}
         className={cn(
-          "flex flex-col items-center gap-1.5 transition-all duration-200 group outline-none text-white/60 hover:text-white"
+          "flex flex-col items-center gap-1.5 transition-all duration-200 group outline-none text-accent"
         )}
       >
         <div className={cn(
-          "p-3 rounded-2xl transition-all duration-200 bg-white/5 hover:bg-white/10"
+          "p-3 rounded-2xl transition-all duration-200 bg-accent/20 text-accent"
         )}>
           <Share2 className="w-7 h-7" />
         </div>
