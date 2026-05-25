@@ -1,18 +1,16 @@
-
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, X, ChevronRight, MessageCircleOff, Send } from 'lucide-react';
+import { Search, X, ChevronRight, MessageCircleOff, Send, CheckCircle2 } from 'lucide-react';
 import { REMEDIES } from '@/lib/remedy-data';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useFirestore } from '@/firebase';
 import { doc, setDoc, increment, serverTimestamp } from 'firebase/firestore';
-import { useToast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
@@ -27,10 +25,10 @@ interface SearchOverlayProps {
 export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: SearchOverlayProps) => {
   const [query, setQuery] = useState('');
   const [manualRequest, setManualRequest] = useState('');
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
   const db = useFirestore();
-  const { toast } = useToast();
   const logTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const results = useMemo(() => {
@@ -52,7 +50,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
     });
   }, [query]);
 
-  // Automatic logging logic for unresolved searches (Analytics)
+  // Automatic logging logic for analytics
   useEffect(() => {
     if (logTimeoutRef.current) clearTimeout(logTimeoutRef.current);
 
@@ -76,10 +74,10 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
               path: docRef.path,
               operation: 'write',
               requestResourceData: { searchQuery: query.trim() }
-            });
+            } satisfies SecurityRuleContext);
             errorEmitter.emit('permission-error', permissionError);
           });
-      }, 3000); // 3 second debounce for automatic logging
+      }, 3000);
     }
 
     return () => {
@@ -100,19 +98,16 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
       isManualRequest: true
     }, { merge: true })
       .then(() => {
-        toast({
-          description: isHindi 
-            ? "आपका संदेश वैद्य जी के पास सुरक्षित पहुंच गया है। जल्द ही नुस्खा अपलोड किया जाएगा!" 
-            : "Your request has reached Vaidya Ji. The remedy will be uploaded soon!",
-        });
+        setShowSuccessAlert(true);
         setManualRequest('');
+        setTimeout(() => setShowSuccessAlert(false), 4000);
       })
       .catch(async (error) => {
         const permissionError = new FirestorePermissionError({
           path: docRef.path,
           operation: 'write',
           requestResourceData: { searchQuery: manualRequest.trim() }
-        });
+        } satisfies SecurityRuleContext);
         errorEmitter.emit('permission-error', permissionError);
       });
   };
@@ -199,6 +194,25 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
 
         <ScrollArea className="flex-1 w-full bg-transparent">
           <div className="p-4 w-full max-w-2xl mx-auto">
+            {/* Inline Success Banner */}
+            {showSuccessAlert && (
+              <div className="mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
+                <div className="bg-emerald-600 text-white p-4 rounded-2xl shadow-xl flex items-start gap-3 border border-emerald-400/20">
+                  <CheckCircle2 className="w-6 h-6 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="font-black text-sm uppercase tracking-wider">
+                      {isHindi ? 'सफलतापूर्वक भेजा गया!' : 'Successfully Sent!'}
+                    </p>
+                    <p className="text-xs font-medium leading-relaxed opacity-90">
+                      {isHindi 
+                        ? 'आपका संदेश वैद्य जी के पास सुरक्षित पहुंच गया है। जल्द ही इसका प्रामाणिक नुस्खा ऐप में जोड़ दिया जाएगा।' 
+                        : 'Your request has reached Vaidya Ji securely. The authentic remedy will be added to the app soon.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {!query.trim() ? (
               <div className="flex flex-col items-center justify-center py-10 text-center space-y-3 opacity-30">
                 <Search className="w-12 h-12" />
@@ -270,7 +284,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                   <Input
                     placeholder={isHindi ? "अपनी बीमारी या समस्या का नाम यहाँ लिखें..." : "Enter your health concern here..."}
                     className={cn(
-                      "h-12 border-emerald-500/20 text-foreground placeholder:text-muted-foreground/50 rounded-xl",
+                      "h-12 border-emerald-500/20 text-foreground placeholder:text-muted-foreground/50 rounded-xl focus-visible:ring-emerald-600",
                       isNight ? "bg-white/5" : "bg-white"
                     )}
                     value={manualRequest}
@@ -279,7 +293,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                   <Button
                     onClick={handleManualRequest}
                     disabled={!manualRequest.trim()}
-                    className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-6 px-4 rounded-xl w-full transition-all text-base flex items-center justify-center gap-2 shadow-lg active:scale-[0.98]"
+                    className="bg-emerald-700 hover:bg-emerald-800 text-white font-black uppercase tracking-[0.1em] py-6 px-4 rounded-xl w-full transition-all text-base flex items-center justify-center gap-2 shadow-lg active:scale-[0.98]"
                   >
                     <Send className="w-4 h-4" />
                     {isHindi ? 'वैद्य जी से इस नुस्खे की मांग करें' : 'Request this Remedy from Vaidya Ji'}
