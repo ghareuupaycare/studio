@@ -57,10 +57,10 @@ const AGE_BRACKETS = {
 export const REMEDIES: Remedy[] = [
   {
     id: 'gf-1',
-    serialNumber: '१',
+    serialNumber: '1',
     name: {
-      hi: '१. तुलसी और गिलोय का दिव्य अमृत काढ़ा',
-      en: '1. Divine Amrit Decoction of Tulsi and Giloy'
+      hi: 'तुलसी और गिलोय का दिव्य अमृत काढ़ा',
+      en: 'Divine Amrit Decoction of Tulsi and Giloy'
     },
     illnessId: 'general-fever',
     introduction: {
@@ -69,7 +69,7 @@ export const REMEDIES: Remedy[] = [
     },
     severity: 'moderate',
     severityLabel: {
-      hi: '🟡 हल्का से मध्यम बुखार',
+      hi: '🟡 सामान्य से मध्यम बुखार',
       en: '🟡 Mild to Moderate Fever'
     },
     doses: [
@@ -125,10 +125,10 @@ export const REMEDIES: Remedy[] = [
   },
   {
     id: 'gf-2',
-    serialNumber: '२',
+    serialNumber: '2',
     name: {
-      hi: '२. अदरक और धनिए के बीजों का पाचक पानी',
-      en: '2. Digestive Water of Ginger and Coriander Seeds'
+      hi: 'अदरक और धनिए के बीजों का पाचक पानी',
+      en: 'Digestive Water of Ginger and Coriander Seeds'
     },
     illnessId: 'general-fever',
     introduction: {
@@ -193,10 +193,10 @@ export const REMEDIES: Remedy[] = [
   },
   {
     id: 'gf-3',
-    serialNumber: '३',
+    serialNumber: '3',
     name: {
-      hi: '३. महासुदर्शन चूर्ण और शहद का योग',
-      en: '3. Mahasudarshan Churna and Honey Blend'
+      hi: 'महासुदर्शन चूर्ण और शहद का योग',
+      en: 'Mahasudarshan Churna and Honey Blend'
     },
     illnessId: 'general-fever',
     introduction: {
@@ -261,10 +261,10 @@ export const REMEDIES: Remedy[] = [
   },
   {
     id: 'gf-4',
-    serialNumber: '४',
+    serialNumber: '4',
     name: {
-      hi: '४. किशमिश और मुनक्के का शीतल पानी',
-      en: '4. Cooling Infusion of Raisins and Munakka'
+      hi: 'किशमिश और मुनक्के का शीतल पानी',
+      en: 'Cooling Infusion of Raisins and Munakka'
     },
     illnessId: 'general-fever',
     introduction: {
@@ -273,7 +273,7 @@ export const REMEDIES: Remedy[] = [
     },
     severity: 'moderate',
     severityLabel: {
-      hi: '🟡 मध्यम से तेज बुखार',
+      hi: '🟡 सामान्य से मध्यम बुखार',
       en: '🟡 Moderate to High Fever'
     },
     doses: [
@@ -316,7 +316,7 @@ export const REMEDIES: Remedy[] = [
         en: 'Afternoon: Plain rice, Moong dal, and sponge gourd vegetable along with cucumber salad.'
       },
       evening: {
-        hi: 'शाम/रात: कद्दू की सादी सब्जी और दो पतली रोटी। रात को सोने से पहले सिर पर सामान्य पानी की सूती पट्टी रखें।',
+        hi: 'शााम/रात: कद्दू की सादी सब्जी और दो पतली रोटी। रात को सोने से पहले सिर पर सामान्य पानी की सूती पट्टी रखें।',
         en: 'Evening/Night: Plain pumpkin vegetable and two thin chapatis. Place a wet cotton cloth strip on the forehead before sleeping.'
       }
     },
@@ -329,10 +329,10 @@ export const REMEDIES: Remedy[] = [
   },
   {
     id: 'gf-5',
-    serialNumber: '५',
+    serialNumber: '5',
     name: {
-      hi: '५. दालचीनी और लौंग का स्वेदन चाय',
-      en: '5. Sudorific Cinnamon and Clove Tea'
+      hi: 'दालचीनी और लौंग का स्वेदन चाय',
+      en: 'Sudorific Cinnamon and Clove Tea'
     },
     illnessId: 'general-fever',
     introduction: {
@@ -363,7 +363,7 @@ export const REMEDIES: Remedy[] = [
       en: 'Strain and drink it hot like tea, sipping slowly, half an hour after breakfast (full stomach) and at bedtime (1 hour after dinner).'
     },
     dietEat: {
-      hi: 'गरम राब और सूप, बाजरे की कांजी। फायदेमंद फल: चीकू और खजूर। फायदेमंद सलाद: हल्का भुना हुआ चुकंदर (कच्चा और ठंडा सलाद बिल्कुल न खाएं)।',
+      hi: 'गरम राब और सूप, बाजरे की कांजी। फायदेमंद फल: चीकू और खजूर। फायदेमंद सलाद: हल्का भुना हुआ चुकंदर (कच्चा और ठंडा सलाद बिल्कुल न खाएं।)',
       en: 'Warm liquid gruel (Raab) or hot soup, pearl millet (Bajra) Kanji. Beneficial Fruits: Sapodilla (Chiku) and dates. Beneficial Salad: Lightly roasted beetroot (strictly avoid raw and cold salads).'
     },
     dietAvoid: {
@@ -397,10 +397,10 @@ export const REMEDIES: Remedy[] = [
   },
   {
     id: 'gf-6',
-    serialNumber: '६',
+    serialNumber: '6',
     name: {
-      hi: '६. अजवाइन, सोंठ और गुड़ का पसीना लाने वाला घरेलू काढ़ा',
-      en: '6. Sweat-Inducing Home Decoction of Carom Seeds, Dry Ginger, and Jaggery'
+      hi: 'अजवाइन, सोंठ और गुड़ का पसीना लाने वाला घरेलू काढ़ा',
+      en: 'Sweat-Inducing Home Decoction of Carom Seeds, Dry Ginger, and Jaggery'
     },
     illnessId: 'general-fever',
     introduction: {
@@ -416,7 +416,7 @@ export const REMEDIES: Remedy[] = [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "2 चम्मच काढ़ा सुबह और 2 चम्मच शाम को (बराबर मात्रा में गुनगुने पानी के साथ)", en: "2 teaspoons of decoction morning and evening (mixed with an equal amount of lukewarm water)" } },
       { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा कप काढ़ा सुबह और आधा कप शाम (भोजन के आधे घंटे बाद, गुनगुना)", en: "Half a cup of decoction morning and evening (half an hour after meals, served lukewarm)" } },
       { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप काढ़ा सुबह... आधा कप शाम (कुल दो बार प्रतिदिन, छानकर गुनगुना पिएं)", en: "Half a cup of decoction morning and evening (Total twice daily, strained and served lukewarm)" } },
-      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) कप काढ़ा दिन में दो बार (हल्का गुनगुना, केवल भोजन के बाद)", en: "Quarter (1/4) cup of decoction twice a day (mildly lukewarm, strictly after meals)" } }
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) चम्मच काढ़ा दिन में दो बार (हल्का गुनगुना, केवल भोजन के बाद)", en: "Quarter (1/4) cup of decoction twice a day (mildly lukewarm, strictly after meals)" } }
     ],
     ingredients: {
       hi: ['आधा चम्मच अजवाइन', 'एक चौथाई चम्मच सोंठ का पाउडर (सूखा अदरक)', 'एक छोटा टुकड़ा पुराना गुड़', '1.5 ग्लास साफ़ पानी'],
@@ -465,10 +465,10 @@ export const REMEDIES: Remedy[] = [
   },
   {
     id: 'gf-7',
-    serialNumber: '७',
+    serialNumber: '7',
     name: {
-      hi: '७. मेथी, सोंठ और भुने जीरे का घरेलू ज्वरनाशक चूर्ण',
-      en: '7. Home Remedy Antipyretic Powder of Fenugreek, Dry Ginger, and Cumin'
+      hi: 'मेथी, सोंठ और भुने जीरे का घरेलू ज्वरनाशक चूर्ण',
+      en: 'Home Remedy Antipyretic Powder of Fenugreek, Dry Ginger, and Cumin'
     },
     illnessId: 'general-fever',
     introduction: {
@@ -533,10 +533,10 @@ export const REMEDIES: Remedy[] = [
   },
   {
     id: 'gf-8',
-    serialNumber: '८',
+    serialNumber: '8',
     name: {
-      hi: '८. काली मिर्च, अदरक और तुलसी पत्र का तीखा ज्वरनाशक काढ़ा',
-      en: '8. Antipyretic Decoction of Black Pepper, Ginger, and Basil Leaves'
+      hi: 'काली मिर्च, अदरक और तुलसी पत्र का तीखा ज्वरनाशक काढ़ा',
+      en: 'Antipyretic Decoction of Black Pepper, Ginger, and Basil Leaves'
     },
     illnessId: 'general-fever',
     introduction: {
@@ -601,10 +601,10 @@ export const REMEDIES: Remedy[] = [
   },
   {
     id: 'gf-9',
-    serialNumber: '९',
+    serialNumber: '9',
     name: {
-      hi: '९. खस, धनिया और सोंठ का शीतल ज्वरनाशक हिम',
-      en: '9. Cooling Antipyretic Infusion of Vetiver, Coriander, and Dry Ginger'
+      hi: 'खस, धनिया और सोंठ का शीतल ज्वरनाशक हिम',
+      en: 'Cooling Antipyretic Infusion of Vetiver, Coriander, and Dry Ginger'
     },
     illnessId: 'general-fever',
     introduction: {
@@ -669,15 +669,15 @@ export const REMEDIES: Remedy[] = [
   },
   {
     id: 'gf-10',
-    serialNumber: '१०',
+    serialNumber: '10',
     name: {
-      hi: '१०. बुखार के बाद की भयंकर कमजोरी मिटाकर शरीर में तुरंत ताकत लाने का घरेलू उपाय',
-      en: '10. Home Remedy to Eradicate Post-Fever Weakness and Restore Instant Body Strength'
+      hi: 'बुखार के बाद की भयंकर कमजोरी मिटाकर शरीर में तुरंत ताकत लाने का घरेलू उपाय',
+      en: 'Home Remedy to Eradicate Post-Fever Weakness and Restore Instant Body Strength'
     },
     illnessId: 'general-fever',
     introduction: {
-      hi: "बुखार ठीक होने के बाद अक्सर शरीर में बहुत ज्यादा कमजोरी आ जाती है, चक्कर आते हैं और हाथ-पैर दुखते हैं। ऐसी स्थिति में किचन में मौजूद मखाने (जो कैल्शियम और प्रोटीन से भरपूर हैं) और मुनक्का (जो नया खून बनाता है) का यह मेल शरीर की खोई हुई ताकत को ३ से ५ दिनों में वापस लौटा देता है। यह कमजोरी को जड़ से मिटाता है।",
-      en: "After the fever subsides, the body often experiences extreme weakness, dizziness, and body aches. In such cases, this kitchen combination of foxnuts (rich in calcium and protein) and raisins (which build new blood) restores lost energy within 3 to 5 days and eradicates fatigue completely."
+      hi: "बुखार ठीक होने के बाद अक्सर शरीर में बहुत ज्यादा कमजोरी आ जाती है, चक्कर आते हैं और हाथ-पैरों में दर्द बना रहता है। ऐसी स्थिति में किचन में मौजूद मखाने और मुनक्के का यह मेल शरीर की खोई हुई ताकत को वापस लौटा देता है।",
+      en: "After the fever subsides, the body often experiences extreme weakness, dizziness, and body aches. In such cases, this kitchen combination of foxnuts and raisins restores lost energy."
     },
     severity: 'mild',
     severityLabel: {

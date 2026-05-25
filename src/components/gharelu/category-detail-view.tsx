@@ -90,10 +90,8 @@ export const CategoryDetailView = ({
           <ChevronLeft className="w-7 h-7" />
         </button>
         <div className="flex flex-col">
-          {/* MAIN TITLE: text-3xl, font-black, tracking-wide */}
           <h2 className={cn(
-            "font-black font-headline leading-tight tracking-wide",
-            selectedRemedy ? "text-3xl" : "text-3xl sm:text-4xl",
+            "font-black font-headline leading-tight tracking-wide text-3xl sm:text-4xl",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
             {selectedRemedy ? selectedRemedy.name[lang] : (selectedIllnessId ? currentIllness?.title : activeCategory.title)}
