@@ -81,11 +81,11 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={cn(
-        "max-w-2xl w-[95vw] h-[80vh] flex flex-col p-0 border-none overflow-hidden transition-colors duration-500",
+        "max-w-2xl w-[95vw] h-[80vh] flex flex-col p-0 border-none overflow-hidden transition-colors duration-500 rounded-b-none rounded-t-[2.5rem] sm:rounded-t-[2.5rem] sm:rounded-b-[2.5rem] top-auto bottom-0 translate-y-0 sm:top-[50%] sm:bottom-auto sm:-translate-y-1/2",
         isNight ? "bg-[#121b15] text-white" : "bg-[#FDFBF7] text-foreground"
       )}>
         <DialogHeader className={cn(
-          "p-6 border-b transition-colors duration-500",
+          "p-6 border-b transition-colors duration-500 shrink-0",
           isNight ? "bg-black border-white/10" : "bg-primary border-white/10"
         )}>
           <DialogTitle className="text-white text-xl font-headline font-black mb-4">
@@ -114,68 +114,70 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
           </div>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 p-4">
-          {!query.trim() ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 opacity-40">
-              <Search className="w-16 h-16" />
-              <p className="font-bold text-lg">
-                {isHindi ? 'खोजना शुरू करें...' : 'Start typing to search...'}
-              </p>
-            </div>
-          ) : results.length > 0 ? (
-            <div className="space-y-3">
-              <p className="text-xs font-black uppercase tracking-[0.2em] opacity-40 px-2 mb-4">
-                {isHindi ? `${results.length} परिणाम मिले` : `${results.length} results found`}
-              </p>
-              {results.map((remedy) => (
-                <button
-                  key={remedy.id}
-                  onClick={() => {
-                    // Logic to find category based on ID prefix or explicit mapping
-                    const catId = remedy.illnessId.includes('fever') ? 'fever' : 'fever'; 
-                    onSelectRemedy(remedy.id, catId);
-                    onClose();
-                  }}
-                  className={cn(
-                    "w-full p-5 rounded-2xl border transition-all text-left flex items-center gap-4 group",
-                    isNight 
-                      ? "bg-black border-white/10 hover:border-accent text-white" 
-                      : "bg-white border-primary/5 hover:border-accent text-primary shadow-sm"
-                  )}
-                >
-                  <div className={cn(
-                    "w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg shrink-0 transition-colors duration-500",
-                    isNight ? "bg-white/5 text-accent" : "bg-accent/5 text-accent"
-                  )}>
-                    {toEnglishDigits(remedy.serialNumber)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-lg leading-tight truncate">
-                      {highlightMatchText(remedy.name[lang], query)}
-                    </h4>
-                    <p className="text-sm opacity-60 truncate mt-0.5">
-                      {highlightMatchText(remedy.introduction[lang], query)}
-                    </p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 opacity-40 group-hover:opacity-100 group-hover:text-accent transition-all" />
-                </button>
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-              <div className="p-5 rounded-full bg-red-500/10 text-red-500">
-                <X className="w-12 h-12" />
-              </div>
-              <div className="space-y-1">
-                <p className="font-black text-xl">
-                  {isHindi ? 'कोई परिणाम नहीं मिला' : 'No results found'}
-                </p>
-                <p className="text-sm opacity-60">
-                  {isHindi ? 'कृपया कोई और शब्द लिखकर देखें।' : 'Try searching for something else.'}
+        <ScrollArea className="flex-1">
+          <div className="p-4">
+            {!query.trim() ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 opacity-40">
+                <Search className="w-16 h-16" />
+                <p className="font-bold text-lg">
+                  {isHindi ? 'खोजना शुरू करें...' : 'Start typing to search...'}
                 </p>
               </div>
-            </div>
-          )}
+            ) : results.length > 0 ? (
+              <div className="space-y-3">
+                <p className="text-xs font-black uppercase tracking-[0.2em] opacity-40 px-2 mb-4">
+                  {isHindi ? `${results.length} परिणाम मिले` : `${results.length} results found`}
+                </p>
+                {results.map((remedy) => (
+                  <button
+                    key={remedy.id}
+                    onClick={() => {
+                      // Logic to find category based on ID prefix or explicit mapping
+                      const catId = remedy.illnessId.includes('fever') ? 'fever' : 'fever'; 
+                      onSelectRemedy(remedy.id, catId);
+                      onClose();
+                    }}
+                    className={cn(
+                      "w-full p-5 rounded-2xl border transition-all text-left flex items-center gap-4 group",
+                      isNight 
+                        ? "bg-black border-white/10 hover:border-accent text-white" 
+                        : "bg-white border-primary/5 hover:border-accent text-primary shadow-sm"
+                    )}
+                  >
+                    <div className={cn(
+                      "w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg shrink-0 transition-colors duration-500",
+                      isNight ? "bg-white/5 text-accent" : "bg-accent/5 text-accent"
+                    )}>
+                      {toEnglishDigits(remedy.serialNumber)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-lg leading-tight truncate">
+                        {highlightMatchText(remedy.name[lang], query)}
+                      </h4>
+                      <p className="text-sm opacity-60 truncate mt-0.5">
+                        {highlightMatchText(remedy.introduction[lang], query)}
+                      </p>
+                    </div>
+                    <ChevronRight className="w-5 h-5 opacity-40 group-hover:opacity-100 group-hover:text-accent transition-all" />
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+                <div className="p-5 rounded-full bg-red-500/10 text-red-500">
+                  <X className="w-12 h-12" />
+                </div>
+                <div className="space-y-1">
+                  <p className="font-black text-xl">
+                    {isHindi ? 'कोई परिणाम नहीं मिला' : 'No results found'}
+                  </p>
+                  <p className="text-sm opacity-60">
+                    {isHindi ? 'कृपया कोई और शब्द लिखकर देखें।' : 'Try searching for something else.'}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
         </ScrollArea>
       </DialogContent>
     </Dialog>
