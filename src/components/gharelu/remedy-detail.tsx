@@ -12,9 +12,10 @@ import {
   AlertTriangle,
   Stethoscope,
   Heart,
-  Share2
+  Share2,
+  Copy
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
@@ -54,9 +55,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       return;
     }
 
-    const title = remedy.name[lang];
-    const ingredients = remedy.ingredients[lang].join(', ');
-    const prep = remedy.preparation[lang];
+    const title = toEnglishDigits(remedy.name[lang]);
+    const ingredients = remedy.ingredients[lang].map(toEnglishDigits).join(', ');
+    const prep = toEnglishDigits(remedy.preparation[lang]);
     
     const shareText = isHindi 
       ? `*घरेलू उपाय केयर - पसंदीदा नुस्खा*\n🌿 *${title}*\n\n📦 *आवश्यक सामग्री:*\n${ingredients}\n\n🥣 *बनाने की विधि:*\n${prep}\n\n📌 *पूरा विवरण देखने के लिए हमारी ऐप पर आएं!*`
@@ -71,6 +72,25 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       if ((error as any).name !== 'AbortError') {
         console.error("Sharing failed", error);
       }
+    }
+  };
+
+  const handleCopy = async () => {
+    const title = toEnglishDigits(remedy.name[lang]);
+    const ingredients = remedy.ingredients[lang].map(toEnglishDigits).join(', ');
+    const prep = toEnglishDigits(remedy.preparation[lang]);
+
+    const textToCopy = isHindi
+      ? `🌿 ${title}\n\n📦 आवश्यक सामग्री:\n${ingredients}\n\n🥣 बनाने की विधि:\n${prep}`
+      : `🌿 ${title}\n\n📦 Required Ingredients:\n${ingredients}\n\n🥣 Preparation:\n${prep}`;
+
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      toast({
+        description: isHindi ? "नुस्खा सफलतापूर्वक कॉपी हो गया है!" : "Remedy copied successfully!",
+      });
+    } catch (err) {
+      console.error('Failed to copy: ', err);
     }
   };
 
@@ -141,7 +161,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                   : (isNight ? "bg-black text-white border-white/20" : "bg-transparent text-primary border-primary/20")
               )}
             >
-              {dose.ageRange[lang]}
+              {toEnglishDigits(dose.ageRange[lang])}
             </button>
           ))}
         </div>
@@ -154,7 +174,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             "text-lg font-semibold leading-[1.6]",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
-            {currentDose?.dose[lang]}
+            {toEnglishDigits(currentDose?.dose[lang] || '')}
           </span>
         </div>
       </div>
@@ -171,7 +191,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             {remedy.ingredients[lang].map((item, i) => (
               <li key={i} className={cn(listTextClass, "flex items-start gap-3")}>
                 <CheckCircle className="w-6 h-6 mt-1 text-accent shrink-0" />
-                <span>{item}</span>
+                <span>{toEnglishDigits(item)}</span>
               </li>
             ))}
           </ul>
@@ -181,7 +201,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           isNight ? "bg-black border-white/20" : "bg-[#FDF6E2] border-primary/10"
         )}>
           <h3 className={cn(headingClass, "text-accent")}>{isHindi ? 'बनाने की विधि' : 'Preparation'}</h3>
-          <p className={bodyTextClass}>{remedy.preparation[lang]}</p>
+          <p className={bodyTextClass}>{toEnglishDigits(remedy.preparation[lang])}</p>
         </div>
       </div>
 
@@ -192,16 +212,17 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           : "bg-[#14532D] border-[#14532D]"
       )}>
         <h3 className={cn(
-          "text-xs font-black uppercase tracking-[0.3em] mb-6",
+          headingClass,
           isNight ? "text-[#FBBF24]" : "text-white/80"
         )}>
           {isHindi ? 'सेवन विधि' : 'Usage Instructions'}
         </h3>
         <p className={cn(
-          "text-xl font-bold leading-loose transition-colors",
+          bodyTextClass,
+          "leading-loose transition-colors",
           "text-white"
         )}>
-          "{remedy.usage[lang]}"
+          "{toEnglishDigits(remedy.usage[lang])}"
         </p>
       </div>
 
@@ -218,7 +239,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             "text-lg leading-[1.6] font-medium transition-colors",
             isNight ? "text-[#A7F3D0]" : "text-green-900"
           )}>
-            {remedy.dietEat[lang]}
+            {toEnglishDigits(remedy.dietEat[lang])}
           </p>
         </div>
         <div className={cn(
@@ -233,7 +254,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             "text-lg leading-[1.6] font-medium transition-colors",
             isNight ? "text-[#FECDD3]" : "text-red-900"
           )}>
-            {remedy.dietAvoid[lang]}
+            {toEnglishDigits(remedy.dietAvoid[lang])}
           </p>
           <div className={cn(
             "mt-6 pt-6 border-t",
@@ -249,7 +270,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               "text-lg font-bold leading-[1.6] transition-colors",
               isNight ? "text-[#FECDD3]" : "text-red-800"
             )}>
-              {remedy.strictAvoid[lang]}
+              {toEnglishDigits(remedy.strictAvoid[lang])}
             </p>
           </div>
         </div>
@@ -267,21 +288,21 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             <div className="p-5 rounded-full bg-accent/10 text-accent h-fit shrink-0"><Sun className="w-7 h-7" /></div>
             <div>
               <h4 className="text-xs font-black uppercase text-accent mb-2">{isHindi ? 'सुबह' : 'Morning'}</h4>
-              <p className={bodyTextClass}>{remedy.routine.morning[lang]}</p>
+              <p className={bodyTextClass}>{toEnglishDigits(remedy.routine.morning[lang])}</p>
             </div>
           </div>
           <div className="flex gap-6">
             <div className="p-5 rounded-full bg-primary/10 text-primary h-fit shrink-0"><Coffee className="w-7 h-7" /></div>
             <div>
               <h4 className="text-xs font-black uppercase text-primary mb-2">{isHindi ? 'दोपहर' : 'Afternoon'}</h4>
-              <p className={bodyTextClass}>{remedy.routine.afternoon[lang]}</p>
+              <p className={bodyTextClass}>{toEnglishDigits(remedy.routine.afternoon[lang])}</p>
             </div>
           </div>
           <div className="flex gap-6">
             <div className="p-5 rounded-full bg-slate-400/10 text-slate-500 h-fit shrink-0"><Moon className="w-7 h-7" /></div>
             <div>
               <h4 className="text-xs font-black uppercase text-slate-500 mb-2">{isHindi ? 'शाम/रात' : 'Evening/Night'}</h4>
-              <p className={bodyTextClass}>{remedy.routine.evening[lang]}</p>
+              <p className={bodyTextClass}>{toEnglishDigits(remedy.routine.evening[lang])}</p>
             </div>
           </div>
         </div>
@@ -300,18 +321,18 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             "text-lg leading-[1.6] font-bold",
             isNight ? "text-accent brightness-110" : "text-[#9B2C2C]"
           )}>
-            {remedy.safetyAdvice[lang]}
+            {toEnglishDigits(remedy.safetyAdvice[lang])}
           </p>
           <p className={cn(
             "text-xs uppercase tracking-widest opacity-60 leading-loose font-medium mt-8 border-t border-accent/20 pt-8 italic",
             isNight ? "text-white" : "text-primary"
           )}>
-            "{remedy.disclaimer[lang]}"
+            "{toEnglishDigits(remedy.disclaimer[lang])}"
           </p>
         </div>
       </div>
 
-      <div className="pt-8 pb-16 flex justify-center">
+      <div className="pt-8 pb-16 flex flex-col sm:flex-row justify-center gap-4 px-6">
         <Button
           onClick={handleShare}
           className={cn(
@@ -321,6 +342,18 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         >
           <Share2 className="w-7 h-7" />
           {isHindi ? 'नुस्खा शेयर करें' : 'Share Remedy'}
+        </Button>
+        <Button
+          onClick={handleCopy}
+          className={cn(
+            "w-full max-w-sm h-18 py-6 rounded-[2rem] flex items-center justify-center gap-4 font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl text-lg border-2",
+            isNight 
+              ? "bg-transparent border-white text-white hover:bg-white/10" 
+              : "bg-transparent border-[#14532D] text-[#14532D] hover:bg-primary/5"
+          )}
+        >
+          <Copy className="w-7 h-7" />
+          {isHindi ? 'नुस्खा कॉपी करें' : 'Copy'}
         </Button>
       </div>
     </div>
