@@ -284,8 +284,10 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                   <Input
                     placeholder={isHindi ? "अपनी बीमारी या समस्या का नाम यहाँ लिखें..." : "Enter your health concern here..."}
                     className={cn(
-                      "h-12 border-emerald-500/20 text-foreground placeholder:text-muted-foreground/50 rounded-xl focus-visible:ring-emerald-600",
-                      isNight ? "bg-white/5" : "bg-white"
+                      "h-12 border-emerald-500/20 rounded-xl focus-visible:ring-emerald-600 transition-colors",
+                      isNight 
+                        ? "bg-white/5 text-white placeholder:text-zinc-400" 
+                        : "bg-white text-foreground placeholder:text-muted-foreground/50"
                     )}
                     value={manualRequest}
                     onChange={(e) => setManualRequest(e.target.value)}
