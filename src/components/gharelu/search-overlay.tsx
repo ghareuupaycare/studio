@@ -4,13 +4,17 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Search, X, ChevronRight, MessageCircleOff } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Search, X, ChevronRight, MessageCircleOff, Send } from 'lucide-react';
 import { REMEDIES } from '@/lib/remedy-data';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useFirestore } from '@/firebase';
-import { doc, setDoc, getDoc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, increment, serverTimestamp } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
 interface SearchOverlayProps {
   isOpen: boolean;
@@ -22,9 +26,11 @@ interface SearchOverlayProps {
 
 export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: SearchOverlayProps) => {
   const [query, setQuery] = useState('');
+  const [manualRequest, setManualRequest] = useState('');
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
   const db = useFirestore();
+  const { toast } = useToast();
   const logTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const results = useMemo(() => {
@@ -46,12 +52,12 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
     });
   }, [query]);
 
-  // Logging logic for unresolved searches
+  // Automatic logging logic for unresolved searches (Analytics)
   useEffect(() => {
     if (logTimeoutRef.current) clearTimeout(logTimeoutRef.current);
 
     if (query.trim() && results.length === 0) {
-      logTimeoutRef.current = setTimeout(async () => {
+      logTimeoutRef.current = setTimeout(() => {
         if (!db) return;
         
         const sanitizedQuery = query.toLowerCase().trim().replace(/[/\\#?]/g, '');
@@ -59,30 +65,57 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
 
         const docRef = doc(db, 'requested_remedies', sanitizedQuery);
         
-        try {
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            updateDoc(docRef, {
-              count: increment(1),
-              timestamp: serverTimestamp()
+        setDoc(docRef, {
+          searchQuery: query.trim(),
+          count: increment(1),
+          timestamp: serverTimestamp(),
+          isAutoLog: true
+        }, { merge: true })
+          .catch(async (error) => {
+            const permissionError = new FirestorePermissionError({
+              path: docRef.path,
+              operation: 'write',
+              requestResourceData: { searchQuery: query.trim() }
             });
-          } else {
-            setDoc(docRef, {
-              searchQuery: query.trim(),
-              count: 1,
-              timestamp: serverTimestamp()
-            });
-          }
-        } catch (error) {
-          // Silent fail for analytics
-        }
-      }, 2000); // 2 second debounce for logging
+            errorEmitter.emit('permission-error', permissionError);
+          });
+      }, 3000); // 3 second debounce for automatic logging
     }
 
     return () => {
       if (logTimeoutRef.current) clearTimeout(logTimeoutRef.current);
     };
   }, [query, results.length, db]);
+
+  const handleManualRequest = () => {
+    if (!manualRequest.trim() || !db) return;
+
+    const sanitizedQuery = manualRequest.toLowerCase().trim().replace(/[/\\#?]/g, '');
+    const docRef = doc(db, 'requested_remedies', sanitizedQuery);
+
+    setDoc(docRef, {
+      searchQuery: manualRequest.trim(),
+      count: increment(1),
+      timestamp: serverTimestamp(),
+      isManualRequest: true
+    }, { merge: true })
+      .then(() => {
+        toast({
+          description: isHindi 
+            ? "आपका संदेश वैद्य जी के पास सुरक्षित पहुंच गया है। जल्द ही नुस्खा अपलोड किया जाएगा!" 
+            : "Your request has reached Vaidya Ji. The remedy will be uploaded soon!",
+        });
+        setManualRequest('');
+      })
+      .catch(async (error) => {
+        const permissionError = new FirestorePermissionError({
+          path: docRef.path,
+          operation: 'write',
+          requestResourceData: { searchQuery: manualRequest.trim() }
+        });
+        errorEmitter.emit('permission-error', permissionError);
+      });
+  };
 
   const highlightMatchText = (text: string, currentQuery: string) => {
     if (!currentQuery.trim()) return toEnglishDigits(text);
@@ -208,17 +241,17 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-10 text-center space-y-6 max-w-sm mx-auto">
+              <div className="flex flex-col items-center justify-center py-10 text-center space-y-6 max-w-sm mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className={cn(
                   "p-5 rounded-full",
-                  isNight ? "bg-primary/20 text-primary" : "bg-primary/10 text-primary"
+                  isNight ? "bg-emerald-900/20 text-emerald-400" : "bg-emerald-50 text-emerald-600"
                 )}>
                   <MessageCircleOff className="w-10 h-10" />
                 </div>
                 <div className="space-y-3">
                   <h3 className={cn(
                     "text-xl font-headline font-black",
-                    isNight ? "text-white" : "text-primary"
+                    isNight ? "text-white" : "text-emerald-800"
                   )}>
                     {isHindi ? 'अभी यह नुस्खा उपलब्ध नहीं है' : 'Remedy Not Available Yet'}
                   </h3>
@@ -230,6 +263,27 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                       ? "क्षमा करें! वैद्य जी जल्द ही आपकी खोजी गई बीमारी का सटीक और प्रामाणिक घरेलू उपचार यहाँ अपलोड करेंगे। स्वस्थ रहें, सुखी रहें!"
                       : "Sorry! Vaidya Ji will soon upload accurate and authentic home remedies for your searched illness. Stay healthy, stay happy!"}
                   </p>
+                </div>
+
+                {/* Manual Request Form */}
+                <div className="w-full space-y-3 pt-4 border-t border-emerald-500/10">
+                  <Input
+                    placeholder={isHindi ? "अपनी बीमारी या समस्या का नाम यहाँ लिखें..." : "Enter your health concern here..."}
+                    className={cn(
+                      "h-12 border-emerald-500/20 text-foreground placeholder:text-muted-foreground/50 rounded-xl",
+                      isNight ? "bg-white/5" : "bg-white"
+                    )}
+                    value={manualRequest}
+                    onChange={(e) => setManualRequest(e.target.value)}
+                  />
+                  <Button
+                    onClick={handleManualRequest}
+                    disabled={!manualRequest.trim()}
+                    className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-6 px-4 rounded-xl w-full transition-all text-base flex items-center justify-center gap-2 shadow-lg active:scale-[0.98]"
+                  >
+                    <Send className="w-4 h-4" />
+                    {isHindi ? 'वैद्य जी से इस नुस्खे की मांग करें' : 'Request this Remedy from Vaidya Ji'}
+                  </Button>
                 </div>
               </div>
             )}
