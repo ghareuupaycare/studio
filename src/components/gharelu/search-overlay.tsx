@@ -30,7 +30,6 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
   const isHindi = lang === 'hi';
   const db = useFirestore();
   const logTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
@@ -51,7 +50,6 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
     });
   }, [query]);
 
-  // Automatic logging logic for analytics (unresolved searches)
   useEffect(() => {
     if (logTimeoutRef.current) clearTimeout(logTimeoutRef.current);
 
@@ -93,7 +91,6 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
     const sanitizedQuery = currentRequest.toLowerCase().replace(/[/\\#?]/g, '');
     const docRef = doc(db, 'requested_remedies', sanitizedQuery);
 
-    // Reset input immediately for fast feedback
     setManualRequest('');
 
     setDoc(docRef, {
@@ -104,8 +101,6 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
     }, { merge: true })
       .then(() => {
         setShowSuccessAlert(true);
-        // Scroll to top to ensure visibility
-        window.scrollTo({ top: 0, behavior: 'smooth' });
         setTimeout(() => setShowSuccessAlert(false), 5000);
       })
       .catch(async (error) => {
@@ -164,6 +159,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
       <DialogContent 
         className={cn(
           "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[50vh] max-w-none p-0 border-none flex flex-col transition-all duration-300 ease-in-out rounded-none shadow-2xl z-[100]",
+          "[&>button]:text-amber-400 [&>button]:opacity-100 [&>button]:scale-125 [&>button]:transition-all [&>button]:duration-200",
           isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7] text-foreground"
         )}
       >
@@ -182,7 +178,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
               autoFocus
               placeholder={isHindi ? "जैसे: बुखार, fever, bukhar..." : "e.g., fever, cold, acidity..."}
               className={cn(
-                "pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-white/40 focus-visible:ring-accent text-lg rounded-2xl"
+                "pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-white/40 focus-visible:ring-amber-400 text-lg rounded-2xl"
               )}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -200,8 +196,6 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
 
         <ScrollArea className="flex-1 w-full bg-transparent">
           <div className="p-4 w-full max-w-2xl mx-auto">
-            
-            {/* INLINE SUCCESS BANNER - Highest visibility spot */}
             {showSuccessAlert && (
               <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="bg-emerald-600 text-white p-5 rounded-2xl shadow-[0_10px_40px_rgba(5,150,105,0.4)] flex items-start gap-4 border-2 border-emerald-400/30">
@@ -239,13 +233,13 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                     className={cn(
                       "w-full p-4 rounded-xl border transition-all text-left flex items-center gap-4 group cursor-pointer active:scale-[0.98]",
                       isNight 
-                        ? "bg-white/5 border-white/5 hover:border-accent text-white" 
-                        : "bg-white border-primary/5 hover:border-accent text-primary shadow-sm"
+                        ? "bg-white/5 border-white/5 hover:border-amber-400 text-white" 
+                        : "bg-white border-primary/5 hover:border-amber-400 text-primary shadow-sm"
                     )}
                   >
                     <div className={cn(
                       "w-10 h-10 rounded-lg flex items-center justify-center font-black text-sm shrink-0 transition-colors duration-500",
-                      isNight ? "bg-white/5 text-accent" : "bg-accent/5 text-accent"
+                      isNight ? "bg-white/5 text-amber-400" : "bg-amber-400/5 text-amber-400"
                     )}>
                       {toEnglishDigits(remedy.serialNumber)}
                     </div>
@@ -257,7 +251,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                         {highlightMatchText(remedy.introduction[lang], query)}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 opacity-30 group-hover:opacity-100 group-hover:text-accent" />
+                    <ChevronRight className="w-4 h-4 opacity-30 group-hover:opacity-100 group-hover:text-amber-400" />
                   </button>
                 ))}
               </div>
@@ -286,7 +280,6 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                   </p>
                 </div>
 
-                {/* Manual Request Form */}
                 <div className="w-full space-y-3 pt-4 border-t border-emerald-500/10">
                   <Input
                     placeholder={isHindi ? "अपनी बीमारी या समस्या का नाम यहाँ लिखें..." : "Enter your health concern here..."}
