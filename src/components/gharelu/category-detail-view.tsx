@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Language, Theme } from '@/app/page';
-import { cn } from '@/lib/utils';
+import { cn, toEnglishDigits } from '@/lib/utils';
 import { ChevronLeft, ArrowRight, BookOpen } from 'lucide-react';
 import { REMEDIES, Remedy } from '@/lib/remedy-data';
 import { RemedyDetail } from './remedy-detail';
@@ -50,7 +50,7 @@ export const CategoryDetailView = ({
       illnesses: [
         {
           id: 'general-fever',
-          title: isHindi ? '१. सामान्य बुखार' : '1. General Fever',
+          title: isHindi ? '1. सामान्य बुखार' : '1. General Fever',
           description: isHindi 
             ? 'हल्के बुखार और शारीरिक थकान के लिए प्राकृतिक उपचार' 
             : 'Natural treatments for mild fever and physical fatigue'
@@ -94,7 +94,7 @@ export const CategoryDetailView = ({
             "font-black font-headline leading-tight tracking-wide text-3xl sm:text-4xl",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
-            {selectedRemedy ? selectedRemedy.name[lang] : (selectedIllnessId ? currentIllness?.title : activeCategory.title)}
+            {toEnglishDigits(selectedRemedy ? selectedRemedy.name[lang] : (selectedIllnessId ? (currentIllness?.title || '') : activeCategory.title))}
           </h2>
           {(selectedIllnessId || selectedRemedy) && (
             <span className={cn(
@@ -127,13 +127,13 @@ export const CategoryDetailView = ({
                   "text-3xl font-black transition-colors leading-tight",
                   isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
                 )}>
-                  {illness.title}
+                  {toEnglishDigits(illness.title)}
                 </h3>
                 <p className={cn(
                   "text-lg font-bold opacity-70 transition-colors leading-relaxed",
                   isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
                 )}>
-                  {illness.description}
+                  {toEnglishDigits(illness.description)}
                 </p>
               </div>
               <div className={cn(
@@ -171,7 +171,7 @@ export const CategoryDetailView = ({
                 {remedy.serialNumber}
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-xl leading-snug">{remedy.name[lang]}</h4>
+                <h4 className="font-bold text-xl leading-snug">{toEnglishDigits(remedy.name[lang])}</h4>
                 <div className="flex items-center gap-3 mt-2">
                   <span className={cn(
                     "px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider",
@@ -179,7 +179,7 @@ export const CategoryDetailView = ({
                     remedy.severity === 'moderate' ? "bg-yellow-500/10 text-yellow-600" :
                     "bg-red-500/10 text-red-600"
                   )}>
-                    {remedy.severityLabel[lang]}
+                    {toEnglishDigits(remedy.severityLabel[lang])}
                   </span>
                 </div>
               </div>

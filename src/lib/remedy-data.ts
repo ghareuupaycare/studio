@@ -36,10 +36,10 @@ export type Remedy = {
 };
 
 export const CATEGORIES = [
-  { id: 'fever', label: 'मौसमी बुखार एवं फ्लू', icon: 'Thermometer', image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl },
-  { id: 'joints', label: 'घुटनों का दर्द', icon: 'Accessibility', image: PlaceHolderImages.find(i => i.id === 'joint-pain')?.imageUrl },
-  { id: 'respiratory', label: 'खांसी और सर्दी', icon: 'Wind', image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl },
-  { id: 'digestion', label: 'पाचन', icon: 'Stomach', image: PlaceHolderImages.find(i => i.id === 'digestion')?.imageUrl },
+  { id: 'fever', label: '1. मौसमी बुखार एवं फ्लू', icon: 'Thermometer', image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl },
+  { id: 'joints', label: '2. घुटनों का दर्द', icon: 'Accessibility', image: PlaceHolderImages.find(i => i.id === 'joint-pain')?.imageUrl },
+  { id: 'respiratory', label: '3. खांसी और सर्दी', icon: 'Wind', image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl },
+  { id: 'digestion', label: '4. पाचन', icon: 'Stomach', image: PlaceHolderImages.find(i => i.id === 'digestion')?.imageUrl },
 ];
 
 const GENERAL_DISCLAIMER: LocalizedString = {
@@ -419,7 +419,7 @@ export const REMEDIES: Remedy[] = [
     doses: [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "2 चम्मच काढ़ा सुबह और 2 चम्मच शाम को (बराबर मात्रा में शहद मिलाकर)", en: "2 teaspoons of decoction morning and evening (mixed with an equal amount of honey)" } },
       { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा कप काढ़ा सुबह और आधा कप शाम (भोजन के आधे घंटे बाद, गुनगुना)", en: "Half a cup of decoction morning and evening (half an hour after meals, served lukewarm)" } },
-      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप काढ़ा सुबह और आधा कप शाम (कुल 2 बार प्रतिदिन, छानकर गुनगुना पिएं)", en: "Half a cup of decoction morning and evening (Total twice daily, strained and served lukewarm)" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप काढ़ा सुबह... आधा कप शाम (कुल 2 बार प्रतिदिन, छानकर गुनगुना पिएं)", en: "Half a cup of decoction morning and evening (Total twice daily, strained and served lukewarm)" } },
       { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक चौथाई (1/4) कप काढ़ा दिन में 2 बार (हल्का गुनगुना, केवल भोजन के बाद)", en: "Quarter (1/4) cup of decoction twice a day (mildly lukewarm, strictly after meals)" } }
     ],
     ingredients: {
@@ -508,7 +508,7 @@ export const REMEDIES: Remedy[] = [
   {
     id: 'gf-10',
     serialNumber: '10',
-    name: { hi: 'बुखार के बाद की भयंकर कमजोरी मिटाकर शरीर में तुरंत ताकत लाने का घरेलू उपाय', en: 'Home Remedy to Eradicate Post-Fever Weakness and Restore Instant Body Strength' },
+    name: { hi: 'बुखार के बाद की भयंकर कमजोरी मिटाकर शरीर में तुरंत ताकत लाने का घरेलू उपाय', en: '10. Home Remedy to Eradicate Post-Fever Weakness and Restore Instant Body Strength' },
     illnessId: 'general-fever',
     introduction: {
       hi: "बुखार ठीक होने के बाद अक्सर शरीर में बहुत ज्यादा कमजोरी आ जाती है, चक्कर आते हैं और हाथ-पैर दुखते हैं। ऐसी स्थिति में किचन में मौजूद मखाने (जो कैल्शियम और प्रोटीन से भरपूर हैं) और मुनक्का (जो नया खून बनाता है) का यह मेल शरीर की खोई हुई ताकत को 3 से 5 दिनों में वापस लौटा देता है। यह कमजोरी को जड़ से मिटाता है।",
