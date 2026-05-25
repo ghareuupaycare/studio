@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 interface BottomNavProps {
   lang: Language;
   theme: Theme;
-  currentView: 'home';
+  currentView: 'home' | 'details' | string;
   onViewChange: (view: 'home') => void;
   enableScrollHide?: boolean;
 }
@@ -87,7 +87,7 @@ ${window.location.origin}`;
       <button
         onClick={() => onViewChange('home')}
         className={cn(
-          "flex flex-col items-center gap-1.5 transition-all duration-200 group outline-none",
+          "flex flex-col items-center gap-1.5 transition-all duration-200 group outline-none cursor-pointer active:opacity-80",
           currentView === 'home' ? "text-accent" : "text-white/60 hover:text-white"
         )}
       >
@@ -108,7 +108,7 @@ ${window.location.origin}`;
       <button
         onClick={handleShare}
         className={cn(
-          "flex flex-col items-center gap-1.5 transition-all duration-200 group outline-none text-accent"
+          "flex flex-col items-center gap-1.5 transition-all duration-200 group outline-none cursor-pointer active:opacity-80 text-accent"
         )}
       >
         <div className={cn(

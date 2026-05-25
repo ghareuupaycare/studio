@@ -34,6 +34,14 @@ export default function GhareluUpayApp() {
     setIsDetailView(false);
   };
 
+  const handleGoHome = () => {
+    setSelectedCategoryId(null);
+    setSelectedRemedyId(null);
+    setIsDetailView(false);
+    // Smooth scroll to top when returning home
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className={cn(
       "min-h-screen flex flex-col transition-colors duration-500",
@@ -75,8 +83,8 @@ export default function GhareluUpayApp() {
       <BottomNav 
         lang={lang} 
         theme={theme} 
-        currentView="home" 
-        onViewChange={() => {}} 
+        currentView={!selectedCategoryId ? 'home' : 'details'} 
+        onViewChange={handleGoHome} 
         enableScrollHide={isDetailView}
       />
     </div>
