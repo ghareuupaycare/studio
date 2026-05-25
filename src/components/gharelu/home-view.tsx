@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -50,7 +51,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
 
         {/* ROW 2 - SUBTITLE 1 */}
         <p className={cn(
-          "text-2xl sm:text-3xl font-black mb-4 transition-colors duration-500 text-amber-400 text-center",
+          "text-[24px] font-bold mb-4 transition-colors duration-500 text-amber-400 text-center leading-tight",
           "max-w-prose"
         )}>
           {isHindi ? (
