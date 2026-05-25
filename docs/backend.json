@@ -1,0 +1,41 @@
+
+{
+  "entities": {
+    "RequestedRemedy": {
+      "title": "RequestedRemedy",
+      "description": "A record of a search query that returned no results, used for analytics.",
+      "type": "object",
+      "properties": {
+        "searchQuery": {
+          "type": "string",
+          "description": "The exact search term entered by the user."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The last time this query was searched."
+        },
+        "count": {
+          "type": "number",
+          "description": "The number of times this term has been searched."
+        }
+      },
+      "required": [
+        "searchQuery",
+        "timestamp",
+        "count"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "google.com"
+    ]
+  },
+  "firestore": {
+    "/requested_remedies/{queryId}": {
+      "schema": "#/backend/entities/RequestedRemedy",
+      "description": "Collection of search terms that yielded no results."
+    }
+  }
+}

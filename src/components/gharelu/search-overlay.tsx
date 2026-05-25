@@ -1,13 +1,16 @@
+
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Search, X, ChevronRight } from 'lucide-react';
+import { Search, X, ChevronRight, MessageCircleOff } from 'lucide-react';
 import { REMEDIES } from '@/lib/remedy-data';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useFirestore } from '@/firebase';
+import { doc, setDoc, getDoc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
 
 interface SearchOverlayProps {
   isOpen: boolean;
@@ -21,6 +24,8 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
   const [query, setQuery] = useState('');
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
+  const db = useFirestore();
+  const logTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
@@ -40,6 +45,44 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
       return searchableText.includes(normalizedQuery);
     });
   }, [query]);
+
+  // Logging logic for unresolved searches
+  useEffect(() => {
+    if (logTimeoutRef.current) clearTimeout(logTimeoutRef.current);
+
+    if (query.trim() && results.length === 0) {
+      logTimeoutRef.current = setTimeout(async () => {
+        if (!db) return;
+        
+        const sanitizedQuery = query.toLowerCase().trim().replace(/[/\\#?]/g, '');
+        if (!sanitizedQuery) return;
+
+        const docRef = doc(db, 'requested_remedies', sanitizedQuery);
+        
+        try {
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            updateDoc(docRef, {
+              count: increment(1),
+              timestamp: serverTimestamp()
+            });
+          } else {
+            setDoc(docRef, {
+              searchQuery: query.trim(),
+              count: 1,
+              timestamp: serverTimestamp()
+            });
+          }
+        } catch (error) {
+          // Silent fail for analytics
+        }
+      }, 2000); // 2 second debounce for logging
+    }
+
+    return () => {
+      if (logTimeoutRef.current) clearTimeout(logTimeoutRef.current);
+    };
+  }, [query, results.length, db]);
 
   const highlightMatchText = (text: string, currentQuery: string) => {
     if (!currentQuery.trim()) return toEnglishDigits(text);
@@ -71,14 +114,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
     );
   };
 
-  /**
-   * Universal Routing Fix: 
-   * Dynamically resolves the category for any remedy to ensure absolute 
-   * root-level state transition regardless of current sub-page context.
-   */
   const handleResultClick = (remedyId: string, illnessId: string) => {
-    // In a production app, this would be a lookup. For MVP, we map current illnessIds to 'fever'.
-    // This allows for future-proof global routing as more categories are added.
     let catId = 'fever'; 
     if (illnessId.includes('joint')) catId = 'joints';
     if (illnessId.includes('cough') || illnessId.includes('respiratory')) catId = 'respiratory';
@@ -172,16 +208,27 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-10 text-center space-y-4">
-                <div className="p-4 rounded-full bg-red-500/10 text-red-500">
-                  <X className="w-8 h-8" />
+              <div className="flex flex-col items-center justify-center py-10 text-center space-y-6 max-w-sm mx-auto">
+                <div className={cn(
+                  "p-5 rounded-full",
+                  isNight ? "bg-primary/20 text-primary" : "bg-primary/10 text-primary"
+                )}>
+                  <MessageCircleOff className="w-10 h-10" />
                 </div>
-                <div className="space-y-1">
-                  <p className="font-black text-lg">
-                    {isHindi ? 'कोई परिणाम नहीं मिला' : 'No results found'}
-                  </p>
-                  <p className="text-xs opacity-50">
-                    {isHindi ? 'कृपया कोई और शब्द लिखकर देखें।' : 'Try searching for something else.'}
+                <div className="space-y-3">
+                  <h3 className={cn(
+                    "text-xl font-headline font-black",
+                    isNight ? "text-white" : "text-primary"
+                  )}>
+                    {isHindi ? 'अभी यह नुस्खा उपलब्ध नहीं है' : 'Remedy Not Available Yet'}
+                  </h3>
+                  <p className={cn(
+                    "text-sm leading-relaxed font-medium opacity-80",
+                    isNight ? "text-zinc-400" : "text-muted-foreground"
+                  )}>
+                    {isHindi 
+                      ? "क्षमा करें! वैद्य जी जल्द ही आपकी खोजी गई बीमारी का सटीक और प्रामाणिक घरेलू उपचार यहाँ अपलोड करेंगे। स्वस्थ रहें, सुखी रहें!"
+                      : "Sorry! Vaidya Ji will soon upload accurate and authentic home remedies for your searched illness. Stay healthy, stay happy!"}
                   </p>
                 </div>
               </div>
