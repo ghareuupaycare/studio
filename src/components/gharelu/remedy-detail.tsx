@@ -34,19 +34,16 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const currentDose = remedy.doses.find(d => d.ageRange.hi === selectedAgeRangeKey);
 
-  // SECTION HEADINGS: text-xl (20pt+), Bold, mb-4
   const headingClass = cn(
     "text-xl font-bold mb-4 flex items-center gap-3 leading-[1.6]",
     isNight ? "text-white" : "text-[#14532D]"
   );
 
-  // BODY TEXT & PARAGRAPHS: text-lg (17pt+), Medium, 1.6x leading
   const bodyTextClass = cn(
     "text-lg leading-[1.6] font-medium",
     isNight ? "text-[#E5E7EB]" : "text-[#1E293B]"
   );
 
-  // BULLET POINTS & GRID TEXT: text-lg (17pt+), Medium, Relaxed leading
   const listTextClass = cn(
     "text-lg leading-relaxed font-medium",
     isNight ? "text-[#E5E7EB]" : "text-[#1E293B]"
@@ -54,13 +51,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const handleShare = async () => {
     if (typeof navigator === 'undefined' || !navigator.share) {
-      toast({
-        title: isHindi ? 'साझेदारी समर्थित नहीं है' : 'Sharing Not Supported',
-        description: isHindi 
-          ? 'आपका ब्राउज़र सीधे मोबाइल ऐप्स के साथ साझा करने का समर्थन नहीं करता है।' 
-          : 'Your browser does not support direct sharing with mobile apps.',
-        variant: "destructive"
-      });
       return;
     }
 
@@ -79,18 +69,13 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       });
     } catch (error) {
       if ((error as any).name !== 'AbortError') {
-        toast({
-          title: isHindi ? 'साझा करने में त्रुटि' : 'Sharing Error',
-          description: isHindi ? 'साझाकरण पैनल खोलने में समस्या आई।' : 'Could not open the sharing panel.',
-          variant: "destructive"
-        });
+        console.error("Sharing failed", error);
       }
     }
   };
 
   return (
     <div className="space-y-10 animate-in fade-in duration-500 pb-32 relative overflow-y-auto h-auto">
-      {/* 1. Header with Favorite Button */}
       <div className="flex items-center justify-between mb-4">
         <div className={cn(
           "px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest",
@@ -113,7 +98,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </Button>
       </div>
 
-      {/* 2. Introduction Section */}
       <div className={cn(
         "p-8 rounded-[2.5rem] border transition-colors shadow-sm",
         isNight ? "bg-white/5 border-white/10" : "bg-primary/5 border-primary/10"
@@ -126,14 +110,23 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </p>
       </div>
 
-      {/* 3. Smart Dose Selector Section */}
       <div className={cn(
         "p-8 rounded-[2.5rem] border overflow-hidden shadow-sm",
         isNight ? "bg-black border-white" : "bg-white border-[#14532D]"
       )}>
-        <div className="flex items-center justify-between mb-8">
-          <h3 className={headingClass}>{isHindi ? 'स्मार्ट खुराक और मात्रा' : 'Smart Dose'}</h3>
-          <Stethoscope className="w-8 h-8 opacity-40 shrink-0" />
+        <div className="flex flex-col mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className={headingClass}>{isHindi ? 'स्मार्ट खुराक और मात्रा' : 'Smart Dose'}</h3>
+            <Stethoscope className="w-8 h-8 opacity-40 shrink-0" />
+          </div>
+          <p className={cn(
+            "text-sm font-bold opacity-70 leading-relaxed",
+            isNight ? "text-white/80" : "text-primary/70"
+          )}>
+            {isHindi 
+              ? 'उपरोक्त कुल सामग्री में से अपनी उम्र के अनुसार केवल नीचे चुनी गई खुराक ही लें:' 
+              : 'From the total ingredients above, consume only the specific dosage selected for your age below:'}
+          </p>
         </div>
         
         <div className="flex flex-wrap gap-4 mb-8">
@@ -158,7 +151,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           isNight ? "bg-white/10" : "bg-accent/10"
         )}>
           <span className={cn(
-            "text-xl font-semibold leading-[1.6]",
+            "text-lg font-semibold leading-[1.6]",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
             {currentDose?.dose[lang]}
@@ -166,13 +159,14 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      {/* 4. Ingredients & Prep Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className={cn(
           "p-8 rounded-[2.5rem] border shadow-sm",
           isNight ? "bg-black border-white/20" : "bg-[#FDF6E2] border-primary/10"
         )}>
-          <h3 className={cn(headingClass, "text-accent")}>{isHindi ? 'आवश्यक सामग्री' : 'Ingredients'}</h3>
+          <h3 className={cn(headingClass, "text-accent")}>
+            {isHindi ? 'आवश्यक सामग्री (कुल स्टॉक या बनाने के लिए)' : 'Required Ingredients (Total Stock / Base Quantity)'}
+          </h3>
           <ul className="space-y-5">
             {remedy.ingredients[lang].map((item, i) => (
               <li key={i} className={cn(listTextClass, "flex items-start gap-3")}>
@@ -191,7 +185,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      {/* 5. Usage Section */}
       <div className={cn(
         "p-10 rounded-[3rem] border-2 shadow-xl transition-all duration-500",
         isNight 
@@ -212,7 +205,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </p>
       </div>
 
-      {/* 6. Diet Plan Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className={cn(
           "p-8 rounded-[2.5rem] border border-green-500/20 shadow-sm transition-colors duration-500",
@@ -263,7 +255,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      {/* 7. Routine Section */}
       <div className={cn(
         "p-10 rounded-[3rem] border shadow-md",
         isNight ? "bg-black border-white/20" : "bg-[#FDF6E2] border-primary/10"
@@ -296,7 +287,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      {/* 8. Safety & Disclaimer Section */}
       <div className="space-y-8">
         <div className={cn(
           "p-8 rounded-[3rem] border border-accent/40 shadow-sm",
@@ -321,7 +311,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      {/* 9. Native Share Button */}
       <div className="pt-8 pb-16 flex justify-center">
         <Button
           onClick={handleShare}
