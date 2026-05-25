@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -46,7 +47,7 @@ export const CategoryDetailView = ({
 
   const categoryContent = {
     fever: {
-      title: isHindi ? 'मौसमी बुखार एवं फ्लू' : 'Seasonal Fever & Flu',
+      title: isHindi ? '1. मौसमी बुखार एवं फ्लू' : '1. Seasonal Fever & Flu',
       illnesses: [
         {
           id: 'general-fever',
@@ -77,7 +78,7 @@ export const CategoryDetailView = ({
   const currentIllness = activeCategory.illnesses.find(i => i.id === selectedIllnessId);
 
   return (
-    <div className="space-y-10 animate-in slide-in-from-right-4 duration-500 pb-32">
+    <div className="space-y-10 animate-in slide-in-from-right-4 duration-500 pb-10">
       {/* Header */}
       <div className="flex items-center gap-5">
         <button 

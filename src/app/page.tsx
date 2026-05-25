@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -51,7 +52,6 @@ export default function GhareluUpayApp() {
 
   const handleSelectRemedyFromFavorites = (remedy: Remedy) => {
     // Map internal illness IDs to the main category IDs used by HomeView
-    // In our case, currently only 'general-fever' maps to 'fever'
     const categoryMap: Record<string, string> = {
       'general-fever': 'fever',
     };
@@ -107,7 +107,6 @@ export default function GhareluUpayApp() {
             <HomeView lang={lang} theme={theme} onSelectCategory={handleSelectCategory} />
           )}
         </div>
-        <div className="h-[400px]" />
       </main>
 
       <BottomNav 

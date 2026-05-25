@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Remedy } from '@/lib/remedy-data';
 import { Language, Theme } from '@/app/page';
@@ -106,7 +107,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   };
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-500 pb-32 relative overflow-y-auto h-auto">
+    <div className="space-y-10 animate-in fade-in duration-500 pb-10 relative overflow-y-auto h-auto">
       <div className="flex items-center justify-between mb-4">
         <div className={cn(
           "px-5 py-2 rounded-full text-sm font-black uppercase tracking-widest",
@@ -351,7 +352,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      <div className="pt-8 pb-16 flex flex-col sm:flex-row justify-center gap-4 px-6">
+      {/* Action Buttons Container */}
+      <div className="pt-8 pb-10 flex flex-col items-center justify-center gap-4 px-6 w-full mx-auto">
         <Button
           onClick={handleShare}
           className={cn(
