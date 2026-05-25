@@ -40,6 +40,8 @@ export const FavoritesOverlay = ({ isOpen, onClose, lang, theme, favorites, onSe
       <DialogContent 
         className={cn(
           "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[50vh] max-w-none p-0 border-none flex flex-col transition-all duration-300 ease-in-out rounded-none shadow-2xl z-[100]",
+          "active:ring-0 focus:ring-0 focus-visible:ring-0 outline-none",
+          "[&>button]:text-accent [&>button]:opacity-100 [&>button]:hover:text-accent [&>button]:scale-125 [&>button]:transition-all [&>button]:duration-200",
           isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7] text-foreground"
         )}
       >
