@@ -50,7 +50,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
 
         {/* ROW 2 - SUBTITLE 1 */}
         <p className={cn(
-          "text-xl sm:text-2xl font-bold mb-4 transition-colors duration-500 text-amber-400 text-center",
+          "text-2xl sm:text-3xl font-black mb-4 transition-colors duration-500 text-amber-400 text-center",
           "max-w-prose"
         )}>
           {isHindi ? (
@@ -65,8 +65,8 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
 
         {/* ROW 3 - SUBTITLE 2 */}
         <p className={cn(
-          "text-base sm:text-lg font-bold leading-relaxed mb-8 transition-colors duration-500 text-center",
-          isNight ? "text-white/80" : "text-white/90",
+          "text-xl sm:text-2xl font-bold leading-relaxed mb-8 transition-colors duration-500 text-center",
+          "text-white",
           "max-w-prose"
         )}>
           {isHindi ? (
