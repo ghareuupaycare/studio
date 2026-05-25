@@ -35,10 +35,10 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
     <div className="space-y-12 animate-in fade-in duration-700 w-full max-w-2xl px-4 sm:px-6">
       {/* Top Premium Brand Banner */}
       <section className={cn(
-        "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-center justify-center p-8 sm:p-12 text-center transition-all duration-500 border-2",
+        "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-center justify-center p-8 sm:p-12 text-center transition-all duration-500 border border-amber-400/40",
         isNight 
-          ? "bg-black border-white" 
-          : "bg-[#14532D] border-[#14532D]"
+          ? "bg-black" 
+          : "bg-[#14532D]"
       )}>
         
         {/* ROW 1 - MAIN TITLE */}
