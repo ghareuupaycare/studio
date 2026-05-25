@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Search, Heart, Languages, Moon, Sun } from 'lucide-react';
+import { Bell, Search, Languages, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Language, Theme } from '@/app/page';
 import { cn } from '@/lib/utils';
@@ -9,11 +9,9 @@ interface TopBarProps {
   theme: Theme;
   onToggleLanguage: () => void;
   onToggleTheme: () => void;
-  onShowFavorites: () => void;
-  hasFavorites: boolean;
 }
 
-export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme, onShowFavorites, hasFavorites }: TopBarProps) => {
+export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme }: TopBarProps) => {
   const isNight = theme === 'night';
 
   const headerBtnClass = "text-white/90 hover:bg-white/5 hover:text-[#FBBF24] active:text-[#B45309] active:scale-95 transition-all duration-200 border-none shadow-none focus-visible:ring-0";
@@ -55,17 +53,6 @@ export const TopBar = ({ lang, theme, onToggleLanguage, onToggleTheme, onShowFav
         </Button>
         <Button variant="ghost" size="icon" className={headerBtnClass}>
           <Search className="w-5 h-5" />
-        </Button>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={onShowFavorites}
-          className={cn(
-            headerBtnClass,
-            hasFavorites && "text-[#FBBF24] hover:text-[#FBBF24]/80"
-          )}
-        >
-          <Heart className={cn("w-5 h-5", hasFavorites && "fill-current")} />
         </Button>
       </div>
     </header>
