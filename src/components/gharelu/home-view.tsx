@@ -42,7 +42,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
   ];
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-700 w-full max-w-2xl mx-auto px-4 sm:px-0">
+    <div className="space-y-12 animate-in fade-in duration-700 w-full max-w-2xl px-4 sm:px-6 text-left">
       {/* Top Premium Brand Banner */}
       <section className={cn(
         "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-start justify-center p-8 sm:p-12 text-left transition-all duration-500 border-2",
@@ -52,28 +52,28 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
       )}>
         
         <h2 className={cn(
-          "text-3xl sm:text-5xl font-black leading-tight mb-4 transition-colors duration-500",
+          "text-4xl sm:text-6xl font-black leading-tight mb-6 transition-colors duration-500",
           isNight ? "text-white" : "text-white"
         )}>
           {bannerContent.title}
         </h2>
 
         <p className={cn(
-          "text-lg sm:text-xl font-bold mb-4 transition-colors duration-500",
+          "text-xl sm:text-2xl font-bold mb-4 transition-colors duration-500",
           isNight ? "text-accent" : "text-accent"
         )}>
           {bannerContent.sub1}
         </p>
 
         <p className={cn(
-          "text-base sm:text-lg font-medium leading-relaxed mb-6 transition-colors duration-500",
+          "text-lg sm:text-xl font-bold leading-loose mb-8 transition-colors duration-500",
           isNight ? "text-white/80" : "text-white/90"
         )}>
           {bannerContent.sub2}
         </p>
 
         <div className={cn(
-          "px-6 py-3 rounded-full font-black text-lg sm:text-xl transition-all shadow-lg",
+          "px-8 py-4 rounded-full font-black text-xl sm:text-2xl transition-all shadow-lg",
           isNight ? "bg-white text-black" : "bg-accent text-white"
         )}>
           {bannerContent.tagline}
