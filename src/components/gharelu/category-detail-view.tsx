@@ -70,6 +70,13 @@ export const CategoryDetailView = ({
           description: isHindi 
             ? 'हल्के बुखार और शारीरिक थकान के लिए प्राकृतिक उपचार' 
             : 'Natural treatments for mild fever and physical fatigue'
+        },
+        {
+          id: 'common-cold',
+          title: isHindi ? '2. नजला और जुकाम' : '2. Chronic Cold & Flu',
+          description: isHindi 
+            ? 'नाक बहना, निरंतर छींकें आना और बंद नाक के लिए अचूक घरेलू उपचार' 
+            : 'Effective home remedies for runny nose, continuous sneezing, and nasal congestion'
         }
       ]
     },
@@ -148,7 +155,7 @@ export const CategoryDetailView = ({
                   "flex items-center justify-between shadow-xl hover:-translate-y-1 active:scale-[0.98]",
                   isNight 
                     ? "bg-black border-white text-white active:bg-white active:text-black" 
-                    : "bg-[#FDF6E2] border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
+                    : "bg-white border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
                 )}
               >
                 <div className="space-y-2">
@@ -220,6 +227,11 @@ export const CategoryDetailView = ({
               <BookOpen className="w-6 h-6 opacity-40 group-hover:opacity-100 transition-opacity" />
             </button>
           ))}
+          {illnessRemedies.length === 0 && (
+            <div className="p-12 text-center rounded-[2.5rem] border border-dashed border-muted-foreground/30 opacity-50">
+              {isHindi ? 'जल्द आ रहा है...' : 'Coming soon...'}
+            </div>
+          )}
         </div>
       ) : (
         /* Level 3: Remedy Detail Matrix */
