@@ -40,7 +40,7 @@ export const RemedyCard = ({ remedy, isFavorite, lang, theme, onToggleFavorite, 
 
         <div className="pr-10">
           <h3 className={cn(
-            "font-headline text-xl font-bold leading-tight transition-colors",
+            "font-headline text-[24px] font-bold leading-tight transition-colors",
             isNight ? "text-[#34D399]" : "text-primary group-hover:text-accent"
           )}>
             {remedy.name[lang]}

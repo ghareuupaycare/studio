@@ -160,7 +160,7 @@ export const CategoryDetailView = ({
               >
                 <div className="space-y-2">
                   <h3 className={cn(
-                    "text-2xl font-black transition-colors leading-tight",
+                    "text-[24px] font-black transition-colors leading-tight",
                     isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
                   )}>
                     {toEnglishDigits(illness.title)}
