@@ -39,7 +39,7 @@ export type Remedy = {
 };
 
 export const CATEGORIES = [
-  { id: 'fever', label: '1. मौसमी बुखार और फ्लू', icon: 'Thermometer', image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl },
+  { id: 'fever', label: '1. मौसमी बुखार एवं फ्लू', icon: 'Thermometer', image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl },
   { id: 'joints', label: '2. घुटनों का दर्द', icon: 'Accessibility', image: PlaceHolderImages.find(i => i.id === 'joint-pain')?.imageUrl },
   { id: 'respiratory', label: '3. खांसी और सर्दी', icon: 'Wind', image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl },
   { id: 'digestion', label: '4. पाचन', icon: 'Stomach', image: PlaceHolderImages.find(i => i.id === 'digestion')?.imageUrl },
@@ -58,6 +58,7 @@ const AGE_BRACKETS = {
 };
 
 export const REMEDIES: Remedy[] = [
+  // --- CATEGORY 1: सामान्य बुखार ---
   {
     id: 'gf-1',
     serialNumber: '1',
@@ -65,48 +66,362 @@ export const REMEDIES: Remedy[] = [
     illnessId: 'general-fever',
     introduction: {
       hi: "जब शरीर का तापमान सामान्य से अधिक हो जाता है, तो उसे सामान्य बुखार कहते हैं। आयुर्वेद में इसे 'ज्वर' कहा जाता है, जो मुख्य रूप से अनुचित खान-पान, मौसम के अचानक बदलाव या शरीर में संचित टॉक्सिंस (आमदोष) के कारण मंदाग्नि होने से होता है। यह शरीर की रक्षा प्रणाली है जो बाहरी संक्रमण से लड़ती है।",
-      en: "When the body temperature rises above normal, it is called a general fever. In Ayurveda, it is known as 'Jvara', primarily caused by improper diet, sudden weather changes, or accumulated toxins (Aamdosha) leading to weakened digestion (Mandagni)."
+      en: "General fever, known as 'Jvara' in Ayurveda, is caused by Mandagni (weakened digestion) due to toxins. This Tulsi-Giloy brew is a powerful natural defense."
     },
     doses: [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "5 से 10 मिलीलीटर", en: "5 to 10 ml" } },
       { ageRange: AGE_BRACKETS.youth, dose: { hi: "20 से 30 मिलीलीटर", en: "20 to 30 ml" } },
       { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "15 से 20 मिलीलीटर", en: "15 to 20 ml" } },
-      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "10 से 15 मिलीलीटर (हल्के गुनगुने पानी के साथ)", en: "10 to 15 ml (with lukewarm water)" } }
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "10 से 15 मिलीलीटर", en: "10 to 15 ml" } }
     ],
     ingredients: {
       hi: ['7-8 ताजी तुलसी की पत्तियां', '3-4 इंच गिलोय की डंडी (कुचली हुई)', '2-3 साबुत काली मिर्च', '1 छोटा टुकड़ा अदरक'],
-      en: ['7-8 fresh Tulsi leaves', '3-4 inches Giloy stick (crushed)', '2-3 whole black peppercorns', '1 small piece of ginger']
+      en: ['7-8 Tulsi leaves', '3-4 inch Giloy stick', '2-3 Black peppercorns', '1 small ginger piece']
     },
     preparation: {
       hi: '1 गिलास पानी में कुचली हुई गिलोय, तुलसी, काली मिर्च और अदरक डालकर धीमी आंच पर तब तक उबालें जब तक पानी आधा गिलास न रह जाए। फिर इसे छान लें।',
-      en: 'Add crushed Giloy, Tulsi, black pepper, and ginger into a glass of water. Boil it on low heat until the water reduces to half a glass. Strain it.'
+      en: 'Boil ingredients in 1 glass of water until reduced to half. Strain it.'
     },
     usage: {
-      hi: 'इस काढ़े को हल्का गुनगुना करके सुबह और शाम को खाली पेट (भोजन करने से 1 घंटे पहले) चाय की तरह धीरे-धीरे सिप लेकर पिएं।',
-      en: 'Drink this decoction warm twice a day, in the morning and evening on an empty stomach (1 hour before meals), sipping it slowly like tea.'
+      hi: 'इसे हल्का गुनगुना करके सुबह और शाम को खाली पेट चाय की तरह धीरे-धीरे सिप लेकर पिएं।',
+      en: 'Sip warm twice daily on an empty stomach.'
     },
     dietEat: {
-      hi: 'मूंग की पतली खिचड़ी, दलिया, उबले हुए सेब का गूदा (बिना छिलके का), गुनगुना पानी। फायदेमंद फल: अनार और पपीता। फायदेमंद सलाद: खीरा (कम मात्रा में) और उबली हुई लौकी-तोरई।',
-      en: 'Thin Moong dal khichdi, porridge, boiled apple pulp (without skin), lukewarm water. Beneficial Fruits: Pomegranate and Papaya. Beneficial Salad: Cucumber (in small amounts) and boiled Bottle Gourd/Sponge Gourd.'
+      hi: 'मूंग की पतली खिचड़ी, दलिया, उबले हुए सेब का गूदा, गुनगुना पानी।',
+      en: 'Thin Moong dal khichdi, porridge, boiled apple, lukewarm water.'
     },
     dietAvoid: {
-      hi: 'ठंडा पानी, फ्रिज का खाना, तली-भुनी चीजें, मैदा, भारी भोजन और दूध।',
-      en: 'Cold water, refrigerated food, fried items, refined flour (Maida), heavy meals, and milk.'
+      hi: 'ठंडा पानी, फ्रिज का खाना, तली-भुनी चीजें, भारी भोजन।',
+      en: 'Cold water, refrigerated food, fried items, heavy meals.'
     },
     strictAvoid: {
-      hi: 'पैकेट वाले चीजें (चिप्स, बिस्कुट), प्रोसेस्ड फूड, कोल्ड ड्रिंक्स और बाजार का डिब्बा-बंद सूप।',
-      en: 'Packaged items (chips, biscuits), processed food, cold drinks, and market-bought canned soups.'
+      hi: 'पैकेट वाले चीजें (चिप्स, बिस्कुट), कोल्ड ड्रिंक्स।',
+      en: 'Packaged snacks, cold drinks.'
     },
     routine: {
-      morning: { hi: 'सुबह: नाश्ते में केवल उबला हुआ सेब या मूंग की दाल का हल्का पानी लें।', en: 'Morning: For breakfast, have only boiled apple or light Moong dal water.' },
-      afternoon: { hi: 'दोपहर: अच्छी तरह पकी हुई मूंग की दाल की पतली खिचड़ी खाएं। साथ में थोड़ा सा अनार खाएं।', en: 'Afternoon: Eat well-cooked thin Moong dal khichdi along with some pomegranate.' },
-      evening: { hi: 'शाम/रात: सूरज ढलने के आसपास हल्का दलिया या उबली हुई सब्जियों का सूप लें। रात को भारी खाना बिल्कुल न खाएं। शरीर को पूरा आराम दें।', en: 'Evening/Night: Have light porridge or boiled vegetable soup around sunset. Avoid heavy food at night. Give the body complete rest.' }
+      morning: { hi: 'सुबह: उबला हुआ सेब या मूंग की दाल का हल्का पानी।', en: 'Morning: Boiled apple or light Moong dal water.' },
+      afternoon: { hi: 'दोपहर: अच्छी तरह पकी हुई मूंग की दाल की पतली खिचड़ी।', en: 'Afternoon: Well-cooked thin Moong dal khichdi.' },
+      evening: { hi: 'शाम/रात: हल्का दलिया या उबली हुई सब्जियों का सूप।', en: 'Evening: Light porridge or vegetable soup.' }
     },
-    safetyAdvice: { hi: 'सुरक्षा सूचना: यदि बुखार 3 दिन से अधिक रहे या तापमान 102°F से ऊपर चला जाए, तो तुरंत डॉक्टर से संपर्क करें।', en: 'Safety Notice: If the fever persists for more than 3 days or the temperature exceeds 102°F, consult a doctor immediately.' },
+    safetyAdvice: { hi: 'यदि बुखार 3 दिन से अधिक रहे, तो तुरंत डॉक्टर से संपर्क करें।', en: 'If fever lasts >3 days, consult a doctor.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || "",
-    keywords: "bukhar fever jwar tulsi giloy kadha immunity shakti thand cold cough sardi khansi"
+    keywords: "bukhar fever jwar tulsi giloy kadha immunity"
   },
+  {
+    id: 'gf-2',
+    serialNumber: '2',
+    name: { hi: 'अदरक और धनिए के बीजों का पाचक पानी', en: 'Digestive Water of Ginger and Coriander Seeds' },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "बुखार के समय अक्सर पाचन तंत्र कमजोर हो जाता है। यह नुस्खा शरीर से टॉक्सिंस को बाहर निकालने और भूख बढ़ाने में मदद करता है।",
+      en: "During fever, digestion weakens. This remedy helps detox and improves appetite."
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "20-30 मिलीलीटर", en: "20-30 ml" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "50-60 मिलीलीटर", en: "50-60 ml" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "50-60 मिलीलीटर", en: "50-60 ml" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "40-50 मिलीलीटर", en: "40-50 ml" } }
+    ],
+    ingredients: {
+      hi: ['1 छोटा चम्मच धनिए के बीज', 'आधा इंच अदरक का टुकड़ा', '2 कप पानी'],
+      en: ['1 tsp coriander seeds', '1/2 inch ginger', '2 cups water']
+    },
+    preparation: {
+      hi: 'पानी में धनिया बीज और कुचला हुआ अदरक डालकर उबालें जब तक पानी आधा न रह जाए।',
+      en: 'Boil coriander and ginger in water until reduced to half.'
+    },
+    usage: {
+      hi: 'इसे छानकर दिन में तीन बार थोड़ा-थोड़ा पिएं।',
+      en: 'Strain and drink small portions thrice daily.'
+    },
+    dietEat: { hi: 'हल्का सुपाच्य भोजन, उबली लौकी।', en: 'Light digestible food, boiled bottle gourd.' },
+    dietAvoid: { hi: 'दूध, घी, और भारी मिठाइयां।', en: 'Milk, ghee, and heavy sweets.' },
+    strictAvoid: { hi: 'खट्टी चीजें और ठंडी ड्रिंक्स।', en: 'Sour items and cold drinks.' },
+    routine: {
+      morning: { hi: 'सुबह: गुनगुना पानी और यह पाचक पानी लें।', en: 'Morning: Lukewarm water and this digestive water.' },
+      afternoon: { hi: 'दोपहर: सादा दलिया।', en: 'Afternoon: Plain porridge.' },
+      evening: { hi: 'शाम: सब्जियों का सादा सूप।', en: 'Evening: Plain veg soup.' }
+    },
+    safetyAdvice: { hi: 'पाचन बहुत ज्यादा खराब होने पर डॉक्टर से मिलें।', en: 'Consult doctor if digestion remains severely poor.' },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'digestion')?.imageUrl || "",
+    keywords: "adrak dhania digestive water bukhar appetite"
+  },
+  {
+    id: 'gf-3',
+    serialNumber: '3',
+    name: { hi: 'महासुदर्शन चूर्ण और शहद का योग', en: 'Mahasudarshan Churna and Honey Blend' },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "महासुदर्शन चूर्ण आयुर्वेद में बुखार की सबसे प्रसिद्ध औषधि है। यह कड़वा होने के कारण पित्त को शांत करता है और खून साफ़ करता है।",
+      en: "Mahasudarshan Churna is the most famous Ayurvedic remedy for fever. It balances Pitta and purifies blood."
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "1-2 ग्राम (शहद के साथ)", en: "1-2g (with honey)" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "3-5 ग्राम", en: "3-5g" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "3-5 ग्राम", en: "3-5g" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "2-3 ग्राम", en: "2-3g" } }
+    ],
+    ingredients: {
+      hi: ['महासुदर्शन चूर्ण (बाजार में उपलब्ध)', 'शुद्ध शहद'],
+      en: ['Mahasudarshan Churna', 'Pure Honey']
+    },
+    preparation: { hi: 'चूर्ण को शहद के साथ मिलाकर पेस्ट बना लें।', en: 'Mix churna with honey to make a paste.' },
+    usage: { hi: 'दिन में दो बार सुबह और शाम भोजन के बाद लें।', en: 'Take twice daily after meals.' },
+    dietEat: { hi: 'मूंग दाल, पतली रोटी।', en: 'Moong dal, thin roti.' },
+    dietAvoid: { hi: 'मसालेदार खाना, आचार।', en: 'Spicy food, pickles.' },
+    strictAvoid: { hi: 'जंक फूड, कोल्ड ड्रिंक्स।', en: 'Junk food, cold drinks.' },
+    routine: {
+      morning: { hi: 'सुबह: हल्का नाश्ता और चूर्ण।', en: 'Morning: Light breakfast and churna.' },
+      afternoon: { hi: 'दोपहर: सात्विक भोजन।', en: 'Afternoon: Sattvic meal.' },
+      evening: { hi: 'शाम: जल्दी और हल्का डिनर।', en: 'Evening: Early and light dinner.' }
+    },
+    safetyAdvice: { hi: 'गर्भवती महिलाएं बिना सलाह न लें।', en: 'Pregnant women should consult before use.' },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || "",
+    keywords: "mahasudarshan churna honey fever jwar"
+  },
+  {
+    id: 'gf-4',
+    serialNumber: '4',
+    name: { hi: 'किशमिश और मुनक्के का शीतल पानी', en: 'Cooling Water of Raisins and Munakka' },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "तेज बुखार में जब शरीर में जलन महसूस हो, तब मुनक्का शरीर को ठंडक देता है और ऊर्जा प्रदान करता है।",
+      en: "During high fever with burning sensation, Munakka provides cooling and energy."
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "4-5 मुनक्का का पानी", en: "Water of 4-5 Munakka" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "8-10 मुनक्का का पानी", en: "Water of 8-10 Munakka" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "8-10 मुनक्का का पानी", en: "Water of 8-10 Munakka" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "6-8 मुनक्का का पानी", en: "Water of 6-8 Munakka" } }
+    ],
+    ingredients: {
+      hi: ['मुनक्का (बीज निकले हुए)', 'पानी'],
+      en: ['Munakka (seeded)', 'Water']
+    },
+    preparation: { hi: 'मुनक्का को रात भर पानी में भिगो दें और सुबह मसलकर छान लें।', en: 'Soak Munakka overnight, mash and strain in the morning.' },
+    usage: { hi: 'सुबह खाली पेट इस पानी को पिएं।', en: 'Drink the water on an empty stomach in the morning.' },
+    dietEat: { hi: 'ठंडे तासीर वाले फल जैसे अनार।', en: 'Cooling fruits like pomegranate.' },
+    dietAvoid: { hi: 'लाल मिर्च, गरम मसाला।', en: 'Red chili, garam masala.' },
+    strictAvoid: { hi: 'शराब, धूम्रपान।', en: 'Alcohol, smoking.' },
+    routine: {
+      morning: { hi: 'सुबह: मुनक्का पानी।', en: 'Morning: Munakka water.' },
+      afternoon: { hi: 'दोपहर: हल्की खिचड़ी।', en: 'Afternoon: Light khichdi.' },
+      evening: { hi: 'शाम: उबले हुए फल।', en: 'Evening: Boiled fruits.' }
+    },
+    safetyAdvice: { hi: 'मधुमेह रोगी मात्रा का ध्यान रखें।', en: 'Diabetic patients should monitor quantity.' },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'skincare')?.imageUrl || "",
+    keywords: "kishmish munakka cooling water energy"
+  },
+  {
+    id: 'gf-5',
+    serialNumber: '5',
+    name: { hi: 'दालचीनी और लौंग की स्वेदन चाय', en: 'Sweat-inducing Tea of Cinnamon and Clove' },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "यदि बुखार में ठंड ज्यादा लग रही हो, तो यह चाय शरीर में गर्माहट लाती है और पसीना निकालकर बुखार कम करती है।",
+      en: "If chills accompany fever, this tea brings warmth and induces sweating to reduce fever."
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "आधा कप", en: "Half cup" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "एक कप", en: "One cup" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "एक कप", en: "One cup" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "आधा कप", en: "Half cup" } }
+    ],
+    ingredients: {
+      hi: ['छोटा टुकड़ा दालचीनी', '2 लौंग', '1 कप पानी'],
+      en: ['Small cinnamon stick', '2 cloves', '1 cup water']
+    },
+    preparation: { hi: 'पानी में दालचीनी और लौंग को उबालें जब तक पानी आधा न हो जाए।', en: 'Boil ingredients until water reduces to half.' },
+    usage: { hi: 'इसे गर्म-गर्म पिएं और चादर ओढ़कर सो जाएं।', en: 'Drink hot and cover yourself with a blanket.' },
+    dietEat: { hi: 'गर्म सूप, अदरक वाली चाय।', en: 'Hot soup, ginger tea.' },
+    dietAvoid: { hi: 'आइसक्रीम, ठंडा पानी।', en: 'Ice cream, cold water.' },
+    strictAvoid: { hi: 'ठंडी हवा में घूमना।', en: 'Walking in cold air.' },
+    routine: {
+      morning: { hi: 'सुबह: दालचीनी चाय।', en: 'Morning: Cinnamon tea.' },
+      afternoon: { hi: 'दोपहर: गर्म सादी रोटी।', en: 'Afternoon: Plain hot roti.' },
+      evening: { hi: 'शाम: गरम दलिया।', en: 'Evening: Hot porridge.' }
+    },
+    safetyAdvice: { hi: 'गर्मी के मौसम में अधिक सेवन न करें।', en: 'Do not over-consume during summer.' },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
+    keywords: "dalchini laung tea sweat chills"
+  },
+  {
+    id: 'gf-6',
+    serialNumber: '6',
+    name: { hi: 'अजवाइन, सोंठ और गुड़ का पसीना लाने वाला घरेलू काढ़ा', en: 'Sweat-Inducing Brew of Ajwain, Dry Ginger and Jaggery' },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "यह काढ़ा बंद पसीने को खोलता है, जिससे शरीर का बढ़ा हुआ तापमान कम होने लगता है।",
+      en: "This brew opens blocked sweat pores, helping reduce elevated body temperature."
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "2-3 चम्मच", en: "2-3 tsp" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा कप", en: "Half cup" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप", en: "Half cup" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "आधा कप", en: "Half cup" } }
+    ],
+    ingredients: {
+      hi: ['आधा चम्मच अजवाइन', 'आधा चम्मच सोंठ', 'छोटा टुकड़ा गुड़', '1 ग्लास पानी'],
+      en: ['1/2 tsp ajwain', '1/2 tsp dry ginger', 'small jaggery piece', '1 glass water']
+    },
+    preparation: { hi: 'सभी को उबालें जब तक पानी आधा न रह जाए।', en: 'Boil all until water reduces to half.' },
+    usage: { hi: 'हल्का गुनगुना पिएं।', en: 'Drink slightly lukewarm.' },
+    dietEat: { hi: 'बाजरे की खिचड़ी।', en: 'Bajra khichdi.' },
+    dietAvoid: { hi: 'दही, मट्ठा।', en: 'Curd, buttermilk.' },
+    strictAvoid: { hi: 'नंगे पैर चलना।', en: 'Walking barefoot.' },
+    routine: {
+      morning: { hi: 'सुबह: काढ़ा और आराम।', en: 'Morning: Brew and rest.' },
+      afternoon: { hi: 'दोपहर: सात्विक आहार।', en: 'Afternoon: Sattvic diet.' },
+      evening: { hi: 'शाम: हल्का सूप।', en: 'Evening: Light soup.' }
+    },
+    safetyAdvice: { hi: 'पित्त प्रकृति वाले कम मात्रा में लें।', en: 'Pitta type individuals should take in moderation.' },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || "",
+    keywords: "ajwain saunth gud sweat fever"
+  },
+  {
+    id: 'gf-7',
+    serialNumber: '7',
+    name: { hi: 'मेथी, सोंठ और भुने जीरे का घरेलू ज्वरनाशक चूर्ण', en: 'Fever-Reducing Powder of Methi, Ginger and Cumin' },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "मेथी कफ और वात को शांत करती है। सोंठ और जीरा पाचन ठीक कर बुखार को जड़ से मिटाते हैं।",
+      en: "Methi calms Kapha and Vata. Ginger and Cumin correct digestion to eradicate fever."
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "1 ग्राम", en: "1g" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "3 ग्राम", en: "3g" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "3 ग्राम", en: "3g" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "2 ग्राम", en: "2g" } }
+    ],
+    ingredients: {
+      hi: ['मेथी दाना पाउडर', 'सोंठ पाउडर', 'भुना जीरा पाउडर (बराबर मात्रा)'],
+      en: ['Fenugreek powder', 'Dry ginger powder', 'Roasted cumin powder (equal parts)']
+    },
+    preparation: { hi: 'तीनों को बराबर मात्रा में मिला लें।', en: 'Mix all three in equal proportions.' },
+    usage: { hi: 'गुनगुने पानी के साथ दिन में दो बार लें।', en: 'Take twice daily with lukewarm water.' },
+    dietEat: { hi: 'ताजा भोजन।', en: 'Fresh food.' },
+    dietAvoid: { hi: 'भारी तेल वाला खाना।', en: 'Oily heavy food.' },
+    strictAvoid: { hi: 'कोल्ड ड्रिंक्स।', en: 'Cold drinks.' },
+    routine: {
+      morning: { hi: 'सुबह: चूर्ण और पानी।', en: 'Morning: Powder and water.' },
+      afternoon: { hi: 'दोपहर: सादी खिचड़ी।', en: 'Afternoon: Plain khichdi.' },
+      evening: { hi: 'शाम: जल्दी भोजन।', en: 'Evening: Early meal.' }
+    },
+    safetyAdvice: { hi: 'खाली पेट न लें।', en: 'Do not take on an empty stomach.' },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'digestion')?.imageUrl || "",
+    keywords: "methi saunth jeera churna fever"
+  },
+  {
+    id: 'gf-8',
+    serialNumber: '8',
+    name: { hi: 'काली मिर्च, अदरक और तुलसी पत्र का तीखा ज्वरनाशक काढ़ा', en: 'Pungent Brew of Black Pepper, Ginger and Tulsi' },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "यह काढ़ा संक्रमण को खत्म करने के लिए बहुत प्रभावी है। यह शरीर की गर्मी को प्राकृतिक रूप से नियंत्रित करता है।",
+      en: "This brew is very effective at killing infections. It naturally regulates body heat."
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "10-20 मिलीलीटर", en: "10-20 ml" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "30-50 मिलीलीटर", en: "30-50 ml" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "30-50 मिलीलीटर", en: "30-50 ml" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "30-40 मिलीलीटर", en: "30-40 ml" } }
+    ],
+    ingredients: {
+      hi: ['3-4 काली मिर्च', 'आधा इंच अदरक', '10 तुलसी पत्ते', '1 ग्लास पानी'],
+      en: ['3-4 Black peppercorns', '1/2 inch ginger', '10 Tulsi leaves', '1 glass water']
+    },
+    preparation: { hi: 'सबको कूटकर उबालें जब तक पानी आधा न रह जाए।', en: 'Crush all and boil until water is half.' },
+    usage: { hi: 'छानकर गुनगुना पिएं।', en: 'Strain and drink lukewarm.' },
+    dietEat: { hi: 'हल्का खाना।', en: 'Light food.' },
+    dietAvoid: { hi: 'भारी भोजन।', en: 'Heavy food.' },
+    strictAvoid: { hi: 'मैदा।', en: 'Refined flour.' },
+    routine: {
+      morning: { hi: 'सुबह: काढ़ा।', en: 'Morning: Brew.' },
+      afternoon: { hi: 'दोपहर: मूंग दाल।', en: 'Afternoon: Moong dal.' },
+      evening: { hi: 'शाम: सब्जी का सूप।', en: 'Evening: Veg soup.' }
+    },
+    safetyAdvice: { hi: 'एसिडिटी होने पर काली मिर्च कम डालें।', en: 'Use less pepper if acidity occurs.' },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || "",
+    keywords: "kali mirch adrak tulsi brew fever"
+  },
+  {
+    id: 'gf-9',
+    serialNumber: '9',
+    name: { hi: 'खस, धनिया और सोंठ का शीतल ज्वरनाशक हिम', en: 'Cooling Infusion of Khus, Coriander and Ginger' },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "यदि बुखार बहुत तेज हो और शरीर में जलन हो, तो यह शीतल हिम शरीर की गर्मी सोख लेता है।",
+      en: "For high fever with burning sensation, this cooling infusion absorbs body heat."
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "आधा कप", en: "Half cup" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "एक कप", en: "One cup" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "एक कप", en: "One cup" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "आधा कप", en: "Half cup" } }
+    ],
+    ingredients: {
+      hi: ['खस की जड़', 'साबुत धनिया', 'सोंठ (थोड़ी मात्रा)', 'मिट्टी का बर्तन और पानी'],
+      en: ['Vetiver (Khus) root', 'Whole coriander', 'Dry ginger (small amount)', 'Earthen pot and water']
+    },
+    preparation: { hi: 'मिट्टी के बर्तन में रात भर भिगोएं, सुबह छान लें।', en: 'Soak in earthen pot overnight, strain in the morning.' },
+    usage: { hi: 'दिन में तीन बार थोड़ा-थोड़ा पिएं।', en: 'Drink small amounts thrice daily.' },
+    dietEat: { hi: 'तरबूज, अनार।', en: 'Watermelon, Pomegranate.' },
+    dietAvoid: { hi: 'तेज धूप।', en: 'Strong sun.' },
+    strictAvoid: { hi: 'शराब।', en: 'Alcohol.' },
+    routine: {
+      morning: { hi: 'सुबह: शीतल हिम।', en: 'Morning: Cooling infusion.' },
+      afternoon: { hi: 'दोपहर: हल्का भोजन।', en: 'Afternoon: Light meal.' },
+      evening: { hi: 'शाम: ठंडा वातावरण।', en: 'Evening: Cool environment.' }
+    },
+    safetyAdvice: { hi: 'अत्यधिक ठंड लगने पर न लें।', en: 'Do not use if feeling severe chills.' },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'skincare')?.imageUrl || "",
+    keywords: "khus dhania cooling infusion fever"
+  },
+  {
+    id: 'gf-10',
+    serialNumber: '10',
+    name: { hi: 'बुखार के बाद की कमजोरी मिटाने का घरेलू उपाय', en: 'Home Remedy for Post-Fever Weakness' },
+    illnessId: 'general-fever',
+    introduction: {
+      hi: "बुखार उतरने के बाद शरीर बहुत कमजोर हो जाता है। यह उपाय शरीर में तुरंत ताकत भर देता है।",
+      en: "The body becomes very weak after fever. This remedy restores strength instantly."
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "1-2 खजूर दूध के साथ", en: "1-2 dates with milk" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "4-5 खजूर दूध के साथ", en: "4-5 dates with milk" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "4-5 खजूर दूध के साथ", en: "4-5 dates with milk" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "3-4 खजूर दूध के साथ", en: "3-4 dates with milk" } }
+    ],
+    ingredients: {
+      hi: ['पके हुए खजूर', 'शुद्ध देसी घी', 'दूध'],
+      en: ['Ripe dates', 'Pure desi ghee', 'Milk']
+    },
+    preparation: { hi: 'खजूर को घी में हल्का भून लें और गर्म दूध के साथ लें।', en: 'Lightly roast dates in ghee and take with warm milk.' },
+    usage: { hi: 'रात को सोने से पहले लें।', en: 'Take before bedtime.' },
+    dietEat: { hi: 'पौष्टिक खाना।', en: 'Nutritious food.' },
+    dietAvoid: { hi: 'फास्ट फूड।', en: 'Fast food.' },
+    strictAvoid: { hi: 'तनाव।', en: 'Stress.' },
+    routine: {
+      morning: { hi: 'सुबह: हल्की सैर।', en: 'Morning: Light walk.' },
+      afternoon: { hi: 'दोपहर: भरपूर भोजन।', en: 'Afternoon: Full meal.' },
+      evening: { hi: 'शाम: खजूर दूध।', en: 'Evening: Dates milk.' }
+    },
+    safetyAdvice: { hi: 'शुगर वाले खजूर कम लें।', en: 'Diabetic patients should use fewer dates.' },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || "",
+    keywords: "weakness post fever khajur strength"
+  },
+
+  // --- CATEGORY 2: नजला और जुकाम ---
   {
     id: 'cc-1',
     serialNumber: '1',
@@ -212,7 +527,7 @@ export const REMEDIES: Remedy[] = [
       afternoon: { hi: 'दोपहर: दोपहर का भोजन हमेशा ताजा और गर्म ही करें। भोजन के तुरंत बाद पानी न पिएं, कम से कम आधा घंटा रुकें।', en: 'Afternoon: Eat fresh hot lunch. Wait 30 minutes before drinking water after meals.' },
       evening: { hi: 'शाम/रात: रात का भोजन बिल्कुल हल्का रखें और सूर्य अस्त के बाद 8 बजे तक हर हाल में कर लें। रात के समय सलाद या फल का सेवन भूलकर भी न करें। छाती और गले को हवा से बचाकर रखें और पूरी नींद लें।', en: 'Evening/Night: Eat light dinner by 8 PM. Avoid fruits/salad at night. Keep chest/throat protected from drafts.' }
     },
-    safetyAdvice: { hi: 'सुरक्षा सूचना: यदि 5 दिनों में आराम न मिले तो चिकित्सक से सलाह लें।', en: 'Safety Notice: If no relief in 5 days, consult a doctor.' },
+    safetyAdvice: { hi: 'यदि 5 दिनों में आराम न मिले तो चिकित्सक से सलाह लें।', en: 'Safety Notice: If no relief in 5 days, consult a doctor.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
     keywords: "nazla jukam mulethi kali mirch cough cold respiratory congestion pratishyaya"
