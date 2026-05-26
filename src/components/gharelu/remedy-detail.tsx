@@ -35,18 +35,20 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const currentDose = remedy.doses.find(d => d.ageRange.hi === selectedAgeRangeKey);
 
+  // Parameter Headings: Locked at 25px, Bold
   const headingClass = cn(
-    "text-xl font-bold mb-3 flex items-center gap-3 leading-[1.6]",
+    "text-[25px] font-bold mb-4 flex items-center gap-3 leading-[1.4]",
     isNight ? "text-white" : "text-[#14532D]"
   );
 
+  // Body Text & Lists: Locked at 22px
   const bodyTextClass = cn(
-    "text-lg leading-loose font-medium",
+    "text-[22px] leading-relaxed font-medium",
     isNight ? "text-[#E5E7EB]" : "text-[#1E293B]"
   );
 
   const listTextClass = cn(
-    "text-lg leading-relaxed font-medium",
+    "text-[22px] leading-relaxed font-medium",
     isNight ? "text-[#E5E7EB]" : "text-[#1E293B]"
   );
 
@@ -106,7 +108,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   };
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-500 pb-24 relative overflow-y-auto h-auto">
+    <div className="space-y-12 animate-in fade-in duration-500 pb-32 relative overflow-y-auto h-auto">
       <div className="flex items-center justify-end mb-4">
         <Button
           variant="ghost"
@@ -123,12 +125,13 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
       {/* Title */}
       <h2 className={cn(
-        "text-3xl font-black tracking-wide leading-tight mb-8",
+        "text-[32px] font-black tracking-wide leading-tight mb-8",
         isNight ? "text-white" : "text-[#14532D]"
       )}>
         {toEnglishDigits(remedy.name[lang])}
       </h2>
 
+      {/* Intro */}
       <div className={cn(
         "p-8 rounded-[2.5rem] border transition-colors shadow-sm",
         isNight ? "bg-white/5 border-white/10" : "bg-primary/5 border-primary/10"
@@ -137,10 +140,11 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           <Info className="w-8 h-8 shrink-0" /> {isHindi ? 'बीमारी का परिचय' : 'Introduction'}
         </h3>
         <p className={bodyTextClass}>
-          {remedy.introduction[lang]}
+          {toEnglishDigits(remedy.introduction[lang])}
         </p>
       </div>
 
+      {/* Smart Dose */}
       <div className={cn(
         "p-8 rounded-[2.5rem] border overflow-hidden shadow-sm",
         isNight ? "bg-black border-white" : "bg-white border-[#14532D]"
@@ -151,7 +155,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             <Stethoscope className="w-8 h-8 opacity-40 shrink-0" />
           </div>
           <p className={cn(
-            "text-base font-bold opacity-80 leading-relaxed mb-4",
+            "text-[18px] font-bold opacity-80 leading-relaxed mb-6",
             isNight ? "text-white/80" : "text-primary/70"
           )}>
             {isHindi 
@@ -166,7 +170,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               key={dose.ageRange.hi}
               onClick={() => setSelectedAgeRangeKey(dose.ageRange.hi)}
               className={cn(
-                "px-6 py-3 rounded-2xl text-lg font-bold transition-all border",
+                "px-6 py-4 rounded-2xl text-[22px] font-bold transition-all border",
                 selectedAgeRangeKey === dose.ageRange.hi
                   ? (isNight ? "bg-white text-black" : "bg-accent text-white border-accent shadow-md")
                   : (isNight ? "bg-black text-white border-white/20" : "bg-transparent text-primary border-primary/20")
@@ -178,11 +182,11 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
 
         <div className={cn(
-          "p-8 rounded-3xl flex items-center justify-center text-center",
+          "p-10 rounded-3xl flex items-center justify-center text-center",
           isNight ? "bg-white/10" : "bg-accent/10"
         )}>
           <span className={cn(
-            "text-lg font-semibold leading-loose",
+            "text-[22px] font-semibold leading-relaxed",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
             {toEnglishDigits(currentDose?.dose[lang] || '')}
@@ -190,18 +194,19 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
+      {/* Ingredients & Prep */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className={cn(
           "p-8 rounded-[2.5rem] border shadow-sm",
           isNight ? "bg-black border-white/20" : "bg-[#FDF6E2] border-primary/10"
         )}>
           <h3 className={cn(headingClass, "text-accent")}>
-            {isHindi ? 'आवश्यक सामग्री (कुल स्टॉक या बनाने के लिए)' : 'Required Ingredients (Total Stock / Base Quantity)'}
+            {isHindi ? 'आवश्यक सामग्री' : 'Required Ingredients'}
           </h3>
-          <ul className="space-y-5">
+          <ul className="space-y-6">
             {remedy.ingredients[lang].map((item, i) => (
               <li key={i} className={cn(listTextClass, "flex items-start gap-3")}>
-                <CheckCircle className="w-7 h-7 mt-1 text-accent shrink-0" />
+                <CheckCircle className="w-7 h-7 mt-1.5 text-accent shrink-0" />
                 <span>{toEnglishDigits(item)}</span>
               </li>
             ))}
@@ -216,6 +221,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
+      {/* Usage Instructions */}
       <div className={cn(
         "p-10 rounded-[3rem] border-2 shadow-xl transition-all duration-500",
         isNight 
@@ -230,13 +236,13 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </h3>
         <p className={cn(
           bodyTextClass,
-          "leading-loose transition-colors",
-          "text-white"
+          "text-white leading-relaxed"
         )}>
           "{toEnglishDigits(remedy.usage[lang])}"
         </p>
       </div>
 
+      {/* Diet Eat / Avoid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className={cn(
           "p-8 rounded-[2.5rem] border border-green-500/20 shadow-sm transition-colors duration-500",
@@ -247,7 +253,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             <span className={isNight ? "text-[#A7F3D0]" : "text-green-700"}>{isHindi ? 'क्या खाएं' : 'What to Eat'}</span>
           </h3>
           <p className={cn(
-            "text-lg leading-loose font-medium transition-colors",
+            "text-[22px] leading-relaxed font-medium transition-colors",
             isNight ? "text-[#A7F3D0]" : "text-green-900"
           )}>
             {toEnglishDigits(remedy.dietEat[lang])}
@@ -262,23 +268,23 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             <span className={isNight ? "text-[#FECDD3]" : "text-red-700"}>{isHindi ? 'क्या न खाएं' : 'What to Avoid'}</span>
           </h3>
           <p className={cn(
-            "text-lg leading-loose font-medium transition-colors",
+            "text-[22px] leading-relaxed font-medium transition-colors",
             isNight ? "text-[#FECDD3]" : "text-red-900"
           )}>
             {toEnglishDigits(remedy.dietAvoid[lang])}
           </p>
           <div className={cn(
-            "mt-6 pt-6 border-t",
+            "mt-8 pt-8 border-t",
             isNight ? "border-red-500/20" : "border-red-200/30"
           )}>
             <p className={cn(
-              "text-base font-black uppercase mb-3",
+              "text-[20px] font-black uppercase mb-4",
               isNight ? "text-[#FEF08A]" : "text-red-600"
             )}>
               {isHindi ? 'सख्त परहेज़' : 'Strict Avoid'}
             </p>
             <p className={cn(
-              "text-lg font-bold leading-loose transition-colors",
+              "text-[22px] font-bold leading-relaxed transition-colors",
               isNight ? "text-[#FECDD3]" : "text-red-800"
             )}>
               {toEnglishDigits(remedy.strictAvoid[lang])}
@@ -287,6 +293,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
+      {/* Routine */}
       <div className={cn(
         "p-10 rounded-[3rem] border shadow-md",
         isNight ? "bg-black border-white/20" : "bg-[#FDF6E2] border-primary/10"
@@ -294,48 +301,49 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         <h3 className={headingClass}>
           <Utensils className="w-8 h-8 shrink-0" /> {isHindi ? 'दिनचर्या' : 'Daily Routine'}
         </h3>
-        <div className="space-y-10">
+        <div className="space-y-12">
           <div className="flex gap-6">
-            <div className="p-5 rounded-full bg-accent/10 text-accent h-fit shrink-0"><Sun className="w-8 h-8" /></div>
+            <div className="p-6 rounded-full bg-accent/10 text-accent h-fit shrink-0"><Sun className="w-9 h-9" /></div>
             <div>
-              <h4 className="text-sm font-black uppercase text-accent mb-2">{isHindi ? 'सुबह' : 'Morning'}</h4>
+              <h4 className="text-[18px] font-black uppercase text-accent mb-3">{isHindi ? 'सुबह' : 'Morning'}</h4>
               <p className={bodyTextClass}>{toEnglishDigits(remedy.routine.morning[lang])}</p>
             </div>
           </div>
           <div className="flex gap-6">
-            <div className="p-5 rounded-full bg-primary/10 text-primary h-fit shrink-0"><Coffee className="w-8 h-8" /></div>
+            <div className="p-6 rounded-full bg-primary/10 text-primary h-fit shrink-0"><Coffee className="w-9 h-9" /></div>
             <div>
-              <h4 className="text-sm font-black uppercase text-primary mb-2">{isHindi ? 'दोपहर' : 'Afternoon'}</h4>
+              <h4 className="text-[18px] font-black uppercase text-primary mb-3">{isHindi ? 'दोपहर' : 'Afternoon'}</h4>
               <p className={bodyTextClass}>{toEnglishDigits(remedy.routine.afternoon[lang])}</p>
             </div>
           </div>
           <div className="flex gap-6">
-            <div className="p-5 rounded-full bg-slate-400/10 text-slate-500 h-fit shrink-0"><Moon className="w-8 h-8" /></div>
+            <div className="p-6 rounded-full bg-slate-400/10 text-slate-500 h-fit shrink-0"><Moon className="w-9 h-9" /></div>
             <div>
-              <h4 className="text-sm font-black uppercase text-slate-500 mb-2">{isHindi ? 'शाम/रात' : 'Evening/Night'}</h4>
+              <h4 className="text-[18px] font-black uppercase text-slate-500 mb-3">{isHindi ? 'शाम/रात' : 'Evening/Night'}</h4>
               <p className={bodyTextClass}>{toEnglishDigits(remedy.routine.evening[lang])}</p>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Safety & Disclaimer */}
       <div className="space-y-8">
         <div className={cn(
-          "p-8 rounded-[3rem] border border-accent/40 shadow-sm",
+          "p-10 rounded-[3rem] border border-accent/40 shadow-sm",
           isNight ? "bg-accent/10" : "bg-accent/5"
         )}>
           <h4 className={headingClass}>
-            <AlertTriangle className="w-8 h-8 shrink-0 text-accent" /> 
+            <AlertTriangle className="w-9 h-9 shrink-0 text-accent" /> 
             <span className={cn("font-bold", isNight ? "text-accent" : "text-[#9B2C2C]")}>{isHindi ? 'सुरक्षा सूचना' : 'Safety Info'}</span>
           </h4>
           <p className={cn(
-            "text-lg leading-loose font-bold",
+            "text-[22px] leading-relaxed font-bold",
             isNight ? "text-accent brightness-110" : "text-[#9B2C2C]"
           )}>
             {toEnglishDigits(remedy.safetyAdvice[lang])}
           </p>
           <p className={cn(
-            "text-sm uppercase tracking-widest opacity-60 leading-loose font-medium mt-8 border-t border-accent/20 pt-8 italic",
+            "text-[18px] uppercase tracking-widest opacity-60 leading-relaxed font-medium mt-10 border-t border-accent/20 pt-10 italic",
             isNight ? "text-white" : "text-primary"
           )}>
             "{toEnglishDigits(remedy.disclaimer[lang])}"
@@ -343,12 +351,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      {/* Action Buttons Container */}
-      <div className="pt-8 flex flex-col items-center justify-center gap-4 px-6 w-full mx-auto">
+      {/* Actions */}
+      <div className="pt-12 flex flex-col items-center justify-center gap-6 px-6 w-full mx-auto">
         <Button
           onClick={handleShare}
           className={cn(
-            "w-full max-w-sm h-18 py-8 rounded-[2rem] flex items-center justify-center gap-4 font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl text-xl",
+            "w-full max-w-sm h-20 py-10 rounded-[2.5rem] flex items-center justify-center gap-4 font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl text-2xl",
             isNight 
               ? "bg-transparent border-2 border-white text-white hover:bg-white/10" 
               : "bg-accent text-white hover:bg-accent/90"
@@ -360,7 +368,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         <Button
           onClick={handleCopy}
           className={cn(
-            "w-full max-w-sm h-18 py-8 rounded-[2rem] flex items-center justify-center gap-4 font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl text-xl border-2",
+            "w-full max-w-sm h-20 py-10 rounded-[2.5rem] flex items-center justify-center gap-4 font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl text-2xl border-2",
             isNight 
               ? "bg-transparent border-2 border-white text-white hover:bg-white/10" 
               : "bg-transparent border-[#14532D] text-[#14532D] hover:bg-primary/5"
