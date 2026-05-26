@@ -19,12 +19,16 @@ export default function GhareluUpayApp() {
   const [isDetailView, setIsDetailView] = useState(false);
   const [lang, setLang] = useState<Language>('hi');
   const [theme, setTheme] = useState<Theme>('cream');
+  
+  // State for persistence
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [readNotifications, setReadNotifications] = useState<string[]>([]);
+  const [lastReadRemedyId, setLastReadRemedyId] = useState<string | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-  // Load favorites and read notifications from local storage
+  // Load favorites and last read ID from local storage on mount
   useEffect(() => {
     const savedFavs = localStorage.getItem('gharelu-favorites');
     if (savedFavs) {
@@ -35,27 +39,30 @@ export default function GhareluUpayApp() {
       }
     }
 
-    const savedRead = localStorage.getItem('gharelu-read-notifications');
-    if (savedRead) {
-      try {
-        setReadNotifications(JSON.parse(savedRead));
-      } catch (e) {
-        console.error("Failed to load read notifications", e);
-      }
+    const savedLastRead = localStorage.getItem('last_read_remedy_id');
+    if (savedLastRead) {
+      setLastReadRemedyId(savedLastRead);
     }
+    
+    setIsLoaded(true);
   }, []);
 
-  // Save state changes to local storage
+  // Persist favorites to local storage
   useEffect(() => {
-    localStorage.setItem('gharelu-favorites', JSON.stringify(favorites));
-  }, [favorites]);
+    if (isLoaded) {
+      localStorage.setItem('gharelu-favorites', JSON.stringify(favorites));
+    }
+  }, [favorites, isLoaded]);
 
+  // Persist last read remedy ID to local storage
   useEffect(() => {
-    localStorage.setItem('gharelu-read-notifications', JSON.stringify(readNotifications));
-  }, [readNotifications]);
+    if (isLoaded && lastReadRemedyId) {
+      localStorage.setItem('last_read_remedy_id', lastReadRemedyId);
+    }
+  }, [lastReadRemedyId, isLoaded]);
 
   const latestRemedy = REMEDIES[REMEDIES.length - 1];
-  const hasNewNotifications = latestRemedy && !readNotifications.includes(latestRemedy.id);
+  const hasNewNotifications = isLoaded && latestRemedy && lastReadRemedyId !== latestRemedy.id;
 
   const toggleLanguage = () => setLang((prev) => (prev === 'hi' ? 'en' : 'hi'));
   const toggleTheme = () => setTheme((prev) => (prev === 'cream' ? 'night' : 'cream'));
@@ -74,7 +81,6 @@ export default function GhareluUpayApp() {
     setIsDetailView(true);
     setIsFavoritesOpen(false);
     setIsNotificationsOpen(false);
-    // Smooth scroll to top when selecting a remedy
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -87,10 +93,7 @@ export default function GhareluUpayApp() {
   };
 
   const handleMarkAsRead = (remedyId: string) => {
-    setReadNotifications(prev => {
-      if (prev.includes(remedyId)) return prev;
-      return [...prev, remedyId];
-    });
+    setLastReadRemedyId(remedyId);
   };
 
   const handleOpenNotifications = () => {
@@ -107,7 +110,6 @@ export default function GhareluUpayApp() {
     setSelectedCategoryId(null);
     setSelectedRemedyId(null);
     setIsDetailView(false);
-    // Smooth scroll to top when returning home
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -168,7 +170,7 @@ export default function GhareluUpayApp() {
         onClose={() => setIsNotificationsOpen(false)}
         lang={lang}
         theme={theme}
-        readNotifications={readNotifications}
+        lastReadRemedyId={lastReadRemedyId}
         onMarkAsRead={handleMarkAsRead}
         onSelectRemedy={handleSelectRemedy}
       />

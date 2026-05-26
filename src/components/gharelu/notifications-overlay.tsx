@@ -13,7 +13,7 @@ interface NotificationsOverlayProps {
   onClose: () => void;
   lang: Language;
   theme: Theme;
-  readNotifications: string[];
+  lastReadRemedyId: string | null;
   onMarkAsRead: (id: string) => void;
   onSelectRemedy: (remedyId: string, categoryId: string) => void;
 }
@@ -23,7 +23,7 @@ export const NotificationsOverlay = ({
   onClose, 
   lang, 
   theme, 
-  readNotifications,
+  lastReadRemedyId,
   onMarkAsRead,
   onSelectRemedy 
 }: NotificationsOverlayProps) => {
@@ -34,8 +34,8 @@ export const NotificationsOverlay = ({
   const unreadLatestRemedy = useMemo(() => {
     const latest = REMEDIES[REMEDIES.length - 1];
     if (!latest) return null;
-    return readNotifications.includes(latest.id) ? null : latest;
-  }, [readNotifications]);
+    return lastReadRemedyId === latest.id ? null : latest;
+  }, [lastReadRemedyId]);
 
   const handleResultClick = (remedyId: string, illnessId: string) => {
     let catId = 'fever'; 
