@@ -138,16 +138,16 @@ export const REMEDIES: Remedy[] = [
       en: 'Drink it slowly 2-3 times a day. Duration: Consume this miraculous decoction warm morning and evening for 3 to 5 days for complete relief.'
     },
     dietEat: {
-      hi: 'गरम सूप, अदरक वाली चाय, भुना हुआ चना।',
-      en: 'Hot soup, ginger tea, roasted chickpeas.'
+      hi: 'भोजन: मूँग दाल की पतली खिचड़ी, साधारण रोटी-सब्जी। फल और सलाद: ताजा हल्का उबला हुआ सलाद (खीरा, गाजर) और अनुकूल फल (पपीता, सेब या अनार)।',
+      en: 'Diet: Moong dal khichdi, simple roti-vegetable. Fruits & Salad: Fresh lightly boiled salad (cucumber, carrot) and seasonal fruits (papaya, apple, or pomegranate).'
     },
     dietAvoid: {
       hi: 'दही, चावल, ठंडी ड्रिंक्स, आइसक्रीम।',
       en: 'Curd, rice, cold drinks, ice cream.'
     },
     strictAvoid: {
-      hi: 'सीधे पंखे के नीचे बैठना और नंगे पैर चलना।',
-      en: 'Sitting directly under the fan and walking barefoot.'
+      hi: 'सीधे पंखे के नीचे बैठना और नंगे पैर चलना। रात में सलाद या फल का सेवन बिल्कुल न करें।',
+      en: 'Sitting directly under the fan and walking barefoot. Do not consume salad or fruits at night.'
     },
     routine: {
       morning: { 
@@ -155,12 +155,12 @@ export const REMEDIES: Remedy[] = [
         en: 'Morning: Start with lukewarm water. Have light porridge or semolina Upma for breakfast.' 
       },
       afternoon: { 
-        hi: 'दोपहर: मूँग दाल की खिचड़ी या साधारण रोटी-सब्जी। भोजन के साथ ताज़ा हल्का उबला हुआ सलाद (जैसे खीरा, गाजर) और इस मौसम के अनुकूल फल (जैसे पपीता, सेब या अनार) अवश्य लें।', 
-        en: 'Afternoon: Moong dal khichdi or simple roti-vegetable. Must include fresh lightly boiled salad (like cucumber, carrot) and seasonal fruits (like papaya, apple, or pomegranate) with the meal.' 
+        hi: 'दोपहर: मूँग दाल की खिचड़ी या साधारण रोटी-सब्जी। भोजन के साथ ताज़ा हल्का उबला हुआ सलाद और इस मौसम के अनुकूल फल अवश्य लें।', 
+        en: 'Afternoon: Moong dal khichdi or simple roti-vegetable. Must include fresh lightly boiled salad and seasonal fruits with the meal.' 
       },
       evening: { 
-        hi: 'शाम/रात: रात का भोजन हल्का रखें (जैसे लौकी या तोरई की सब्जी और पतली रोटी)। रात में सलाद या फल का सेवन बिल्कुल न करें।', 
-        en: 'Evening/Night: Keep dinner light (like bottle gourd or sponge gourd vegetable and thin roti). Do not consume salad or fruits at night.' 
+        hi: 'शाम/रात: रात का भोजन हल्का रखें। रात में सलाद या फल का सेवन बिल्कुल न करें।', 
+        en: 'Evening/Night: Keep dinner light. Do not consume salad or fruits at night.' 
       }
     },
     safetyAdvice: { 
@@ -170,6 +170,57 @@ export const REMEDIES: Remedy[] = [
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
     keywords: "sardi khansi cold cough sneezing cheekh nazla jukam respiratory"
+  },
+  {
+    id: 'cc-2',
+    serialNumber: '2',
+    name: { hi: 'मुलेठी और काली मिर्च का औषधीय काढ़ा', en: 'Medicinal Decoction of Licorice and Black Pepper' },
+    illnessId: 'common-cold',
+    introduction: {
+      hi: "आयुर्वेद में नजला और जुकाम को 'प्रतिश्याय' रोग कहा जाता है, जो मुख्य रूप से शरीर में कफ और वात दोष के असंतुलन तथा मंदाग्नि के कारण उत्पन्न होता है। बदलते मौसम में रोग प्रतिरोधक क्षमता कमजोर होने से वायरस का हमला तेजी से होता है। इसके कारण नाक से निरंतर पानी बहना, अत्यधिक छींकें आना, गले में दर्दभरी खराश, सिर में भारीपन और आंखों से पानी गिरने जैसी समस्याएं मरीज को परेशान कर देती हैं। मुलेठी और काली मिर्च का यह औषधीय काढ़ा श्वसन नली की सूजन को शांत करता है, छाती और फेफड़ों में जमे हुए गाढ़े कफ को पिघलाकर बाहर निकालता है और संक्रमण को जड़ से समाप्त कर शरीर को प्राकृतिक ऊर्जा प्रदान करता है।",
+      en: "Common cold is known as 'Pratishyaya' in Ayurveda, caused by Kapha and Vata imbalance. This Mulethi and Black Pepper decoction calms respiratory inflammation, thins chest congestion, and eradicates infection at the root."
+    },
+    severity: 'moderate',
+    severityLabel: { hi: '🟡 सामान्य से मध्यम (नजला और जुकाम)', en: '🟡 Mild to Moderate (Common Cold)' },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "एक चौथाई कप (लगभग 20ml से 25ml)", en: "Quarter cup (approx. 20ml to 25ml)" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "आधा कप (लगभग 50ml)", en: "Half a cup (approx. 50ml)" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "आधा कप (लगभग 50ml)", en: "Half a cup (approx. 50ml)" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "आधा कप (लगभग 40ml से 50ml)", en: "Half a cup (approx. 40ml to 50ml)" } }
+    ],
+    ingredients: {
+      hi: ['1 इंच मुलेठी का टुकड़ा', '4-5 साबुत काली मिर्च (हल्की कुचली हुई)', '5-6 ताज़ा तुलसी के पत्ते', '2 कप साफ़ पीने का पानी'],
+      en: ['1 inch Licorice (Mulethi) stick', '4-5 Whole black peppercorns (crushed)', '5-6 Fresh basil leaves', '2 cups clean drinking water']
+    },
+    preparation: {
+      hi: 'दो कप पानी को किसी बर्तन में डालकर आंच पर रखें। उसमें मुलेठी का टुकड़ा, कुचली हुई काली मिर्च और तुलसी के पत्ते डाल दें। इसे मध्यम आंच पर तब तक अच्छी तरह उबालें जब तक कि दो कप पानी जलकर आधा (अर्थात 1 कप) न रह जाए। इसके बाद इसे आंच से उतारकर छान लें।',
+      en: 'Boil ingredients in 2 cups of water until reduced to 1 cup. Strain and serve.'
+    },
+    usage: {
+      hi: 'विधि: इस छने हुए काढ़े को हमेशा हल्का गुनगुना (चाय की तरह धीरे-धीरे घूंट लेकर) सुबह और शाम को खाली पेट या भोजन करने के ठीक 1 घंटे बाद पिएं। अवधि: इस नुस्खे का सेवन लगातार 3 से 5 दिनों तक करें।',
+      en: 'Sip warm like tea morning and evening on an empty stomach or 1 hour after meals. Duration: Use for 3 to 5 days.'
+    },
+    dietEat: {
+      hi: 'भोजन: मूँग दाल की पतली खिचड़ी, बिना तेल-मसाले का सादा दलिया, सूजी का हल्का उपमा, गुनगुना पानी और ताज़ा गर्म सूप। दोपहर के भोजन के साथ 1 छोटी कटोरी ताज़ा हल्का उबला हुआ सलाद (जैसे भाप में पकी गाजर या खीरा) और आधा कप पका पपीता या छोटा सेब छीलकर खाएं।',
+      en: 'Diet: Moong dal khichdi, oil-free porridge, semolina Upma, lukewarm water, hot soup. Include steamed carrots/cucumbers and papaya or peeled apple for lunch.'
+    },
+    dietAvoid: {
+      hi: 'पैकेट वाले फूड्स: चिप्स, नमकीन, कुरकुरे, चाउमीन, बर्गर और मैदे से बने बिस्कुट। भारी भोजन: मांस, मछली, अंडा या भारी मांसाहारी भोजन और तली-भुनी चीजें। ठंडी चीजें: फ्रिज का ठंडा पानी, कोल्ड ड्रिंक्स, दही, मट्ठा, खट्टी चीजें और आइसक्रीम।',
+      en: 'Avoid: Packaged snacks, biscuits, heavy non-veg meals, fried foods, cold water, soda, curd, buttermilk, and ice cream.'
+    },
+    strictAvoid: {
+      hi: 'पैकेट वाले तीखे स्नेक्स, भारी मांसाहार और फ्रिज की ठंडी चीजें पूरी तरह वर्जित हैं।',
+      en: 'Strictly Avoid: Packaged spicy snacks, heavy meats, and refrigerated items.'
+    },
+    routine: {
+      morning: { hi: 'सुबह: सुबह उठकर सबसे पहले 1-2 गिलास गुनगुना पानी पिएं। हल्के गर्म पानी से गरारे (Kulla) करें।', en: 'Morning: Start with 1-2 glasses of lukewarm water. Gargle with warm water.' },
+      afternoon: { hi: 'दोपहर: दोपहर का भोजन हमेशा ताजा और गर्म ही करें। भोजन के तुरंत बाद पानी न पिएं, कम से कम आधा घंटा रुकें।', en: 'Afternoon: Eat fresh hot lunch. Wait 30 minutes before drinking water after meals.' },
+      evening: { hi: 'शाम/रात: रात का भोजन बिल्कुल हल्का रखें और सूर्य अस्त के बाद 8 बजे तक हर हाल में कर लें। रात के समय सलाद या फल का सेवन भूलकर भी न करें। छाती और गले को हवा से बचाकर रखें और पूरी नींद लें।', en: 'Evening/Night: Eat light dinner by 8 PM. Avoid fruits/salad at night. Keep chest/throat protected from drafts.' }
+    },
+    safetyAdvice: { hi: 'सुरक्षा सूचना: यदि 5 दिनों में आराम न मिले तो चिकित्सक से सलाह लें। यदि कफ पुराना हो या सांस लेने में बहुत ज्यादा दिक्कत हो, तो योग्य नाड़ी वैद्य से परामर्श करें।', en: 'Safety Notice: If no relief in 5 days, consult a doctor. For chronic cough or breathing difficulty, see an Ayurvedic expert.' },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
+    keywords: "nazla jukam mulethi kali mirch cough cold respiratory congestion pratishyaya"
   },
   {
     id: 'gf-2',
@@ -228,7 +279,7 @@ export const REMEDIES: Remedy[] = [
     name: { hi: 'महासुदर्शन चूर्ण और शहद का योग', en: 'Mahasudarshan Churna and Honey Blend' },
     illnessId: 'general-fever',
     introduction: {
-      hi: "जब पुराना बुखार शरीर के अंदर बैठ जाता है, जिसे 'जीर्ण ज्वर' कहते हैं, या शरीर में हरारत और बदन टूटना लगातार बना रहता है, तब महासुदर्शन चूर्ण शरीर के कोने-कोने से छिपे हुए बुखार को बाहर निकालता है।",
+      hi: "जब पुराना बुखार शरीर के अंदर बैठ जाता है, जिसे 'जीर्ण ज्वर' कहते हैं, या शरीर में हरारत and बदन टूटना लगातार बना रहता है, तब महासुदर्शन चूर्ण शरीर के कोने-कोने से छिपे हुए बुखार को बाहर निकालता है।",
       en: "When old fever settles deep into the body, known as chronic fever ('Jirna Jvara'), or body aches and exhaustion persist continuously, Mahasudarshan Churna flushes out the hidden fever from every corner of the body."
     },
     severity: 'severe',
@@ -248,19 +299,19 @@ export const REMEDIES: Remedy[] = [
       en: 'Mix the recommended quantity of churna thoroughly into a teaspoon of honey to form a smooth paste.'
     },
     usage: {
-      hi: 'इसे सुबह and शाम को खाना खाने के आधे घंटे बाद (भरा पेट) चाटें और ऊपर से आधा गिलास हल्का गुनगुना पानी पिएं।',
+      hi: 'इसे सुबह and शाम को खाना खाने के आधे घंटे बाद (भरा पेट) चाटें and ऊपर से आधा गिलास हल्का गुनगुना पानी पिएं।',
       en: 'Lick this paste twice a day, morning and evening, half an hour after meals (full stomach), and follow it with half a glass of lukewarm water.'
     },
     dietEat: {
-      hi: 'परवल की सब्जी, लौकी की सब्जी, सादा सुपाच्य भोजन। फायदेमंद फल: सेब (छिलका उतारकर कद्दूकस किया हुआ) and अनार के दाने। फायदेमंद सलाद: उबले हुए पत्तागोभी और टमाटर का हल्का सलाद (भाप में पका हुआ)।',
+      hi: 'परवल की सब्जी, लौकी की सब्जी, सादा सुपाच्य भोजन। फायदेमंद फल: सेब (छिलका उतारकर कद्दूकस किया हुआ) and अनार के दाने। फायदेमंद सलाद: उबले हुए पत्तागोभी and टमाटर का हल्का सलाद (भाप में पका हुआ)।',
       en: 'Pointed gourd (Parwal) vegetable, bottle gourd vegetable, simple easily digestible meals. Beneficial Fruits: Peeled and grated apple, and pomegranate seeds. Beneficial Salad: Light steamed cabbage and tomato salad.'
     },
     dietAvoid: {
-      hi: 'मिठाई, तेज मसाले, घी, तेल, नया चावल और ज्यादा नमक वाला खाना।',
+      hi: 'मिठाई, तेज मसाले, घी, तेल, नया चावल and ज्यादा नमक वाला खाना।',
       en: 'Sweets, hot spices, ghee, oil, newly harvested rice, and heavily salted food.'
     },
     strictAvoid: {
-      hi: 'पैकेट बंद नमकीन, रेडी-टू-ईट भोजन, इंस्टेंट सूप और प्रिजर्वेटिव वाले जूस।',
+      hi: 'पैकेट बंद नमकीन, रेडी-टू-ईट भोजन, इंस्टेंट सूप and प्रिजर्वेटिव वाले जूस।',
       en: 'Packaged savory snacks, ready-to-eat meals, instant commercial soups, and juices with preservatives.'
     },
     routine: {
@@ -268,7 +319,7 @@ export const REMEDIES: Remedy[] = [
       afternoon: { hi: 'दोपहर: मूंग की दाल and परवल की सादी सब्जी के साथ 1 या 2 पतली चपाती।', en: 'Afternoon: One or two thin chapatis with Moong dal and simple pointed gourd vegetable.' },
       evening: { hi: 'शाम/रात: रात का खाना 7 बजे से पहले खा लें, जिसमें सिर्फ मूंग की दाल का पानी या हल्का सूप हो। दिन में सोने से बचें।', en: 'Evening/Night: Have dinner before 7 PM, consisting only of Moong dal water or light soup. Avoid sleeping during the day.' }
     },
-    safetyAdvice: { hi: 'सुरक्षा सूचना: यह चूर्ण स्वाद में बहुत कड़वा होता है। बुजुर्गों और बच्चों को देते समय शहद की मात्रा थोड़ी बढ़ाई जा सकती है।', en: 'Safety Notice: This powder is very bitter in taste. The quantity of honey can be slightly increased when giving it to children and the elderly.' },
+    safetyAdvice: { hi: 'सुरक्षा सूचना: यह चूर्ण स्वाद में बहुत कड़वा होता है। बुजुर्गों and बच्चों को देते समय शहद की मात्रा थोड़ी बढ़ाई जा सकती है।', en: 'Safety Notice: This powder is very bitter in taste. The quantity of honey can be slightly increased when giving it to children and the elderly.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || "",
     keywords: "purana bukhar chronic fever weakness kamzori thakan tired body pain badan dard kadwa mahasudarshan churna"
@@ -279,7 +330,7 @@ export const REMEDIES: Remedy[] = [
     name: { hi: 'किशमिश और मुनक्के का शीतल पानी', en: 'Cooling Infusion of Raisins and Munakka' },
     illnessId: 'general-fever',
     introduction: {
-      hi: "तेज बुखार और पित्त बढ़ने के कारण जब शरीर में बहुत तेज जलन होने लगती है, आँखें लाल हो जाती हैं, अत्यधिक प्यास लगती है और भयंकर कमजोरी महसूस होती है, तो यह उपाय शरीर की अत्यधिक गर्मी (पित्त) को तुरंत शांत करता है।",
+      hi: "तेज बुखार and पित्त बढ़ने के कारण जब शरीर में बहुत तेज जलन होने लगती है, आँखें लाल हो जाती हैं, अत्यधिक प्यास लगती है and भयंकर कमजोरी महसूस होती है, तो यह उपाय शरीर की अत्यधिक गर्मी (पित्त) को तुरंत शांत करता है।",
       en: "When high fever or elevated Pitta causes intense burning sensations in the body, red eyes, excessive thirst, and severe weakness, this remedy instantly calms down the body's excessive heat (Pitta)."
     },
     severity: 'moderate',
@@ -295,7 +346,7 @@ export const REMEDIES: Remedy[] = [
       en: ['10-12 pieces of Munakka (seeded)', '1 teaspoon fennel seeds', '1 glass of water']
     },
     preparation: {
-      hi: 'रात में 1 गिलास साफ पानी में मुनक्का and सौंफ को भिगोकर रख दें। सुबह मुनक्के को उसी पानी में हाथ से अच्छी तरह मसल लें और फिर पानी को छान लें।',
+      hi: 'रात में 1 गिलास साफ पानी में मुनक्का and सौंफ को भिगोकर रख दें। सुबह मुनक्के को उसी पानी में हाथ से अच्छी तरह मसल लें and फिर पानी को छान लें।',
       en: 'Soak Munakka and fennel seeds in a glass of clean water overnight. In the morning, mash the raisins thoroughly into the same water with clean hands and strain the water.'
     },
     usage: {
@@ -303,11 +354,11 @@ export const REMEDIES: Remedy[] = [
       en: 'Drink this infusion without heating it, at room temperature, in the morning on an empty stomach and in the evening (empty stomach).'
     },
     dietEat: {
-      hi: 'नारियल पानी, जौ का सत्तू। फायदेमंद फल: मीठा अनार, पका हुआ केला (यदि खांसी न हो) and तरबूज-खरबूजा। फायदेमंद सलाद: कच्ची ककड़ी, खीरा और कद्दूकस की हुई गाजर।',
+      hi: 'नारियल पानी, जौ का सत्तू। फायदेमंद फल: मीठा अनार, पका हुआ केला (यदि खांसी न हो) and तरबूज-खरबूजा। फायदेमंद सलाद: कच्ची ककड़ी, खीरा and कद्दूकस की हुई गाजर।',
       en: 'Coconut water, barley Sattu. Beneficial Fruits: Sweet pomegranate, ripe banana (if no cough), and watermelon/muskmelon. Beneficial Salad: Raw snake cucumber, field cucumber, and grated carrot.'
     },
     dietAvoid: {
-      hi: 'गरम मसाले, लाल मिर्च, चाय, कॉफी, लहसुन और प्याज।',
+      hi: 'गरम मसाले, लाल मिर्च, चाय, कॉफी, लहसुन and प्याज।',
       en: 'Hot spices, red chili, tea, coffee, garlic, and onions.'
     },
     strictAvoid: {
@@ -317,9 +368,9 @@ export const REMEDIES: Remedy[] = [
     routine: {
       morning: { hi: 'सुबह: खाली पेट यह मुनक्के का पानी पिएं। 1 घंटे बाद जौ का हल्का दलिया लें।', en: 'Morning: Drink this Munakka water on an empty stomach. Eat light barley porridge an hour later.' },
       afternoon: { hi: 'दोपहर: सादे चावल, मूंग की दाल and तोरई की सब्जी। साथ में ककड़ी-खीरे का सलाद खाएं।', en: 'Afternoon: Plain rice, Moong dal, and sponge gourd vegetable along with cucumber salad.' },
-      evening: { hi: 'शाम/रात: कद्दू की सादी सब्जी और 2 पतली रोटी। रात को सोने से पहले सिर पर सामान्य पानी की सूती पट्टी रखें।', en: 'Evening/Night: Plain pumpkin vegetable and two thin chapatis. Place a wet cotton cloth strip on the forehead before sleeping.' }
+      evening: { hi: 'शाम/रात: कद्दू की सादी सब्जी and 2 पतली रोटी। रात को सोने से पहले सिर पर सामान्य पानी की सूती पट्टी रखें।', en: 'Evening/Night: Plain pumpkin vegetable and two thin chapatis. Place a wet cotton cloth strip on the forehead before sleeping.' }
     },
-    safetyAdvice: { hi: 'सुरक्षा सूचना: मुनक्का और सौंफ का पानी मीठा होता है, इसलिए डायबिटीज (शुगर) के रोगी मुनक्के की संख्या आधी रखें।', en: 'Safety Notice: Since Munakka and fennel water is naturally sweet, diabetes patients should reduce the number of raisins by half.' },
+    safetyAdvice: { hi: 'सुरक्षा सूचना: मुनक्का and सौंफ का पानी मीठा होता है, इसलिए डायबिटीज (शुगर) के रोगी मुनक्के की संख्या आधी रखें।', en: 'Safety Notice: Since Munakka and fennel water is naturally sweet, diabetes patients should reduce the number of raisins by half.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || "",
     keywords: "jalan burning eyes heat pitta thandak cool munakka kishmish weak pyas thirst pitta shanti fever bukhar"
@@ -327,10 +378,10 @@ export const REMEDIES: Remedy[] = [
   {
     id: 'gf-5',
     serialNumber: '5',
-    name: { hi: 'दालचीनी और लौंग का स्वेदन चाय', en: 'Sudorific Cinnamon and Clove Tea' },
+    name: { hi: 'दालचीनी and लौंग का स्वेदन चाय', en: 'Sudorific Cinnamon and Clove Tea' },
     illnessId: 'general-fever',
     introduction: {
-      hi: "जब बुखार ठंड लगकर आता है, पूरा शरीर थर-थर कांप रहा हो या जोड़ों में भयंकर जकड़न हो, तब यह गरम तासीर का उपाय शरीर के भीतर तुरंत अग्नि पैदा करता है, रोम-छिद्रों को खोलता है और भरपूर पसीना लाकर बुखार को शरीर से बाहर ढकेलता है।",
+      hi: "जब बुखार ठंड लगकर आता है, पूरा शरीर थर-थर कांप रहा हो या जोड़ों में भयंकर जकड़न हो, तब यह गरम तासीर का उपाय शरीर के भीतर तुरंत अग्नि पैदा करता है, रोम-छिद्रों को खोलता है and भरपूर पसीना लाकर बुखार को शरीर से बाहर ढकेलता है।",
       en: "When fever sets in with shivering chills, severe body shaking, or extreme joint stiffness, this warm-potency tea immediately generates internal heat, opens skin pores, and induces sweating to drive the fever out of the body."
     },
     severity: 'moderate',
@@ -346,7 +397,7 @@ export const REMEDIES: Remedy[] = [
       en: ['1 small piece of cinnamon', '2 cloves', '2 green cardamoms', '1 glass of water']
     },
     preparation: {
-      hi: 'पानी में दालचीनी, लौंग और इलायची को कूटकर डालें। इसे तब तक उबालें जब तक पानी उबलकर आधा न रह जाए।',
+      hi: 'पानी में दालचीनी, लौंग and इलायची को कूटकर डालें। इसे तब तक उबालें जब तक पानी उबलकर आधा न रह जाए।',
       en: 'Crush the cinnamon, cloves, and cardamom and add them to water. Boil until the liquid reduces to half.'
     },
     usage: {
@@ -354,11 +405,11 @@ export const REMEDIES: Remedy[] = [
       en: 'Strain and drink it hot like tea, sipping slowly, half an hour after breakfast (full stomach) and at bedtime (1 hour after dinner).'
     },
     dietEat: {
-      hi: 'गरम राब और सूप, बाजरे की कांजी। फायदेमंद फल: चीकू और खजूर। फायदेमंद सलाद: हल्का भुना हुआ चुकंदर।',
+      hi: 'गरम राब and सूप, बाजरे की कांजी। फायदेमंद फल: चीकू and खजूर। फायदेमंद सलाद: हल्का भुना हुआ चुकंदर।',
       en: 'Warm liquid gruel (Raab) or hot soup, pearl millet (Bajra) Kanji. Beneficial Fruits: Sapodilla (Chiku) and dates. Beneficial Salad: Lightly roasted beetroot.'
     },
     dietAvoid: {
-      hi: 'आइसक्रीम, कोल्ड ड्रिंक, खट्टा खाना, ठंडा पानी और दही।',
+      hi: 'आइसक्रीम, कोल्ड ड्रिंक, खट्टा खाना, ठंडा पानी and दही।',
       en: 'Ice cream, cold drinks, sour food, cold water, and curd.'
     },
     strictAvoid: {
@@ -378,10 +429,10 @@ export const REMEDIES: Remedy[] = [
   {
     id: 'gf-6',
     serialNumber: '6',
-    name: { hi: 'अजवाइन, सोंठ और गुड़ का पसीना लाने वाला घरेलू काढ़ा', en: 'Sweat-Inducing Home Decoction of Carom Seeds, Dry Ginger, and Jaggery' },
+    name: { hi: 'अजवाइन, सोंठ and गुड़ का पसीना लाने वाला घरेलू काढ़ा', en: 'Sweat-Inducing Home Decoction of Carom Seeds, Dry Ginger, and Jaggery' },
     illnessId: 'general-fever',
     introduction: {
-      hi: "जब शरीर ठंड से कांप रहा हो, बुखार का वेग तेज हो और पसीना न आ रहा हो, तो किचन में मौजूद अजवाइन, सोंठ and गुड़ का यह पुराना घरेलू काढ़ा रामबाण काम करता है। यह शरीर के बंद रोमछिद्रों को खोलता है, पसीना लाकर बुखार की गर्मी को बाहर निकालता है और ठंड लगने की समस्या को तुरंत शांत करता है।",
+      hi: "जब शरीर ठंड से कांप रहा हो, बुखार का वेग तेज हो and पसीना न आ रहा हो, तो किचन में मौजूद अजवाइन, सोंठ and गुड़ का यह पुराना घरेलू काढ़ा रामबाण काम करता है। यह शरीर के बंद रोमछिद्रों को खोलता है, पसीना लाकर बुखार की गर्मी को बाहर निकालता है and ठंड लगने की समस्या को तुरंत शांत करता है।",
       en: "When the body is shivering with severe chills, the fever is high, and there is no sweating, this traditional kitchen decoction of carom seeds, dry ginger, and jaggery works wonders. It opens pores, induces sweating to break the fever, and immediately calms the shivering."
     },
     severity: 'severe',
@@ -429,10 +480,10 @@ export const REMEDIES: Remedy[] = [
   {
     id: 'gf-7',
     serialNumber: '7',
-    name: { hi: 'मेथी, सोंठ और भुने जीरे का घरेलू ज्वरनाशक चूर्ण', en: 'Home Remedy Antipyretic Powder of Fenugreek, Dry Ginger, and Cumin' },
+    name: { hi: 'मेथी, सोंठ and भुने जीरे का घरेलू ज्वरनाशक चूर्ण', en: 'Home Remedy Antipyretic Powder of Fenugreek, Dry Ginger, and Cumin' },
     illnessId: 'general-fever',
     introduction: {
-      hi: "जब अचानक मौसम बदलने से शरीर में दर्द के साथ हल्का या मध्यम बुखार आ जाए, तो किचन में मौजूद मेथी दाना, सोंठ (सूखा अदरक) and जीरे का यह घरेलू मिश्रण रामबाण काम करता है। यह शरीर का तापमान सामान्य करता है, पसीना लाकर बुखार बाहर निकालता है और भूख को दोबारा खोलता है।",
+      hi: "जब अचानक मौसम बदलने से शरीर में दर्द के साथ हल्का या मध्यम बुखार आ जाए, तो किचन में मौजूद मेथी दाना, सोंठ (सूखा अदरक) and जीरे का यह घरेलू मिश्रण रामबाण काम करता है। यह शरीर का तापमान सामान्य करता है, पसीना लाकर बुखार बाहर निकालता है and भूख को दोबारा खोलता है।",
       en: "When sudden seasonal changes cause mild to moderate fever accompanied by body aches, this homemade blend of fenugreek seeds, dry ginger (Saunth), and cumin works wonders. It normalizes body temperature, induces sweating to break the fever, and restores appetite."
     },
     severity: 'moderate',
@@ -480,7 +531,7 @@ export const REMEDIES: Remedy[] = [
   {
     id: 'gf-8',
     serialNumber: '8',
-    name: { hi: 'काली मिर्च, अदरक और तुलसी पत्र का तीखा ज्वरनाशक काढ़ा', en: 'Antipyretic Decoction of Black Pepper, Ginger, and Basil Leaves' },
+    name: { hi: 'काली मिर्च, अदरक and तुलसी पत्र का तीखा ज्वरनाशक काढ़ा', en: 'Antipyretic Decoction of Black Pepper, Ginger, and Basil Leaves' },
     illnessId: 'general-fever',
     introduction: {
       hi: "जब सर्दी-खांसी के साथ अचानक शरीर जकड़ जाए and बुखार चढ़ने लगे, तो दादी-नानी के जमाने का यह काली मिर्च and तुलसी का काढ़ा सबसे तेज असर करता है। काली मिर्च इन्फेक्शन को मारती है, अदरक शरीर का दर्द खींचता है, and तुलसी के पत्ते खून के तापमान को तुरंत नियंत्रित करने में मदद करते हैं।",
@@ -531,7 +582,7 @@ export const REMEDIES: Remedy[] = [
   {
     id: 'gf-9',
     serialNumber: '9',
-    name: { hi: 'खस, धनिया और सोंठ का शीतल ज्वरनाशक हिम', en: 'Cooling Antipyretic Infusion of Vetiver, Coriander, and Dry Ginger' },
+    name: { hi: 'खस, धनिया and सोंठ का शीतल ज्वरनाशक हिम', en: 'Cooling Antipyretic Infusion of Vetiver, Coriander, and Dry Ginger' },
     illnessId: 'general-fever',
     introduction: {
       hi: "जब बुखार के कारण शरीर में तेज जलन हो, हाथ-पैरों से आग निकल रही हो and बार-बार प्यास लग रही हो, तब धनिया and सोंठ का यह पानी (आयुर्वेद में जिसे 'हिम' कहते हैं) शरीर की अंदरूनी गर्मी को शांत करता है। यह लीवर को ठंडा करता है, पेशाब के रास्ते बुखार की गर्मी को बाहर निकालता है and पाचन को दुरुस्त करता है।",
@@ -570,7 +621,7 @@ export const REMEDIES: Remedy[] = [
       en: 'Spicy street food, samosas, packaged hot savories, and chilled fridge water.'
     },
     routine: {
-      morning: { hi: 'सुबह: खाली पेट सादे पानी से कुल्ला करें।', en: 'Morning: Rinse your mouth with plain water on an empty stomach.' },
+      morning: { hi: 'सुबह: खाली पेट सादे पानी से कुल्ला करें।', en: 'Morning: Rinse your mouth with plain water on an stomach.' },
       afternoon: { hi: 'दोपहर: सुपाच्य भोजन के बाद खुली and साफ हवा वाले कमरे में आराम करें।', en: 'Afternoon: After an easily digestible lunch, rest in a well-ventilated, clean room.' },
       evening: { hi: 'शाम/रात: हल्का सूप या पतली लापसी लें। धूप में जाने या भारी मेहनत करने से पूरी तरह बचें।', en: 'Evening/Night: Have light soup or thin porridge. Avoid going out in the sun or doing heavy physical work.' }
     },
@@ -589,7 +640,7 @@ export const REMEDIES: Remedy[] = [
       en: "After the fever subsides, the body often experiences extreme weakness, dizziness, and body aches. In such cases, this kitchen combination of foxnuts (rich in calcium and protein) and raisins (which build new blood) restores lost energy within 3 to 5 days and eradicates fatigue completely."
     },
     severity: 'mild',
-    severityLabel: { hi: '🟢 बुखार के बाद की कमजोरी और थकान', en: '🟢 Post-Fever Recovery & Fatigue' },
+    severityLabel: { hi: '🟢 बुखार के बाद की कमजोरी and थकान', en: '🟢 Post-Fever Recovery & Fatigue' },
     doses: [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "2 भुने मखाने and 2 भीगे मुनक्के सुबह-शाम (चबाकर खाएं, ऊपर से हल्का गुनगुना दूध पिएं)", en: "2 roasted foxnuts and 2 soaked raisins morning-evening (chew well, followed by lukewarm milk)" } },
       { ageRange: AGE_BRACKETS.youth, dose: { hi: "एक छोटा कटोरा भुने मखाने and 5 भीगे मुनक्के सुबह and शाम (भोजन या नाश्ते के बाद)", en: "One small bowl of roasted foxnuts and 5 soaked raisins morning and evening (after meals or breakfast)" } },
