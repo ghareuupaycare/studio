@@ -201,7 +201,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           isNight ? "bg-black border-white/20" : "bg-[#FDF6E2] border-primary/10"
         )}>
           <h3 className={cn(headingClass, "text-accent")}>
-            {isHindi ? 'आवश्यक सामग्री' : 'Required Ingredients'}
+            {isHindi ? 'आवश्यक सामग्री (कुल स्टॉक या बनाने के लिए)' : 'Required Ingredients'}
           </h3>
           <ul className="space-y-6">
             {remedy.ingredients[lang].map((item, i) => (
