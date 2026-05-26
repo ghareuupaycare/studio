@@ -212,7 +212,7 @@ export const CategoryDetailView = ({
                 {remedy.serialNumber}
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-lg leading-snug">{toEnglishDigits(remedy.name[lang])}</h4>
+                <h4 className="font-bold text-[24px] leading-snug">{toEnglishDigits(remedy.name[lang])}</h4>
               </div>
               <BookOpen className="w-6 h-6 opacity-40 group-hover:opacity-100 transition-opacity" />
             </button>
