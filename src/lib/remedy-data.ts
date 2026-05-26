@@ -39,7 +39,7 @@ export type Remedy = {
 };
 
 export const CATEGORIES = [
-  { id: 'fever', label: '1. मौसमी बुखार एवं फ्लू', icon: 'Thermometer', image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl },
+  { id: 'fever', label: '1. मौसमी बुखार और फ्लू', icon: 'Thermometer', image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl },
   { id: 'joints', label: '2. घुटनों का दर्द', icon: 'Accessibility', image: PlaceHolderImages.find(i => i.id === 'joint-pain')?.imageUrl },
   { id: 'respiratory', label: '3. खांसी और सर्दी', icon: 'Wind', image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl },
   { id: 'digestion', label: '4. पाचन', icon: 'Stomach', image: PlaceHolderImages.find(i => i.id === 'digestion')?.imageUrl },
@@ -94,7 +94,7 @@ export const REMEDIES: Remedy[] = [
       en: 'Cold water, refrigerated food, fried items, refined flour (Maida), heavy meals, and milk.'
     },
     strictAvoid: {
-      hi: 'पैकेट वाली चीजें (चिप्स, बिस्कुट), प्रोसेस्ड फूड, कोल्ड ड्रिंक्स और बाजार का डिब्बा-बंद सूप।',
+      hi: 'पैकेट वाले चीजें (चिप्स, बिस्कुट), प्रोसेस्ड फूड, कोल्ड ड्रिंक्स और बाजार का डिब्बा-बंद सूप।',
       en: 'Packaged items (chips, biscuits), processed food, cold drinks, and market-bought canned soups.'
     },
     routine: {
@@ -367,8 +367,8 @@ export const REMEDIES: Remedy[] = [
     },
     routine: {
       morning: { hi: "सुबह (Morning): सुबह उठकर सबसे पहले थोड़ा गर्म पानी पिएं और नमक डालकर गुनगुने पानी से गरारे करें।", en: "Morning: Drink warm water and gargle with lukewarm salt water." },
-      afternoon: { hi: "दोपहर (Afternoon): दोपहर का खाना हमेशा ताजा और गर्म ही खाएं, बासी भोजन भूलकर भी न लें।", en: "Afternoon: Always eat fresh and hot lunch; never eat stale food." },
-      evening: { hi: "शाम/रात (Evening/Night): रात का भोजन 8 बजे से पहले कर लें। सोते समय सिर और कानों को ढककर रखें और रात को भूलकर भी पंखे की तेज हवा या एसी में न सोएं।", en: "Evening/Night: Eat dinner before 8 PM. Keep head and ears covered while sleeping; avoid direct air from fans or AC at night." }
+      afternoon: { hi: "दोपहर (Afternoon): दोपहर का खाना हमेशा ताजा and गर्म ही खाएं, बासी भोजन भूलकर भी न लें।", en: "Afternoon: Always eat fresh and hot lunch; never eat stale food." },
+      evening: { hi: "शाम/रात (Evening/Night): रात का भोजन 8 बजे से पहले कर लें। सोते समय सिर and कानों को ढककर रखें and रात को भूलकर भी पंखे की तेज हवा या एसी में न सोएं।", en: "Evening/Night: Eat dinner before 8 PM. Keep head and ears covered while sleeping; avoid direct air from fans or AC at night." }
     },
     safetyAdvice: { hi: "यदि इस उपाय को लगातार 5 दिनों तक नियम से करने के बाद भी आपको आराम महसूस न हो, तो बिना देर किए अपने नजदीकी आयुर्वेदिक चिकित्सक से मिलकर उचित परामर्श लें। शरीर का ध्यान रखना ही सबसे पहली प्राथमिकता है।", en: "If you don't find relief after 5 days, consult an Ayurvedic physician immediately. Taking care of your body is the first priority." },
     disclaimer: GENERAL_DISCLAIMER,
@@ -483,21 +483,146 @@ export const REMEDIES: Remedy[] = [
       en: "Food: Thin gruel of old rice or hot cooked rice with gruel removed, Moong dal soup, boiled gram water, and lukewarm water. For lunch, you can eat 1 small bowl of lightly boiled salad (like boiled bottle gourd or sponge gourd). Keep raw fruits completely off."
     },
     dietAvoid: {
-      hi: "पैकेट वाले फूड्स: चिप्स, कुरकुरे, समोसे, कचौड़ी, बिस्कुट, ब्रेड और मैदे से बनी चीजें पूरी तरह से बंद रखें।\nभारी भोजन: राजमा, छोले, पनीर, मलाई, मिठाई, मांसाहारी भोजन और रात के समय भारी दालें न खाएं।\nठंडी चीजें: ठंडा पानी, गन्ने का रस, खट्टा नींबू, दही, छाछ, और फ्रिज में रखा हुआ बासी भोजन बिल्कुल न लें।",
+      hi: "पैकेट वाले फूड्स: चिप्स, कुरकुरे, समोसे, कचौड़ी, बिस्कुट, ब्रेड and मैदे से बनी चीजें पूरी तरह से बंद रखें।\nभारी भोजन: राजमा, छोले, पनीर, मलाई, मिठाई, मांसाहारी भोजन and रात के समय भारी दालें न खाएं।\nठंडी चीजें: ठंडा पानी, गन्ने का रस, खट्टा नींबू, दही, छाछ, and फ्रिज में रखा हुआ बासी भोजन बिल्कुल न लें।",
       en: "Packaged foods: Keep chips, snacks, samosas, kachoris, biscuits, bread and items made of refined flour completely off. Heavy food: Do not eat kidney beans, chickpeas, paneer, cream, sweets, non-vegetarian food and heavy pulses at night. Cold things: Do not take cold water, sugarcane juice, sour lemon, curd, buttermilk, and stale food kept in the fridge at all."
     },
     strictAvoid: {
-      hi: "ठंडी चीजें, भारी मांसाहार और पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।",
+      hi: "ठंडी चीजें, भारी मांसाहार and पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।",
       en: "Cold items, heavy non-veg, and packaged snacks are strictly prohibited."
     },
     routine: {
       morning: { hi: "सुबह (Morning): सुबह उठकर तुलसी के पत्तों की भाप (Steam) लें और नाक में दो-दो बूंद अणु तेल या सरसों का तेल डालें।", en: "Morning: Take steam of basil leaves after waking up in the morning and put two drops of Anu oil or mustard oil in the nose." },
-      afternoon: { hi: "दोपहर (Afternoon): दोपहर में गर्म और सुपाच्य भोजन लें और खाने के तुरंत बाद पानी न पिएं।", en: "Afternoon: Take hot and easily digestible food in the afternoon and do not drink water immediately after eating." },
-      evening: { hi: "शाम/रात (Evening/Night): रात का भोजन सूर्यास्त के आसपास या रात 8 बजे से पहले कर लें। सोते समय छाती पर थोड़ा सा गुनगुना सरसों का तेल मलें और खुली हवा या पंखे के नीचे सीधे न सोएं।", en: "Evening/Night: Take dinner around sunset or before 8 pm. Rub a little lukewarm mustard oil on the chest while sleeping and do not sleep directly under open air or fan." }
+      afternoon: { hi: "दोपहर (Afternoon): दोपहर में गर्म and सुपाच्य भोजन लें और खाने के तुरंत बाद पानी न पिएं।", en: "Afternoon: Take hot and easily digestible food in the afternoon and do not drink water immediately after eating." },
+      evening: { hi: "शाम/रात (Evening/Night): रात का भोजन सूर्यास्त के आसपास या रात 8 बजे से पहले कर लें। सोते समय छाती पर थोड़ा सा गुनगुना सरसों का तेल मलें and खुली हवा या पंखे के नीचे सीधे न सोएं।", en: "Evening/Night: Take dinner around sunset or before 8 pm. Rub a little lukewarm mustard oil on the chest while sleeping and do not sleep directly under open air or fan." }
     },
     safetyAdvice: { hi: "यदि इस उपाय को लगातार 5 दिनों तक नियम से करने के बाद भी आपको आराम महसूस न हो, तो बिना देर किए अपने नजदीकी आयुर्वेदिक चिकित्सक से मिलकर उचित परामर्श लें। शरीर का ध्यान रखना ही सबसे पहली प्राथमिकता है।", en: "If you don't feel relief even after doing this remedy regularly for 5 consecutive days, then consult your nearest Ayurvedic physician for proper advice without delay. Taking care of the body is the first priority." },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
     keywords: "sardi khansi cold cough sinus nazla jukam saunth dalchini"
+  },
+  {
+    id: 'cc-6',
+    serialNumber: '6',
+    name: { hi: 'सर्दी-जुकाम, बदन दर्द और हरारत बुखार नाशक काढ़ा', en: 'Relief Decoction for Cold, Body Ache and Fever' },
+    illnessId: 'common-cold',
+    introduction: {
+      hi: "जब मौसम बदलने के कारण अचानक सर्दी, ज़ुकाम, बदन में भयंकर टूटन (दर्द) और हल्की हरारत (ऐसा लगना जैसे बुखार आने वाला है) तीनों समस्याएं एक साथ हमला करती हैं, तो शरीर की रोग प्रतिरोधक क्षमता कमजोर पड़ जाती है। ऐसी स्थिति में यह पारंपरिक घरेलू काढ़ा रामबाण की तरह काम करता है। सोंठ और काली मिर्च मिलकर शरीर के भीतर जमे हुए कफ और वात दोष को शांत करते हैं जिससे बदन का दर्द तुरंत ठीक होता है। तुलसी के दिव्य औषधीय गुण हरारत और जुकाम के वायरस को जड़ से खत्म करते हैं।",
+      en: "When weather changes bring cold, intense body ache, and mild feverishness together, the immune system weakens. This traditional decoction works like a panacea. Dry ginger and black pepper calm the accumulated Kapha and Vata doshas, while Tulsi's medicinal properties eradicate the cold virus."
+    },
+    doses: [
+      { 
+        ageRange: AGE_BRACKETS.childhood, 
+        dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." },
+        ingredients: {
+          hi: [
+            'सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)',
+            'ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए)',
+            'साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचले हुए)',
+            'पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा)',
+            'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'
+          ],
+          en: [
+            'Dry ginger powder — half a teaspoon (approx. 1-2g)',
+            'Fresh Tulsi leaves — 4 to 5 pieces (washed)',
+            'Whole black pepper powder — 2 grains (finely crushed)',
+            'Old clean jaggery — 10g (small piece)',
+            'Clean drinking water — 1 cup (approx. 150ml)'
+          ]
+        }
+      },
+      { 
+        ageRange: AGE_BRACKETS.youth, 
+        dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." },
+        ingredients: {
+          hi: [
+            'सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)',
+            'ताज़ा तुलसी के पत्ते — 8 से 10 पीस (साफ धुले हुए)',
+            'साबुत काली मिर्च का पाउडर — 4 से 5 दाने (बारीक कुचले हुए)',
+            'पुराना साफ़ गुड़ — 20 gram (एक मध्यम टुकड़ा)',
+            'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'
+          ],
+          en: [
+            'Dry ginger powder — 1 teaspoon (approx. 3-4g)',
+            'Fresh Tulsi leaves — 8 to 10 pieces (washed)',
+            'Whole black pepper powder — 4 to 5 grains (finely crushed)',
+            'Old clean jaggery — 20g (medium piece)',
+            'Clean drinking water — 1 large glass (approx. 250ml)'
+          ]
+        }
+      },
+      { 
+        ageRange: AGE_BRACKETS.middleAge, 
+        dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." },
+        ingredients: {
+          hi: [
+            'सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)',
+            'ताज़ा तुलसी के पत्ते — 8 से 10 पीस (साफ धुले हुए)',
+            'साबुत काली मिर्च का पाउडर — 4 से 5 दाने (बारीक कुचले हुए)',
+            'पुराना साफ़ गुड़ — 20 gram (एक मध्यम टुकड़ा)',
+            'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'
+          ],
+          en: [
+            'Dry ginger powder — 1 teaspoon (approx. 3-4g)',
+            'Fresh Tulsi leaves — 8 to 10 pieces (washed)',
+            'Whole black pepper powder — 4 to 5 grains (finely crushed)',
+            'Old clean jaggery — 20g (medium piece)',
+            'Clean drinking water — 1 large glass (approx. 250ml)'
+          ]
+        }
+      },
+      { 
+        ageRange: AGE_BRACKETS.oldAge, 
+        dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." },
+        ingredients: {
+          hi: [
+            'सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)',
+            'ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए)',
+            'साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचले हुए)',
+            'पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा)',
+            'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'
+          ],
+          en: [
+            'Dry ginger powder — half a teaspoon (approx. 1-2g)',
+            'Fresh Tulsi leaves — 4 to 5 pieces (washed)',
+            'Whole black pepper powder — 2 grains (finely crushed)',
+            'Old clean jaggery — 10g (small piece)',
+            'Clean drinking water — 1 cup (approx. 150ml)'
+          ]
+        }
+      }
+    ],
+    ingredients: {
+      hi: ['सोंठ का पाउडर (सूखा अदरक)', 'ताज़ा तुलसी के पत्ते', 'साबुत काली मिर्च का पाउडर', 'पुराना साफ़ गुड़', 'पीने का साफ पानी'],
+      en: ['Dry ginger powder', 'Fresh Tulsi leaves', 'Whole black pepper powder', 'Old clean jaggery', 'Clean drinking water']
+    },
+    preparation: {
+      hi: "एक बर्तन में अपनी उम्र के अनुसार तय की गई मात्रा में पानी डालें। अब उसमें तुलसी के पत्तों को हाथ से तोड़कर डालें, साथ ही सोंठ का पाउडर, कुचली हुई काली मिर्च और गुड़ डाल दें। अब आंच को धीमा रखें और इसे तब तक उबलने दें जब तक कि यह उबलकर आधा न रह जाए। जब काढ़ा आधा बचे, तो आंच बंद कर दें और इसे कप में छान लें।",
+      en: "Add water to a vessel according to age. Add hand-torn Tulsi leaves, dry ginger powder, crushed black pepper and jaggery. Boil on low heat until water reduces to half. Strain into a cup."
+    },
+    usage: {
+      hi: "इस काढ़े को छानने के बाद हल्का गुनगुना (चाय की तरह गर्म) रहते हुए ही धीरे-धीरे सिप लेकर पिएं। इसे पीने के तुरंत बाद शरीर पर चादर या कंबल ओढ़कर सो जाएं ताकि पसीना आए। पसीना आते ही हरारत और बदन दर्द गायब हो जाएगा। इसके बाद 1 घंटे तक हवा में न निकलें।\nअवधि: इस काढ़े का नियमित सेवन रोजाना सुबह खाली पेट और रात को सोने से पहले, लगातार 3 से 5 दिनों तक करें।",
+      en: "Sip warm decoction slowly. Immediately cover yourself with a blanket to induce sweating, which helps relieve feverishness and pain. Avoid drafts for 1 hour. Duration: Consume morning and night for 3 to 5 days."
+    },
+    dietEat: {
+      hi: "भोजन और गर्म सूप: मूंग की दाल का गर्म सूप पिएं। ताकत के लिए ताजा पका हुआ टमाटर, अदरक और काली मिर्च का गर्म सूप (1 छोटा बाउल यानी लगभग 150 मिली) शाम को ले सकते हैं, यह बहुत फायदेमंद है। इसके अलावा सोंठ-अजवाइन डाल कर बनाई हुई पतली खिचड़ी, सादी गर्म रोटी और गुनगुना पानी ही लें।\nसलाद की मात्रा: हरारत और जुकाम की स्थिति में कच्चे फल और ठंडे जूस पूरी तरह वर्जित हैं। सलाद के रूप में दोपहर के भोजन के साथ 1 छोटी कटोरी (लगभग 100 ग्राम) हल्के उबले हुए गर्म सलाद (जैसे भाप में पकी हुई गाजर या शलजम) पर हल्का सा सेंधा नमक छिड़क कर खा सकते हैं।",
+      en: "Diet: Moong dal soup, hot tomato-ginger-pepper soup (150ml) in the evening. Eat thin khichdi with dry ginger and carom seeds. Drink lukewarm water. Salad: Steamed warm carrots/turnips with rock salt. Avoid raw fruits and juices."
+    },
+    dietAvoid: {
+      hi: "पैकेट वाले फूड्स: बाजार के चिप्स, कुरकुरे, नमकीन, समोसे, तली-भुनी चीजें, बिस्कुट और मैदे से बने सामान सख़्ती से बंद रखें।\nभारी भोजन: उड़द की दाल, चावल, पनीर, मिठाई, भारी तड़का लगा हुआ भोजन और मांसाहार का सेवन बिल्कुल न करें।\nठंडी चीजें और जूस: फ्रिज का ठंडा पानी, फलों के ठंडे जूस, कोल्ड ड्रिंक्स, आइसक्रीम, दही, मट्ठा और कच्चे खट्टे फल पूरी तरह वर्जित हैं।",
+      en: "Avoid: Packaged snacks, fried items, refined flour products. Avoid Urad dal, rice, paneer, sweets, spicy food, and non-veg. Strictly avoid cold water, cold juices, sodas, ice cream, curd, and sour fruits."
+    },
+    strictAvoid: {
+      hi: "ठंडी चीजें और जूस, भारी मांसाहार और पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।",
+      en: "Cold items, juices, heavy non-veg, and packaged snacks are strictly prohibited."
+    },
+    routine: {
+      morning: { hi: "सुबह (Morning): सुबह उठकर गुनगुने पानी में थोड़ा सा सेंधा नमक डालकर गरारे करें और गर्म पानी की भाप लें।", en: "Morning: Gargle with warm salt water and take steam inhalation." },
+      afternoon: { hi: "दोपहर (Afternoon): दोपहर का खाना हमेशा ताजा और गर्म ही करें, बासी भोजन भूलकर भी न छुएं।", en: "Afternoon: Always eat fresh hot lunch; never eat stale food." },
+      evening: { hi: "शाम/रात (Evening/Night): रात का भोजन 8 बजे से पहले खा लें। सोते समय अपने सिर, कान और छाती को सूती कपड़े या मफलर से ढककर रखें और पंखे की तेज हवा के नीचे सीधे न सोएं।", en: "Evening/Night: Eat dinner before 8 PM. Keep head, ears, and chest covered with cotton cloth or muffler while sleeping. Avoid direct air from fans." }
+    },
+    safetyAdvice: { hi: "यदि इस उपाय को लगातार 3 से 5 दिनों तक नियम से करने के बाद भी आपकी हरारत, जुकाम, बुखार और बदन दर्द में राहत महसूस न हो, तो बिना देर किए अपने नजदीकी आयुर्वेदिक चिकित्सक से मिलकर उचित परामर्श लें। शरीर को सुरक्षित रखना ही हमारी सबसे पहली प्राथमिकता है।", en: "If no relief after 3-5 days, consult an Ayurvedic physician immediately. Body safety is the top priority." },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
+    keywords: "sardi jukam badan dard hararat bukhar tulsi saunth kali mirch"
   }
 ];
