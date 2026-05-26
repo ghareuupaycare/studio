@@ -208,13 +208,62 @@ export const REMEDIES: Remedy[] = [
     },
     routine: {
       morning: { hi: 'सुबह: सुबह उठकर सबसे पहले 1-2 गिलास गुनगुना पानी पिएं। हल्के गर्म पानी से गरारे (Kulla) करें।', en: 'Morning: Start with 1-2 glasses of lukewarm water. Gargle with warm water.' },
-      afternoon: { hi: 'दोपहर: दोपहर का भोजन हमेशा ताजा और गर्म ही करें। भोजन के तुरंत बाद पानी न पिएं, कम से कम आधा घंटा रुकें।', en: 'Afternoon: Eat fresh hot lunch. Wait 30 minutes before drinking water after meals.' },
-      evening: { hi: 'शाम/रात: रात का भोजन बिल्कुल हल्का रखें और सूर्य अस्त के बाद 8 बजे तक हर हाल में कर लें। रात के समय सलाद या फल का सेवन भूलकर भी न करें। छाती और गले को हवा से बचाकर रखें और पूरी नींद लें।', en: 'Evening/Night: Eat light dinner by 8 PM. Avoid fruits/salad at night. Keep chest/throat protected from drafts.' }
+      afternoon: { hi: 'दोपहर: दोपहर का भोजन हमेशा ताजा and गर्म ही करें। भोजन के तुरंत बाद पानी न पिएं, कम से कम आधा घंटा रुकें।', en: 'Afternoon: Eat fresh hot lunch. Wait 30 minutes before drinking water after meals.' },
+      evening: { hi: 'शाम/रात: रात का भोजन बिल्कुल हल्का रखें और सूर्य अस्त के बाद 8 बजे तक हर हाल में कर लें। रात के समय सलाद या फल का सेवन भूलकर भी न करें। छाती and गले को हवा से बचाकर रखें और पूरी नींद लें।', en: 'Evening/Night: Eat light dinner by 8 PM. Avoid fruits/salad at night. Keep chest/throat protected from drafts.' }
     },
     safetyAdvice: { hi: 'सुरक्षा सूचना: यदि 5 दिनों में आराम न मिले तो चिकित्सक से सलाह लें।', en: 'Safety Notice: If no relief in 5 days, consult a doctor.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
     keywords: "nazla jukam mulethi kali mirch cough cold respiratory congestion pratishyaya"
+  },
+  {
+    id: 'cc-3',
+    serialNumber: '3',
+    name: { hi: 'सोंठ और गुड़ का औषधीय चाटन', en: 'Medicinal Lick of Dry Ginger and Jaggery' },
+    illnessId: 'common-cold',
+    introduction: {
+      hi: "आयुर्वेद में नजला-जुकाम का मुख्य कारण शरीर में कफ और वात दोष का बिगड़ना माना जाता है। इसके चलते नाक बहना, गले में कांटे जैसी चुभन, खांसी और सिरदर्द की समस्या मरीज को परेशान करती है। सोंठ और गुड़ का यह पारंपरिक चाटन शरीर में तुरंत गर्माहट लाता है। सोंठ अपने तीखे और गर्म गुणों से श्वसन मार्ग में जमे गाढ़े कफ को सुखाकर बाहर निकालती है, जबकि पुराना गुड़ गले की खराश दूर कर फेफड़ों को मजबूती देता है।",
+      en: "In Ayurveda, the main cause of cold and flu is considered to be the disturbance of Kapha and Vata doshas in the body. This traditional lick of dry ginger and jaggery brings instant warmth. Dry ginger dries up thick phlegm in the respiratory tract with its pungent and hot properties, while old jaggery relieves sore throat and strengthens lungs."
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "आधा छोटा चम्मच (लगभग 2 से 3 ग्राम) सुबह और शाम को", en: "Half a teaspoon (approx. 2 to 3 grams) morning and evening" } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "एक छोटा चम्मच (लगभग 5 से 6 ग्राम) सुबह और शाम को", en: "One teaspoon (approx. 5 to 6 grams) morning and evening" } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "एक छोटा चम्मच (लगभग 5 से 6 ग्राम) सुबह और शाम को", en: "One teaspoon (approx. 5 to 6 grams) morning and evening" } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "एक छोटा चम्मच (लगभग 4 से 5 ग्राम) सुबह और शाम को", en: "One teaspoon (approx. 4 to 5 grams) morning and evening" } }
+    ],
+    ingredients: {
+      hi: ['सोंठ का पाउडर (सूखा अदरक) — 20 ग्राम', 'पुराना देसी गुड़ — 50 ग्राम', 'शुद्ध गाय का घी — 1 चम्मच', 'कुचली हुई छोटी इलायची — 2 पीस'],
+      en: ['Dry ginger powder (Saunth) — 20g', 'Old desi jaggery — 50g', 'Pure cow ghee — 1 teaspoon', 'Crushed green cardamom — 2 pieces']
+    },
+    preparation: {
+      hi: 'सबसे पहले एक कढ़ाई या बर्तन में एक चम्मच गाय का घी डालकर धीमी आंच पर गर्म करें। अब उसमें कुचला हुआ गुड़ डालें और उसे पूरी तरह पिघलने दें। जब गुड़ पिघल जाए, तो आंच बंद कर दें और उसमें सोंठ का पाउडर व इलायची मिलाकर अच्छी तरह चलाएं। ठंडा होने पर इसे एक साफ़ कांच के बर्तन में सुरक्षित रख लें। आपका औषधीय अवलेह (चाटन) तैयार है।',
+      en: 'Heat one teaspoon of cow ghee in a pan on low heat. Add crushed jaggery and let it melt completely. Once melted, turn off heat, add dry ginger powder and cardamom, and mix well. Once cool, store in a clean glass jar.'
+    },
+    usage: {
+      hi: 'इस तैयार अवलेह (चटनी) को अपनी उम्र के अनुसार तय खुराक में लेकर सुबह खाली पेट और रात को सोने से ठीक पहले धीरे-धीरे चाटकर खाएं। ध्यान रखें, इसे खाने के बाद कम से कम 1 घंटे तक पानी बिल्कुल नहीं पीना है। अवधि: इस नुस्खे का सेवन लगातार 3 से 5 दिनों तक करें।',
+      en: 'Take the prescribed dose based on age and lick it slowly on an empty stomach in the morning and just before bedtime. Note: Do not drink water for at least 1 hour after consuming. Duration: Use for 3 to 5 days.'
+    },
+    dietEat: {
+      hi: 'भोजन: पुराना सादी मूँग दाल का सूप, ताज़ा गर्म बाजरे या मक्के की रोटी (कम मात्रा में), गर्म दलिया, और गुनगुना पानी। फल और सलाद की मात्रा: दोपहर के भोजन के साथ 1 छोटी कटोरी (लगभग 100 ग्राम) हल्के भाप में पके हुए सलाद (जैसे उबली गाजर) और सीजन के अनुसार आधा कटोरा काटा हुआ पका पपीता या एक सेब छीलकर खाएं।',
+      en: 'Diet: Plain Moong dal soup, fresh hot Bajra or corn roti (small amount), hot porridge, and lukewarm water. For lunch, include 1 small bowl of steamed salad (like boiled carrots) and half a bowl of papaya or a peeled apple.'
+    },
+    dietAvoid: {
+      hi: 'पैकेट वाले फूड्स: चिप्स, नमकीन, कुरकुरे, समोसा, कचौड़ी और मैदे से बने बिस्कुट पूरी तरह बंद रखें। भारी भोजन: किसी भी प्रकार का मांस, मछली, अंडा या भारी मांसाहारी भोजन, पनीर और उड़द की दाल का सेवन बिल्कुल न करें।',
+      en: 'Avoid: Packaged snacks, deep-fried items, refined flour biscuits. Also avoid all non-veg, paneer, and Urad dal.'
+    },
+    strictAvoid: {
+      hi: 'ठंडी चीजें: फ्रिज का पानी, कोल्ड ड्रिंक्स, गन्ने का रस, खट्टे फल, दही और आइसक्रीम का सेवन पूरी तरह वर्जित है।',
+      en: 'Strictly Avoid: Cold water, sodas, sugarcane juice, sour fruits, curd, and ice cream.'
+    },
+    routine: {
+      morning: { hi: 'सुबह: सुबह उठकर गुनगुना पानी पिएं। सोंठ और गुड़ के सेवन के तुरंत बाद खुली ठंडी हवा में बाहर न निकलें।', en: 'Morning: Drink lukewarm water. Avoid cold drafts immediately after consuming the remedy.' },
+      afternoon: { hi: 'दोपहर: दोपहर का भोजन हमेशा गर्म-गर्म ही करें। भोजन के बाद छाछ या मट्ठा बिल्कुल न लें।', en: 'Afternoon: Always eat a hot lunch. Do not consume buttermilk after meals.' },
+      evening: { hi: 'शाम/रात: रात का भोजन सूर्य अस्त के आसपास या 8 बजे तक हर हाल में कर लें। रात को सलाद या फल भूलकर भी न खाएं। सोते समय गले और छाती को सूती कपड़े या मफलर से ढककर रखें।', en: 'Evening/Night: Eat dinner by sunset or 8 PM. Avoid fruits/salad at night. Keep throat and chest covered with a cotton cloth or muffler while sleeping.' }
+    },
+    safetyAdvice: { hi: 'सुरक्षा सूचना: यदि 5 दिनों में आराम न मिले तो चिकित्सक से सलाह लें।', en: 'Safety Notice: If no relief in 5 days, consult a doctor.' },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
+    keywords: "saunth gud jaggery cold jukam cough sardi pratishyaya"
   },
   {
     id: 'gf-2',
