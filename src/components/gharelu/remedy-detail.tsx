@@ -34,6 +34,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const { toast } = useToast();
 
   const currentDose = remedy.doses.find(d => d.ageRange.hi === selectedAgeRangeKey);
+  
+  // Dynamic ingredients logic: use dose-specific ingredients if available, otherwise fallback to remedy-level ingredients
+  const displayIngredients = currentDose?.ingredients?.[lang] || remedy.ingredients[lang];
 
   // Parameter Headings: Locked at 25px, Bold
   const headingClass = cn(
@@ -69,7 +72,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     }
 
     const title = toEnglishDigits(remedy.name[lang]);
-    const ingredients = remedy.ingredients[lang].map(toEnglishDigits).join(', ');
+    const ingredients = displayIngredients.map(toEnglishDigits).join(', ');
     const prep = toEnglishDigits(remedy.preparation[lang]);
     
     const shareText = (isHindi 
@@ -90,7 +93,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const handleCopy = async () => {
     const title = toEnglishDigits(remedy.name[lang]);
-    const ingredients = remedy.ingredients[lang].map(toEnglishDigits).join(', ');
+    const ingredients = displayIngredients.map(toEnglishDigits).join(', ');
     const prep = toEnglishDigits(remedy.preparation[lang]);
 
     const textToCopy = (isHindi
@@ -204,7 +207,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             {isHindi ? '3. आवश्यक सामग्री (कुल स्टॉक या बनाने के लिए)' : '3. Required Ingredients'}
           </h3>
           <ul className="space-y-6">
-            {remedy.ingredients[lang].map((item, i) => (
+            {displayIngredients.map((item, i) => (
               <li key={i} className={cn(listTextClass, "flex items-start gap-3")}>
                 <CheckCircle className="w-7 h-7 mt-1.5 text-accent shrink-0" />
                 <span>{toEnglishDigits(item)}</span>
