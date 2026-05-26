@@ -20,13 +20,12 @@ export default function GhareluUpayApp() {
   const [lang, setLang] = useState<Language>('hi');
   const [theme, setTheme] = useState<Theme>('cream');
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [readNotifications, setReadNotifications] = useState<string[]>([]);
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [hasNewNotifications, setHasNewNotifications] = useState(false);
 
-  // Load favorites and check for new remedies
+  // Load favorites and read notifications from local storage
   useEffect(() => {
-    // Favorites
     const savedFavs = localStorage.getItem('gharelu-favorites');
     if (savedFavs) {
       try {
@@ -36,19 +35,27 @@ export default function GhareluUpayApp() {
       }
     }
 
-    // Notification Logic: Check if remedy count has increased
-    const lastCount = localStorage.getItem('gharelu-remedy-count');
-    const currentCount = REMEDIES.length;
-    
-    if (!lastCount || parseInt(lastCount) < currentCount) {
-      setHasNewNotifications(true);
+    const savedRead = localStorage.getItem('gharelu-read-notifications');
+    if (savedRead) {
+      try {
+        setReadNotifications(JSON.parse(savedRead));
+      } catch (e) {
+        console.error("Failed to load read notifications", e);
+      }
     }
   }, []);
 
-  // Save favorites to local storage
+  // Save state changes to local storage
   useEffect(() => {
     localStorage.setItem('gharelu-favorites', JSON.stringify(favorites));
   }, [favorites]);
+
+  useEffect(() => {
+    localStorage.setItem('gharelu-read-notifications', JSON.stringify(readNotifications));
+  }, [readNotifications]);
+
+  const latestRemedy = REMEDIES[REMEDIES.length - 1];
+  const hasNewNotifications = latestRemedy && !readNotifications.includes(latestRemedy.id);
 
   const toggleLanguage = () => setLang((prev) => (prev === 'hi' ? 'en' : 'hi'));
   const toggleTheme = () => setTheme((prev) => (prev === 'cream' ? 'night' : 'cream'));
@@ -79,10 +86,15 @@ export default function GhareluUpayApp() {
     );
   };
 
+  const handleMarkAsRead = (remedyId: string) => {
+    setReadNotifications(prev => {
+      if (prev.includes(remedyId)) return prev;
+      return [...prev, remedyId];
+    });
+  };
+
   const handleOpenNotifications = () => {
     setIsNotificationsOpen(true);
-    setHasNewNotifications(false);
-    localStorage.setItem('gharelu-remedy-count', REMEDIES.length.toString());
   };
 
   const handleBackToCategories = () => {
@@ -156,6 +168,8 @@ export default function GhareluUpayApp() {
         onClose={() => setIsNotificationsOpen(false)}
         lang={lang}
         theme={theme}
+        readNotifications={readNotifications}
+        onMarkAsRead={handleMarkAsRead}
         onSelectRemedy={handleSelectRemedy}
       />
 
