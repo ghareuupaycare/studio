@@ -213,16 +213,6 @@ export const CategoryDetailView = ({
               </div>
               <div className="flex-1">
                 <h4 className="font-bold text-lg leading-snug">{toEnglishDigits(remedy.name[lang])}</h4>
-                <div className="flex items-center gap-3 mt-1">
-                  <span className={cn(
-                    "px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider",
-                    remedy.severity === 'mild' ? "bg-green-500/10 text-green-600" :
-                    remedy.severity === 'moderate' ? "bg-yellow-500/10 text-yellow-600" :
-                    "bg-red-500/10 text-red-600"
-                  )}>
-                    {toEnglishDigits(remedy.severityLabel[lang])}
-                  </span>
-                </div>
               </div>
               <BookOpen className="w-6 h-6 opacity-40 group-hover:opacity-100 transition-opacity" />
             </button>

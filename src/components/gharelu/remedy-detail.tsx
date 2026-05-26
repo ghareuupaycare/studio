@@ -107,15 +107,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   return (
     <div className="space-y-10 animate-in fade-in duration-500 pb-24 relative overflow-y-auto h-auto">
-      <div className="flex items-center justify-between mb-4">
-        <div className={cn(
-          "px-5 py-2 rounded-full text-sm font-black uppercase tracking-widest",
-          remedy.severity === 'mild' ? "bg-green-500/10 text-green-600" :
-          remedy.severity === 'moderate' ? "bg-yellow-500/10 text-yellow-600" :
-          "bg-red-500/10 text-red-600"
-        )}>
-          {remedy.severityLabel[lang]}
-        </div>
+      <div className="flex items-center justify-end mb-4">
         <Button
           variant="ghost"
           size="icon"
