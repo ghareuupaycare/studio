@@ -205,7 +205,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         )}>
           <h3 className={cn(headingClass, "text-accent")}>
             {isHindi 
-              ? (['cc-4', 'cc-5', 'cc-6'].includes(remedy.id) ? '3. आवश्यक सामग्री' : '3. आवश्यक सामग्री (कुल स्टॉक या बनाने के लिए)') 
+              ? (['cc-4', 'cc-5', 'cc-6', 'cc-7'].includes(remedy.id) ? '3. आवश्यक सामग्री' : '3. आवश्यक सामग्री (कुल स्टॉक या बनाने के लिए)') 
               : '3. Required Ingredients'}
           </h3>
           <ul className="space-y-6">

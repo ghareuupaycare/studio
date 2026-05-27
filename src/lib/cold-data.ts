@@ -1,6 +1,6 @@
 /**
  * @fileOverview Category 2: Cold & Flu (नजला और जुकाम) Data Store
- * Contains 6 authentic Ayurvedic remedies with dynamic age-calculation logic.
+ * Contains 7 authentic Ayurvedic remedies with dynamic age-calculation logic.
  * Language standard: Strictly Hindi "और" used for connectives.
  */
 
@@ -41,7 +41,7 @@ export type Remedy = {
   keywords: string;
 };
 
-const AGE_BRACKETS = {
+export const AGE_BRACKETS = {
   childhood: { hi: "5-12 वर्ष", en: "5-12 Years" },
   youth: { hi: "13-40 वर्ष", en: "13-40 Years" },
   middleAge: { hi: "41-60 वर्ष", en: "41-60 Years" },
@@ -136,7 +136,7 @@ export const COLD_REMEDIES: Remedy[] = [
     },
     dietAvoid: {
       hi: 'पैकेट वाले फूड्स: चिप्स, नमकीन, कुरकुरे, चाउमीन, बर्गर और मैदे से बने बिस्कुट पूरी तरह बंद रखें। भारी भोजन: किसी भी प्रकार का मांस, मछली, अंडा या भारी मांसाहारी भोजन और बाजार की तली-भुनी चीजें बिल्कुल न खाएं। ठंडी चीजें: फ्रिज का ठंडा पानी, कोल्ड ड्रिंक्स, दही, मट्ठा, खट्टी चीजें और आइसक्रीम का सेवन पूरी तरह वर्जित है।',
-      en: 'Avoid: Packaged snacks, biscuits, heavy non-veg meals, fried foods, cold water, soda, curd, buttermilk, and ice cream.'
+      en: 'Avoid: Packaged snacks, biscuits, heavy non-veg meals, fried foods, cold water, soda, curd, buttercream, and ice cream.'
     },
     strictAvoid: {
       hi: 'पैकेट वाले तीखे स्नेक्स, भारी मांसाहार और फ्रिज की ठंडी चीजें पूरी तरह वर्जित हैं।',
@@ -224,7 +224,7 @@ export const COLD_REMEDIES: Remedy[] = [
     strictAvoid: { hi: "ठंडी चीजें, भारी मांसाहार और पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।", en: "Cold items, heavy non-veg, and packaged snacks are strictly prohibited." },
     routine: {
       morning: { hi: "सुबह (Morning): सुबह उठकर सबसे पहले थोड़ा गर्म पानी पिएं और नमक डालकर गुनगुने पानी से गरारे करें।", en: "Morning: Drink warm water and gargle with lukewarm salt water." },
-      afternoon: { hi: "दोपहर (Afternoon): दोपहर का खाना हमेशा ताजा और गर्म ही खाएं, बासी भोजन भूलकर भी न लें।", en: "Afternoon: Always eat fresh and hot lunch; never eat stale food." },
+      afternoon: { hi: "दोपहर (Afternoon): दोपहर का खाना हमेशा ताजा and गर्म ही खाएं, बासी भोजन भूलकर भी न लें।", en: "Afternoon: Always eat fresh and hot lunch; never eat stale food." },
       evening: { hi: "शाम/रात (Evening/Night): रात का भोजन 8 बजे से पहले कर लें। सोते समय सिर और कानों को ढककर रखें और रात को भूलकर भी पंखे की तेज हवा या एसी में न सोएं।", en: "Evening/Night: Eat dinner before 8 PM. Keep head and ears covered while sleeping; avoid direct air from fans or AC at night." }
     },
     safetyAdvice: { hi: "यदि इस उपाय को लगातार 5 दिनों तक नियम से करने के बाद भी आपको आराम महसूस न हो, तो बिना देर किए अपने नजदीकी आयुर्वेदिक चिकित्सक से मिलकर उचित परामर्श लें। शरीर का ध्यान रखना ही सबसे पहली प्राथमिकता है।", en: "If you don't find relief after 5 days, consult an Ayurvedic physician immediately. Taking care of your body is the first priority." },
@@ -293,5 +293,64 @@ export const COLD_REMEDIES: Remedy[] = [
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/cough/600/400",
     keywords: "sardi jukam badan dard hararat bukhar tulsi saunth kali mirch"
+  },
+  {
+    id: 'cc-7',
+    serialNumber: '7',
+    name: { hi: 'भुनी अलसी, मुलेठी और मिश्री का कफ-नाशक दिव्य चूर्ण', en: 'Relief Powder of Roasted Flaxseed, Licorice and Sugar Candy' },
+    illnessId: 'common-cold',
+    introduction: {
+      hi: "मौसमी नजला और जुकाम जब पुराना हो जाता है, तो छाती और श्वसन नली में कफ सूख जाता है। इसके कारण गले में हर समय भयंकर खराश बनी रहती है, सूखी खांसी आती है और रात को सोते समय सांस लेने में भारीपन महसूस होता है। अलसी के बीजों में मौजूद प्राकृतिक तत्व छाती में जमे कफ को पिघलाकर बाहर निकालते हैं, मुलेठी गले की सूजन और दर्द को जड़ से शांत करती है, और धागे वाली मिश्री गले के सूखेपन को दूर कर उसे तर रखती है। यह दिव्य चूर्ण पुरानी से पुरानी सूखी खांसी और गले की जकड़न में पहले ही दिन से बहुत आराम देता है।",
+      en: "When seasonal cold and flu become chronic, phlegm dries up in the chest and respiratory tract. This causes severe throat irritation, dry cough, and heaviness in breathing. Flaxseed thins dried phlegm, Licorice calms throat inflammation, and threaded sugar candy hydrates the throat. This divine powder provides relief from dry cough and throat congestion from the first day."
+    },
+    doses: [
+      { 
+        ageRange: AGE_BRACKETS.childhood, 
+        dose: { hi: "सुबह खाली पेट और रात को सोने से ठीक पहले हल्के गुनगुने पानी के साथ।", en: "Morning empty stomach and before bedtime with lukewarm water." },
+        ingredients: { 
+          hi: ['भुनी अलसी का पाउडर — आधा छोटा चम्मच (लगभग 1.5 ग्राम)', 'मुलेठी चूर्ण — 1 चुटकी', 'धागे वाली मिश्री का पाउडर — आधा छोटा चम्मच'],
+          en: ['Roasted flaxseed powder — 1/2 tsp (approx 1.5g)', 'Licorice powder — 1 pinch', 'Threaded sugar candy powder — 1/2 tsp']
+        }
+      },
+      { 
+        ageRange: AGE_BRACKETS.youth, 
+        dose: { hi: "सुबह खाली पेट और रात को सोने से ठीक पहले हल्के गुनगुने पानी के साथ।", en: "Morning empty stomach and before bedtime with lukewarm water." },
+        ingredients: { 
+          hi: ['भुनी अलसी का पाउडर — 1 छोटा चम्मच (लगभग 3 ग्राम)', 'मुलेठी चूर्ण — आधा छोटा चम्मच (लगभग 1.5 ग्राम)', 'धागे वाली मिश्री का पाउडर — 1 छोटा चम्मच'],
+          en: ['Roasted flaxseed powder — 1 tsp (approx 3g)', 'Licorice powder — 1/2 tsp (approx 1.5g)', 'Threaded sugar candy powder — 1 tsp']
+        }
+      },
+      { 
+        ageRange: AGE_BRACKETS.middleAge, 
+        dose: { hi: "सुबह खाली पेट और रात को सोने से ठीक पहले हल्के गुनगुने पानी के साथ।", en: "Morning empty stomach and before bedtime with lukewarm water." },
+        ingredients: { 
+          hi: ['भुनी अलसी का पाउडर — 1 छोटा चम्मच (लगभग 3 ग्राम)', 'मुलेठी चूर्ण — आधा छोटा चम्मच (लगभग 1.5 ग्राम)', 'धागे वाली मिश्री का पाउडर — 1 छोटा चम्मच (यदि शुगर न हो)'],
+          en: ['Roasted flaxseed powder — 1 tsp (approx 3g)', 'Licorice powder — 1/2 tsp (approx 1.5g)', 'Threaded sugar candy powder — 1 tsp (if no diabetes)']
+        }
+      },
+      { 
+        ageRange: AGE_BRACKETS.oldAge, 
+        dose: { hi: "सुबह खाली पेट और रात को सोने से ठीक पहले हल्के गुनगुने पानी के साथ।", en: "Morning empty stomach and before bedtime with lukewarm water." },
+        ingredients: { 
+          hi: ['भुनी अलसी का पाउडर — आधा छोटा चम्मच (लगभग 1.5 ग्राम)', 'मुलेठी चूर्ण — आधा छोटा चम्मच', 'धागे वाली मिश्री का पाउडर — 1 चुटकी (शुगर में मिश्री न डालें)'],
+          en: ['Roasted flaxseed powder — 1/2 tsp (approx 1.5g)', 'Licorice powder — 1/2 tsp', 'Threaded sugar candy powder — 1 pinch (omit in diabetes)']
+        }
+      }
+    ],
+    ingredients: { hi: ['भुनी हुई अलसी का बारीक पिसा हुआ पाउडर', 'शुद्ध मुलेठी की जड़ का महीन चूर्ण', 'पीसकर तैयार की गई धागे वाली मिश्री का पाउडर'], en: ['Finely ground roasted flaxseed powder', 'Fine powder of pure Licorice root', 'Finely ground threaded sugar candy powder'] },
+    preparation: { hi: "सबसे पहले अलसी के साफ बीजों को एक लोहे या भारी कड़ाही या तवे पर बिना तेल या घी के धीमी आंच पर हल्का सा भून लें। जब बीजों के चटकने की आवाज आना बंद हो जाए, तो इन्हें एक बर्तन में निकालकर ठंडा कर लें। ठंडा होने पर इसे मिक्सी या साफ खरल में पीसकर बारीक चूर्ण बना लें। अब चुनी गई उम्र की सटीक मात्रा के अनुसार, एक छोटी साफ कटोरी में भुनी हुई अलसी का पाउडर, मुलेठी का चूर्ण और मिश्री का पाउडर निकालें और चम्मच की मदद से आपस में अच्छी तरह मिला लें। आपकी एक बार की दिव्य खुराक तैयार है।", en: "First, lightly roast clean flaxseeds in an iron or heavy pan without oil or ghee on low heat. Once the popping sound stops, remove them and let them cool. Grind into a fine powder. Now, as per the prescribed amount for the selected age, mix the roasted flaxseed powder, Licorice powder, and sugar candy powder thoroughly in a small bowl. Your single divine dose is ready." },
+    usage: { hi: "इस तैयार चूर्ण के मिश्रण को सुबह खाली पेट और रात को सोने से ठीक पहले हल्के गुनगुने पानी के साथ फांक लें। इसे लेने के कम से कम 45 मिनट बाद तक पानी के अलावा कुछ भी न खाएं और न ही पिएं।\nअवधि: इसका नियमित सेवन लगातार 3 से 5 दिनों तक करें, या जब तक सूखी खांसी और गले की खराश पूरी तरह ठीक न हो जाए।", en: "Take this prepared powder mixture with lukewarm water in the morning on an empty stomach and just before bedtime. Do not eat or drink anything except water for at least 45 minutes after taking it. Duration: Consume regularly for 3 to 5 days, or until dry cough and throat irritation are completely cured." },
+    dietEat: { hi: "भोजन: भोजन में केवल हल्के और गरम सूप (जैसे टमाटर या कद्दू का सूप), मूंग दाल की पतली और ढीली खिचड़ी, या उबले चावल का मांड लें। पीने के लिए हमेशा हल्का गुनगुना पानी ही इस्तेमाल करें।\nसब्जियां: तोरई, लौकी, परवल और टिंडा जैसी सुपाच्य सब्जियां हल्के सेंधा नमक और जीरे के तड़के के साथ खाएं।", en: "Diet: Take only light and hot soups (like tomato or pumpkin soup), thin Moong dal khichdi, or boiled rice gruel. Always use lukewarm water for drinking. Vegetables: Eat easily digestible vegetables like sponge gourd, bottle gourd, pointed gourd, and apple gourd with light rock salt and cumin tempering." },
+    dietAvoid: { hi: "पैकेट वाले फूड्स: बाजार के तले-भुने चिप्स, कुरकुरे, पैकेट वाली नमकीन, बिस्कुट, ब्रेड और टोस्ट पूरी तरह वर्जित हैं।\nभारी भोजन: मांसाहार (चिकन, मटन, मछली, अंडा), पनीर, भारी घी या तेल, मैदा से बनी चीजें (जैसे समोसा, कचौड़ी, नूडल्स) और भारी दालें (उड़द, राजमा) बिल्कुल न खाएं।", en: "Packaged foods: Market-bought fried chips, snacks, packaged savories, biscuits, bread, and toast are strictly prohibited. Heavy food: Do not eat non-veg (chicken, mutton, fish, eggs), paneer, heavy ghee or oil, items made of refined flour (like samosa, kachori, noodles), and heavy pulses (Urad, Rajma)." },
+    strictAvoid: { hi: "फ्रिज का ठंडा पानी, खट्टा दही, छाछ, खट्टे फल (संतरा, नींबू) और आइसक्रीम या कोल्ड ड्रिंक्स का सेवन सख्त मना है, क्योंकि ये गले को और ज्यादा सुखाकर कफ को जमा देती हैं।", en: "Cold water from the fridge, sour curd, buttermilk, sour fruits (orange, lemon), and ice cream or cold drinks are strictly forbidden as they further dry the throat and cause phlegm buildup." },
+    routine: {
+      morning: { hi: "सुबह (Morning): सुबह उठते ही हल्के गरम पानी में थोड़ा सा सेंधा नमक डालकर कम से कम 2 मिनट तक गरारे ज़रूर करें।", en: "Morning: Gargle with lukewarm water and a bit of rock salt for at least 2 minutes immediately after waking up." },
+      afternoon: { hi: "दोपहर (Afternoon): दोपहर के भोजन के बाद गुनगुने वातावरण में आराम करें। सीधे कूलर, एसी या तेज पंखे की सीधी हवा के नीचे बैठने से बचें।", en: "Afternoon: Rest in a warm environment after lunch. Avoid sitting directly under cooler, AC, or strong fan draft." },
+      evening: { hi: "शाम/रात (Evening/Night): रात का भोजन सूरज डूबने के आसपास या 8 बजे तक हर हाल में कर लें। सोते समय अपने गले और कान को सूती कपड़े या हल्के मफलर से ढककर सोएं ताकि रात की ठंडी हवा न लगे।", en: "Evening/Night: Take dinner around sunset or by 8 PM. Keep your throat and ears covered with a cotton cloth or light muffler while sleeping to avoid cold night drafts." }
+    },
+    safetyAdvice: { hi: "यदि खांसी के साथ बलगम में खून आने की शिकायत हो, छाती में बहुत तेज दर्द हो या सांस लेने में अत्यधिक तकलीफ महसूस हो, तो तुरंत अपने नजदीकी योग्य वैद्य से मिलें। स्वास्थ्य ही सर्वोपरि है।", en: "If you experience blood in phlegm with cough, severe chest pain, or extreme difficulty in breathing, consult your nearest qualified Vaidya immediately. Health is the top priority." },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: "https://picsum.photos/seed/cough/600/400",
+    keywords: "alsi mulethi mishri cough cold jukam nazla dry cough throat irritation"
   }
 ];
