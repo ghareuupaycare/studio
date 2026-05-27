@@ -1,5 +1,56 @@
-import { Remedy, AGE_BRACKETS, GENERAL_DISCLAIMER } from "./remedy-data";
-import { PlaceHolderImages } from "./placeholder-images";
+/**
+ * @fileOverview Category 2: Cold & Flu (नजला और जुकाम) Data Store
+ * Contains 6 authentic Ayurvedic remedies with dynamic age-calculation logic.
+ */
+
+export type LocalizedString = {
+  hi: string;
+  en: string;
+};
+
+export type DoseConfig = {
+  ageRange: LocalizedString;
+  dose: LocalizedString;
+  ingredients?: { hi: string[]; en: string[] };
+};
+
+export type Remedy = {
+  id: string;
+  serialNumber: string;
+  name: LocalizedString;
+  illnessId: string;
+  introduction: LocalizedString;
+  severity?: 'mild' | 'moderate' | 'severe';
+  severityLabel?: LocalizedString;
+  doses: DoseConfig[];
+  ingredients: { hi: string[]; en: string[] };
+  preparation: LocalizedString;
+  usage: LocalizedString;
+  dietEat: LocalizedString;
+  dietAvoid: LocalizedString;
+  strictAvoid: LocalizedString;
+  routine: {
+    morning: LocalizedString;
+    afternoon: LocalizedString;
+    evening: LocalizedString;
+  };
+  safetyAdvice: LocalizedString;
+  disclaimer: LocalizedString;
+  image: string;
+  keywords: string;
+};
+
+const AGE_BRACKETS = {
+  childhood: { hi: "5-12 वर्ष", en: "5-12 Years" },
+  youth: { hi: "13-40 वर्ष", en: "13-40 Years" },
+  middleAge: { hi: "41-60 वर्ष", en: "41-60 Years" },
+  oldAge: { hi: "61-80 वर्ष", en: "61-80 Years" }
+};
+
+const GENERAL_DISCLAIMER: LocalizedString = {
+  hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
+  en: "This information is for educational purposes only, please consult your physician."
+};
 
 export const COLD_REMEDIES: Remedy[] = [
   {
@@ -42,25 +93,13 @@ export const COLD_REMEDIES: Remedy[] = [
       en: 'Sitting directly under the fan and walking barefoot. Do not consume salad or fruits at night.'
     },
     routine: {
-      morning: { 
-        hi: 'सुबह: गुनगुने पानी के साथ शुरुआत करें। नाश्ते में हल्का दलिया या सूजी का उपमा लें।', 
-        en: 'Morning: Start with lukewarm water. Have light porridge or semolina Upma for breakfast.' 
-      },
-      afternoon: { 
-        hi: 'दोपहर: मूँग दाल की खिचड़ी या साधारण रोटी-सब्जी। भोजन के साथ ताज़ा हल्का उबला हुआ सलाद (जैसे खीरा, गाजर) and इस मौसम के अनुकूल फल (जैसे पपीता, सेब या अनार) अवश्य लें।', 
-        en: 'Afternoon: Moong dal khichdi or simple roti-vegetable. Must include fresh lightly boiled salad and seasonal fruits with the meal.' 
-      },
-      evening: { 
-        hi: 'शाम/रात: रात का भोजन हल्का रखें (जैसे लौकी या तोरई की सब्जी and पतली रोटी)। रात में सलाद या फल का सेवन बिल्कुल न करें।', 
-        en: 'Evening/Night: Keep dinner light (e.g., bottle gourd vegetable and thin roti). Do not consume salad or fruits at night.' 
-      }
+      morning: { hi: 'सुबह: गुनगुने पानी के साथ शुरुआत करें। नाश्ते में हल्का दलिया या सूजी का उपमा लें।', en: 'Morning: Start with lukewarm water. Have light porridge or semolina Upma for breakfast.' },
+      afternoon: { hi: 'दोपहर: मूँग दाल की खिचड़ी या साधारण रोटी-सब्जी। भोजन के साथ ताज़ा हल्का उबला हुआ सलाद (जैसे खीरा, गाजर) and इस मौसम के अनुकूल फल (जैसे पपीता, सेब या अनार) अवश्य लें।', en: 'Afternoon: Moong dal khichdi or simple roti-vegetable. Must include fresh lightly boiled salad and seasonal fruits with the meal.' },
+      evening: { hi: 'शाम/रात: रात का भोजन हल्का रखें (जैसे लौकी या तोरई की सब्जी and पतली रोटी)। रात में सलाद या फल का सेवन बिल्कुल न करें।', en: 'Evening/Night: Keep dinner light (e.g., bottle gourd vegetable and thin roti). Do not consume salad or fruits at night.' }
     },
-    safetyAdvice: { 
-      hi: 'सुरक्षा सूचना: यदि जुकाम के साथ तेज सिरदर्द हो, तो भाप (Steam) ज़रूर लें।', 
-      en: 'Safety Notice: If cold is accompanied by severe headache, ensure you take steam inhalation.' 
-    },
+    safetyAdvice: { hi: 'सुरक्षा सूचना: यदि जुकाम के साथ तेज सिरदर्द हो, तो भाप (Steam) ज़रूर लें।', en: 'Safety Notice: If cold is accompanied by severe headache, ensure you take steam inhalation.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
+    image: "https://picsum.photos/seed/cough/600/400",
     keywords: "sardi khansi cold cough sneezing cheekh nazla jukam respiratory"
   },
   {
@@ -109,7 +148,7 @@ export const COLD_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'यदि 5 दिनों में आराम न मिले तो चिकित्सक से सलाह लें।', en: 'Safety Notice: If no relief in 5 days, consult a doctor.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
+    image: "https://picsum.photos/seed/cough/600/400",
     keywords: "nazla jukam mulethi kali mirch cough cold respiratory congestion pratishyaya"
   },
   {
@@ -158,7 +197,7 @@ export const COLD_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'यदि 5 दिनों में आराम न मिले तो चिकित्सक से सलाह लें।', en: 'Safety Notice: If no relief in 5 days, consult a doctor.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
+    image: "https://picsum.photos/seed/cough/600/400",
     keywords: "saunth gud jaggery cold jukam cough sardi pratishyaya"
   },
   {
@@ -171,95 +210,17 @@ export const COLD_REMEDIES: Remedy[] = [
       en: "In conditions of cold and flu when phlegm accumulates in the lungs and respiratory tract, heaviness in breathing and continuous dry cough occur. Ayurveda considers turmeric a powerful Kapha-pacifier and antibiotic. Roasted turmeric in ghee with warm milk reduces inflammation of the respiratory tract instantly."
     },
     doses: [
-      { 
-        ageRange: AGE_BRACKETS.childhood, 
-        dose: { hi: "आधा छोटा चम्मच (लगभग 2 से 3 ग्राम) भुनी हल्दी का पाउडर रात को सोने से पहले गर्म दूध के साथ।", en: "Half a teaspoon of roasted turmeric powder with warm milk before bedtime." },
-        ingredients: {
-          hi: [
-            'भुनी हुई हल्दी का पाउडर — आधा छोटा चम्मच (लगभग 2 से 3 ग्राम)',
-            'शुद्ध गाय का देसी घी — आधा छोटा चम्मच',
-            'ताज़ा उबला हुआ गाय का दूध — आधा ग्लास (लगभग 100 से 150 मिली)'
-          ],
-          en: [
-            'Roasted turmeric powder — half a teaspoon (approx. 2-3g)',
-            'Pure cow ghee — half a teaspoon',
-            'Fresh boiled cow milk — half a glass (approx. 100-150ml)'
-          ]
-        }
-      },
-      { 
-        ageRange: AGE_BRACKETS.youth, 
-        dose: { hi: "1 छोटा चम्मच (लगभग 5 से 6 ग्राम) भुनी हल्दी का पाउडर रात को सोने से पहले गर्म दूध के साथ।", en: "1 teaspoon of roasted turmeric powder with warm milk before bedtime." },
-        ingredients: {
-          hi: [
-            'भुनी हुई हल्दी का पाउडर — 1 छोटा चम्मच (लगभग 5 से 6 ग्राम)',
-            'शुद्ध गाय का देसी घी — 1 छोटा चम्मच',
-            'ताज़ा उबला हुआ गाय का दूध — 1 बड़ा ग्लास (लगभग 200 मिली)'
-          ],
-          en: [
-            'Roasted turmeric powder — 1 teaspoon (approx. 5-6g)',
-            'Pure cow ghee — 1 teaspoon',
-            'Fresh boiled cow milk — 1 large glass (approx. 200ml)'
-          ]
-        }
-      },
-      { 
-        ageRange: AGE_BRACKETS.middleAge, 
-        dose: { hi: "1 छोटा चम्मच (लगभग 5 से 6 ग्राम) भुनी हल्दी का पाउडर रात को सोने से पहले गर्म दूध के साथ।", en: "1 teaspoon of roasted turmeric powder with warm milk before bedtime." },
-        ingredients: {
-          hi: [
-            'भुनी हुई हल्दी का पाउडर — 1 छोटा चम्मच (लगभग 5 से 6 ग्राम)',
-            'शुद्ध गाय का देसी घी — 1 छोटा चम्मच',
-            'ताज़ा उबला हुआ गाय का दूध — 1 बड़ा ग्लास (लगभग 200 मिली)'
-          ],
-          en: [
-            'Roasted turmeric powder — 1 teaspoon (approx. 5-6g)',
-            'Pure cow ghee — 1 teaspoon',
-            'Fresh boiled cow milk — 1 large glass (approx. 200ml)'
-          ]
-        }
-      },
-      { 
-        ageRange: AGE_BRACKETS.oldAge, 
-        dose: { hi: "आधा छोटा चम्मच (लगभग 2 से 3 ग्राम) भुनी हल्दी का पाउडर रात को सोने से पहले गर्म दूध के साथ।", en: "Half a teaspoon of roasted turmeric powder with warm milk before bedtime." },
-        ingredients: {
-          hi: [
-            'भुनी हुई हल्दी का पाउडर — आधा छोटा चम्मच (लगभग 2 से 3 ग्राम)',
-            'शुद्ध गाय का देसी घी — आधा छोटा चम्मच',
-            'ताज़ा उबला हुआ गाय का दूध — आधा ग्लास (लगभग 100 से 150 मिली)'
-          ],
-          en: [
-            'Roasted turmeric powder — half a teaspoon (approx. 2-3g)',
-            'Pure cow ghee — half a teaspoon',
-            'Fresh boiled cow milk — half a glass (approx. 100-150ml)'
-          ]
-        }
-      }
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "आधा छोटा चम्मच (लगभग 2 से 3 ग्राम) भुनी हल्दी का पाउडर रात को सोने से पहले गर्म दूध के साथ।", en: "Half a teaspoon of roasted turmeric powder with warm milk before bedtime." }, ingredients: { hi: ['भुनी हुई हल्दी का पाउडर — आधा छोटा चम्मच (लगभग 2 से 3 ग्राम)', 'शुद्ध गाय का देसी घी — आधा छोटा चम्मच', 'ताज़ा उबला हुआ गाय का दूध — आधा ग्लास (लगभग 100 से 150 मिली)'], en: ['Roasted turmeric powder — half a teaspoon (approx. 2-3g)', 'Pure cow ghee — half a teaspoon', 'Fresh boiled cow milk — half a glass (approx. 100-150ml)'] } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "1 छोटा चम्मच (लगभग 5 से 6 ग्राम) भुनी हल्दी का पाउडर रात को सोने से पहले गर्म दूध के साथ।", en: "1 teaspoon of roasted turmeric powder with warm milk before bedtime." }, ingredients: { hi: ['भुनी हुई हल्दी का पाउडर — 1 छोटा चम्मच (लगभग 5 से 6 ग्राम)', 'शुद्ध गाय का देसी घी — 1 छोटा चम्मच', 'ताज़ा उबला हुआ गाय का दूध — 1 बड़ा ग्लास (लगभग 200 मिली)'], en: ['Roasted turmeric powder — 1 teaspoon (approx. 5-6g)', 'Pure cow ghee — 1 teaspoon', 'Fresh boiled cow milk — 1 large glass (approx. 200ml)'] } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "1 छोटा चम्मच (लगभग 5 से 6 ग्राम) भुनी हल्दी का पाउडर रात को सोने से पहले गर्म दूध के साथ।", en: "1 teaspoon of roasted turmeric powder with warm milk before bedtime." }, ingredients: { hi: ['भुनी हुई हल्दी का पाउडर — 1 छोटा चम्मच (लगभग 5 से 6 ग्राम)', 'शुद्ध गाय का देसी घी — 1 छोटा चम्मच', 'ताज़ा उबला हुआ गाय का दूध — 1 बड़ा ग्लास (लगभग 200 मिली)'], en: ['Roasted turmeric powder — 1 teaspoon (approx. 5-6g)', 'Pure cow ghee — 1 teaspoon', 'Fresh boiled cow milk — 1 large glass (approx. 200ml)'] } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "आधा छोटा चम्मच (लगभग 2 से 3 ग्राम) भुनी हल्दी का पाउडर रात को सोने से पहले गर्म दूध के साथ।", en: "Half a teaspoon of roasted turmeric powder with warm milk before bedtime." }, ingredients: { hi: ['भुनी हुई हल्दी का पाउडर — आधा छोटा चम्मच (लगभग 2 से 3 ग्राम)', 'शुद्ध गाय का देसी घी — आधा छोटा चम्मच', 'ताज़ा उबला हुआ गाय का दूध — आधा ग्लास (लगभग 100 से 150 मिली)'], en: ['Roasted turmeric powder — half a teaspoon (approx. 2-3g)', 'Pure cow ghee — half a teaspoon', 'Fresh boiled cow milk — half a glass (approx. 100-150ml)'] } }
     ],
-    ingredients: {
-      hi: ['हल्दी पाउडर (शुद्ध)', 'शुद्ध गाय का घी', 'ताज़ा गाय का दूध'],
-      en: ['Turmeric powder (Pure)', 'Pure cow ghee', 'Fresh cow milk']
-    },
-    preparation: {
-      hi: "उम्र के अनुसार ऊपर बताई गई मात्रा में हल्दी पाउडर and घी लें। एक छोटे तवे पर घी डालकर धीमी आंच पर हल्दी को 1 से 2 मिनट के लिए भून लें, जब तक सोंधी खुशबू न आने लगे। अब दूध को अच्छे से उबाल लें।",
-      en: "Take the amount of turmeric and ghee as per age. Put ghee on a small pan and roast turmeric on low heat for 1-2 minutes until a pleasant aroma arises. Boil the milk well."
-    },
-    usage: {
-      hi: "विधि: रोजाना रात को सोने से ठीक पहले, गर्म दूध में अपनी उम्र के अनुसार तय की गई यह भुनी हुई हल्दी का पाउडर मिलाएं and अच्छी तरह घोलकर चाय की तरह धीरे-धीरे पिएं। इसके सेवन के बाद पानी बिल्कुल नहीं पीना है।\nअवधि: इस नुस्खे का नियमित सेवन लगातार 3 से 5 दिनों तक करें।",
-      en: "Method: Daily just before bedtime, mix this roasted turmeric powder into warm milk according to age and sip slowly like tea. Do not drink water after this.\nDuration: Use regularly for 3 to 5 days."
-    },
-    dietEat: {
-      hi: "भोजन: मूंग की दाल की खिचड़ी, गर्म बाजारे की राबड़ी, सोंठ and तुलसी डली हुई सादी चाय, and गुनगुना पानी कराएं।\nफल and सलाद की मात्रा: दोपहर के भोजन के साथ 1 छोटी कटोरी (लगभग 100 ग्राम) हल्के उबले हुए सलाद (जैसे उबली हुई शलजम या गाजर) and सीजन के अनुसार आधा कप काटा हुआ पका पपीता खा सकते हैं।",
-      en: "Diet: Moong dal khichdi, hot Bajra Rabri, plain tea with dry ginger and basil, and lukewarm water. For lunch, eat 1 small bowl of steamed salad (e.g., boiled turnip or carrot) and half a cup of ripe papaya."
-    },
-    dietAvoid: {
-      hi: "पैकेट वाले फूड्स: तली-भुनी चीजें, समोसे, नमकीन, बिस्कुट, बेकरी प्रोडक्ट्स and मैदे से बनी चीजें सख़्ती से बंद रखें।\nभारी भोजन: उड़द की दाल, अरबी, चावल, पनीर, मिठाई, मांसाहारी भोजन and अंडे का सेवन बिल्कुल न करें।\nठंडी चीजें: फ्रिज का ठंडा पानी, आइसक्रीम, कोल्ड ड्रिंक्स, दही, मट्ठा and खट्टे फलों का सेवन पूरी तरह वर्जित है।",
-      en: "Avoid: Fried foods, samosas, snacks, biscuits, bakery products, and refined flour items. Do not consume Urad dal, Arbi, rice, paneer, sweets, non-veg, or eggs. Strictly avoid cold water, ice cream, sodas, curd, and sour fruits."
-    },
-    strictAvoid: {
-      hi: "ठंडी चीजें, भारी मांसाहार and पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।",
-      en: "Cold items, heavy non-veg, and packaged snacks are strictly prohibited."
-    },
+    ingredients: { hi: ['हल्दी पाउडर (शुद्ध)', 'शुद्ध गाय का घी', 'ताज़ा गाय का दूध'], en: ['Turmeric powder (Pure)', 'Pure cow ghee', 'Fresh cow milk'] },
+    preparation: { hi: "उम्र के अनुसार ऊपर बताई गई मात्रा में हल्दी पाउडर and घी लें। एक छोटे तवे पर घी डालकर धीमी आंच पर हल्दी को 1 से 2 मिनट के लिए भून लें, जब तक सोंधी खुशबू न आने लगे। अब दूध को अच्छे से उबाल लें।", en: "Take the amount of turmeric and ghee as per age. Put ghee on a small pan and roast turmeric on low heat for 1-2 minutes until a pleasant aroma arises. Boil the milk well." },
+    usage: { hi: "विधि: रोजाना रात को सोने से ठीक पहले, गर्म दूध में अपनी उम्र के अनुसार तय की गई यह भुनी हुई हल्दी का पाउडर मिलाएं and अच्छी तरह घोलकर चाय की तरह धीरे-धीरे पिएं। इसके सेवन के बाद पानी बिल्कुल नहीं पीना है।\nअवधि: इस नुस्खे का नियमित सेवन लगातार 3 से 5 दिनों तक करें।", en: "Method: Daily just before bedtime, mix this roasted turmeric powder into warm milk according to age and sip slowly like tea. Do not drink water after this.\nDuration: Use regularly for 3 to 5 days." },
+    dietEat: { hi: "भोजन: मूंग की दाल की खिचड़ी, गर्म बाजारे की राबड़ी, सोंठ and तुलसी डली हुई सादी चाय, and गुनगुना पानी कराएं।\nफल and सलाद की मात्रा: दोपहर के भोजन के साथ 1 छोटी कटोरी (लगभग 100 ग्राम) हल्के उबले हुए सलाद (जैसे उबली हुई शलजम या गाजर) and सीजन के अनुसार आधा कप काटा हुआ पका पपीता खा सकते हैं।", en: "Diet: Moong dal khichdi, hot Bajra Rabri, plain tea with dry ginger and basil, and lukewarm water. For lunch, eat 1 small bowl of steamed salad (e.g., boiled turnip or carrot) and half a cup of ripe papaya." },
+    dietAvoid: { hi: "पैकेट वाले फूड्स: तली-भुनी चीजें, समोसे, नमकीन, बिस्कुट, बेकरी प्रोडक्ट्स and मैदे से बनी चीजें सख़्ती से बंद रखें।\nभारी भोजन: उड़द की दाल, अरबी, चावल, पनीर, मिठाई, मांसाहारी भोजन and अंडे का सेवन बिल्कुल न करें।\nठंडी चीजें: फ्रिज का ठंडा पानी, आइसक्रीम, कोल्ड ड्रिंक्स, दही, मट्ठा and खट्टे फलों का सेवन पूरी तरह वर्जित है।", en: "Avoid: Fried foods, samosas, snacks, biscuits, bakery products, and refined flour items. Do not consume Urad dal, Arbi, rice, paneer, sweets, non-veg, or eggs. Strictly avoid cold water, ice cream, sodas, curd, and sour fruits." },
+    strictAvoid: { hi: "ठंडी चीजें, भारी मांसाहार and पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।", en: "Cold items, heavy non-veg, and packaged snacks are strictly prohibited." },
     routine: {
       morning: { hi: "सुबह (Morning): सुबह उठकर सबसे पहले थोड़ा गर्म पानी पिएं and नमक डालकर गुनगुने पानी से गरारे करें।", en: "Morning: Drink warm water and gargle with lukewarm salt water." },
       afternoon: { hi: "दोपहर (Afternoon): दोपहर का खाना हमेशा ताजा and गर्म ही खाएं, बासी भोजन भूलकर भी न लें।", en: "Afternoon: Always eat fresh and hot lunch; never eat stale food." },
@@ -267,7 +228,7 @@ export const COLD_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: "यदि इस उपाय को लगातार 5 दिनों तक नियम से करने के बाद भी आपको आराम महसूस न हो, तो बिना देर किए अपने नजदीकी आयुर्वेदिक चिकित्सक से मिलकर उचित परामर्श लें। शरीर का ध्यान रखना ही सबसे पहली प्राथमिकता है।", en: "If you don't find relief after 5 days, consult an Ayurvedic physician immediately. Taking care of your body is the first priority." },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
+    image: "https://picsum.photos/seed/cough/600/400",
     keywords: "haldi dudh turmeric milk cough sardi khansi respiratory throat pain"
   },
   {
@@ -280,111 +241,17 @@ export const COLD_REMEDIES: Remedy[] = [
       en: "When cold and flu become chronic and the mucous membrane inside the nose becomes inflamed, problems like continuous runny nose or completely blocked nose occur. According to Ayurveda, dry ginger and cinnamon are pungent and hot in nature, which pacify Kapha dosha. This decoction immediately opens blocked nose and sinus passages, removes head heaviness, and eradicates mild fever and body pain caused by cold."
     },
     doses: [
-      { 
-        ageRange: AGE_BRACKETS.childhood, 
-        dose: { hi: "सुबह खाली पेट और शाम को चाय की जगह धीरे-धीरे सिप लेकर पिएं।", en: "Drink slowly morning empty stomach and evening instead of tea." },
-        ingredients: {
-          hi: [
-            'सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)',
-            'दालचीनी का पाउडर या छोटा टुकड़ा — आधा छोटा चम्मच',
-            'हरी या छोटी इलायची — 1 पीस (कुचली हुई)',
-            'शुद्ध शहद — आधा छोटा चम्मच (काढ़ा गुनगुना होने पर मिलाने के लिए)',
-            'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'
-          ],
-          en: [
-            'Dry ginger powder — half a teaspoon (approx. 1-2g)',
-            'Cinnamon powder or stick — half a teaspoon',
-            'Green cardamom — 1 piece (crushed)',
-            'Pure honey — half a teaspoon (to be mixed when lukewarm)',
-            'Clean drinking water — 1 cup (approx. 150ml)'
-          ]
-        }
-      },
-      { 
-        ageRange: AGE_BRACKETS.youth, 
-        dose: { hi: "सुबह खाली पेट और शाम को चाय की जगह धीरे-धीरे सिप लेकर पिएं।", en: "Drink slowly morning empty stomach and evening instead of tea." },
-        ingredients: {
-          hi: [
-            'सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)',
-            'दालचीनी का पाउडर या छोटा टुकड़ा — 1 छोटा चम्मच',
-            'हरी या छोटी इलायची — 2 पीस (कुचली हुई)',
-            'शुद्ध शहद — 1 छोटा चम्मच (काढ़ा गुनगुना होने पर मिलाने के लिए)',
-            'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'
-          ],
-          en: [
-            'Dry ginger powder — 1 teaspoon (approx. 3-4g)',
-            'Cinnamon powder or stick — 1 teaspoon',
-            'Green cardamom — 2 pieces (crushed)',
-            'Pure honey — 1 teaspoon (to be mixed when lukewarm)',
-            'Clean drinking water — 1 large glass (approx. 250ml)'
-          ]
-        }
-      },
-      { 
-        ageRange: AGE_BRACKETS.middleAge, 
-        dose: { hi: "सुबह खाली पेट और शाम को चाय की जगह धीरे-धीरे सिप लेकर पिएं।", en: "Drink slowly morning empty stomach and evening instead of tea." },
-        ingredients: {
-          hi: [
-            'सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)',
-            'दालचीनी का पाउडर या छोटा टुकड़ा — 1 छोटा चम्मच',
-            'हरी या छोटी इलायची — 2 पीस (कुचली हुई)',
-            'शुद्ध शहद — 1 छोटा चम्मच (काढ़ा गुनगुना होने पर मिलाने के लिए)',
-            'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'
-          ],
-          en: [
-            'Dry ginger powder — 1 teaspoon (approx. 3-4g)',
-            'Cinnamon powder or stick — 1 teaspoon',
-            'Green cardamom — 2 pieces (crushed)',
-            'Pure honey — 1 teaspoon (to be mixed when lukewarm)',
-            'Clean drinking water — 1 large glass (approx. 250ml)'
-          ]
-        }
-      },
-      { 
-        ageRange: AGE_BRACKETS.oldAge, 
-        dose: { hi: "आधा छोटा चम्मच (लगभग 1 से 2 gram)", en: "Half a teaspoon (approx. 1 to 2 grams)" },
-        ingredients: {
-          hi: [
-            'सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)',
-            'दालचीनी का पाउडर या छोटा टुकड़ा — आधा छोटा चम्मच',
-            'हरी या छोटी इलायची — 1 पीस (कुचली हुई)',
-            'शुद्ध शहद — आधा छोटा चम्मच (काढ़ा गुनगुना होने पर मिलाने के लिए)',
-            'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'
-          ],
-          en: [
-            'Dry ginger powder — half a teaspoon (approx. 1-2g)',
-            'Cinnamon powder or stick — half a teaspoon',
-            'Green cardamom — 1 piece (crushed)',
-            'Pure honey — half a teaspoon (to be mixed when lukewarm)',
-            'Clean drinking water — 1 cup (approx. 150ml)'
-          ]
-        }
-      }
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "सुबह खाली पेट और शाम को चाय की जगह धीरे-धीरे सिप लेकर पिएं।", en: "Drink slowly morning empty stomach and evening instead of tea." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)', 'दालचीनी का पाउडर या छोटा टुकड़ा — आधा छोटा चम्मच', 'हरी या छोटी इलायची — 1 पीस (कुचली हुई)', 'शुद्ध शहद — आधा छोटा चम्मच (काढ़ा गुनगुना होने पर मिलाने के लिए)', 'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'], en: ['Dry ginger powder — half a teaspoon (approx. 1-2g)', 'Cinnamon powder or stick — half a teaspoon', 'Green cardamom — 1 piece (crushed)', 'Pure honey — half a teaspoon (to be mixed when lukewarm)', 'Clean drinking water — 1 cup (approx. 150ml)'] } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "सुबह खाली पेट और शाम को चाय की जगह धीरे-धीरे सिप लेकर पिएं।", en: "Drink slowly morning empty stomach and evening instead of tea." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)', 'दालचीनी का पाउडर या छोटा टुकड़ा — 1 छोटा चम्मच', 'हरी या छोटी इलायची — 2 पीस (कुचली हुई)', 'शुद्ध शहद — 1 छोटा चम्मच (काढ़ा गुनगुना होने पर मिलाने के लिए)', 'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'], en: ['Dry ginger powder — 1 teaspoon (approx. 3-4g)', 'Cinnamon powder or stick — 1 teaspoon', 'Green cardamom — 2 pieces (crushed)', 'Pure honey — 1 teaspoon (to be mixed when lukewarm)', 'Clean drinking water — 1 large glass (approx. 250ml)'] } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "सुबह खाली पेट और शाम को चाय की जगह धीरे-धीरे सिप लेकर पिएं।", en: "Drink slowly morning empty stomach and evening instead of tea." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)', 'दालचीनी का पाउडर या छोटा टुकड़ा — 1 छोटा चम्मच', 'हरी या छोटी इलायची — 2 पीस (कुचली हुई)', 'शुद्ध शहद — 1 छोटा चम्मच (काढ़ा गुनगुना होने पर मिलाने के लिए)', 'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'], en: ['Dry ginger powder — 1 teaspoon (approx. 3-4g)', 'Cinnamon powder or stick — 1 teaspoon', 'Green cardamom — 2 pieces (crushed)', 'Pure honey — 1 teaspoon (to be mixed when lukewarm)', 'Clean drinking water — 1 large glass (approx. 250ml)'] } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "आधा छोटा चम्मच (लगभग 1 से 2 gram)", en: "Half a teaspoon (approx. 1 to 2 grams)" }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)', 'दालचीनी का पाउडर या छोटा टुकड़ा — आधा छोटा चम्मच', 'हरी या छोटी इलायची — 1 पीस (कुचली हुई)', 'शुद्ध शहद — आधा छोटा चम्मच (काढ़ा गुनगुना होने पर मिलाने के लिए)', 'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'], en: ['Dry ginger powder — half a teaspoon (approx. 1-2g)', 'Cinnamon powder or stick — half a teaspoon', 'Green cardamom — 1 piece (crushed)', 'Pure honey — half a teaspoon (to be mixed when lukewarm)', 'Clean drinking water — 1 cup (approx. 150ml)'] } }
     ],
-    ingredients: {
-      hi: ['सोंठ का पाउडर (सूखा अदरक)', 'दालचीनी का पाउडर या छोटा टुकड़ा', 'हरी या छोटी इलायची', 'शुद्ध शहद', 'पीने का साफ पानी'],
-      en: ['Dry ginger powder', 'Cinnamon powder or stick', 'Green cardamom', 'Pure honey', 'Clean drinking water']
-    },
-    preparation: {
-      hi: "एक बर्तन में पानी डालें and उसमें अपनी उम्र के अनुसार तय मात्रा में सोंठ, दालचीनी and कुचली हुई इलायची डाल दें। अब इसे धीमी आंच पर तब तक उबालें जब तक कि पानी उबलकर आधा न रह जाए। इसके बाद आंच बंद कर दें and काढ़े को छानकर हल्का गुनगुना होने के लिए रख दें। जब काढ़ा पीने लायक गुनगुना हो जाए, तब उसमें शहद मिलाएं।",
-      en: "Add water to a vessel and put the prescribed amount of dry ginger, cinnamon and crushed cardamom as per your age. Now boil it on low flame until the water is reduced to half. After this, turn off the flame and strain the decoction and keep it to become lukewarm. When the decoction becomes lukewarm enough to drink, then add honey to it."
-    },
-    usage: {
-      hi: "इस काढ़े को सुबह खाली पेट and शाम को चाय की जगह पर धीरे-धीरे सिप लेकर (चाय की तरह) पिएं। ध्यान रहे कि शहद हमेशा काढ़ा गुनगुना होने पर ही मिलाएं, उबलते हुए गर्म काढ़े में नहीं।\nइस काढ़े का नियमित सेवन लगातार 3 से 5 दिनों तक करें।",
-      en: "Drink this decoction slowly sipping (like tea) in the morning on an empty stomach and in the evening instead of tea. Keep in mind that honey should always be mixed only when the decoction is lukewarm, not in boiling hot decoction.\nUse this decoction regularly for 3 to 5 days."
-    },
-    dietEat: {
-      hi: "भोजन: पुराने चावल की पतली मांड या मांड निकाला हुआ गर्म भात, मूंग दाल का सूप, उबले हुए चने का पानी, and गुनगुना पानी।\nफल and सलाद की मात्रा: दोपहर के भोजन के साथ 1 छोटी कटोरी (लगभग 100 ग्राम) हल्के उबले हुए सलाद (जैसे उबली हुई लौकी या तरोई) खा सकते हैं। कच्चे फल पूरी तरह बंद रखें।",
-      en: "Food: Thin gruel of old rice or hot cooked rice with gruel removed, Moong dal soup, boiled gram water, and lukewarm water. For lunch, you can eat 1 small bowl of lightly boiled salad (like boiled bottle gourd or sponge gourd). Keep raw fruits completely off."
-    },
-    dietAvoid: {
-      hi: "पैकेट वाले फूड्स: चिप्स, कुरकुरे, समोसे, कचौड़ी, बिस्कुट, ब्रेड and मैदे से बनी चीजें पूरी तरह से बंद रखें।\nभारी भोजन: राजमा, छोले, पनीर, मलाई, मिठाई, मांसाहारी भोजन and रात के समय भारी दालें न खाएं।\nठंडी चीजें: ठंडा पानी, गन्ने का रस, खट्टा नींबू, दही, छाछ, and फ्रिज में रखा हुआ बासी भोजन बिल्कुल न लें।",
-      en: "Packaged foods: Keep chips, snacks, samosas, kachoris, biscuits, bread and items made of refined flour completely off. Heavy food: Do not eat kidney beans, chickpeas, paneer, cream, sweets, non-vegetarian food and heavy pulses at night. Cold things: Do not take cold water, sugarcane juice, sour lemon, curd, buttermilk, and stale food kept in the fridge at all."
-    },
-    strictAvoid: {
-      hi: "ठंडी चीजें, भारी मांसाहार and पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।",
-      en: "Cold items, heavy non-veg, and packaged snacks are strictly prohibited."
-    },
+    ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक)', 'दालचीनी का पाउडर या छोटा टुकड़ा', 'हरी या छोटी इलायची', 'शुद्ध शहद', 'पीने का साफ पानी'], en: ['Dry ginger powder', 'Cinnamon powder or stick', 'Green cardamom', 'Pure honey', 'Clean drinking water'] },
+    preparation: { hi: "एक बर्तन में पानी डालें and उसमें अपनी उम्र के अनुसार तय मात्रा में सोंठ, दालचीनी and कुचली हुई इलायची डाल दें। अब इसे धीमी आंच पर तब तक उबालें जब तक कि पानी उबलकर आधा न रह जाए। इसके बाद आंच बंद कर दें and काढ़े को छानकर हल्का गुनगुना होने के लिए रख दें। जब काढ़ा पीने लायक गुनगुना हो जाए, तब उसमें शहद मिलाएं।", en: "Add water to a vessel and put the prescribed amount of dry ginger, cinnamon and crushed cardamom as per your age. Now boil it on low flame until the water is reduced to half. After this, turn off the flame and strain the decoction and keep it to become lukewarm. When the decoction becomes lukewarm enough to drink, then add honey to it." },
+    usage: { hi: "इस काढ़े को सुबह खाली पेट and शाम को चाय की जगह पर धीरे-धीरे सिप लेकर (चाय की तरह) पिएं। ध्यान रहे कि शहद हमेशा काढ़ा गुनगुना होने पर ही मिलाएं, उबलते हुए गर्म काढ़े में नहीं।\nइस काढ़े का नियमित सेवन लगातार 3 से 5 दिनों तक करें।", en: "Drink this decoction slowly sipping (like tea) in the morning on an empty stomach and in the evening instead of tea. Keep in mind that honey should always be mixed only when the decoction is lukewarm, not in boiling hot decoction.\nUse this decoction regularly for 3 to 5 days." },
+    dietEat: { hi: "भोजन: पुराने चावल की पतली मांड या मांड निकाला हुआ गर्म भात, मूंग दाल का सूप, उबले हुए चने का पानी, and गुनगुना पानी।\nफल and सलाद की मात्रा: दोपहर के भोजन के साथ 1 छोटी कटोरी (लगभग 100 ग्राम) हल्के उबले हुए सलाद (जैसे उबली हुई लौकी या तरोई) खा सकते हैं। कच्चे फल पूरी तरह बंद रखें।", en: "Food: Thin gruel of old rice or hot cooked rice with gruel removed, Moong dal soup, boiled gram water, and lukewarm water. For lunch, you can eat 1 small bowl of lightly boiled salad (like boiled bottle gourd or sponge gourd). Keep raw fruits completely off." },
+    dietAvoid: { hi: "पैकेट वाले फूड्स: चिप्स, कुरकुरे, समोसे, कचौड़ी, बिस्कुट, ब्रेड and मैदे से बनी चीजें पूरी तरह से बंद रखें।\nभारी भोजन: राजमा, छोले, पनीर, मलाई, मिठाई, मांसाहारी भोजन and रात के समय भारी दालें न खाएं।\nठंडी चीजें: ठंडा पानी, गन्ने का रस, खट्टा नींबू, दही, छाछ, and फ्रिज में रखा हुआ बासी भोजन बिल्कुल न लें।", en: "Packaged foods: Keep chips, snacks, samosas, kachoris, biscuits, bread and items made of refined flour completely off. Heavy food: Do not eat kidney beans, chickpeas, paneer, cream, sweets, non-vegetarian food and heavy pulses at night. Cold things: Do not take cold water, sugarcane juice, sour lemon, curd, buttermilk, and stale food kept in the fridge at all." },
+    strictAvoid: { hi: "ठंडी चीजें, भारी मांसाहार and पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।", en: "Cold items, heavy non-veg, and packaged snacks are strictly prohibited." },
     routine: {
       morning: { hi: "सुबह (Morning): सुबह उठकर तुलसी के पत्तों की भाप (Steam) लें and नाक में दो-दो बूंद अणु तेल या सरसों का तेल डालें।", en: "Morning: Take steam of basil leaves after waking up in the morning and put two drops of Anu oil or mustard oil in the nose." },
       afternoon: { hi: "दोपहर (Afternoon): दोपहर में गर्म and सुपाच्य भोजन लें and खाने के तुरंत बाद पानी न पिएं।", en: "Afternoon: Take hot and easily digestible food in the afternoon and do not drink water immediately after eating." },
@@ -392,7 +259,7 @@ export const COLD_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: "यदि इस उपाय को लगातार 5 दिनों तक नियम से करने के बाद भी आपको आराम महसूस न हो, तो बिना देर किए अपने नजदीकी आयुर्वेदिक चिकित्सक से मिलकर उचित परामर्श लें। शरीर का ध्यान रखना ही सबसे पहली प्राथमिकता है।", en: "If you don't feel relief even after doing this remedy regularly for 5 consecutive days, then consult your nearest Ayurvedic physician for proper advice without delay. Taking care of the body is the first priority." },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
+    image: "https://picsum.photos/seed/cough/600/400",
     keywords: "sardi khansi cold cough sinus nazla jukam saunth dalchini"
   },
   {
@@ -405,111 +272,17 @@ export const COLD_REMEDIES: Remedy[] = [
       en: "When weather changes bring cold, intense body ache, and mild feverishness together, the immune system weakens. This traditional decoction works like a panacea. Dry ginger and black pepper calm the accumulated Kapha and Vata doshas, while Tulsi's medicinal properties eradicate the cold virus."
     },
     doses: [
-      { 
-        ageRange: AGE_BRACKETS.childhood, 
-        dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." },
-        ingredients: {
-          hi: [
-            'सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)',
-            'ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए)',
-            'साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचले हुए)',
-            'पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा)',
-            'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'
-          ],
-          en: [
-            'Dry ginger powder — half a teaspoon (approx. 1-2g)',
-            'Fresh Tulsi leaves — 4 to 5 pieces (washed)',
-            'Whole black pepper powder — 2 grains (finely crushed)',
-            'Old clean jaggery — 10g (small piece)',
-            'Clean drinking water — 1 cup (approx. 150ml)'
-          ]
-        }
-      },
-      { 
-        ageRange: AGE_BRACKETS.youth, 
-        dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." },
-        ingredients: {
-          hi: [
-            'सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)',
-            'ताज़ा तुलसी के पत्ते — 8 से 10 पीस (साफ धुले हुए)',
-            'साबुत काली मिर्च का पाउडर — 4 से 5 दाने (बारीक कुचले हुए)',
-            'पुराना साफ़ गुड़ — 20 gram (एक मध्यम टुकड़ा)',
-            'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'
-          ],
-          en: [
-            'Dry ginger powder — 1 teaspoon (approx. 3-4g)',
-            'Fresh Tulsi leaves — 8 to 10 pieces (washed)',
-            'Whole black pepper powder — 4 to 5 grains (finely crushed)',
-            'Old clean jaggery — 20g (medium piece)',
-            'Clean drinking water — 1 large glass (approx. 250ml)'
-          ]
-        }
-      },
-      { 
-        ageRange: AGE_BRACKETS.middleAge, 
-        dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." },
-        ingredients: {
-          hi: [
-            'सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)',
-            'ताज़ा तुलसी के पत्ते — 8 से 10 पीस (साफ धुले हुए)',
-            'साबुत काली मिर्च का पाउडर — 4 से 5 दाने (बारीक कुचले हुए)',
-            'पुराना साफ़ गुड़ — 20 gram (एक मध्यम टुकड़ा)',
-            'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'
-          ],
-          en: [
-            'Dry ginger powder — 1 teaspoon (approx. 3-4g)',
-            'Fresh Tulsi leaves — 8 to 10 pieces (washed)',
-            'Whole black pepper powder — 4 to 5 grains (finely crushed)',
-            'Old clean jaggery — 20g (medium piece)',
-            'Clean drinking water — 1 large glass (approx. 250ml)'
-          ]
-        }
-      },
-      { 
-        ageRange: AGE_BRACKETS.oldAge, 
-        dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." },
-        ingredients: {
-          hi: [
-            'सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)',
-            'ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए)',
-            'साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचले हुए)',
-            'पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा)',
-            'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'
-          ],
-          en: [
-            'Dry ginger powder — half a teaspoon (approx. 1-2g)',
-            'Fresh Tulsi leaves — 4 to 5 pieces (washed)',
-            'Whole black pepper powder — 2 grains (finely crushed)',
-            'Old clean jaggery — 10g (small piece)',
-            'Clean drinking water — 1 cup (approx. 150ml)'
-          ]
-        }
-      }
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)', 'ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए)', 'साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचले हुए)', 'पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा)', 'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'], en: ['Dry ginger powder — half a teaspoon (approx. 1-2g)', 'Fresh Tulsi leaves — 4 to 5 pieces (washed)', 'Whole black pepper powder — 2 grains (finely crushed)', 'Old clean jaggery — 10g (small piece)', 'Clean drinking water — 1 cup (approx. 150ml)'] } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)', 'ताज़ा तुलसी के पत्ते — 8 से 10 पीस (साफ धुले हुए)', 'साबुत काली मिर्च का पाउडर — 4 से 5 दाने (बारीक कुचले हुए)', 'पुराना साफ़ गुड़ — 20 gram (एक मध्यम टुकड़ा)', 'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'], en: ['Dry ginger powder — 1 teaspoon (approx. 3-4g)', 'Fresh Tulsi leaves — 8 to 10 pieces (washed)', 'Whole black pepper powder — 4 to 5 grains (finely crushed)', 'Old clean jaggery — 20g (medium piece)', 'Clean drinking water — 1 large glass (approx. 250ml)'] } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)', 'ताज़ा तुलसी के पत्ते — 8 से 10 पीस (साफ धुले हुए)', 'साबुत काली मिर्च का पाउडर — 4 से 5 दाने (बारीक कुचले हुए)', 'पुराना साफ़ गुड़ — 20 gram (एक मध्यम टुकड़ा)', 'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'], en: ['Dry ginger powder — 1 teaspoon (approx. 3-4g)', 'Fresh Tulsi leaves — 8 to 10 pieces (washed)', 'Whole black pepper powder — 4 to 5 grains (finely crushed)', 'Old clean jaggery — 20g (medium piece)', 'Clean drinking water — 1 large glass (approx. 250ml)'] } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)', 'ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए)', 'साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचले हुए)', 'पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा)', 'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'], en: ['Dry ginger powder — half a teaspoon (approx. 1-2g)', 'Fresh Tulsi leaves — 4 to 5 pieces (washed)', 'Whole black pepper powder — 2 grains (finely crushed)', 'Old clean jaggery — 10g (small piece)', 'Clean drinking water — 1 cup (approx. 150ml)'] } }
     ],
-    ingredients: {
-      hi: ['सोंठ का पाउडर (सूखा अदरक)', 'ताज़ा तुलसी के पत्ते', 'साबुत काली मिर्च का पाउडर', 'पुराना साफ़ गुड़', 'पीने का साफ पानी'],
-      en: ['Dry ginger powder', 'Fresh Tulsi leaves', 'Whole black pepper powder', 'Old clean jaggery', 'Clean drinking water']
-    },
-    preparation: {
-      hi: "एक बर्तन में अपनी उम्र के अनुसार तय की गई मात्रा में पानी डालें। अब उसमें तुलसी के पत्तों को हाथ से तोड़कर डालें, साथ ही सोंठ का पाउडर, कुचली हुई काली मिर्च and गुड़ डाल दें। अब आंच को धीमा रखें and इसे तब तक उबलने दें जब तक कि यह उबलकर आधा न रह जाए। जब काढ़ा आधा बचे, तो आंच बंद कर दें and इसे कप में छान लें।",
-      en: "Add water to a vessel according to age. Add hand-torn Tulsi leaves, dry ginger powder, crushed black pepper and jaggery. Boil on low heat until water reduces to half. Strain into a cup."
-    },
-    usage: {
-      hi: "इस काढ़े को छानने के बाद हल्का गुनगुना (चाय की तरह गर्म) रहते हुए ही धीरे-धीरे सिप लेकर पिएं। इसे पीने के तुरंत बाद शरीर पर चादर या कंबल ओढ़कर सो जाएं ताकि पसीना आए। पसीना आते ही हरारत and बदन दर्द गायब हो जाएगा। इसके बाद 1 घंटे तक हवा में न निकलें।\nअवधि: इस काढ़े का नियमित सेवन रोजाना सुबह खाली पेट and रात को सोने से पहले, लगातार 3 से 5 दिनों तक करें।",
-      en: "Sip warm decoction slowly. Immediately cover yourself with a blanket to induce sweating, which helps relieve feverishness and pain. Avoid drafts for 1 hour. Duration: Consume morning and night for 3 to 5 days."
-    },
-    dietEat: {
-      hi: "भोजन and गर्म सूप: मूंग की दाल का गर्म सूप पिएं। ताकत के लिए ताजा पका हुआ टमाटर, अदरक and काली मिर्च का गर्म सूप (1 छोटा बाउल यानी लगभग 150 मिली) शाम को ले सकते हैं, यह बहुत फायदेमंद है। इसके अलावा सोंठ-अजवाइन डाल कर बनाई हुई पतली खिचड़ी, सादी गर्म रोटी and गुनगुना पानी ही लें।\nसलाद की मात्रा: हरारत and जुकाम की स्थिति में कच्चे फल and ठंडे जूस पूरी तरह वर्जित हैं। सलाद के रूप में दोपहर के भोजन के साथ 1 छोटी कटोरी (लगभग 100 ग्राम) हल्के उबले हुए गर्म सलाद (जैसे भाप में पकी हुई गाजर या शलजम) पर हल्का सा सेंधा नमक छिड़क कर खा सकते हैं।",
-      en: "Diet: Moong dal soup, hot tomato-ginger-pepper soup (150ml) in the evening. Eat thin khichdi with dry ginger and carom seeds. Drink lukewarm water. Salad: Steamed warm carrots/turnips with rock salt. Avoid raw fruits and juices."
-    },
-    dietAvoid: {
-      hi: "पैकेट वाले फूड्स: बाजार के चिप्स, कुरकुरे, नमकीन, समोसे, तली-भुनी चीजें, बिस्कुट and मैदे से बने सामान सख़्ती से बंद रखें।\nभारी भोजन: उड़द की दाल, चावल, पनीर, मिठाई, भारी तड़का लगा हुआ भोजन and मांसाहार का सेवन बिल्कुल न करें।\nठंडी चीजें and जूस: फ्रिज का ठंडा पानी, फलों के ठंडे जूस, कोल्ड ड्रिंक्स, आइसक्रीम, दही, मट्ठा and कच्चे खट्टे फल पूरी तरह वर्जित हैं।",
-      en: "Avoid: Packaged snacks, fried items, refined flour products. Avoid Urad dal, rice, paneer, sweets, spicy food, and non-veg. Strictly avoid cold water, cold juices, sodas, ice cream, curd, and sour fruits."
-    },
-    strictAvoid: {
-      hi: "ठंडी चीजें and जूस, भारी मांसाहार and पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।",
-      en: "Cold items, juices, heavy non-veg, and packaged snacks are strictly prohibited."
-    },
+    ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक)', 'ताज़ा तुलसी के पत्ते', 'साबुत काली मिर्च का पाउडर', 'पुराना साफ़ गुड़', 'पीने का साफ पानी'], en: ['Dry ginger powder', 'Fresh Tulsi leaves', 'Whole black pepper powder', 'Old clean jaggery', 'Clean drinking water'] },
+    preparation: { hi: "एक बर्तन में अपनी उम्र के अनुसार तय की गई मात्रा में पानी डालें। अब उसमें तुलसी के पत्तों को हाथ से तोड़कर डालें, साथ ही सोंठ का पाउडर, कुचली हुई काली मिर्च and गुड़ डाल दें। अब आंच को धीमा रखें and इसे तब तक उबलने दें जब तक कि यह उबलकर आधा न रह जाए। जब काढ़ा आधा बचे, तो आंच बंद कर दें and इसे कप में छान लें।", en: "Add water to a vessel according to age. Add hand-torn Tulsi leaves, dry ginger powder, crushed black pepper and jaggery. Boil on low heat until water reduces to half. Strain into a cup." },
+    usage: { hi: "इस काढ़े को छानने के बाद हल्का गुनगुना (चाय की तरह गर्म) रहते हुए ही धीरे-धीरे सिप लेकर पिएं। इसे पीने के तुरंत बाद शरीर पर चादर या कंबल ओढ़कर सो जाएं ताकि पसीना आए। पसीना आते ही हरारत and बदन दर्द गायब हो जाएगा। इसके बाद 1 घंटे तक हवा में न निकलें।\nअवधि: इस काढ़े का नियमित सेवन रोजाना सुबह खाली पेट and रात को सोने से पहले, लगातार 3 से 5 दिनों तक करें।", en: "Sip warm decoction slowly. Immediately cover yourself with a blanket to induce sweating, which helps relieve feverishness and pain. Avoid drafts for 1 hour. Duration: Consume morning and night for 3 to 5 days." },
+    dietEat: { hi: "भोजन and गर्म सूप: मूंग की दाल का गर्म सूप पिएं। ताकत के लिए ताजा पका हुआ टमाटर, अदरक and काली मिर्च का गर्म सूप (1 छोटा बाउल यानी लगभग 150 मिली) शाम को ले सकते हैं, यह बहुत फायदेमंद है। इसके अलावा सोंठ-अजवाइन डाल कर बनाई हुई पतली खिचड़ी, सादी गर्म रोटी and गुनगुना पानी ही लें।\nसलाद की मात्रा: हरारत and जुकाम की स्थिति में कच्चे फल and ठंडे जूस पूरी तरह वर्जित हैं। सलाद के रूप में दोपहर के भोजन के साथ 1 छोटी कटोरी (लगभग 100 ग्राम) हल्के उबले हुए गर्म सलाद (जैसे भाप में पकी हुई गाजर या शलजम) पर हल्का सा सेंधा नमक छिड़क कर खा सकते हैं।", en: "Diet: Moong dal soup, hot tomato-ginger-pepper soup (150ml) in the evening. Eat thin khichdi with dry ginger and carom seeds. Drink lukewarm water. Salad: Steamed warm carrots/turnips with rock salt. Avoid raw fruits and juices." },
+    dietAvoid: { hi: "पैकेट वाले फूड्स: बाजार के चिप्स, कुरकुरे, नमकीन, समोसे, तली-भुनी चीजें, बिस्कुट and मैदे से बने सामान सख़्ती से बंद रखें।\nभारी भोजन: उड़द की दाल, चावल, पनीर, मिठाई, भारी तड़का लगा हुआ भोजन and मांसाहार का सेवन बिल्कुल न करें।\nठंडी चीजें and जूस: फ्रिज का ठंडा पानी, फलों के ठंडे जूस, कोल्ड ड्रिंक्स, आइसक्रीम, दही, मट्ठा and कच्चे खट्टे फल पूरी तरह वर्जित हैं।", en: "Avoid: Packaged snacks, fried items, refined flour products. Avoid Urad dal, rice, paneer, sweets, spicy food, and non-veg. Strictly avoid cold water, cold juices, sodas, ice cream, curd, and sour fruits." },
+    strictAvoid: { hi: "ठंडी चीजें and जूस, भारी मांसाहार and पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।", en: "Cold items, juices, heavy non-veg, and packaged snacks are strictly prohibited." },
     routine: {
       morning: { hi: "सुबह (Morning): सुबह उठकर गुनगुने पानी में थोड़ा सा सेंधा नमक डालकर गरारे करें and गर्म पानी की भाप लें।", en: "Morning: Gargle with warm salt water and take steam inhalation." },
       afternoon: { hi: "दोपहर (Afternoon): दोपहर का खाना हमेशा ताजा and गर्म ही करें, बासी भोजन भूलकर भी न छुएं।", en: "Afternoon: Always eat fresh hot lunch; never eat stale food." },
@@ -517,7 +290,7 @@ export const COLD_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: "यदि इस उपाय को लगातार 3 से 5 दिनों तक नियम से करने के बाद भी आपकी हरारत, जुकाम, बुखार and बदन दर्द में राहत महसूस न हो, तो बिना देर किए अपने नजदीकी आयुर्वेदिक चिकित्सक से मिलकर उचित परामर्श लें। शरीर को सुरक्षित रखना ही हमारी सबसे पहली प्राथमिकता है।", en: "If no relief after 3-5 days, consult an Ayurvedic physician immediately. Body safety is the top priority." },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
+    image: "https://picsum.photos/seed/cough/600/400",
     keywords: "sardi jukam badan dard hararat bukhar tulsi saunth kali mirch"
   }
 ];

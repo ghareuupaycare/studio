@@ -1,5 +1,56 @@
-import { Remedy, AGE_BRACKETS, GENERAL_DISCLAIMER } from "./remedy-data";
-import { PlaceHolderImages } from "./placeholder-images";
+/**
+ * @fileOverview Category 1: General Fever (सामान्य बुखार) Data Store
+ * Contains 10 authentic Ayurvedic remedies with full-length detailed parameters.
+ */
+
+export type LocalizedString = {
+  hi: string;
+  en: string;
+};
+
+export type DoseConfig = {
+  ageRange: LocalizedString;
+  dose: LocalizedString;
+  ingredients?: { hi: string[]; en: string[] };
+};
+
+export type Remedy = {
+  id: string;
+  serialNumber: string;
+  name: LocalizedString;
+  illnessId: string;
+  introduction: LocalizedString;
+  severity?: 'mild' | 'moderate' | 'severe';
+  severityLabel?: LocalizedString;
+  doses: DoseConfig[];
+  ingredients: { hi: string[]; en: string[] };
+  preparation: LocalizedString;
+  usage: LocalizedString;
+  dietEat: LocalizedString;
+  dietAvoid: LocalizedString;
+  strictAvoid: LocalizedString;
+  routine: {
+    morning: LocalizedString;
+    afternoon: LocalizedString;
+    evening: LocalizedString;
+  };
+  safetyAdvice: LocalizedString;
+  disclaimer: LocalizedString;
+  image: string;
+  keywords: string;
+};
+
+const AGE_BRACKETS = {
+  childhood: { hi: "5-12 वर्ष", en: "5-12 Years" },
+  youth: { hi: "13-40 वर्ष", en: "13-40 Years" },
+  middleAge: { hi: "41-60 वर्ष", en: "41-60 Years" },
+  oldAge: { hi: "61-80 वर्ष", en: "61-80 Years" }
+};
+
+const GENERAL_DISCLAIMER: LocalizedString = {
+  hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
+  en: "This information is for educational purposes only, please consult your physician."
+};
 
 export const FEVER_REMEDIES: Remedy[] = [
   {
@@ -48,7 +99,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'यदि बुखार 102 डिग्री से अधिक हो या 3 दिन से ज्यादा रहे, तो तुरंत डॉक्टर से संपर्क करें।', en: 'If fever exceeds 102°F or lasts more than 3 days, consult a physician immediately.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || "",
+    image: "https://picsum.photos/seed/herb1/600/400",
     keywords: "bukhar fever jwar tulsi giloy kadha immunity"
   },
   {
@@ -88,7 +139,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'यदि पाचन बहुत ज्यादा खराब हो और लगातार उल्टियां हों, तो तुरंत डॉक्टर से मिलें।', en: 'If digestion is severely compromised with continuous vomiting, consult a doctor immediately.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'digestion')?.imageUrl || "",
+    image: "https://picsum.photos/seed/digestion/600/400",
     keywords: "adrak dhania digestive water bukhar appetite"
   },
   {
@@ -122,7 +173,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'गर्भवती महिलाएं और स्तनपान कराने वाली माताएं बिना चिकित्सक की सलाह के इसका सेवन न करें।', en: 'Pregnant and lactating mothers should not consume this without a physician\'s advice.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || "",
+    image: "https://picsum.photos/seed/vaidya/600/400",
     keywords: "mahasudarshan churna honey fever jwar"
   },
   {
@@ -132,7 +183,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     illnessId: 'general-fever',
     introduction: {
       hi: "तेज बुखार के समय जब शरीर में अत्यधिक जलन, प्यास और बेचैनी महसूस हो, तब मुनक्का और किशमिश का शीतल पानी एक वरदान की तरह काम करता है। मुनक्का शरीर की आंतरिक गर्मी (पित्त) को सोख लेता है और शरीर को तुरंत ऊर्जा (Glucose) प्रदान करता है। यह पेट को साफ़ करने में भी मदद करता है जो बुखार के दौरान अक्सर कब्ज की समस्या को दूर करता है।",
-      en: "During high fever with intense burning, thirst, and restlessness, the cooling water of Munakka and raisins acts as a blessing. Munakka absorbs internal heat (Pitta) and provides instant glucose for energy. It also helps clear the bowels, addressing common fever-induced constipation."
+      en: "During high fever with intense burning, thirst, and restlessness, the cooling water of Munakka and raisins acts as a blessing. Munakka absorbs internal heat (Pitta) and provides instant glucose for energy. It also helps clear the bowels, addressing common fever-induced configuration."
     },
     doses: [
       { ageRange: AGE_BRACKETS.childhood, dose: { hi: "4-5 मुनक्का का तैयार पानी", en: "Prepared water of 4-5 Munakka" } },
@@ -156,7 +207,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'मधुमेह (Diabetes) के रोगी इसकी मात्रा का विशेष ध्यान रखें या डॉक्टर से पूछकर ही लें।', en: 'Diabetic patients should monitor the quantity or consult a doctor before use.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'skincare')?.imageUrl || "",
+    image: "https://picsum.photos/seed/skin/600/400",
     keywords: "kishmish munakka cooling water energy"
   },
   {
@@ -165,7 +216,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     name: { hi: 'दालचीनी और लौंग की स्वेदन चाय', en: 'Sweat-inducing Tea of Cinnamon and Clove' },
     illnessId: 'general-fever',
     introduction: {
-      hi: "यदि बुखार में ठंड ज्यादा लग रही हो, कंपकंपी हो और पसीना नहीं आ रहा हो, तो यह दालचीनी और लौंग की चाय रामबाण है। यह शरीर की आंतरिक गर्मी को सक्रिय करती है और 'स्वेदन' (पसीना निकालने) की प्रक्रिया को शुरू करती है। जब शरीर से पसीना निकलता है, तो बुखार का वेग कम होने लगता है। इसमें मौजूद मसालों के तेल श्वसन तंत्र को भी साफ़ रखते हैं।",
+      hi: " यदि बुखार में ठंड ज्यादा लग रही हो, कंपकंपी हो और पसीना नहीं आ रहा हो, तो यह दालचीनी और लौंग की चाय रामबाण है। यह शरीर की आंतरिक गर्मी को सक्रिय करती है और 'स्वेदन' (पसीना निकालने) की प्रक्रिया को शुरू करती है। जब शरीर से पसीना निकलता है, तो बुखार का वेग कम होने लगता है। इसमें मौजूद मसालों के तेल श्वसन तंत्र को भी साफ़ रखते हैं।",
       en: "If chills and shivering accompany fever with no sweating, this cinnamon and clove tea is a panacea. It activates internal body heat and initiates the process of 'Svedana' (sweating). As the body sweats, the intensity of the fever decreases. The essential oils in these spices also keep the respiratory system clear."
     },
     doses: [
@@ -190,7 +241,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'गर्मी के मौसम में इसका अधिक सेवन न करें क्योंकि इसकी तासीर बहुत गर्म होती है।', en: 'Avoid over-consumption during summer due to its highly heating nature.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'respiratory')?.imageUrl || "",
+    image: "https://picsum.photos/seed/cough/600/400",
     keywords: "dalchini laung tea sweat chills"
   },
   {
@@ -224,7 +275,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'जिन लोगों को एसिडिटी (पित्त) की समस्या अधिक है, वे इसकी मात्रा कम रखें।', en: 'Individuals with high acidity (Pitta) should take this in smaller quantities.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || "",
+    image: "https://picsum.photos/seed/herb1/600/400",
     keywords: "ajwain saunth gud sweat fever"
   },
   {
@@ -258,7 +309,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'इसे खाली पेट न लें, वरना पेट में जलन हो सकती है।', en: 'Do not take on an empty stomach, as it may cause gastric irritation.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'digestion')?.imageUrl || "",
+    image: "https://picsum.photos/seed/digestion/600/400",
     keywords: "methi saunth jeera churna fever"
   },
   {
@@ -292,7 +343,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: ' यदि एसिडिटी या पेट में जलन महसूस हो, तो काली मिर्च की मात्रा कम कर दें।', en: 'If acidity or stomach burning occurs, reduce the quantity of black pepper.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || "",
+    image: "https://picsum.photos/seed/herb1/600/400",
     keywords: "kali mirch adrak tulsi brew fever"
   },
   {
@@ -326,7 +377,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'यदि मरीज को ठंड लग रही हो या कफ जमा हो, तो यह शीतल हिम न लें।', en: 'Do not use if the patient is feeling chills or has heavy congestion.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'skincare')?.imageUrl || "",
+    image: "https://picsum.photos/seed/skin/600/400",
     keywords: "khus dhania cooling infusion fever"
   },
   {
@@ -360,7 +411,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     safetyAdvice: { hi: 'मधुमेह (Diabetes) के रोगी खजूर की मात्रा कम रखें and डॉक्टर से सलाह लें।', en: 'Diabetic patients should limit dates and consult their doctor.' },
     disclaimer: GENERAL_DISCLAIMER,
-    image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || "",
+    image: "https://picsum.photos/seed/vaidya/600/400",
     keywords: "weakness post fever khajur strength"
   }
 ];
