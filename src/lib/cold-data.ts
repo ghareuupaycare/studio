@@ -1,6 +1,6 @@
 /**
  * @fileOverview Category 2: Cold & Flu (नजला और जुकाम) Data Store
- * Contains 7 authentic Ayurvedic remedies with dynamic age-calculation logic.
+ * Contains authentic Ayurvedic remedies with dynamic age-calculation logic.
  * Language standard: Strictly Hindi "और" used for connectives.
  */
 
@@ -224,7 +224,7 @@ export const COLD_REMEDIES: Remedy[] = [
     strictAvoid: { hi: "ठंडी चीजें, भारी मांसाहार और पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।", en: "Cold items, heavy non-veg, and packaged snacks are strictly prohibited." },
     routine: {
       morning: { hi: "सुबह (Morning): सुबह उठकर सबसे पहले थोड़ा गर्म पानी पिएं और नमक डालकर गुनगुने पानी से गरारे करें।", en: "Morning: Drink warm water and gargle with lukewarm salt water." },
-      afternoon: { hi: "दोपहर (Afternoon): दोपहर का खाना हमेशा ताजा and गर्म ही खाएं, बासी भोजन भूलकर भी न लें।", en: "Afternoon: Always eat fresh and hot lunch; never eat stale food." },
+      afternoon: { hi: "दोपहर (Afternoon): दोपहर का खाना हमेशा ताजा और गर्म ही खाएं, बासी भोजन भूलकर भी न लें।", en: "Afternoon: Always eat fresh and hot lunch; never eat stale food." },
       evening: { hi: "शाम/रात (Evening/Night): रात का भोजन 8 बजे से पहले कर लें। सोते समय सिर और कानों को ढककर रखें और रात को भूलकर भी पंखे की तेज हवा या एसी में न सोएं।", en: "Evening/Night: Eat dinner before 8 PM. Keep head and ears covered while sleeping; avoid direct air from fans or AC at night." }
     },
     safetyAdvice: { hi: "यदि इस उपाय को लगातार 5 दिनों तक नियम से करने के बाद भी आपको आराम महसूस न हो, तो बिना देर किए अपने नजदीकी आयुर्वेदिक चिकित्सक से मिलकर उचित परामर्श लें। शरीर का ध्यान रखना ही सबसे पहली प्राथमिकता है।", en: "If you don't find relief after 5 days, consult an Ayurvedic physician immediately. Taking care of your body is the first priority." },
@@ -273,10 +273,10 @@ export const COLD_REMEDIES: Remedy[] = [
       en: "When weather changes bring cold, intense body ache, and mild feverishness together, the immune system weakens. This traditional decoction works like a panacea. Dry ginger and black pepper calm the accumulated Kapha and Vata doshas, while Tulsi's medicinal properties eradicate the cold virus."
     },
     doses: [
-      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)', 'ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए)', 'साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचले हुए)', 'पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा)', 'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'], en: ['Dry ginger powder — half a teaspoon (approx. 1-2g)', 'Fresh Tulsi leaves — 4 to 5 pieces (washed)', 'Whole black pepper powder — 2 grains (finely crushed)', 'Old clean jaggery — 10g (small piece)', 'Clean drinking water — 1 cup (approx. 150ml)'] } },
-      { ageRange: AGE_BRACKETS.youth, dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)', 'ताज़ा तुलसी के पत्ते — 8 से 10 पीस (साफ धुले हुए)', 'साबुत काली मिर्च का पाउडर — 4 से 5 दाने (बारीक कुचले हुए)', 'पुराना साफ़ गुड़ — 20 gram (एक मध्यम टुकड़ा)', 'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'], en: ['Dry ginger powder — 1 teaspoon (approx. 3-4g)', 'Fresh Tulsi leaves — 8 to 10 pieces (washed)', 'Whole black pepper powder — 4 to 5 grains (finely crushed)', 'Old clean jaggery — 20g (medium piece)', 'Clean drinking water — 1 large glass (approx. 250ml)'] } },
-      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)', 'ताज़ा तुलसी के पत्ते — 8 से 10 पीस (साफ धुले हुए)', 'साबुत काली मिर्च का पाउडर — 4 से 5 दाने (बारीक कुचले हुए)', 'पुराना साफ़ गुड़ — 20 gram (एक मध्यम टुकड़ा)', 'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'], en: ['Dry ginger powder — 1 teaspoon (approx. 3-4g)', 'Fresh Tulsi leaves — 8 to 10 pieces (washed)', 'Whole black pepper powder — 4 to 5 grains (finely crushed)', 'Old clean jaggery — 20g (medium piece)', 'Clean drinking water — 1 large glass (approx. 250ml)'] } },
-      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "रोजाना सुबह खाली पेट और रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)', 'ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए)', 'साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचले हुए)', 'पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा)', 'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'], en: ['Dry ginger powder — half a teaspoon (approx. 1-2g)', 'Fresh Tulsi leaves — 4 to 5 pieces (washed)', 'Whole black pepper powder — 2 grains (finely crushed)', 'Old clean jaggery — 10g (small piece)', 'Clean drinking water — 1 cup (approx. 150ml)'] } }
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "रोजाना सुबह खाली पेट and रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)', 'ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए)', 'साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचले हुए)', 'पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा)', 'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'], en: ['Dry ginger powder — half a teaspoon (approx. 1-2g)', 'Fresh Tulsi leaves — 4 to 5 pieces (washed)', 'Whole black pepper powder — 2 grains (finely crushed)', 'Old clean jaggery — 10g (small piece)', 'Clean drinking water — 1 cup (approx. 150ml)'] } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "रोजाना सुबह खाली पेट and रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)', 'ताज़ा तुलसी के पत्ते — 8 से 10 पीस (साफ धुले हुए)', 'साबुत काली मिर्च का पाउडर — 4 से 5 दाने (बारीक कुचले हुए)', 'पुराना साफ़ गुड़ — 20 gram (एक मध्यम टुकड़ा)', 'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'], en: ['Dry ginger powder — 1 teaspoon (approx. 3-4g)', 'Fresh Tulsi leaves — 8 to 10 pieces (washed)', 'Whole black pepper powder — 4 to 5 grains (finely crushed)', 'Old clean jaggery — 20g (medium piece)', 'Clean drinking water — 1 large glass (approx. 250ml)'] } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "रोजाना सुबह खाली पेट and रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram)', 'ताज़ा तुलसी के पत्ते — 8 से 10 पीस (साफ धुले हुए)', 'साबुत काली मिर्च का पाउडर — 4 से 5 दाने (बारीक कुचले हुए)', 'पुराना साफ़ गुड़ — 20 gram (एक मध्यम टुकड़ा)', 'पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)'], en: ['Dry ginger powder — 1 teaspoon (approx. 3-4g)', 'Fresh Tulsi leaves — 8 to 10 pieces (washed)', 'Whole black pepper powder — 4 to 5 grains (finely crushed)', 'Old clean jaggery — 20g (medium piece)', 'Clean drinking water — 1 large glass (approx. 250ml)'] } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "रोजाना सुबह खाली पेट and रात को सोने से पहले।", en: "Daily morning on an empty stomach and before bedtime." }, ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram)', 'ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए)', 'साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचले हुए)', 'पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा)', 'पीने का साफ पानी — 1 कप (लगभग 150 मिली)'], en: ['Dry ginger powder — half a teaspoon (approx. 1-2g)', 'Fresh Tulsi leaves — 4 to 5 pieces (washed)', 'Whole black pepper powder — 2 grains (finely crushed)', 'Old clean jaggery — 10g (small piece)', 'Clean drinking water — 1 cup (approx. 150ml)'] } }
     ],
     ingredients: { hi: ['सोंठ का पाउडर (सूखा अदरक)', 'ताज़ा तुलसी के पत्ते', 'साबुत काली मिर्च का पाउडर', 'पुराना साफ़ गुड़', 'पीने का साफ पानी'], en: ['Dry ginger powder', 'Fresh Tulsi leaves', 'Whole black pepper powder', 'Old clean jaggery', 'Clean drinking water'] },
     preparation: { hi: "एक बर्तन में अपनी उम्र के अनुसार तय की गई मात्रा में पानी डालें। अब उसमें तुलसी के पत्तों को हाथ से तोड़कर डालें, साथ ही सोंठ का पाउडर, कुचली हुई काली मिर्च और गुड़ डाल दें। अब आंच को धीमा रखें और इसे तब तक उबलने दें जब तक कि यह उबलकर आधा न रह जाए। जब काढ़ा आधा बचे, तो आंच बंद कर दें और इसे कप में छान लें।", en: "Add water to a vessel according to age. Add hand-torn Tulsi leaves, dry ginger powder, crushed black pepper and jaggery. Boil on low heat until water reduces to half. Strain into a cup." },
@@ -300,7 +300,7 @@ export const COLD_REMEDIES: Remedy[] = [
     name: { hi: 'भुनी अलसी, मुलेठी और मिश्री का कफ-नाशक दिव्य चूर्ण', en: 'Relief Powder of Roasted Flaxseed, Licorice and Sugar Candy' },
     illnessId: 'common-cold',
     introduction: {
-      hi: "मौसमी नजला और जुकाम जब पुराना हो जाता है, तो छाती और श्वसन नली में कफ सूख जाता है। इसके कारण गले में हर समय भयंकर खराश बनी रहती है, सूखी खांसी आती है और रात को सोते समय सांस लेने में भारीपन महसूस होता है। अलसी के बीजों में मौजूद प्राकृतिक तत्व छाती में जमे कफ को पिघलाकर बाहर निकालते हैं, मुलेठी गले की सूजन और दर्द को जड़ से शांत करती है, और धागे वाली मिश्री गले के सूखेपन को दूर कर उसे तर रखती है। यह दिव्य चूर्ण पुरानी से पुरानी सूखी खांसी और गले की जकड़न में पहले ही दिन से बहुत आराम देता है।",
+      hi: "मौसमी नजला और जुकाम जब पुराना हो जाता है, तो छाती और श्वसन नली में कफ सूख जाता है। इसके कारण गले में हर समय भयंकर खराश बनी रहती है, सूखी खांसी आती है और रात को सोते समय सांस लेने में भारीपन महसूस होता है। अलसी के बीजों में मौजूद प्राकृतिक तत्व छाती में जमे कफ को पिघलाकर बाहर निकालता है, मुलेठी गले की सूजन और दर्द को जड़ से शांत करती है, और धागे वाली मिश्री गले के सूखेपन को दूर कर उसे तर रखती है। यह दिव्य चूर्ण पुरानी से पुरानी सूखी खांसी और गले की जकड़न में पहले ही दिन से बहुत आराम देता है।",
       en: "When seasonal cold and flu become chronic, phlegm dries up in the chest and respiratory tract. This causes severe throat irritation, dry cough, and heaviness in breathing. Flaxseed thins dried phlegm, Licorice calms throat inflammation, and threaded sugar candy hydrates the throat. This divine powder provides relief from dry cough and throat congestion from the first day."
     },
     doses: [
@@ -352,5 +352,64 @@ export const COLD_REMEDIES: Remedy[] = [
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/cough/600/400",
     keywords: "alsi mulethi mishri cough cold jukam nazla dry cough throat irritation"
+  },
+  {
+    id: 'cc-8',
+    serialNumber: '8',
+    name: { hi: 'भुनी अजवाइन, काली मिर्च और सोंठ का दिव्य सेक और काढ़ा', en: 'Roasted Carom, Black Pepper and Ginger Decoction with Compress' },
+    illnessId: 'common-cold',
+    introduction: {
+      hi: "बदलते मौसम या ठंडी हवा के संपर्क में आने से जब नाक से लगातार पानी बहने लगता है, बार-बार छींकें आती हैं, और कफ जमने के कारण माथा और सिर भारी हो जाता है, तो उसे तीव्र नजला-जुकाम कहा जाता है। अजवाइन की तासीर अत्यधिक गर्म और कफ को सुखाने वाली होती है। इसकी गरम भाप और सेक से बंद नसें तुरंत खुलती हैं, जबकि काली मिर्च और सोंठ का काढ़ा छाती के संक्रमण को खत्म करता है। यह दोहरा उपाय बहती नाक और सर्दी के सिरदर्द में रामबाण की तरह काम करता है।",
+      en: "When weather changes bring cold, intense body ache, and mild feverishness together, the immune system weakens. This traditional decoction works like a panacea. Dry ginger and black pepper calm the accumulated Kapha and Vata doshas, while Tulsi's medicinal properties eradicate the cold virus."
+    },
+    doses: [
+      { 
+        ageRange: AGE_BRACKETS.childhood, 
+        dose: { hi: "काढ़े के लिए: कुचली अजवाइन — 1 चुटकी, काली मिर्च पाउडर — आधा चुटकी, सोंठ पाउडर — 1 चुटकी, धागे वाली मिश्री — आधा छोटा चम्मच। (पोटली के लिए 1 चम्मच अजवाइन तवे पर भूनें)।", en: "For Decoction: Crushed Ajwain — 1 pinch, Black pepper powder — 1/2 pinch, Dry ginger powder — 1 pinch, Sugar candy — 1/2 tsp. (For compress: Roast 1 tsp Ajwain on pan)." },
+        ingredients: {
+          hi: ['कुचली अजवाइन — 1 चुटकी', 'काली मिर्च पाउडर — आधा चुटकी', 'सोंठ पाउडर — 1 चुटकी', 'धागे वाली मिश्री — आधा छोटा चम्मच', 'पोटली के लिए 1 चम्मच अजवाइन'],
+          en: ['Crushed Ajwain — 1 pinch', 'Black pepper powder — 1/2 pinch', 'Dry ginger powder — 1 pinch', 'Sugar candy — 1/2 tsp', '1 tsp Ajwain for compress']
+        }
+      },
+      { 
+        ageRange: AGE_BRACKETS.youth, 
+        dose: { hi: "काढ़े के लिए: कुचली अजवाइन — आधा छोटा चम्मच, काली मिर्च पाउडर — 1 चुटकी, सोंठ पाउडर — आधा छोटा चम्मच, धागे वाली मिश्री — 1 छोटा चम्मच। (पोटली के लिए 2 चम्मच अजवाइन तवे पर भूनें)।", en: "For Decoction: Crushed Ajwain — 1/2 tsp, Black pepper powder — 1 pinch, Dry ginger powder — 1/2 tsp, Sugar candy — 1 tsp. (For compress: Roast 2 tsp Ajwain on pan)." },
+        ingredients: {
+          hi: ['कुचली अजवाइन — आधा छोटा चम्मच', 'काली मिर्च पाउडर — 1 चुटकी', 'सोंठ पाउडर — आधा छोटा चम्मच', 'धागे वाली मिश्री — 1 छोटा चम्मच', 'पोटली के लिए 2 चम्मच अजवाइन'],
+          en: ['Crushed Ajwain — 1/2 tsp', 'Black pepper powder — 1 pinch', 'Dry ginger powder — 1/2 tsp', 'Sugar candy — 1 tsp', '2 tsp Ajwain for compress']
+        }
+      },
+      { 
+        ageRange: AGE_BRACKETS.middleAge, 
+        dose: { hi: "काढ़े के लिए: कुचली अजवाइन — आधा छोटा चम्मच, काली मिर्च पाउडर — 1 चुटकी, सोंठ पाउडर — आधा छोटा चम्मच, धागे वाली मिश्री — 1 छोटा चम्मच (यदि शुगर न हो)। (पोटली के लिए 2 चम्मच अजवाइन तवे पर भूनें)।", en: "For Decoction: Crushed Ajwain — 1/2 tsp, Black pepper powder — 1 pinch, Dry ginger powder — 1/2 tsp, Sugar candy — 1 tsp (if no diabetes). (For compress: Roast 2 tsp Ajwain on pan)." },
+        ingredients: {
+          hi: ['कुचली अजवाइन — आधा छोटा चम्मच', 'काली मिर्च पाउडर — 1 चुटकी', 'सोंठ पाउडर — आधा छोटा चम्मच', 'धागे वाली मिश्री — 1 छोटा चम्मच', 'पोटली के लिए 2 चम्मच अजवाइन'],
+          en: ['Crushed Ajwain — 1/2 tsp', 'Black pepper powder — 1 pinch', 'Dry ginger powder — 1/2 tsp', 'Sugar candy — 1 tsp', '2 tsp Ajwain for compress']
+        }
+      },
+      { 
+        ageRange: AGE_BRACKETS.oldAge, 
+        dose: { hi: "काढ़े के लिए: कुचली अजवाइन — 1 चुटकी, काली मिर्च पाउडर — आधा चुटकी, सोंठ पाउडर — आधा छोटा चम्मच, मिश्री — बिल्कुल नहीं (यदि शुगर की समस्या हो)। (पोटली के लिए 1 चम्मच अजवाइन धीमी आंच पर भूनें)।", en: "For Decoction: Crushed Ajwain — 1 pinch, Black pepper powder — 1/2 pinch, Dry ginger powder — 1/2 tsp, Sugar candy — None. (For compress: Roast 1 tsp Ajwain on pan)." },
+        ingredients: {
+          hi: ['कुचली अजवाइन — 1 चुटकी', 'काली मिर्च पाउडर — आधा चुटकी', 'सोंठ पाउडर — आधा छोटा चम्मच', 'पोटली के लिए 1 चम्मच अजवाइन'],
+          en: ['Crushed Ajwain — 1 pinch', 'Black pepper powder — 1/2 pinch', 'Dry ginger powder — 1/2 tsp', '1 tsp Ajwain for compress']
+        }
+      }
+    ],
+    ingredients: { hi: ['साफ अजवाइन के दाने', 'बारीक कुचली हुई काली मिर्च का पाउडर', 'सोंठ (सूखा अदरक) का महीन चूर्ण', 'धागे वाली मिश्री', 'साफ सूती कपड़ा (पोटली के लिए)'], en: ['Clean Ajwain seeds', 'Fine black pepper powder', 'Dry ginger powder', 'Threaded sugar candy', 'Clean cotton cloth (for compress)'] },
+    preparation: { hi: "पोटली सेक विधि: तवे पर अजवाइन को बिना तेल या घी के तेज गर्म कर लें। जब धुआं और खुशबू निकलने लगे, तो इसे सूती कपड़े में बांधकर एक छोटी पोटली बना लें।\nकाढ़ा विधि: एक बर्तन में डेढ़ कप पीने का पानी लें। उसमें चुनी गई उम्र के अनुसार कुचली हुई अजवाइन, काली मिर्च और सोंठ का पाउडर डाल दें। इसे धीमी आंच पर तब तक उबालें जब तक पानी जलकर आधा कप न रह जाए। इसे छान लें और गुनगुना होने दें।", en: "Compress Method: Roast Ajwain on a pan until aromatic, then tie in cotton cloth. Decoction Method: Boil Ajwain, pepper, and ginger in 1.5 cups water until reduced to half a cup. Strain." },
+    usage: { hi: "उपयोग (पोटली): तैयार गरम पोटली को पहले अपनी हथेली पर छूकर तापमान जांचें, फिर इससे माथे, नाक के दोनों तरफ और छाती पर धीरे-धीरे 5 से 7 मिनट तक सेक करें और इसकी गहरी भाप नाक से अंदर खींचें।\nसेवन (काढ़ा): सेक करने के तुरंत बाद इस छने हुए गुनगुने काढ़े को चाय की तरह धीरे-धीरे सिप लेकर पिएं। इसे सुबह खाली पेट और रात को सोते समय दिन में दो बार लें।\nअवधि: इस उपाय को नियमित रूप से लगातार 3 से 5 दिनों तक करें।", en: "Compress: Check temp on palm, then apply to forehead, nose, and chest for 5-7 mins while inhaling steam. Drink: Immediately after compress, sip warm decoction slowly twice daily. Duration: Use for 3-5 days." },
+    dietEat: { hi: "भोजन: भोजन में गरमा-गरम बाजरे या गेहूं की सादी रोटी, तोरई या कद्दू की सूखी सब्जी (सेंधा नमक और जीरे वाली), और मूंग की दाल का गर्म पानी लें। पीने के लिए केवल गुनगुने पानी का ही प्रयोग करें।", en: "Diet: Eat hot Bajra or wheat roti, dry bottle gourd or pumpkin veg (with rock salt/cumin), and hot Moong dal water. Drink only lukewarm water." },
+    dietAvoid: { hi: "पैकेट वाले फूड्स: बाजार के तले-भुने कुरकुरे, चिप्स, आलू भुजिया, मैदे वाले बिस्कुट, टोस्ट और पैकेट बंद नमकीन पूरी तरह बंद रखें।\nभारी भोजन: मांसाहार, अंडा, पनीर, गाढ़ा दूध, मक्खन, चावल, समोसा, कचौड़ी और भारी तली हुई चीजें बिल्कुल न खाएं, क्योंकि ये कफ को और गाढ़ा बनाती हैं।", en: "Avoid: Packaged snacks, biscuits, toast. Do not eat non-veg, eggs, paneer, thick milk, butter, rice, or fried foods as they thicken phlegm." },
+    strictAvoid: { hi: "फ्रिज का ठंडा पानी, कोल्ड ड्रिंक्स, आइसक्रीम, खट्टा दही, मट्ठा, केला, अमरूद और खट्टे फल सख्त वर्जित हैं।", en: "Strictly Avoid: Cold water, sodas, ice cream, sour curd, buttermilk, banana, guava, and sour fruits." },
+    routine: {
+      morning: { hi: "सुबह (Morning): सुबह उठकर गुनगुने पानी से चेहरा धोएं। ठंडे पानी के संपर्क में आने से बचें और सिर को ढक कर रखें।", en: "Morning: Wash face with lukewarm water. Avoid cold water and keep head covered." },
+      afternoon: { hi: "दोपहर (Afternoon): दोपहर के भोजन के बाद कम से कम 45 मिनट का विश्राम करें। कूलर या एसी की सीधी हवा के सामने बिल्कुल न बैठें।", en: "Afternoon: Rest for 45 mins after lunch. Avoid direct air from coolers or AC." },
+      evening: { hi: "शाम/रात (Evening/Night): रात का भोजन 8 बजे से पहले खा लें। सोते समय कान में साफ रुई डाल लें या मफलर बांधें, और पैरों के तलवों में सरसों का तेल हल्का गुनगुना करके मलें।", en: "Evening/Night: Eat dinner before 8 PM. Put cotton in ears or tie a muffler. Massage soles with warm mustard oil." }
+    },
+    safetyAdvice: { hi: "यदि लगातार नाक बहने के साथ तेज बुखार आ जाए, सांस फूलने लगे या छाती में घबराहट हो, तो घरेलू उपाय के साथ-साथ तुरंत डॉक्टर से संपर्क करके उचित परामर्श लें।", en: "If continuous runny nose is joined by high fever, breathlessness, or chest discomfort, consult a doctor immediately along with home remedies." },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: "https://picsum.photos/seed/cough/600/400",
+    keywords: "sardi jukam badan dard hararat bukhar ajwain kali mirch saunth"
   }
 ];
