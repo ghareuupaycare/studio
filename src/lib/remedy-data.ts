@@ -1,6 +1,4 @@
 import { PlaceHolderImages } from "./placeholder-images";
-import { FEVER_REMEDIES } from "./fever-data";
-import { COLD_REMEDIES } from "./cold-data";
 
 export type LocalizedString = {
   hi: string;
@@ -58,6 +56,10 @@ export const AGE_BRACKETS = {
   middleAge: { hi: "41-60 वर्ष", en: "41-60 Years" },
   oldAge: { hi: "61-80 वर्ष", en: "61-80 Years" }
 };
+
+// Data imports must happen AFTER constants are defined to avoid circular dependency initialization errors
+import { FEVER_REMEDIES } from "./fever-data";
+import { COLD_REMEDIES } from "./cold-data";
 
 export const REMEDIES: Remedy[] = [
   ...FEVER_REMEDIES,

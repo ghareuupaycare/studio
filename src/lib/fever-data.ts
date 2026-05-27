@@ -290,7 +290,7 @@ export const FEVER_REMEDIES: Remedy[] = [
       afternoon: { hi: 'दोपहर: सादी मूँग दाल और रोटी।', en: 'Afternoon: Plain Moong dal and roti.' },
       evening: { hi: 'शाम: गरमा-गरम सब्जी का सूप।', en: 'Evening: Piping hot vegetable soup.' }
     },
-    safetyAdvice: { hi: 'यदि एसिडिटी या पेट में जलन महसूस हो, तो काली मिर्च की मात्रा कम कर दें।', en: 'If acidity or stomach burning occurs, reduce the quantity of black pepper.' },
+    safetyAdvice: { hi: ' यदि एसिडिटी या पेट में जलन महसूस हो, तो काली मिर्च की मात्रा कम कर दें।', en: 'If acidity or stomach burning occurs, reduce the quantity of black pepper.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'ayurveda-herbs')?.imageUrl || "",
     keywords: "kali mirch adrak tulsi brew fever"
