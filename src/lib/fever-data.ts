@@ -1,6 +1,7 @@
 /**
  * @fileOverview Category 1: General Fever (सामान्य बुखार) Data Store
  * Contains 10 authentic Ayurvedic remedies with full-length detailed parameters.
+ * Language standard: Strictly Hindi "और" used for connectives.
  */
 
 export type LocalizedString = {
@@ -197,7 +198,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     preparation: { hi: 'मुनक्का और किशमिश को धोकर रात भर एक गिलास पानी में भिगो दें। सुबह इन दानों को उसी पानी में अच्छी तरह मसल लें और फिर छान लें।', en: 'Wash Munakka and raisins and soak them overnight in a glass of water. In the morning, mash them thoroughly into the same water and then strain.' },
     usage: { hi: 'इस तैयार पानी को सुबह खाली पेट पिएं। इसे धीरे-धीरे पिएं ताकि शरीर इसे अच्छे से सोख सके।\nअवधि: इसे लगातार 3 से 5 दिनों तक पिएं।', en: 'Drink this prepared water on an empty stomach in the morning. Sip slowly for better absorption. Duration: Use for 3 to 5 days.' },
-    dietEat: { hi: 'भोजन: ठंडी तासीर वाले फल जैसे अनार और मौसमी फल खाएं।', en: 'Food: Eat cooling fruits like pomegranate and other seasonal fruits.' },
+    dietEat: { hi: 'भोजन: ठंडी तासीर वाले फल और अनुकूल जैसे अनार और मौसमी फल खाएं।', en: 'Food: Eat cooling fruits like pomegranate and other seasonal fruits.' },
     dietAvoid: { hi: 'परहेज़: लाल मिर्च, गरम मसाला, और बहुत अधिक गरम चाय-कॉफी।', en: 'Avoid: Red chili, garam masala, and very hot tea or coffee.' },
     strictAvoid: { hi: 'सख्त मनाही: शराब, धूम्रपान और मांस का सेवन पूरी तरह वर्जित है।', en: 'Strict Avoid: Alcohol, smoking, and non-veg consumption are strictly prohibited.' },
     routine: {
@@ -401,15 +402,15 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     preparation: { hi: 'खजूर के छोटे टुकड़े कर लें। एक बर्तन में घी डालकर खजूर को हल्का सा भून लें। अब इसमें दूध डालकर एक उबाल आने तक गर्म करें।', en: 'Chop the dates into small pieces. Heat ghee in a pan and lightly roast the dates. Add milk and heat until it reaches a boil.' },
     usage: { hi: 'इसे रात को सोने से पहले गुनगुना पिएं और खजूर को चबा-चबाकर खाएं।\nअवधि: बुखार ठीक होने के बाद 7 से 10 दिनों तक लगातार लें।', en: 'Drink it lukewarm before bedtime and chew the dates thoroughly. Duration: Take for 7 to 10 consecutive days after the fever has subsided.' },
-    dietEat: { hi: 'भोजन: पौष्टिक and संतुलित आहार, हरी पत्तेदार सब्जियां।', en: 'Food: Nutritious and balanced diet, green leafy vegetables.' },
-    dietAvoid: { hi: 'परहेज़: भारी तली-भुनी चीजें and फास्ट फूड।', en: 'Avoid: Deep-fried oily items and fast food.' },
-    strictAvoid: { hi: 'सख्त मनाही: अत्यधिक मानसिक and शारीरिक तनाव।', en: 'Strict Avoid: Excessive mental and physical stress.' },
+    dietEat: { hi: 'भोजन: पौष्टिक और संतुलित आहार, हरी पत्तेदार सब्जियां।', en: 'Food: Nutritious and balanced diet, green leafy vegetables.' },
+    dietAvoid: { hi: 'परहेज़: भारी तली-भुनी चीजें और फास्ट फूड।', en: 'Avoid: Deep-fried oily items and fast food.' },
+    strictAvoid: { hi: 'सख्त मनाही: अत्यधिक मानसिक और शारीरिक तनाव।', en: 'Strict Avoid: Excessive mental and physical stress.' },
     routine: {
       morning: { hi: 'सुबह: ताजी हवा में हल्की सैर।', en: 'Morning: Light walk in fresh air.' },
       afternoon: { hi: 'दोपहर: भरपूर पौष्टिक भोजन।', en: 'Afternoon: Full nutritious lunch.' },
-      evening: { hi: 'शाम: यह खजूर वाला दूध लें and समय पर सोएं।', en: 'Evening: Take this dates milk and sleep on time.' }
+      evening: { hi: 'शाम: यह खजूर वाला दूध लें और समय पर सोएं।', en: 'Evening: Take this dates milk and sleep on time.' }
     },
-    safetyAdvice: { hi: 'मधुमेह (Diabetes) के रोगी खजूर की मात्रा कम रखें and डॉक्टर से सलाह लें।', en: 'Diabetic patients should limit dates and consult their doctor.' },
+    safetyAdvice: { hi: 'मधुमेह (Diabetes) के रोगी खजूर की मात्रा कम रखें और डॉक्टर से सलाह लें।', en: 'Diabetic patients should limit dates and consult their doctor.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/vaidya/600/400",
     keywords: "weakness post fever khajur strength"
