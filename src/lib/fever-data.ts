@@ -350,15 +350,15 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     preparation: { hi: 'खजूर के छोटे टुकड़े कर लें। एक बर्तन में घी डालकर खजूर को हल्का सा भून लें। अब इसमें दूध डालकर एक उबाल आने तक गर्म करें।', en: 'Chop the dates into small pieces. Heat ghee in a pan and lightly roast the dates. Add milk and heat until it reaches a boil.' },
     usage: { hi: 'इसे रात को सोने से पहले गुनगुना पिएं और खजूर को चबा-चबाकर खाएं।\nअवधि: बुखार ठीक होने के बाद 7 से 10 दिनों तक लगातार लें।', en: 'Drink it lukewarm before bedtime and chew the dates thoroughly. Duration: Take for 7 to 10 consecutive days after the fever has subsided.' },
-    dietEat: { hi: 'भोजन: पौष्टिक और संतुलित आहार, हरी पत्तेदार सब्जियां।', en: 'Food: Nutritious and balanced diet, green leafy vegetables.' },
-    dietAvoid: { hi: 'परहेज़: भारी तली-भुनी चीजें और फास्ट फूड।', en: 'Avoid: Deep-fried oily items and fast food.' },
-    strictAvoid: { hi: 'सख्त मनाही: अत्यधिक मानसिक और शारीरिक तनाव।', en: 'Strict Avoid: Excessive mental and physical stress.' },
+    dietEat: { hi: 'भोजन: पौष्टिक and संतुलित आहार, हरी पत्तेदार सब्जियां।', en: 'Food: Nutritious and balanced diet, green leafy vegetables.' },
+    dietAvoid: { hi: 'परहेज़: भारी तली-भुनी चीजें and फास्ट फूड।', en: 'Avoid: Deep-fried oily items and fast food.' },
+    strictAvoid: { hi: 'सख्त मनाही: अत्यधिक मानसिक and शारीरिक तनाव।', en: 'Strict Avoid: Excessive mental and physical stress.' },
     routine: {
       morning: { hi: 'सुबह: ताजी हवा में हल्की सैर।', en: 'Morning: Light walk in fresh air.' },
       afternoon: { hi: 'दोपहर: भरपूर पौष्टिक भोजन।', en: 'Afternoon: Full nutritious lunch.' },
-      evening: { hi: 'शाम: यह खजूर वाला दूध लें और समय पर सोएं।', en: 'Evening: Take this dates milk and sleep on time.' }
+      evening: { hi: 'शाम: यह खजूर वाला दूध लें and समय पर सोएं।', en: 'Evening: Take this dates milk and sleep on time.' }
     },
-    safetyAdvice: { hi: 'मधुमेह (Diabetes) के रोगी खजूर की मात्रा कम रखें और डॉक्टर से सलाह लें।', en: 'Diabetic patients should limit dates and consult their doctor.' },
+    safetyAdvice: { hi: 'मधुमेह (Diabetes) के रोगी खजूर की मात्रा कम रखें and डॉक्टर से सलाह लें।', en: 'Diabetic patients should limit dates and consult their doctor.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: PlaceHolderImages.find(i => i.id === 'vaidya-expert')?.imageUrl || "",
     keywords: "weakness post fever khajur strength"
