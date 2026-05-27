@@ -194,7 +194,7 @@ export const COLD_REMEDIES: Remedy[] = [
     routine: {
       morning: { hi: 'सुबह: सुबह उठकर गुनगुना पानी पिएं। सोंठ और गुड़ के सेवन के तुरंत बाद खुली ठंडी हवा में बाहर न निकलें।', en: 'Morning: Start with lukewarm water. Avoid cold drafts immediately after consuming the remedy.' },
       afternoon: { hi: 'दोपहर: दोपहर का भोजन हमेशा गर्म-गर्म ही करें। भोजन के बाद छाछ या मट्ठा बिल्कुल न लें।', en: 'Afternoon: Always eat a hot lunch. Do not consume buttercream after meals.' },
-      evening: { hi: 'शाम/रात: रात का भोजन सूर्य अस्त के आसपास या 8 बजे तक हर हाल में कर लें। रात को सलाद या फल भूलकर भी न खाएं। सोते समय गले और छाती को सूती कपड़े या मफलर से ढककर रखें।', en: 'Evening/Night: Eat dinner by sunset or 8 PM. Avoid fruits/salad at night. Keep throat and chest covered with a cotton cloth or muffler while sleeping.' }
+      evening: { hi: 'शाम/रात: रात का भोजन सूर्य अस्त के आसपास या 8 बजे तक हर हाल में कर लें। रात को सलाद या फल भूलकर भी न खाएं। सोते समय गले और छाती को सूती कपड़े या मफलर से ढककर रखें और पूरी नींद लें।', en: 'Evening/Night: Eat dinner by sunset or 8 PM. Avoid fruits/salad at night. Keep throat and chest covered with a cotton cloth or muffler while sleeping.' }
     },
     safetyAdvice: { hi: 'यदि 5 दिनों में आराम न मिले तो चिकित्सक से सलाह लें।', en: 'Safety Notice: If no relief in 5 days, consult a doctor.' },
     disclaimer: GENERAL_DISCLAIMER,
@@ -242,7 +242,7 @@ export const COLD_REMEDIES: Remedy[] = [
     },
     routine: {
       morning: { hi: 'सुबह (Morning): सुबह उठकर सबसे पहले थोड़ा गर्म पानी पिएं और नमक डालकर गुनगुने पानी से गरारे करें।', en: 'Morning: Start with warm water and salt water gargles.' },
-      afternoon: { hi: 'दोपहर (Afternoon): दोपहर का खाना हमेशा ताजा और गर्म ही खाएं, बासी भोजन भूलकर भी न लें।', en: 'Afternoon: Eat fresh hot lunch; avoid stale food.' },
+      afternoon: { hi: 'दोपहर (Afternoon): दोपहर का खाना हमेशा ताजा and गर्म ही खाएं, बासी भोजन भूलकर भी न लें।', en: 'Afternoon: Eat fresh hot lunch; avoid stale food.' },
       evening: { hi: 'शाम/रात (Evening/Night): रात का भोजन 8 बजे से पहले कर लें। सोते समय सिर और कानों को ढककर रखें और रात को भूलकर भी पंखे की तेज हवा या एसी में न सोएं।', en: 'Evening/Night: Eat dinner before 8 PM. Keep head and ears covered; avoid direct air from fans or AC.' }
     },
     safetyAdvice: { hi: 'यदि इस उपाय को लगातार 5 दिनों तक नियम से करने के बाद भी आपको आराम महसूस न हो, तो बिना देर किए अपने नजदीकी आयुर्वेदिक चिकित्सक से मिलकर उचित परामर्श लें। शरीर का ध्यान रखना ही सबसे पहली प्राथमिकता है।', en: 'Safety Notice: If no relief in 5 days, consult an Ayurvedic physician immediately.' },
@@ -309,10 +309,10 @@ export const COLD_REMEDIES: Remedy[] = [
       en: "This brew targets combined cold, body ache, and mild feverishness. Ginger and black pepper pacify Kapha and Vata, while Tulsi eliminates viral infection."
     },
     doses: [
-      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram), ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए), साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचली हुए), पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा), पीने का साफ पानी — 1 कप (लगभग 150 मिली)।", en: "Ginger — 1/2 tsp, Tulsi — 4-5 leaves, Black pepper — 2 grains, Jaggery — 10g, Water — 1 cup." } },
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram), ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए), साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचले हुए), पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा), पीने का साफ पानी — 1 कप (लगभग 150 मिली)।", en: "Ginger — 1/2 tsp, Tulsi — 4-5 leaves, Black pepper — 2 grains, Jaggery — 10g, Water — 1 cup." } },
       { ageRange: AGE_BRACKETS.youth, dose: { hi: "सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram), ताज़ा तुलसी के पत्ते — 8 से 10 पीस (साफ धुले हुए), साबुत काली मिर्च का पाउडर — 4 से 5 दाने (बारीक कुचले हुए), पुराना साफ़ गुड़ — 20 gram (एक मध्यम टुकड़ा), पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)।", en: "Ginger — 1 tsp, Tulsi — 8-10 leaves, Black pepper — 4-5 grains, Jaggery — 20g, Water — 1 large glass." } },
       { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "सोंठ का पाउडर (सूखा अदरक) — 1 छोटा चम्मच (लगभग 3 से 4 gram), ताज़ा तुलसी के पत्ते — 8 से 10 पीस (साफ धुले हुए), साबुत काली मिर्च का पाउडर — 4 से 5 दाने (बारीक कुचले हुए), पुराना साफ़ गुड़ — 20 gram (एक मध्यम टुकड़ा), पीने का साफ पानी — 1 बड़ा ग्लास (लगभग 250 मिली)।", en: "Ginger — 1 tsp, Tulsi — 8-10 leaves, Black pepper — 4-5 grains, Jaggery — 20g, Water — 1 large glass." } },
-      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram), ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए), साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचली हुए), पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा), पीने का साफ पानी — 1 कप (लगभग 150 मिली)।", en: "Ginger — 1/2 tsp, Tulsi — 4-5 leaves, Black pepper — 2 grains, Jaggery — 10g, Water — 1 cup." } }
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "सोंठ का पाउडर (सूखा अदरक) — आधा छोटा चम्मच (लगभग 1 से 2 gram), ताज़ा तुलसी के पत्ते — 4 से 5 पीस (साफ धुले हुए), साबुत काली मिर्च का पाउडर — 2 दाने (बारीक कुचले हुए), पुराना साफ़ गुड़ — 10 gram (एक छोटा टुकड़ा), पीने का साफ पानी — 1 कप (लगभग 150 मिली)।", en: "Ginger — 1/2 tsp, Tulsi — 4-5 leaves, Black pepper — 2 grains, Jaggery — 10g, Water — 1 cup." } }
     ],
     ingredients: {
       hi: ['सोंठ का पाउडर (सूखा अदरक)', 'ताज़ा तुलसी के पत्ते', 'साबुत काली मिर्च का पाउडर', 'पुराना साफ़ गुड़', 'पीने का साफ पानी'],
@@ -413,15 +413,27 @@ export const COLD_REMEDIES: Remedy[] = [
       { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "काढ़े के लिए: कुचली अजवाइन — 1 चुटकी, काली मिर्च पाउडर — आधा चुटकी, सोंठ पाउडर — आधा छोटा चम्मच, मिश्री — बिल्कुल नहीं (यदि शुगर की समस्या हो)। (पोटली के लिए 1 चम्मच अजवाइन धीमी आंच पर भूनें)।", en: "Brew: 1 pinch Ajwain, 1/2 pinch pepper, 1/2 tsp ginger, No sugar candy. Compress: 1 tsp Ajwain." } }
     ],
     ingredients: {
-      hi: ['साफ अजवाइन के दाने, बारीक कुचली हुई काली मिर्च का पाउडर, सोंठ (सूखा अदरक) का महीन चूर्ण, मीठे के लिए धागे वाली मिश्री, और सेक करने के लिए एक साफ सूती कपड़ा।\n\n(ज़रूरी नोट: यह सभी जड़ी-बूटियाँ बाजार से अपनी सुविधा अनुसार 20 या 50 ग्राम की मात्रा में लाकर घर पर साफ डिब्बे में सुरक्षित रख लें। रोज नुस्खा बनाने के लिए ऊपर \'स्मार्ट खुराक\' के बटन में अपनी उम्र के अनुसार बताई गई चुटकी या चम्मच की मात्रा में ही सामान बाहर निकालें।)'],
-      en: ['Clean carom seeds, fine black pepper powder, dry ginger powder, threaded sugar candy, and a clean cotton cloth for compress. Note: Store these herbs at home and use small amounts as per age buttons for daily preparation.']
+      hi: [
+        'साफ अजवाइन के दाने',
+        'बारीक कुचली हुई काली मिर्च का पाउडर',
+        'सोंठ (सूखा अदरक) का महीन चूर्ण',
+        'मीठे के लिए धागे वाली मिश्री',
+        'सेक करने के लिए एक साफ सूती कपड़ा\n\n(ज़रूरी नोट: यह सभी जड़ी-बूटियाँ बाजार से अपनी सुविधा अनुसार 20 या 50 ग्राम की मात्रा में लाकर घर पर साफ डिब्बे में सुरक्षित रख लें। रोज नुस्खा बनाने के लिए ऊपर \'स्मार्ट खुराक\' के बटन में अपनी उम्र के अनुसार बताई गई चुटकी या चम्मच की मात्रा में ही सामान बाहर निकालें।)'
+      ],
+      en: [
+        'Clean carom seeds',
+        'Fine black pepper powder',
+        'Dry ginger powder',
+        'Threaded sugar candy',
+        'Clean cotton cloth for compress\n\n(Note: Store these herbs at home and use small amounts as per age buttons for daily preparation.)'
+      ]
     },
     preparation: {
-      hi: 'पोटली सेक विधि: तवे पर अजवाइन को बिना तेल या घी के तेज गर्म कर लें। जब धुआं और खुशबू निकलने लगे, तो इसे सूती कपड़े में बांधकर एक छोटी पोटली बना लें।\nकाढ़ा विधि: एक बर्तन में 1.5 कप पीने का पानी लें। उसमें चुनी गई उम्र के अनुसार कुचली हुई अजवाइन, काली मिर्च और सोंठ का पाउडर डाल दें। इसे धीमी आंच पर तब तक उबालें जब तक पानी जलकर आधा कप न रह जाए। इसे छान लें और गुनगुना होने दें।',
+      hi: 'पोटली सेक विधि: तवे पर अजवाइन को बिना तेल या घी के तेज गर्म कर लें। जब धुआं और खुशबू निकलने लगे, तो इसे सूती कपड़े में बांधकर एक छोटी पोटली बना लें。\nकाढ़ा विधि: एक बर्तन में 1.5 कप पीने का पानी लें। उसमें चुनी गई उम्र के अनुसार कुचली हुई अजवाइन, काली मिर्च और सोंठ का पाउडर डाल दें। इसे धीमी आंच पर तब तक उबालें जब तक पानी जलकर आधा कप न रह जाए। इसे छान लें और गुनगुना होने दें।',
       en: 'Roast Ajwain for a compress. Boil Ajwain, pepper, and ginger in 1.5 cups water until reduced to half a cup.'
     },
     usage: {
-      hi: 'उपयोग (पोटली): तैयार गरम पोटली को पहले अपनी हथेली पर छूकर तापमान जांचें, फिर इससे माथे, नाक के दोनों तरफ और छाती पर धीरे-धीरे 5 से 7 मिनट तक सेक करें और इसकी गहरी भाप नाक से अंदर खींचें।\nसेवन (काढ़ा): सेक करने के तुरंत बाद इस छने हुए गुनगुने काढ़े को चाय की तरह धीरे-धीरे सिप लेकर पिएं। इसे सुबह खाली पेट और रात को सोते समय दिन में 2 बार लें।\nअवधि: इस उपाय को नियमित रूप से लगातार 3 से 5 दिनों तक करें।',
+      hi: 'उपयोग (पोटली): तैयार गरम पोटली को पहले अपनी हथेली पर छूकर तापमान जांचें, फिर इससे माथे, नाक के दोनों तरफ और छाती पर धीरे-धीरे 5 से 7 मिनट तक सेक करें और इसकी गहरी भाप नाक से अंदर खींचें。\nसेवन (काढ़ा): सेक करने के तुरंत बाद इस छने हुए गुनगुने काढ़े को चाय की तरह धीरे-धीरे सिप लेकर पिएं। इसे सुबह खाली पेट और रात को सोते समय दिन में 2 बार लें。\nअवधि: इस उपाय को नियमित रूप से लगातार 3 से 5 दिनों तक करें।',
       en: 'Apply compress to forehead and chest while inhaling steam. Immediately after, sip the warm brew slowly. Use twice daily for 3 to 5 days.'
     },
     dietEat: {
@@ -429,7 +441,7 @@ export const COLD_REMEDIES: Remedy[] = [
       en: 'Diet: Hot Bajra/wheat roti, dry gourd vegetables, warm Moong dal water, and lukewarm water.'
     },
     dietAvoid: {
-      hi: 'पैकेट वाले फूड्स: बाजार के तले-भुने कुरकुरे, चिप्स, आलू भुजिया, मैदे वाले बिस्कुट, टोस्ट और पैकेट बंद नमकीन पूरी तरह बंद रखें। भारी भोजन: मांसाहार, अंडा, पनीर, गाढ़ा दूध, मक्खन, चावल, समोसा, कचौड़ी और भारी तली हुई चीजें बिल्कुल न खाएं, क्योंकि ये कफ को और गाढ़ा बनाती हैं। ठंडी चीजें: फ्रिज का पानी, कोल्ड ड्रिंक्स, आइसक्रीम, खट्टा दही, मट्ठा, केला, अमरूद और खट्टे फल सख्त वर्जित हैं।',
+      hi: 'पैकेट वाले फूड्स: बाजार के तले-भुने कुरकुरे, चिप्स, आलू भुजिया, मैदे वाले बिस्कुट, टोस्ट और पैकेट बंद नमकीन पूरी तरह बंद रखें。\nभारी भोजन: मांसाहार, अंडा, पनीर, गाढ़ा दूध, मक्खन, चावल, समोसा, कचौड़ी और भारी तली हुई चीजें बिल्कुल न खाएं, क्योंकि ये कफ को और गाढ़ा बनाती हैं。\nठंडी चीजें: फ्रिज का पानी, कोल्ड ड्रिंक्स, आइसक्रीम, खट्टा दही, मट्ठा, केला, अमरूद और खट्टे फल सख्त वर्जित हैं।',
       en: 'Avoid: Packaged snacks, fried items, non-veg, eggs, paneer, thick milk, and cold items.'
     },
     strictAvoid: {
