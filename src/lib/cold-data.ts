@@ -109,7 +109,7 @@ export const COLD_REMEDIES: Remedy[] = [
     name: { hi: 'मुलेठी और काली मिर्च का औषधीय काढ़ा', en: 'Medicinal Decoction of Licorice and Black Pepper' },
     illnessId: 'common-cold',
     introduction: {
-      hi: "आयुर्वेद में नजला और जुकाम को 'प्रतिश्याय' रोग कहा जाता है, जो मुख्य रूप से शरीर में कफ और वात दोष के असंतुलन तथा मंदाग्नि के कारण उत्पन्न होता है। बदलते मौसम में रोग प्रतिरोधक क्षमता कमजोर होने से वायरस का हमला तेजी से होता है। इसके कारण नाक से निरंतर पानी बहना, अत्यधिक छींकें आना, गले में दर्दभरी खराश, सिर में भारीपन और आंखों से पानी गिरने जैसी समस्याएं मरीज को परेशान कर देती हैं। मुलेठी और काली मिर्च का यह औषधीय काढ़ा श्वसन नली की सूजन को शांत करता है, छाती और फेफड़ों में जमे हुए गाढ़े कफ को पिघलाकर बाहर निकालता है और संक्रमण को जड़ से समाप्त कर शरीर को प्राकृतिक ऊर्जा प्रदान करता है।",
+      hi: "आयुर्वेद में नजला और जुकाम को 'प्रतिश्याय' रोग कहा जाता है, जो मुख्य रूप से शरीर में कफ और वात दोष के असंतुलन तथा मंदाग्नि के कारण उत्पन्न होता है। बदलते मौसम में रोग प्रतिरोधक क्षमता कमजोर होने से वायरस का हमला तेजी से होता है। इसके कारण नाक से निरंतर पानी बहना, अत्यधिक छींकें आना, गले में दर्दभरी खराश, सिर में भारीपन और आंखों से पानी गिरने जैसी समस्याएं मरीज को परेशान कर देते हैं। मुलेठी और काली मिर्च का यह औषधीय काढ़ा श्वसन नली की सूजन को शांत करता है, छाती और फेफड़ों में जमे हुए गाढ़े कफ को पिघलाकर बाहर निकालता है और संक्रमण को जड़ से समाप्त कर शरीर को प्राकृतिक ऊर्जा प्रदान करता है।",
       en: "Common cold is known as 'Pratishyaya' in Ayurveda, caused by Kapha and Vata imbalance. This Mulethi and Black Pepper decoction calms respiratory inflammation, thins chest congestion, and eradicates infection at the root."
     },
     doses: [
@@ -189,7 +189,7 @@ export const COLD_REMEDIES: Remedy[] = [
     },
     strictAvoid: {
       hi: 'ठंडी चीजें: फ्रिज का पानी, कोल्ड ड्रिंक्स, गन्ने का रस, खट्टे फल, दही और आइसक्रीम का सेवन पूरी तरह वर्जित है।',
-      en: 'Strictly Avoid: Cold water, sodas, sugarcane juice, sour fruits, curd, and ice cream.'
+      en: 'Strictly Avoid: Cold water, sodas, sugarcane juice, some sour fruits, curd, and ice cream.'
     },
     routine: {
       morning: { hi: 'सुबह: सुबह उठकर गुनगुना पानी पिएं। सोंठ और गुड़ के सेवन के तुरंत बाद खुली ठंडी हवा में बाहर न निकलें।', en: 'Morning: Start with lukewarm water. Avoid cold drafts immediately after consuming the remedy.' },
@@ -242,7 +242,7 @@ export const COLD_REMEDIES: Remedy[] = [
     },
     routine: {
       morning: { hi: 'सुबह (Morning): सुबह उठकर सबसे पहले थोड़ा गर्म पानी पिएं और नमक डालकर गुनगुने पानी से गरारे करें।', en: 'Morning: Start with warm water and salt water gargles.' },
-      afternoon: { hi: 'दोपहर (Afternoon): दोपहर का खाना हमेशा ताजा and गर्म ही खाएं, बासी भोजन भूलकर भी न लें।', en: 'Afternoon: Eat fresh hot lunch; avoid stale food.' },
+      afternoon: { hi: 'दोपहर (Afternoon): दोपहर का खाना हमेशा ताजा और गर्म ही खाएं, बासी भोजन भूलकर भी न लें।', en: 'Afternoon: Eat fresh hot lunch; avoid stale food.' },
       evening: { hi: 'शाम/रात (Evening/Night): रात का भोजन 8 बजे से पहले कर लें। सोते समय सिर और कानों को ढककर रखें और रात को भूलकर भी पंखे की तेज हवा या एसी में न सोएं।', en: 'Evening/Night: Eat dinner before 8 PM. Keep head and ears covered; avoid direct air from fans or AC.' }
     },
     safetyAdvice: { hi: 'यदि इस उपाय को लगातार 5 दिनों तक नियम से करने के बाद भी आपको आराम महसूस न हो, तो बिना देर किए अपने नजदीकी आयुर्वेदिक चिकित्सक से मिलकर उचित परामर्श लें। शरीर का ध्यान रखना ही सबसे पहली प्राथमिकता है।', en: 'Safety Notice: If no relief in 5 days, consult an Ayurvedic physician immediately.' },
@@ -418,14 +418,16 @@ export const COLD_REMEDIES: Remedy[] = [
         'बारीक कुचली हुई काली मिर्च का पाउडर',
         'सोंठ (सूखा अदरक) का महीन चूर्ण',
         'मीठे के लिए धागे वाली मिश्री',
-        'सेक करने के लिए एक साफ सूती कपड़ा\n\n(ज़रूरी नोट: यह सभी जड़ी-बूटियाँ बाजार से अपनी सुविधा अनुसार 20 या 50 ग्राम की मात्रा में लाकर घर पर साफ डिब्बे में सुरक्षित रख लें। रोज नुस्खा बनाने के लिए ऊपर \'स्मार्ट खुराक\' के बटन में अपनी उम्र के अनुसार बताई गई चुटकी या चम्मच की मात्रा में ही सामान बाहर निकालें।)'
+        'सेक करने के लिए एक साफ सूती कपड़ा',
+        '\n\n(ज़रूरी नोट: यह सभी जड़ी-बूटियाँ बाजार से अपनी सुविधा अनुसार 20 या 50 ग्राम की मात्रा में लाकर घर पर साफ डिब्बे में सुरक्षित रख लें। रोज नुस्खा बनाने के लिए ऊपर \'स्मार्ट खुराक\' के बटन में अपनी उम्र के अनुसार बताई गई चुटकी या चम्मच की मात्रा में ही सामान बाहर निकालें।)'
       ],
       en: [
         'Clean carom seeds',
         'Fine black pepper powder',
         'Dry ginger powder',
         'Threaded sugar candy',
-        'Clean cotton cloth for compress\n\n(Note: Store these herbs at home and use small amounts as per age buttons for daily preparation.)'
+        'Clean cotton cloth for compress',
+        '\n\n(Note: Store these herbs at home and use small amounts as per age buttons for daily preparation.)'
       ]
     },
     preparation: {
@@ -457,5 +459,65 @@ export const COLD_REMEDIES: Remedy[] = [
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/cough/600/400",
     keywords: "sardi jukam badan dard hararat bukhar ajwain kali mirch saunth"
+  },
+  {
+    id: 'cc-9',
+    serialNumber: '9',
+    name: { hi: '9. सर्दी-जुकाम और बुखार के बाद की भयंकर कमजोरी और थकान मिटाने वाला दिव्य ऊर्जा चूर्ण', en: '9. Divine Energy Powder for Post-Cold and Fever Weakness' },
+    illnessId: 'common-cold',
+    introduction: {
+      hi: "• सर्दी, जुकाम और बुखार ठीक होने के बाद शरीर के भीतर बहुत कमजोरी आ जाती है।\n• इसके कारण हाथ-पैरों में हर समय मीठा-मीठा दर्द बना रहता है, चक्कर आते हैं और भूख गायब हो जाती है।\n• थोड़ा सा काम करने पर भी शरीर में भयंकर थकान और सुस्ती होने लगती है।\n• भुने हुए चने और बादाम शरीर की खोई हुई ताकत और रोग प्रतिरोधक क्षमता को वापस लाते हैं।\n• सोंठ और मिश्री हड्डियों के दर्द को खींचकर पाचन तंत्र को मजबूत करते हैं।\n• यह दिव्य चूर्ण बीमारी के बाद की कमजोरी को मात्र 3 से 5 दिनों में पूरी तरह गायब कर देता है।",
+      en: "• Post cold and fever, the body experiences severe weakness.\n• It causes body ache, dizziness, and loss of appetite.\n• Even light work leads to extreme fatigue.\n• Roasted gram and almonds restore lost strength and immunity.\n• Dry ginger and sugar candy relieve bone pain and strengthen digestion.\n• This divine powder eradicates weakness within 3 to 5 days."
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "• तैयार चूर्ण की मात्रा — आधा छोटा चम्मच (लगभग 2 से 3 ग्राम)। इसे रोज रात को सोने से पहले आधा ग्लास हल्के गुनगुने मीठे दूध के साथ दें।", en: "• Powder quantity — 1/2 tsp (2-3g). Take with half glass lukewarm sweetened milk before bed." } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "• तैयार चूर्ण की मात्रा — 1 बड़ा चम्मच (लगभग 5 से 7 gram)। इसे सुबह खाली पेट और रात को सोने से पहले 1 ग्लास गुनगुने दूध के साथ लें।", en: "• Powder quantity — 1 tbsp (5-7g). Take with 1 glass lukewarm milk on empty stomach and before bed." } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "• तैयार चूर्ण की मात्रा — 1 बड़ा चम्मच (लगभग 5 से 7 gram)। इसे सुबह और रात को 1 ग्लास गुनगुने दूध के साथ लें (यदि शुगर न हो, तो ही मिश्री वाला चूर्ण लें, वरना बिना मिश्री का चूर्ण इस्तेमाल करें)।", en: "• Powder quantity — 1 tbsp (5-7g). Take with 1 glass lukewarm milk (omit sugar candy if diabetic)." } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "• तैयार चूर्ण की मात्रा — आधा बड़ा चम्मच (लगभग 4 gram)। इसे दिन में 1 बार (सुबह या रात को) 1 ग्लास बिना मलाई वाले हल्के गर्म दूध के साथ लें (शुगर होने पर मिश्री का परहेज रखें)।", en: "• Powder quantity — 1/2 tbsp (4g). Take once daily with skimmed warm milk (omit sugar candy if diabetic)." } }
+    ],
+    ingredients: {
+      hi: [
+        'छिलके उतरे हुए साफ भुने चने',
+        'साबुत बादाम की गिरियां',
+        'सोंठ (सूखा अदरक) का बारीक चूर्ण',
+        'धागे वाली मिश्री (शुगर रोगियों को छोड़कर)',
+        '\n\n(ज़रूरी नोट: यह सभी पौष्टिक सामग्रियां बाजार से अपनी सुविधा अनुसार 50 या 100 ग्राम की मात्रा में लाकर घर पर साफ डिब्बे में सुरक्षित रख लें। रोज खाने के लिए ऊपर \'स्मार्ट खुराक\' के बटन में अपनी उम्र के अनुसार बताई गई चम्मच की मात्रा में ही चूर्ण बाहर निकालें।)'
+      ],
+      en: [
+        'Clean roasted gram (skinless)',
+        'Whole almond kernels',
+        'Fine dry ginger powder',
+        'Threaded sugar candy (except for diabetics)',
+        '\n\n(Note: Procure 50g or 100g of these ingredients and store in a clean jar. Use the spoon quantity specified for your age group.)'
+      ]
+    },
+    preparation: {
+      hi: "• सबसे पहले बराबर मात्रा में (जैसे 50-50 ग्राम) भुने हुए चने और बादाम की गिरियों को मिक्सी या खरल में डाल लें।\n• इन दोनों को एक साथ पीसकर बढ़िया और महीन पाउडर बना लें।\n• अब इस तैयार पाउडर में केवल 10 ग्राम सोंठ का बारीक चूर्ण मिला दें।\n• इसके बाद स्वाद और चुनी गई उम्र के अनुसार पिसी हुई धागे वाली मिश्री को भी इस मिश्रण में अच्छी तरह मिला लें।\n• इस तैयार दिव्य ऊर्जा चूर्ण को कांच के एक साफ और सूखे डिब्बे में भरकर सुरक्षित रख लें।",
+      en: "• Grind equal parts (e.g., 50g each) of roasted gram and almonds together.\n• Make a fine powder.\n• Add 10g of fine dry ginger powder.\n• Mix powdered sugar candy according to taste and age requirement.\n• Store the prepared energy powder in a clean glass jar."
+    },
+    usage: {
+      hi: "• विधि: इस तैयार चूर्ण को अपनी उम्र के बटन के अनुसार बताई गई चम्मच की मात्रा में निकालें और हल्के गुनगुने गाय या भैंस के दूध के साथ फांक लें।\n• समय: इसे सुबह खाली पेट और रात को सोने से ठीक 30 मिनट पहले दूध के साथ लें।\n• अवधि: इसका नियमित सेवन लगातार 5 से 7 दिनों तक करें, जिससे शरीर की पूरी कमजोरी और बदन दर्द जड़ से खत्म हो जाएगा।",
+      en: "• Method: Take the prescribed spoon quantity and consume with lukewarm milk.\n• Time: Take on an empty stomach in the morning and 30 minutes before bedtime.\n• Duration: Use regularly for 5 to 7 days to eradicate weakness and body ache."
+    },
+    dietEat: {
+      hi: "• भोजन: सुपाच्य और पौष्टिक भोजन लें जैसे—मूंग की दाल का हलवा, दलिया या साबूदाने की खीर खाएं।\n• रोटी: गरमा-गरम गेहूं या बाजरे की सादी रोटी पर थोड़ा सा शुद्ध देसी घी लगाकर खाएं।\n• फल: सेब, पपीता और अनार जैसे ताजे फल खाना कमजोरी में बहुत फायदेमंद होता है।\n• पानी: पीने के लिए हमेशा हल्का गुनगुना पानी ही इस्तेमाल करें।",
+      en: "• Food: Eat digestible nutrition like Moong dal halwa, porridge, or sago pudding.\n• Roti: Eat fresh wheat/bajra roti with a bit of pure desi ghee.\n• Fruits: Apples, papaya, and pomegranate are very beneficial.\n• Water: Always use lukewarm water for drinking."
+    },
+    dietAvoid: {
+      hi: "• पैकेट वाले फूड्स: बाजार के तले-भुने चिप्स, कुरकुरे, मैदे वाले बिस्कुट, टोस्ट, नमकीन और डिब्बाबंद जूस पूरी तरह बंद रखें, क्योंकि ये कमजोरी में लीवर को और सुस्त कर देते हैं।\n• भारी भोजन: बहुत ज्यादा तेल-मसाले वाला खाना, समोसा, चाउमीन, बासी भोजन बिल्कुल न खाएं।\n• भारी प्रोटीन: मांसाहार, अंडा, पनीर और भारी तली-भुनी पूरियां बिल्कुल न खाएं।",
+      en: "• Packaged foods: Avoid chips, snacks, refined flour biscuits, and canned juices as they slow down the liver.\n• Heavy meals: Avoid oily-spicy food, samosas, noodles, or stale food.\n• Heavy protein: Avoid non-veg, eggs, paneer, and deep-fried items."
+    },
+    routine: {
+      morning: { hi: "• सुबह (Morning): सुबह उठकर ताजी धूप में कम से कम 10 से 15 मिनट बैठें, जिससे शरीर को तुरंत ताकत और विटामिन-डी मिले।", en: "• Morning: Sit in fresh sunlight for 10-15 mins to get Vitamin D and instant energy." },
+      afternoon: { hi: "• दोपहर (Afternoon): दोपहर के भोजन के बाद 1 घंटे की गहरी और शांत नींद लें, जिससे मांसपेशियों को पूरा आराम मिले।", en: "• Afternoon: Take a 1-hour nap after lunch for muscle recovery." },
+      evening: { hi: "• शाम/रात (Evening/Night): रात का भोजन 8 बजे से पहले हल्का और सुपाच्य रखें और सोने से ठीक पहले इस चूर्ण का सेवन दूध के साथ करें।", en: "• Evening/Night: Keep dinner light before 8 PM. Take the powder with milk just before bed." }
+    },
+    safetyAdvice: {
+      hi: "• यदि कमजोरी के साथ-साथ चक्कर खाकर बेहोशी आने लगे, शरीर का तापमान बहुत ज्यादा गिर जाए, या आंखों के आगे बार-बार अंधेरा छाए।\n• तो इस घरेलू उपाय के साथ-साथ अपने किसी अच्छे डॉक्टर या वैद्य से मिलकर एक बार अपनी सेहत की जांच अवश्य करवा लें।",
+      en: "• If weakness leads to dizziness, fainting, severe drop in body temperature, or vision blurring.\n• Consult a qualified doctor or physician immediately alongside these remedies."
+    },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: "https://picsum.photos/seed/vaidya/600/400",
+    keywords: "kamjori fatigue weakness post fever chana badam saunth"
   }
 ];
