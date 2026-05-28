@@ -103,6 +103,7 @@ export const NotificationsOverlay = ({
                           {toEnglishDigits(remedy.name[lang])}
                         </h4>
                         <p className="text-[12px] opacity-70 truncate font-medium">
+                          {/* toEnglishDigits handles string arrays by joining them automatically */}
                           {toEnglishDigits(remedy.introduction[lang])}
                         </p>
                       </div>
