@@ -37,7 +37,7 @@ export type Remedy = {
   safetyAdvice: LocalizedString;
   disclaimer: LocalizedString;
   image: string;
-  keywords: string;
+  keywords: string | string[];
 };
 
 export const AGE_BRACKETS = {

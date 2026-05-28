@@ -38,7 +38,7 @@ export type Remedy = {
   safetyAdvice: LocalizedString;
   disclaimer: LocalizedString;
   image: string;
-  keywords: string;
+  keywords: string[];
 };
 
 const AGE_BRACKETS = {
@@ -101,7 +101,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     safetyAdvice: { hi: 'यदि बुखार 102 डिग्री से अधिक हो या 3 दिन से ज्यादा रहे, तो तुरंत डॉक्टर से संपर्क करें।', en: 'If fever exceeds 102°F or lasts more than 3 days, consult a physician immediately.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/herb1/600/400",
-    keywords: "bukhar fever jwar tulsi giloy kadha immunity"
+    keywords: ["bukhar ka gharelu ilaj", "fever home remedy", "tulsi aur giloy ka kadha", "giloy kwath", "viral fever dawa", "बुखार का इलाज", "गिलोय", "तुलसी"]
   },
   {
     id: 'gf-2',
@@ -141,7 +141,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     safetyAdvice: { hi: 'यदि पाचन बहुत ज्यादा खराब हो और लगातार उल्टियां हों, तो तुरंत डॉक्टर से मिलें।', en: 'If digestion is severely compromised with continuous vomiting, consult a doctor immediately.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/digestion/600/400",
-    keywords: "adrak dhania digestive water bukhar appetite"
+    keywords: ["bukhar me dhaniya ka pani", "adrak aur dhaniya", "fever digestion remedy", "dhaniya ke beej", "halka bukhar ka upay", "धनिए का पानी", "अदरक"]
   },
   {
     id: 'gf-3',
@@ -175,7 +175,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     safetyAdvice: { hi: 'गर्भवती महिलाएं और स्तनपान कराने वाली माताएं बिना चिकित्सक की सलाह के इसका सेवन न करें।', en: 'Pregnant and lactating mothers should not consume this without a physician\'s advice.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/vaidya/600/400",
-    keywords: "mahasudarshan churna honey fever jwar"
+    keywords: ["mahasudarshan churna", "mahasudarshan aur shahad", "ayurvedic fever medicine", "purana bukhar ka ilaj", "महासुदर्शन चूर्ण", "शहद"]
   },
   {
     id: 'gf-4',
@@ -209,7 +209,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     safetyAdvice: { hi: 'मधुमेह (Diabetes) के रोगी इसकी मात्रा का विशेष ध्यान रखें या डॉक्टर से पूछकर ही लें।', en: 'Diabetic patients should monitor the quantity or consult a doctor before use.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/skin/600/400",
-    keywords: "kishmish munakka cooling water energy"
+    keywords: ["kishmish aur munakka", "munakka ka pani bukhar", "fever heat reduction", "body temperature down", "मुनक्का का पानी", "शीतल पानी"]
   },
   {
     id: 'gf-5',
@@ -243,7 +243,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     safetyAdvice: { hi: 'गर्मी के मौसम में इसका अधिक सेवन न करें क्योंकि इसकी तासीर बहुत गर्म होती है।', en: 'Avoid over-consumption during summer due to its highly heating nature.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/cough/600/400",
-    keywords: "dalchini laung tea sweat chills"
+    keywords: ["dalchini aur laung ki chai", "fever cough remedy", "svedi chai", "sweating remedy for fever", "दालचीनी", "लौंग की चाय"]
   },
   {
     id: 'gf-6',
@@ -277,7 +277,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     safetyAdvice: { hi: 'जिन लोगों को एसिडिटी (पित्त) की समस्या अधिक है, वे इसकी मात्रा कम रखें।', en: 'Individuals with high acidity (Pitta) should take this in smaller quantities.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/herb1/600/400",
-    keywords: "ajwain saunth gud sweat fever"
+    keywords: ["ajwain sonth aur gud", "pasina lane wala kadha", "thand lagkar bukhar", "fever chills remedy", "अजवाइन सोंठ", "गुड़ का काढ़ा"]
   },
   {
     id: 'gf-7',
@@ -311,7 +311,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     safetyAdvice: { hi: 'इसे खाली पेट न लें, वरना पेट में जलन हो सकती है।', en: 'Do not take on an empty stomach, as it may cause gastric irritation.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/digestion/600/400",
-    keywords: "methi saunth jeera churna fever"
+    keywords: ["methi sonth bhuna jeera", "jwarnashak churna", "fever powder home remedy", "home made paracetamol ayurvedic", "ज्वरनाशक चूर्ण", "मेथी"]
   },
   {
     id: 'gf-8',
@@ -345,7 +345,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     safetyAdvice: { hi: ' यदि एसिडिटी या पेट में जलन महसूस हो, तो काली मिर्च की मात्रा कम कर दें।', en: 'If acidity or stomach burning occurs, reduce the quantity of black pepper.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/herb1/600/400",
-    keywords: "kali mirch adrak tulsi brew fever"
+    keywords: ["kali mirch adrak tulsi", "tikha jwarnashak kadha", "cough aur fever remedy", "gale me kharas aur bukhar", "काली मिर्च", "तीखा काढ़ा"]
   },
   {
     id: 'gf-9',
@@ -379,7 +379,7 @@ export const FEVER_REMEDIES: Remedy[] = [
     safetyAdvice: { hi: 'यदि मरीज को ठंड लग रही हो या कफ जमा हो, तो यह शीतल हिम न लें।', en: 'Do not use if the patient is feeling chills or has heavy congestion.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/skin/600/400",
-    keywords: "khus dhania cooling infusion fever"
+    keywords: ["khas dhaniya sonth", "jwarnashak him", "pitta bukhar", "body burning in fever", "शीतल ज्वरनाशक", "खस का पानी"]
   },
   {
     id: 'gf-10',
@@ -402,9 +402,9 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     preparation: { hi: 'खजूर के छोटे टुकड़े कर लें। एक बर्तन में घी डालकर खजूर को हल्का सा भून लें। अब इसमें दूध डालकर एक उबाल आने तक गर्म करें।', en: 'Chop the dates into small pieces. Heat ghee in a pan and lightly roast the dates. Add milk and heat until it reaches a boil.' },
     usage: { hi: 'इसे रात को सोने से पहले गुनगुना पिएं और खजूर को चबा-चबाकर खाएं।\nअवधि: बुखार ठीक होने के बाद 7 से 10 दिनों तक लगातार लें।', en: 'Drink it lukewarm before bedtime and chew the dates thoroughly. Duration: Take for 7 to 10 consecutive days after the fever has subsided.' },
-    dietEat: { hi: 'भोजन: पौष्टिक और संतुलित आहार, हरी पत्तेदार सब्जियां।', en: 'Food: Nutritious and balanced diet, green leafy vegetables.' },
-    dietAvoid: { hi: 'परहेज़: भारी तली-भुनी चीजें और फास्ट फूड।', en: 'Avoid: Deep-fried oily items and fast food.' },
-    strictAvoid: { hi: 'सख्त मनाही: अत्यधिक मानसिक और शारीरिक तनाव।', en: 'Strict Avoid: Excessive mental and physical stress.' },
+    dietEat: { hi: 'भोजन: पौष्टिक and संतुलित आहार, हरी पत्तेदार सब्जियां।', en: 'Food: Nutritious and balanced diet, green leafy vegetables.' },
+    dietAvoid: { hi: 'परहेज़: भारी तली-भुनी चीजें and फास्ट फूड।', en: 'Avoid: Deep-fried oily items and fast food.' },
+    strictAvoid: { hi: 'सख्त मनाही: अत्यधिक मानसिक and शारीरिक तनाव।', en: 'Strict Avoid: Excessive mental and physical stress.' },
     routine: {
       morning: { hi: 'सुबह: ताजी हवा में हल्की सैर।', en: 'Morning: Light walk in fresh air.' },
       afternoon: { hi: 'दोपहर: भरपूर पौष्टिक भोजन।', en: 'Afternoon: Full nutritious lunch.' },
@@ -413,6 +413,6 @@ export const FEVER_REMEDIES: Remedy[] = [
     safetyAdvice: { hi: 'मधुमेह (Diabetes) के रोगी खजूर की मात्रा कम रखें और डॉक्टर से सलाह लें।', en: 'Diabetic patients should limit dates and consult their doctor.' },
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/vaidya/600/400",
-    keywords: "weakness post fever khajur strength"
+    keywords: ["bukhar ke baad ki kamjori", "fever weakness remedy", "body pain after fever", "immunity booster after fever", "ताकत लाने का उपाय", "कमजोरी"]
   }
 ];

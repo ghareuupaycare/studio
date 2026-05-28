@@ -36,10 +36,14 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
     
     const normalizedQuery = query.toLowerCase().trim();
     return REMEDIES.filter(remedy => {
+      const keywordsStr = Array.isArray(remedy.keywords) 
+        ? remedy.keywords.join(' ') 
+        : remedy.keywords || '';
+
       const searchableText = [
         remedy.name.hi,
         remedy.name.en,
-        remedy.keywords,
+        keywordsStr,
         remedy.introduction.hi,
         remedy.introduction.en,
         toEnglishDigits(remedy.name.hi),
