@@ -1,6 +1,6 @@
 /**
  * @fileOverview Category 2: Cold & Flu (नजला और जुकाम) Data Store
- * Contains authentic Ayurvedic remedies with dynamic age-calculation logic.
+ * Contains 10 authentic Ayurvedic remedies with dynamic age-calculation logic.
  * Language standard: Strictly Hindi "और" used for connectives.
  */
 
@@ -145,7 +145,7 @@ export const COLD_REMEDIES: Remedy[] = [
     routine: {
       morning: { hi: 'सुबह: सुबह उठकर सबसे पहले 1-2 गिलास गुनगुना पानी पिएं। हल्के गर्म पानी से गरारे (Kulla) करें।', en: 'Morning: Start with 1-2 glasses of lukewarm water. Gargle with warm water.' },
       afternoon: { hi: 'दोपहर: दोपहर का भोजन हमेशा ताजा और गर्म ही करें। भोजन के तुरंत बाद पानी न पिएं, कम से कम आधा घंटा रुकें।', en: 'Afternoon: Eat fresh hot lunch. Wait 30 minutes before drinking water after meals.' },
-      evening: { hi: 'शाम/रात: रात का भोजन बिल्कुल हल्का रखें और सूर्य अस्त के आसपास या 8 बजे तक हर हाल में कर लें। रात के समय सलाद या फल का सेवन भूलकर भी न करें। छाती और गले को हवा से बचाकर रखें और पूरी नींद लें।', en: 'Evening/Night: Eat light dinner by 8 PM. Avoid fruits/salad at night. Keep chest/throat protected from drafts.' }
+      evening: { hi: 'शाम/रात: रात का भोजन सूर्य अस्त के आसपास या 8 बजे तक हर हाल में कर लें। रात के समय सलाद या फल का सेवन भूलकर भी न करें। छाती और गले को हवा से बचाकर रखें और पूरी नींद लें।', en: 'Evening/Night: Eat dinner by 8 PM. Avoid fruits/salad at night. Keep chest/throat protected from drafts.' }
     },
     safetyAdvice: { hi: 'यदि 5 दिनों में आराम न मिले तो चिकित्सक से सलाह लें।', en: 'Safety Notice: If no relief in 5 days, consult a doctor.' },
     disclaimer: GENERAL_DISCLAIMER,
@@ -335,8 +335,8 @@ export const COLD_REMEDIES: Remedy[] = [
       en: 'Avoid: Packaged snacks, fried items, refined flour, heavy pulses, sweets, non-veg, and all cold items/juices.'
     },
     strictAvoid: {
-      hi: 'ठंडी चीजें और जूस, भारी मांसाहार और पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।',
-      en: 'Strictly avoid cold items, juices, heavy non-veg, and packaged snacks.'
+      hi: 'ठंडी चीजें, भारी मांसाहार और पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।',
+      en: 'Strictly avoid cold items, heavy non-veg, and packaged snacks.'
     },
     routine: {
       morning: { hi: 'सुबह (Morning): सुबह उठकर गुनगुने पानी में थोड़ा सा सेंधा नमक डालकर गरारे करें और गर्म पानी की भाप लें।', en: 'Morning: Gargle with salt water and take steam.' },
@@ -354,7 +354,7 @@ export const COLD_REMEDIES: Remedy[] = [
     name: { hi: 'भुनी अलसी, मुलेठी और मिश्री का कफ-नाशक दिव्य चूर्ण', en: 'Relief Powder of Roasted Flaxseed, Licorice and Sugar Candy' },
     illnessId: 'common-cold',
     introduction: {
-      hi: "मौसमी नजला और जुकाम जब पुराना हो जाता है, तो छाती और श्वसन नली में कफ सूख जाता है। इसके कारण गले में हर समय भयंकर खराश बनी रहती है, सूखी खांसी आती है और रात को सोते समय सांस लेने में भारीपन महसूस होता है। अलसी के बीजों में मौजूद प्राकृतिक तत्व छाती में जमे कफ को पिघलाकर बाहर निकाल निकालते हैं, मुलेठी गले की सूजन और दर्द को जड़ से शांत करती है, और धागे वाली मिश्री गले के सूखेपन को दूर कर उसे तर रखती है। यह दिव्य चूर्ण पुरानी से पुरानी सूखी खांसी और गले की जकड़न में पहले ही दिन से बहुत आराम देता है।",
+      hi: "मौसमी नजला और जुकाम जब पुराना हो जाता है, तो छाती और श्वसन नली में कफ सूख जाता है। इसके कारण गले में हर समय भयंकर खराश बनी रहती है, सूखी खांसी आती है और रात को सोते समय सांस लेने में भारीपन महसूस होता. है। अलसी के बीजों में मौजूद प्राकृतिक तत्व छाती में जमे कफ को पिघलाकर बाहर निकालते हैं, मुलेठी गले की सूजन और दर्द को जड़ से शांत करती है, और धागे वाली मिश्री गले के सूखेपन को दूर कर उसे तर रखती है। यह दिव्य चूर्ण पुरानी से पुरानी सूखी खांसी और गले की जकड़न में पहले ही दिन से बहुत आराम देता है।",
       en: "This powder targets chronic cold with dry phlegm and throat irritation. Flaxseed thins congestion, licorice calms inflammation, and sugar candy hydrates the throat."
     },
     doses: [
@@ -466,7 +466,7 @@ export const COLD_REMEDIES: Remedy[] = [
     name: { hi: '9. सर्दी-जुकाम और बुखार के बाद की भयंकर कमजोरी और थकान मिटाने वाला दिव्य ऊर्जा चूर्ण', en: '9. Divine Energy Powder for Post-Cold and Fever Weakness' },
     illnessId: 'common-cold',
     introduction: {
-      hi: "• सर्दी, जुकाम और बुखार ठीक होने के बाद शरीर के भीतर बहुत कमजोरी आ जाती है।\n• इसके कारण हाथ-पैरों में हर समय मीठा-मीठा दर्द बना रहता है, चक्कर आते हैं और भूख गायब हो जाती है।\n• थोड़ा सा काम करने पर भी शरीर में भयंकर थकान और सुस्ती होने लगती है।\n• भुने हुए चने और बादाम शरीर की खोई हुई ताकत और रोग प्रतिरोधक क्षमता को वापस लाते हैं।\n• सोंठ और मिश्री हड्डियों के दर्द को खींचकर पाचन तंत्र को मजबूत करते हैं।\n• यह दिव्य चूर्ण बीमारी के बाद की कमजोरी को मात्र 3 से 5 दिनों में पूरी तरह गायब कर देता है।",
+      hi: "• कुछ लोगों की रोग प्रतिरोधक क्षमता बहुत कमज़ोर होती है।\n• सर्दी, जुकाम और बुखार ठीक होने के बाद शरीर के भीतर बहुत कमजोरी आ जाती है।\n• इसके कारण हाथ-पैरों में हर समय मीठा-मीठा दर्द बना रहता है, चक्कर आते हैं और भूख गायब हो जाती है।\n• थोड़ा सा काम करने पर भी शरीर में भयंकर थकान और सुस्ती होने लगती है।\n• भुने हुए चने और बादाम शरीर की खोई हुई ताकत और रोग प्रतिरोधक क्षमता को वापस लाते हैं।\n• सोंठ और मिश्री हड्डियों के दर्द को खींचकर पाचन तंत्र को मजबूत करते हैं।\n• यह दिव्य चूर्ण बीमारी के बाद की कमजोरी को मात्र 3 से 5 दिनों में पूरी तरह गायब कर देता है।",
       en: "• Post cold and fever, the body experiences severe weakness.\n• It causes body ache, dizziness, and loss of appetite.\n• Even light work leads to extreme fatigue.\n• Roasted gram and almonds restore lost strength and immunity.\n• Dry ginger and sugar candy relieve bone pain and strengthen digestion.\n• This divine powder eradicates weakness within 3 to 5 days."
     },
     doses: [
@@ -477,17 +477,17 @@ export const COLD_REMEDIES: Remedy[] = [
     ],
     ingredients: {
       hi: [
-        'छिलके उतरे हुए साफ भुने चने',
-        'साबुत बादाम की गिरियां',
-        'सोंठ (सूखा अदरक) का बारीक चूर्ण',
-        'धागे वाली मिश्री (शुगर रोगियों को छोड़कर)',
+        '• छिलके उतरे हुए साफ भुने चने',
+        '• साबुत बादाम की गिरियां',
+        '• सोंठ (सूखा अदरक) का बारीक चूर्ण',
+        '• धागे वाली मिश्री (शुगर रोगियों को छोड़कर)',
         '\n\n(ज़रूरी नोट: यह सभी पौष्टिक सामग्रियां बाजार से अपनी सुविधा अनुसार 50 या 100 ग्राम की मात्रा में लाकर घर पर साफ डिब्बे में सुरक्षित रख लें। रोज खाने के लिए ऊपर \'स्मार्ट खुराक\' के बटन में अपनी उम्र के अनुसार बताई गई चम्मच की मात्रा में ही चूर्ण बाहर निकालें।)'
       ],
       en: [
-        'Clean roasted gram (skinless)',
-        'Whole almond kernels',
-        'Fine dry ginger powder',
-        'Threaded sugar candy (except for diabetics)',
+        '• Clean roasted gram (skinless)',
+        '• Whole almond kernels',
+        '• Fine dry ginger powder',
+        '• Threaded sugar candy (except for diabetics)',
         '\n\n(Note: Procure 50g or 100g of these ingredients and store in a clean jar. Use the spoon quantity specified for your age group.)'
       ]
     },
@@ -523,5 +523,69 @@ export const COLD_REMEDIES: Remedy[] = [
     disclaimer: GENERAL_DISCLAIMER,
     image: "https://picsum.photos/seed/vaidya/600/400",
     keywords: "kamjori fatigue weakness post fever chana badam saunth"
+  },
+  {
+    id: 'cc-10',
+    serialNumber: '10',
+    name: { hi: '10. बार-बार होने वाले नजला-जुकाम और मौसमी इन्फेक्शन को जड़ से रोकने वाला दिव्य सुरक्षा कवच काढ़ा', en: '10. Divine Security Shield Decoction to Prevent Recurring Cold and Seasonal Infections' },
+    illnessId: 'common-cold',
+    introduction: {
+      hi: "• कुछ लोगों की रोग प्रतिरोधक क्षमता बहुत कमज़ोर होती है, जिसके कारण उन्हें हर बदलते मौसम में बार-बार नजला-जुकाम घेर लेता है।\n• हल्की सी ठंडी हवा लगते ही या ठंडा पानी पीते ही नाक बहने लगती है और छींकें शुरू हो जाती हैं।\n• गिलोय और तुलसी का यह दिव्य काढ़ा शरीर के भीतर जाकर खून को साफ करता है और फेफड़ों को अंदर से फौलाद जैसा मज़बूत बनाता है।\n• इसका नियमित सेवन करने से सालों पुराना नजला और बार-बार होने वाला मौसमी इन्फेक्शन हमेशा के लिए जड़ से खत्म हो जाता है।",
+      en: "• Some people have weak immunity, making them susceptible to recurring colds with every seasonal change.\n• Even a slight cold draft or cold water triggers runny nose and sneezing.\n• This divine Giloy and Tulsi decoction purifies the blood and makes lungs strong from within.\n• Regular consumption eradicates chronic catarrh and recurring seasonal infections permanently."
+    },
+    doses: [
+      { ageRange: AGE_BRACKETS.childhood, dose: { hi: "• तैयार छने हुए काढ़े की मात्रा — 2 छोटे चम्मच (लगभग 10 मिलीलीटर)। इसमें आधा चम्मच शुद्ध शहद मिलाकर रोज सुबह खाली पेट बच्चे को पिलाएं।", en: "• Decoction quantity — 2 teaspoons (approx. 10ml). Mix with 1/2 tsp pure honey and give to child on empty stomach." } },
+      { ageRange: AGE_BRACKETS.youth, dose: { hi: "• तैयार छने हुए काढ़े की मात्रा — 4 बड़े चम्मच (लगभग 30 मिलीलीटर)। इसमें 1 चम्मच शुद्ध शहद मिलाकर रोज सुबह खाली पेट चाय की तरह गुनगुना पिएं।", en: "• Decoction quantity — 4 tablespoons (approx. 30ml). Mix with 1 tsp pure honey and sip warm on empty stomach." } },
+      { ageRange: AGE_BRACKETS.middleAge, dose: { hi: "• तैयार छने हुए काढ़े की मात्रा — 4 बड़े चम्मच (लगभग 30 मिलीलीटर)। सुबह खाली पेट गुनगुना पिएं (यदि शुगर न हो, तो ही शहद मिलाएं, अन्यथा इसे बिना शहद के ही सादा पिएं)।", en: "• Decoction quantity — 4 tablespoons (approx. 30ml). Drink warm on empty stomach (omit honey if diabetic)." } },
+      { ageRange: AGE_BRACKETS.oldAge, dose: { hi: "• तैयार छने हुए काढ़े की मात्रा — 2 बड़े चम्मच (लगभग 15 मिलीलीटर)। इसे सुबह खाली पेट हल्के गुनगुने पानी में मिलाकर धीरे-धीरे पिएं (शुगर के मरीज शहद का परहेज रखें)।", en: "• Decoction quantity — 2 tablespoons (approx. 15ml). Mix with lukewarm water and sip on empty stomach (omit honey if diabetic)." } }
+    ],
+    ingredients: {
+      hi: [
+        '• हरी और ताजी गिलोय की डंडी (लगभग 3 से 4 इंच लंबी)',
+        '• श्याम तुलसी के साफ पत्ते (5 से 7 पीस)',
+        '• साबुत काली मिर्च के दोने (3 पीस)',
+        '• देशी अदरक का छोटा टुकड़ा या सोंठ पाउडर (आधा छोटा चम्मच)',
+        '\n\n(ज़रूरी नोट: गिलोय और तुलसी जैसी सामग्रियां यदि ताजी न मिलें, तो बाजार से इनका सूखा पाउडर भी 50 या 100 ग्राम लाकर रख सकते हैं। रोज काढ़ा बनाने के लिए ऊपर \'स्मार्ट खुराक\' के बटन में अपनी उम्र के अनुसार बताई गई मात्रा का ही ध्यान रखें।)'
+      ],
+      en: [
+        '• Fresh green Giloy stick (approx. 3 to 4 inches)',
+        '• Fresh Holy Basil (Tulsi) leaves (5 to 7 pieces)',
+        '• Whole black peppercorns (3 pieces)',
+        '• Small piece of fresh ginger or dry ginger powder (1/2 tsp)',
+        '\n\n(Note: If fresh ingredients aren\'t available, dry powder can be used. Follow age-specific dosage buttons for daily preparation.)'
+      ]
+    },
+    preparation: {
+      hi: "• सबसे पहले गिलोय की डंडी और अदरक के टुकड़े को इमामदस्ते में डालकर अच्छी तरह से कुचल लें।\n• अब एक बर्तन में 2 कप साफ पीने का पानी गैस पर उबलने के लिए चढ़ा दें।\n• इस पानी में कुचली हुई गिलोय, अदरक, तुलसी के पत्ते और कुचली हुई काली मिर्च डाल दें।\n• गैस की आंच को धीमा कर दें और इसे तब तक उबलने दें जब तक 2 कप पानी जलकर आधा कप न रह जाए।\n• पानी आधा कप बचने पर गैस बंद कर दें और इसे छानकर हल्का गुनगुना होने के लिए छोड़ दें।",
+      en: "• Crush Giloy and ginger thoroughly.\n• Boil 2 cups of clean water.\n• Add crushed Giloy, ginger, Tulsi, and black pepper.\n• Simmer on low heat until water reduces to half a cup.\n• Turn off heat, strain, and let it become lukewarm."
+    },
+    usage: {
+      hi: "• विधि: इस तैयार गुनगुने काढ़े को अपनी उम्र के बटन के अनुसार बताई गई चम्मच की मात्रा में निकालें।\n• समय: इसे रोज सुबह उठकर बिल्कुल खाली पेट (बिना कुछ खाए-पिए) चाय की तरह एक-एक घूंट लेकर पिएं।\n• अवधि: बदलते मौसम के दौरान इस उपाय को लगातार 7 दिनों तक करें, जिससे पूरे साल के लिए शरीर की इम्युनिटी मजबूत हो जाएगी।",
+      en: "• Method: Take the prescribed quantity based on age selection.\n• Time: Drink on a completely empty stomach, sipping slowly like tea.\n• Duration: Use for 7 consecutive days during seasonal changes to boost year-long immunity."
+    },
+    dietEat: {
+      hi: "• भोजन: सादा, गरम और ताजा बना हुआ घर का सात्विक भोजन ही करें।\n• दाल-सब्जी: भोजन में हरी पत्तेदार सब्जियां, मूंग की दाल और लौकी-तोरई का ख्याल सबसे ज्यादा रखें।\n• फल: मौसमी मीठे फल खाएं और सुबह के समय मुनक्का या बादाम भिगोकर खाएं।\n• तरल पदार्थ: पूरे दिन में जब भी प्यास लगे, केवल हल्का गुनगुना पानी ही पिएं।",
+      en: "• Food: Eat simple, hot, and freshly cooked sattvic home meals.\n• Pulses/Veg: Focus on green leafy vegetables, Moong dal, and gourds.\n• Fruits: Eat sweet seasonal fruits; have soaked Munakka or almonds in the morning.\n• Liquids: Drink only lukewarm water throughout the day."
+    },
+    dietAvoid: {
+      hi: "• पैकेट वाले फूड्स: बाजार के ठंडे जूस, पैकेट बंद नमकीन, चिप्स, कुरकुरे और मैदे से बनी चीजें बिल्कुल न खाएं।\n• ठंडी चीजें: फ्रिज का बर्फीला पानी, आइसक्रीम, कोल्ड ड्रिंक्स, खट्टा गाढ़ा दही और मट्ठा पूरी तरह बंद रखें।\n• बासी भोजन: रात का बचा हुआ बासी खाना, फ्रिज में रखी ठंडी चीजें और ज्यादा तेल-मसाले वाला खाना सख्त वर्जित है।",
+      en: "• Packaged foods: Avoid cold juices, packaged snacks, chips, and refined flour items.\n• Cold items: Avoid icy water, ice cream, sodas, sour curd, and buttercream.\n• Stale food: Strictly avoid overnight food, refrigerated items, and oily-spicy meals."
+    },
+    strictAvoid: {
+      hi: "फ्रिज का ठंडा पानी, बासी भोजन और पैकेट वाले स्नेक्स पूरी तरह वर्जित हैं।",
+      en: "Strictly avoid refrigerated water, stale food, and packaged snacks."
+    },
+    routine: {
+      morning: { hi: "• सुबह : सुबह सूर्योदय से पहले उठने का नियम बनाएं और 10 से 15 मिनट प्राणायाम खुली हवा में करें।", en: "• Morning: Wake up before sunrise and practice Pranayama for 10-15 mins in fresh air." },
+      afternoon: { hi: "• दोपहर : दोपहर के भोजन के तुरंत बाद ठंडे पानी से हाथ-मुंह न धोएं और कूलर या एसी की सीधी हवा में सोने से बचें।", en: "• Afternoon: Do not wash face with cold water immediately after lunch; avoid direct AC drafts." },
+      evening: { hi: "• शाम/रात : रात का भोजन 8 बजे से पहले हर हाल में खा लें और सोते समय सिर तथा कान को ठंडी हवा से बचाकर रखें।", en: "• Evening/Night: Eat dinner before 8 PM. Keep head and ears protected from cold drafts while sleeping." }
+    },
+    safetyAdvice: {
+      hi: "• यह काढ़ा पूरी तरह सुरक्षित और प्राकृतिक है, लेकिन यदि इसे पीने के बाद भी शरीर में बहुत तेज गर्मी महसूस हो या उल्टी जैसा मन हो।\n• तो इसकी मात्रा आधी कर दें या अपने पास के किसी अच्छे आयुर्वेद विशेषज्ञ से मिलकर अपनी प्रकृति के अनुसार उचित सलाह ले लें।",
+      en: "• This decoction is safe and natural, but if you feel excessive heat or nausea after drinking.\n• Halve the dose or consult an Ayurvedic expert according to your body constitution."
+    },
+    disclaimer: GENERAL_DISCLAIMER,
+    image: "https://picsum.photos/seed/herb1/600/400",
+    keywords: "immunity nazla jukam cold protection giloy tulsi"
   }
 ];
