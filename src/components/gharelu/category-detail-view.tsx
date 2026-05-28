@@ -34,11 +34,6 @@ export const CategoryDetailView = ({
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
 
-  /**
-   * Arrest Sub-Page Routing Conflicts:
-   * Reactively updates the view when initialRemedyId changes from the search overlay.
-   * This ensures absolute navigation works even if the component is already mounted.
-   */
   useEffect(() => {
     if (initialRemedyId) {
       const remedy = REMEDIES.find(r => r.id === initialRemedyId);
@@ -62,34 +57,47 @@ export const CategoryDetailView = ({
 
   const categoryContent = {
     fever: {
-      title: isHindi ? '1. मौसमी बुखार एवं फ्लू' : '1. Seasonal Fever & Flu',
+      title: isHindi ? '1. सामान्य बुखार' : '1. General Fever',
       illnesses: [
         {
           id: 'general-fever',
-          title: isHindi ? '1. सामान्य बुखार' : '1. General Fever',
+          title: isHindi ? 'बुखार के उपचार' : 'Fever Remedies',
           description: isHindi 
             ? 'हल्के बुखार और शारीरिक थकान के लिए प्राकृतिक उपचार' 
             : 'Natural treatments for mild fever and physical fatigue'
-        },
+        }
+      ]
+    },
+    cold: {
+      title: isHindi ? '2. नजला और जुकाम' : '2. Cold & Flu',
+      illnesses: [
         {
           id: 'common-cold',
-          title: isHindi ? '2. नजला और जुकाम' : '2. Chronic Cold & Flu',
+          title: isHindi ? 'नजला और जुकाम' : 'Cold & Flu',
           description: isHindi 
-            ? 'नाक बहना, निरंतर छींकें आना और बंद नाक के लिए अचूक घरेलू उपचार' 
-            : 'Effective home remedies for runny nose, continuous sneezing, and nasal congestion'
+            ? 'नाक बहना, छींकें और बंद नाक के लिए अचूक घरेलू उपचार' 
+            : 'Effective home remedies for runny nose, sneezing, and congestion'
+        }
+      ]
+    },
+    respiratory: {
+      title: isHindi ? '3. सूखी एवं बलगम वाली खांसी' : '3. Dry and Productive Cough',
+      illnesses: [
+        {
+          id: 'cough',
+          title: isHindi ? 'खांसी के उपचार' : 'Cough Remedies',
+          description: isHindi 
+            ? 'सूखी खांसी, बलगम और छाती में जकड़न से राहत' 
+            : 'Relief from dry cough, phlegm and chest congestion'
         }
       ]
     },
     joints: {
-      title: isHindi ? '2. घुटनों का दर्द' : '2. Joint Pain',
-      illnesses: [] // Add future illnesses here
-    },
-    respiratory: {
-      title: isHindi ? '3. खांसी और सर्दी' : '3. Cough & Cold',
+      title: isHindi ? '4. घुटनों का दर्द' : '4. Joint Pain',
       illnesses: []
     },
     digestion: {
-      title: isHindi ? '4. पाचन' : '4. Digestion',
+      title: isHindi ? '5. पाचन' : '5. Digestion',
       illnesses: []
     }
   };

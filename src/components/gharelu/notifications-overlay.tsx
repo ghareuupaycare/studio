@@ -33,8 +33,10 @@ export const NotificationsOverlay = ({
   const handleResultClick = (remedyId: string, illnessId: string) => {
     let catId = 'fever'; 
     if (illnessId.includes('joint')) catId = 'joints';
-    if (illnessId.includes('cough') || illnessId.includes('respiratory') || illnessId.includes('cold')) catId = 'respiratory';
+    if (illnessId === 'common-cold') catId = 'cold';
+    if (illnessId.includes('cough') || illnessId.includes('respiratory')) catId = 'respiratory';
     if (illnessId.includes('digestion') || illnessId.includes('acidity')) catId = 'digestion';
+    if (illnessId === 'general-fever') catId = 'fever';
 
     // Mark as read and navigate
     onMarkAsRead(remedyId);

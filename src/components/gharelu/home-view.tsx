@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -20,12 +19,38 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
       id: 'fever',
       translations: {
         hi: {
-          title: '1. मौसमी बुखार एवं फ्लू',
-          subtitle: 'बुखार, मलेरिया, डेंगू, चिकनगुनिया',
+          title: '1. सामान्य बुखार',
+          subtitle: 'हल्के बुखार, हरारत और शारीरिक थकान के लिए प्राकृतिक उपचार',
         },
         en: {
-          title: '1. Seasonal Fever & Flu',
-          subtitle: 'Fever, Malaria, Dengue, Chikungunya',
+          title: '1. General Fever',
+          subtitle: 'Natural treatments for mild fever and physical fatigue',
+        }
+      }
+    },
+    {
+      id: 'cold',
+      translations: {
+        hi: {
+          title: '2. नजला और जुकाम',
+          subtitle: 'नाक बहना, छींकें और बंद नाक के लिए अचूक घरेलू उपचार',
+        },
+        en: {
+          title: '2. Cold & Flu',
+          subtitle: 'Effective remedies for runny nose, sneezing and congestion',
+        }
+      }
+    },
+    {
+      id: 'respiratory',
+      translations: {
+        hi: {
+          title: '3. सूखी एवं बलगम वाली खांसी',
+          subtitle: 'हर तरह की सूखी खांसी, बलगम और छाती में जकड़न से राहत के लिए अचूक घरेलू उपचार',
+        },
+        en: {
+          title: '3. Dry and Productive Cough',
+          subtitle: 'Effective remedies for dry cough, phlegm and chest congestion',
         }
       }
     },
@@ -41,7 +66,6 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
           : "bg-[#14532D]"
       )}>
         
-        {/* ROW 1 - MAIN TITLE */}
         <h2 className={cn(
           "text-4xl sm:text-5xl font-black leading-tight mb-6 transition-colors duration-500 whitespace-nowrap",
           "text-white"
@@ -49,7 +73,6 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
           {isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions'}
         </h2>
 
-        {/* ROW 2 - SUBTITLE 1 */}
         <p className={cn(
           "text-[35px] font-black mb-4 transition-colors duration-500 text-amber-400 text-center leading-tight",
           "max-w-prose"
@@ -64,7 +87,6 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
           )}
         </p>
 
-        {/* ROW 3 - SUBTITLE 2 */}
         <p className={cn(
           "text-xl sm:text-2xl font-bold leading-relaxed mb-8 transition-colors duration-500 text-center",
           "text-white",
@@ -80,7 +102,6 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
           )}
         </p>
 
-        {/* ROW 4 - TAGLINE BADGE */}
         <div className={cn(
           "px-10 py-5 rounded-full font-black text-2xl sm:text-3xl transition-all shadow-lg whitespace-nowrap",
           isNight ? "bg-white text-black" : "bg-accent text-white"
@@ -89,7 +110,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
         </div>
       </section>
 
-      {/* Categories List - Strictly Left Aligned */}
+      {/* Categories List */}
       <div className="space-y-8 w-full text-left">
         <div className="grid grid-cols-1 gap-6 w-full">
           {categories.map((category) => {

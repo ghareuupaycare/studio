@@ -53,17 +53,18 @@ export const GENERAL_DISCLAIMER: LocalizedString = {
 };
 
 export const CATEGORIES = [
-  { id: 'fever', label: '1. मौसमी बुखार एवं फ्लू', icon: 'Thermometer', image: "https://picsum.photos/seed/cough/600/400" },
-  { id: 'joints', label: '2. घुटनों का दर्द', icon: 'Accessibility', image: "https://picsum.photos/seed/joint/600/400" },
-  { id: 'respiratory', label: '3. खांसी और सर्दी', icon: 'Wind', image: "https://picsum.photos/seed/cough/600/400" },
+  { id: 'fever', label: '1. सामान्य बुखार', icon: 'Thermometer', image: "https://picsum.photos/seed/cough/600/400" },
+  { id: 'cold', label: '2. नजला और जुकाम', icon: 'Wind', image: "https://picsum.photos/seed/cold/600/400" },
+  { id: 'respiratory', label: '3. सूखी एवं बलगम वाली खांसी', icon: 'Wind', image: "https://picsum.photos/seed/cough/600/400" },
   { id: 'digestion', label: '4. पाचन', icon: 'Stomach', image: "https://picsum.photos/seed/digestion/600/400" },
 ];
 
-// Data imports must happen AFTER constants are defined to avoid circular dependency initialization errors
 import { FEVER_REMEDIES } from "./fever-data";
 import { COLD_REMEDIES } from "./cold-data";
+import { COUGH_REMEDIES } from "./cough-data";
 
 export const REMEDIES: Remedy[] = [
   ...FEVER_REMEDIES,
-  ...COLD_REMEDIES
+  ...COLD_REMEDIES,
+  ...COUGH_REMEDIES
 ];
