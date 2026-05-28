@@ -292,7 +292,7 @@ export const COLD_REMEDIES: Remedy[] = [
     routine: {
       morning: { hi: 'सुबह (Morning): सुबह उठकर तुलसी के पत्तों की भाप (Steam) लें और नाक में दो-दो बूंद अणु तेल या सरसों का तेल डालें।', en: 'Morning: Inhale Tulsi steam and apply Anu oil to the nose.' },
       afternoon: { hi: 'दोपहर (Afternoon): दोपहर में गर्म और सुपाच्य भोजन लें और खाने के तुरंत बाद पानी न पिएं।', en: 'Afternoon: Eat hot digestible lunch; wait before drinking water.' },
-      evening: { hi: 'शाम/रात (Evening/Night): रात का भोजन सूर्यास्त के आसपास या रात 8 बजे से पहले कर लें। सोते समय छाती पर थोड़ा सा गुनगुना सरसों का तेल मलें और खुली हवा या पंखे के नीचे सीधे न सोएं।', en: 'Evening/Night: Eat early dinner. Apply warm mustard oil to the chest; avoid direct drafts.' }
+      evening: { hi: 'शाम/रात (Evening/Night): रात का भोजन सूर्यास्त के आसपास या रात 8 बजे से पहले कर लें। सोते समय छाती पर थोड़ा सा गुनगुना सरसों का तेल मलें और खुली हवा या पंखे के नीचे सीधे न सोएं।', en: 'Evening/Night: Eat early dinner. Keep throat and chest covered with a cotton cloth or muffler while sleeping; avoid direct fan drafts.' }
     },
     safetyAdvice: { hi: 'यदि इस उपाय को लगातार 5 दिनों तक नियम से करने के बाद भी आपको आराम महसूस न हो, तो बिना देर किए अपने नजदीकी आयुर्वेदिक चिकित्सक से मिलकर उचित परामर्श लें। शरीर का ध्यान रखना ही सबसे पहली प्राथमिकता है।', en: 'Safety Notice: If no relief in 5 days, consult an Ayurvedic physician immediately.' },
     disclaimer: GENERAL_DISCLAIMER,
@@ -354,7 +354,7 @@ export const COLD_REMEDIES: Remedy[] = [
     name: { hi: 'भुनी अलसी, मुलेठी और मिश्री का कफ-नाशक दिव्य चूर्ण', en: 'Relief Powder of Roasted Flaxseed, Licorice and Sugar Candy' },
     illnessId: 'common-cold',
     introduction: {
-      hi: "मौसमी नजला और जुकाम जब पुराना हो जाता है, तो छाती और श्वसन नली में कफ सूख जाता है। इसके कारण गले में हर समय भयंकर खराश बनी रहती है, सूखी खांसी आती है और रात को सोते समय सांस लेने में भारीपन महसूस होता है। अलसी के बीजों में मौजूद प्राकृतिक तत्व छाती में जमे कफ को पिघलाकर बाहर निकालते हैं, मुलेठी गले की सूजन और दर्द को जड़ से शांत करती है, और धागे वाली मिश्री गले के सूखेपन को दूर कर उसे तर रखती है। यह दिव्य चूर्ण पुरानी से पुरानी सूखी खांसी और गले की जकड़न में पहले ही दिन से बहुत आराम देता है।",
+      hi: "मौसमी नजला और जुकाम जब पुराना हो जाता है, तो छाती और श्वसन नली में कफ सूख जाता है। इसके कारण गले में हर समय भयंकर खराश बनी रहती है, सूखी खांसी आती है और रात को सोते समय सांस लेने में भारीपन महसूस होता है। अलसी के बीजों में मौजूद प्राकृतिक तत्व छाती में जमे कफ को पिघलाकर बाहर निकाल निकालते हैं, मुलेठी गले की सूजन और दर्द को जड़ से शांत करती है, और धागे वाली मिश्री गले के सूखेपन को दूर कर उसे तर रखती है। यह दिव्य चूर्ण पुरानी से पुरानी सूखी खांसी और गले की जकड़न में पहले ही दिन से बहुत आराम देता है।",
       en: "This powder targets chronic cold with dry phlegm and throat irritation. Flaxseed thins congestion, licorice calms inflammation, and sugar candy hydrates the throat."
     },
     doses: [
@@ -506,6 +506,10 @@ export const COLD_REMEDIES: Remedy[] = [
     dietAvoid: {
       hi: "• पैकेट वाले फूड्स: बाजार के तले-भुने चिप्स, कुरकुरे, मैदे वाले बिस्कुट, टोस्ट, नमकीन और डिब्बाबंद जूस पूरी तरह बंद रखें, क्योंकि ये कमजोरी में लीवर को और सुस्त कर देते हैं।\n• भारी भोजन: बहुत ज्यादा तेल-मसाले वाला खाना, समोसा, चाउमीन, बासी भोजन बिल्कुल न खाएं।\n• भारी प्रोटीन: मांसाहार, अंडा, पनीर और भारी तली-भुनी पूरियां बिल्कुल न खाएं।",
       en: "• Packaged foods: Avoid chips, snacks, refined flour biscuits, and canned juices as they slow down the liver.\n• Heavy meals: Avoid oily-spicy food, samosas, noodles, or stale food.\n• Heavy protein: Avoid non-veg, eggs, paneer, and deep-fried items."
+    },
+    strictAvoid: {
+      hi: "पैकेट वाले स्नेक्स, भारी मांसाहार और फ्रिज की ठंडी चीजें पूरी तरह वर्जित हैं।",
+      en: "Strictly avoid packaged snacks, heavy non-veg, and cold items."
     },
     routine: {
       morning: { hi: "• सुबह (Morning): सुबह उठकर ताजी धूप में कम से कम 10 से 15 मिनट बैठें, जिससे शरीर को तुरंत ताकत और विटामिन-डी मिले।", en: "• Morning: Sit in fresh sunlight for 10-15 mins to get Vitamin D and instant energy." },

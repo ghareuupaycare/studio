@@ -28,15 +28,15 @@ interface RemedyDetailProps {
 }
 
 export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite }: RemedyDetailProps) => {
-  const [selectedAgeRangeKey, setSelectedAgeRangeKey] = useState(remedy.doses[1].ageRange.hi);
+  const [selectedAgeRangeKey, setSelectedAgeRangeKey] = useState(remedy.doses?.[1]?.ageRange?.hi || (remedy.doses?.[0]?.ageRange?.hi || ''));
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
   const { toast } = useToast();
 
-  const currentDose = remedy.doses.find(d => d.ageRange.hi === selectedAgeRangeKey);
+  const currentDose = remedy.doses?.find(d => d.ageRange?.hi === selectedAgeRangeKey);
   
   // Dynamic ingredients logic: use dose-specific ingredients if available, otherwise fallback to remedy-level ingredients
-  const displayIngredients = currentDose?.ingredients?.[lang] || remedy.ingredients[lang];
+  const displayIngredients = currentDose?.ingredients?.[lang] || remedy.ingredients?.[lang] || [];
 
   // Parameter Headings: Locked at 25px, Bold
   const headingClass = cn(
@@ -71,9 +71,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       return;
     }
 
-    const title = toEnglishDigits(remedy.name[lang]);
+    const title = toEnglishDigits(remedy.name?.[lang] || '');
     const ingredients = displayIngredients.map(toEnglishDigits).join(', ');
-    const prep = toEnglishDigits(remedy.preparation[lang]);
+    const prep = toEnglishDigits(remedy.preparation?.[lang] || '');
     
     const shareText = (isHindi 
       ? `*घरेलू उपाय केयर*\n🌿 *${title}*\n\n📦 *आवश्यक सामग्री:*\n${ingredients}\n\n🥣 *बनाने की विधि:*\n${prep}`
@@ -92,9 +92,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   };
 
   const handleCopy = async () => {
-    const title = toEnglishDigits(remedy.name[lang]);
+    const title = toEnglishDigits(remedy.name?.[lang] || '');
     const ingredients = displayIngredients.map(toEnglishDigits).join(', ');
-    const prep = toEnglishDigits(remedy.preparation[lang]);
+    const prep = toEnglishDigits(remedy.preparation?.[lang] || '');
 
     const textToCopy = (isHindi
       ? `🌿 ${title}\n\n📦 आवश्यक सामग्री:\n${ingredients}\n\n🥣 बनाने की विधि:\n${prep}`
@@ -131,7 +131,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         "text-[32px] font-black tracking-wide leading-tight mb-8",
         isNight ? "text-white" : "text-[#14532D]"
       )}>
-        {toEnglishDigits(remedy.name[lang])}
+        {toEnglishDigits(remedy.name?.[lang] || '')}
       </h2>
 
       {/* Intro */}
@@ -143,59 +143,61 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           <Info className="w-8 h-8 shrink-0" /> {isHindi ? '1. बीमारी का परिचय' : '1. Introduction'}
         </h3>
         <p className={bodyTextClass}>
-          {toEnglishDigits(remedy.introduction[lang])}
+          {toEnglishDigits(remedy.introduction?.[lang] || '')}
         </p>
       </div>
 
       {/* Smart Dose */}
-      <div className={cn(
-        "p-8 rounded-[2.5rem] border overflow-hidden shadow-sm",
-        isNight ? "bg-black border-white" : "bg-white border-[#14532D]"
-      )}>
-        <div className="flex flex-col mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className={headingClass}>{isHindi ? '2. स्मार्ट खुराक और मात्रा' : '2. Smart Dose'}</h3>
-            <Stethoscope className="w-8 h-8 opacity-40 shrink-0" />
-          </div>
-          <p className={cn(
-            "text-[18px] font-bold opacity-80 leading-relaxed mb-6",
-            isNight ? "text-white/80" : "text-primary/70"
-          )}>
-            {isHindi 
-              ? 'उपरोक्त कुल सामग्री में से अपनी उम्र के अनुसार केवल नीचे चुनी गई खुराक ही लें:' 
-              : 'From the total ingredients above, consume only the specific dosage selected for your age below:'}
-          </p>
-        </div>
-        
-        <div className="flex flex-wrap gap-4 mb-8">
-          {remedy.doses.map((dose) => (
-            <button
-              key={dose.ageRange.hi}
-              onClick={() => setSelectedAgeRangeKey(dose.ageRange.hi)}
-              className={cn(
-                "px-6 py-4 rounded-2xl text-[22px] font-bold transition-all border",
-                selectedAgeRangeKey === dose.ageRange.hi
-                  ? (isNight ? "bg-white text-black" : "bg-accent text-white border-accent shadow-md")
-                  : (isNight ? "bg-black text-white border-white/20" : "bg-transparent text-primary border-primary/20")
-              )}
-            >
-              {toEnglishDigits(dose.ageRange[lang])}
-            </button>
-          ))}
-        </div>
-
+      {remedy.doses && remedy.doses.length > 0 && (
         <div className={cn(
-          "p-10 rounded-3xl flex items-center justify-center text-center",
-          isNight ? "bg-white/10" : "bg-accent/10"
+          "p-8 rounded-[2.5rem] border overflow-hidden shadow-sm",
+          isNight ? "bg-black border-white" : "bg-white border-[#14532D]"
         )}>
-          <span className={cn(
-            "text-[22px] font-semibold leading-relaxed",
-            isNight ? "text-white" : "text-[#14532D]"
+          <div className="flex flex-col mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className={headingClass}>{isHindi ? '2. स्मार्ट खुराक और मात्रा' : '2. Smart Dose'}</h3>
+              <Stethoscope className="w-8 h-8 opacity-40 shrink-0" />
+            </div>
+            <p className={cn(
+              "text-[18px] font-bold opacity-80 leading-relaxed mb-6",
+              isNight ? "text-white/80" : "text-primary/70"
+            )}>
+              {isHindi 
+                ? 'उपरोक्त कुल सामग्री में से अपनी उम्र के अनुसार केवल नीचे चुनी गई खुराक ही लें:' 
+                : 'From the total ingredients above, consume only the specific dosage selected for your age below:'}
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap gap-4 mb-8">
+            {remedy.doses.map((dose) => (
+              <button
+                key={dose.ageRange?.hi}
+                onClick={() => setSelectedAgeRangeKey(dose.ageRange?.hi || '')}
+                className={cn(
+                  "px-6 py-4 rounded-2xl text-[22px] font-bold transition-all border",
+                  selectedAgeRangeKey === dose.ageRange?.hi
+                    ? (isNight ? "bg-white text-black" : "bg-accent text-white border-accent shadow-md")
+                    : (isNight ? "bg-black text-white border-white/20" : "bg-transparent text-primary border-primary/20")
+                )}
+              >
+                {toEnglishDigits(dose.ageRange?.[lang] || '')}
+              </button>
+            ))}
+          </div>
+
+          <div className={cn(
+            "p-10 rounded-3xl flex items-center justify-center text-center",
+            isNight ? "bg-white/10" : "bg-accent/10"
           )}>
-            {toEnglishDigits(currentDose?.dose[lang] || '')}
-          </span>
+            <span className={cn(
+              "text-[22px] font-semibold leading-relaxed",
+              isNight ? "text-white" : "text-[#14532D]"
+            )}>
+              {toEnglishDigits(currentDose?.dose?.[lang] || '')}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Ingredients & Prep */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -205,11 +207,11 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         )}>
           <h3 className={cn(headingClass, "text-accent")}>
             {isHindi 
-              ? (['cc-4', 'cc-5', 'cc-6', 'cc-7', 'cc-8'].includes(remedy.id) ? '3. आवश्यक सामग्री' : '3. आवश्यक सामग्री (कुल स्टॉक या बनाने के लिए)') 
+              ? (['cc-4', 'cc-5', 'cc-6', 'cc-7', 'cc-8'].includes(remedy.id) ? '3. आवश्यक सामग्री' : '3. आवश्यक सामग्री') 
               : '3. Required Ingredients'}
           </h3>
           <ul className="space-y-6">
-            {displayIngredients.map((item, i) => (
+            {(displayIngredients || []).map((item, i) => (
               <li key={i} className={cn(listTextClass, "flex items-start gap-3")}>
                 <CheckCircle className="w-7 h-7 mt-1.5 text-accent shrink-0" />
                 <span>{toEnglishDigits(item)}</span>
@@ -222,7 +224,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           isNight ? "bg-black border-white/20" : "bg-[#FDF6E2] border-primary/10"
         )}>
           <h3 className={cn(headingClass, "text-accent")}>{isHindi ? '4. बनाने की विधि' : '4. Preparation'}</h3>
-          <p className={bodyTextClass}>{toEnglishDigits(remedy.preparation[lang])}</p>
+          <p className={bodyTextClass}>{toEnglishDigits(remedy.preparation?.[lang] || '')}</p>
         </div>
       </div>
 
@@ -243,7 +245,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           bodyTextClass,
           "text-white leading-relaxed"
         )}>
-          "{toEnglishDigits(remedy.usage[lang])}"
+          "{toEnglishDigits(remedy.usage?.[lang] || '')}"
         </p>
       </div>
 
@@ -261,7 +263,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             "text-[22px] leading-relaxed font-medium transition-colors",
             isNight ? "text-[#A7F3D0]" : "text-green-900"
           )}>
-            {toEnglishDigits(remedy.dietEat[lang])}
+            {toEnglishDigits(remedy.dietEat?.[lang] || '')}
           </p>
         </div>
         <div className={cn(
@@ -276,7 +278,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             "text-[22px] leading-relaxed font-medium transition-colors",
             isNight ? "text-[#FECDD3]" : "text-red-900"
           )}>
-            {toEnglishDigits(remedy.dietAvoid[lang])}
+            {toEnglishDigits(remedy.dietAvoid?.[lang] || '')}
           </p>
           <div className={cn(
             "mt-8 pt-8 border-t",
@@ -290,9 +292,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             </p>
             <p className={cn(
               "text-[22px] font-bold leading-relaxed transition-colors",
-              isNight ? "text-[#FECDD3]" : "text-red-800"
+              isNight ? "text-[#FECDD3]" : "text-red-900"
             )}>
-              {toEnglishDigits(remedy.strictAvoid[lang])}
+              {toEnglishDigits(remedy.strictAvoid?.[lang] || '')}
             </p>
           </div>
         </div>
@@ -311,21 +313,21 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             <div className="p-6 rounded-full bg-accent/10 text-accent h-fit shrink-0"><Sun className="w-9 h-9" /></div>
             <div>
               <h4 className="text-[22px] font-black uppercase text-accent mb-3">{isHindi ? 'सुबह' : 'Morning'}</h4>
-              <p className={bodyTextClass}>{toEnglishDigits(remedy.routine.morning[lang])}</p>
+              <p className={bodyTextClass}>{toEnglishDigits(remedy.routine?.morning?.[lang] || '')}</p>
             </div>
           </div>
           <div className="flex gap-6">
             <div className="p-6 rounded-full bg-primary/10 text-primary h-fit shrink-0"><Coffee className="w-9 h-9" /></div>
             <div>
               <h4 className="text-[22px] font-black uppercase text-primary mb-3">{isHindi ? 'दोपहर' : 'Afternoon'}</h4>
-              <p className={bodyTextClass}>{toEnglishDigits(remedy.routine.afternoon[lang])}</p>
+              <p className={bodyTextClass}>{toEnglishDigits(remedy.routine?.afternoon?.[lang] || '')}</p>
             </div>
           </div>
           <div className="flex gap-6">
             <div className="p-6 rounded-full bg-slate-400/10 text-slate-500 h-fit shrink-0"><Moon className="w-9 h-9" /></div>
             <div>
               <h4 className="text-[22px] font-black uppercase text-slate-500 mb-3">{isHindi ? 'शाम/रात' : 'Evening/Night'}</h4>
-              <p className={bodyTextClass}>{toEnglishDigits(remedy.routine.evening[lang])}</p>
+              <p className={bodyTextClass}>{toEnglishDigits(remedy.routine?.evening?.[lang] || '')}</p>
             </div>
           </div>
         </div>
@@ -345,13 +347,13 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             "text-[22px] leading-relaxed font-bold",
             isNight ? "text-accent brightness-110" : "text-[#9B2C2C]"
           )}>
-            {toEnglishDigits(remedy.safetyAdvice[lang])}
+            {toEnglishDigits(remedy.safetyAdvice?.[lang] || '')}
           </p>
           <p className={cn(
             "text-[18px] uppercase tracking-widest opacity-60 leading-relaxed font-medium mt-10 border-t border-accent/20 pt-10 italic",
             isNight ? "text-white" : "text-primary"
           )}>
-            "{toEnglishDigits(remedy.disclaimer[lang])}"
+            "{toEnglishDigits(remedy.disclaimer?.[lang] || '')}"
           </p>
         </div>
       </div>
