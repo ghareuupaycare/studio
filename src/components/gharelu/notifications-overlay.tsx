@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Bell, ChevronRight, Sparkles, MessageCircleOff } from 'lucide-react';
-import { REMEDIES } from '@/lib/remedy-data';
+import { Remedy } from '@/lib/remedy-data';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -13,7 +13,7 @@ interface NotificationsOverlayProps {
   onClose: () => void;
   lang: Language;
   theme: Theme;
-  lastReadRemedyId: string | null;
+  unreadRemedies: Remedy[];
   onMarkAsRead: (id: string) => void;
   onSelectRemedy: (remedyId: string, categoryId: string) => void;
 }
@@ -23,24 +23,17 @@ export const NotificationsOverlay = ({
   onClose, 
   lang, 
   theme, 
-  lastReadRemedyId,
+  unreadRemedies,
   onMarkAsRead,
   onSelectRemedy 
 }: NotificationsOverlayProps) => {
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
 
-  // Only display the single most recently added/updated remedy if it hasn't been read
-  const unreadLatestRemedy = useMemo(() => {
-    const latest = REMEDIES[REMEDIES.length - 1];
-    if (!latest) return null;
-    return lastReadRemedyId === latest.id ? null : latest;
-  }, [lastReadRemedyId]);
-
   const handleResultClick = (remedyId: string, illnessId: string) => {
     let catId = 'fever'; 
     if (illnessId.includes('joint')) catId = 'joints';
-    if (illnessId.includes('cough') || illnessId.includes('respiratory')) catId = 'respiratory';
+    if (illnessId.includes('cough') || illnessId.includes('respiratory') || illnessId.includes('cold')) catId = 'respiratory';
     if (illnessId.includes('digestion') || illnessId.includes('acidity')) catId = 'digestion';
 
     // Mark as read and navigate
@@ -53,7 +46,7 @@ export const NotificationsOverlay = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
         className={cn(
-          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[50vh] max-w-none p-0 border-none flex flex-col transition-all duration-300 ease-in-out rounded-none shadow-2xl z-[100]",
+          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[60vh] max-w-none p-0 border-none flex flex-col transition-all duration-300 ease-in-out rounded-none shadow-2xl z-[100]",
           "active:ring-0 focus:ring-0 focus-visible:ring-0 outline-none",
           "[&>button]:text-amber-400 [&>button]:opacity-100 [&>button]:scale-125",
           isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7] text-foreground"
@@ -76,50 +69,55 @@ export const NotificationsOverlay = ({
 
         <ScrollArea className="flex-1 w-full bg-transparent">
           <div className="p-4 w-full max-w-2xl mx-auto">
-            {unreadLatestRemedy ? (
-              <div className="space-y-4 pb-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {unreadRemedies.length > 0 ? (
+              <div className="space-y-4 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="flex items-center gap-2 px-2 py-1 mb-2">
                   <Sparkles className="w-4 h-4 text-amber-400" />
                   <span className="text-[11px] font-black uppercase tracking-[0.2em] opacity-60">
-                    {isHindi ? 'नवीनतम नुस्खा' : 'Latest Remedy'}
+                    {isHindi ? 'अपठित नुस्खे और अपडेट' : 'Unread Remedies & Updates'}
                   </span>
                 </div>
 
-                <button
-                  onClick={() => handleResultClick(unreadLatestRemedy.id, unreadLatestRemedy.illnessId)}
-                  className={cn(
-                    "w-full p-4 rounded-xl border transition-all text-left flex items-center gap-4 group cursor-pointer active:scale-[0.98]",
-                    isNight 
-                      ? "bg-white/5 border-white/5 hover:border-amber-400 text-white" 
-                      : "bg-white border-primary/5 hover:border-amber-400 text-primary shadow-sm"
-                  )}
-                >
-                  <div className={cn(
-                    "w-10 h-10 rounded-lg flex items-center justify-center font-black text-sm shrink-0 transition-colors duration-500",
-                    isNight ? "bg-white/5 text-amber-400" : "bg-amber-400/5 text-amber-400"
-                  )}>
-                    {toEnglishDigits(unreadLatestRemedy.serialNumber)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-base leading-tight truncate">
-                      {toEnglishDigits(unreadLatestRemedy.name[lang])}
-                    </h4>
-                    <p className="text-[11px] opacity-60 truncate mt-0.5 font-medium">
-                      {toEnglishDigits(unreadLatestRemedy.introduction[lang])}
-                    </p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 opacity-30 group-hover:opacity-100 group-hover:text-amber-400" />
-                </button>
+                <div className="grid grid-cols-1 gap-3">
+                  {unreadRemedies.map((remedy) => (
+                    <button
+                      key={remedy.id}
+                      onClick={() => handleResultClick(remedy.id, remedy.illnessId)}
+                      className={cn(
+                        "w-full p-5 rounded-2xl border transition-all text-left flex items-center gap-5 group cursor-pointer active:scale-[0.98] shadow-sm",
+                        isNight 
+                          ? "bg-white/5 border-white/5 hover:border-amber-400/50 text-white" 
+                          : "bg-white border-primary/5 hover:border-amber-400/50 text-primary"
+                      )}
+                    >
+                      <div className={cn(
+                        "w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg shrink-0 transition-colors duration-500",
+                        isNight ? "bg-white/5 text-amber-400" : "bg-amber-400/10 text-amber-400"
+                      )}>
+                        {toEnglishDigits(remedy.serialNumber)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-lg leading-tight truncate mb-1">
+                          {toEnglishDigits(remedy.name[lang])}
+                        </h4>
+                        <p className="text-[12px] opacity-70 truncate font-medium">
+                          {toEnglishDigits(remedy.introduction[lang])}
+                        </p>
+                      </div>
+                      <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:text-amber-400 group-hover:translate-x-1 transition-all" />
+                    </button>
+                  ))}
+                </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 opacity-40">
-                <MessageCircleOff className="w-16 h-16" />
+              <div className="flex flex-col items-center justify-center py-16 text-center space-y-4 opacity-40">
+                <MessageCircleOff className="w-20 h-20" />
                 <div className="space-y-1">
-                  <p className="font-black text-lg">
+                  <p className="font-black text-xl">
                     {isHindi ? 'अभी कोई नया अपडेट नहीं है' : 'No new updates right now'}
                   </p>
-                  <p className="text-xs">
-                    {isHindi ? 'वैद्य जी जल्द ही नए नुस्खे यहाँ जोड़ेंगे।' : 'Vaidya Ji will add new remedies here soon.'}
+                  <p className="text-sm">
+                    {isHindi ? 'वैद्य जी जल्द ही नए नुस्खे और अपडेट यहाँ जोड़ेंगे।' : 'Vaidya Ji will add new remedies and updates here soon.'}
                   </p>
                 </div>
               </div>
