@@ -16,44 +16,31 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
 
   const categories = [
     {
-      id: 'fever',
+      id: 'fever_flu',
       translations: {
         hi: {
-          title: '1. सामान्य बुखार',
-          subtitle: 'हल्के बुखार, हरारत और शारीरिक थकान के लिए प्राकृतिक उपचार',
+          title: '1. मौसमी बुखार एवं फ्लू',
+          subtitle: 'बुखार, जुकाम और खांसी के लिए प्रामाणिक आयुर्वेदिक उपचार',
         },
         en: {
-          title: '1. General Fever',
-          subtitle: 'Natural treatments for mild fever and physical fatigue',
+          title: '1. Seasonal Fever & Flu',
+          subtitle: 'Authentic Ayurvedic remedies for fever, cold and cough',
         }
       }
     },
     {
-      id: 'cold',
+      id: 'digestion',
       translations: {
         hi: {
-          title: '2. नजला और जुकाम',
-          subtitle: 'नाक बहना, छींकें और बंद नाक के लिए अचूक घरेलू उपचार',
+          title: '2. पाचन',
+          subtitle: 'एसिडिटी, गैस और कब्ज के लिए अचूक घरेलू उपाय',
         },
         en: {
-          title: '2. Cold & Flu',
-          subtitle: 'Effective remedies for runny nose, sneezing and congestion',
+          title: '2. Digestion',
+          subtitle: 'Effective remedies for acidity, gas and constipation',
         }
       }
-    },
-    {
-      id: 'respiratory',
-      translations: {
-        hi: {
-          title: '3. सूखी एवं बलगम वाली खांसी',
-          subtitle: 'हर तरह की सूखी खांसी, बलगम और छाती में जकड़न से राहत के लिए अचूक घरेलू उपचार',
-        },
-        en: {
-          title: '3. Dry and Productive Cough',
-          subtitle: 'Effective remedies for dry cough, phlegm and chest congestion',
-        }
-      }
-    },
+    }
   ];
 
   return (

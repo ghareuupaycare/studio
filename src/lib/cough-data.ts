@@ -1,6 +1,6 @@
 /**
  * @fileOverview Category 3: Dry & Productive Cough (सूखी एवं बलगम वाली खांसी) Data Store
- * Initialized as a dedicated modular node for future expansion.
+ * Isolated dataset handler for Category 3 remedies.
  */
 
 export type LocalizedString = {

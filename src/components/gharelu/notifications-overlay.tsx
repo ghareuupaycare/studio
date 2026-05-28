@@ -31,12 +31,12 @@ export const NotificationsOverlay = ({
   const isHindi = lang === 'hi';
 
   const handleResultClick = (remedyId: string, illnessId: string) => {
-    let catId = 'fever'; 
+    let catId = 'fever_flu'; 
     if (illnessId.includes('joint')) catId = 'joints';
-    if (illnessId === 'common-cold') catId = 'cold';
-    if (illnessId.includes('cough') || illnessId.includes('respiratory')) catId = 'respiratory';
+    if (illnessId === 'common-cold') catId = 'fever_flu';
+    if (illnessId.includes('cough') || illnessId.includes('respiratory')) catId = 'fever_flu';
     if (illnessId.includes('digestion') || illnessId.includes('acidity')) catId = 'digestion';
-    if (illnessId === 'general-fever') catId = 'fever';
+    if (illnessId === 'general-fever') catId = 'fever_flu';
 
     // Mark as read and navigate
     onMarkAsRead(remedyId);
