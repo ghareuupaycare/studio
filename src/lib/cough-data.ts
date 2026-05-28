@@ -3,53 +3,11 @@
  * Isolated dataset handler for Category 3 remedies.
  */
 
-export type LocalizedString = {
-  hi: string | string[];
-  en: string | string[];
-};
-
-export type DoseConfig = {
-  ageRange: { hi: string; en: string };
-  dose: LocalizedString;
-  ingredients?: { hi: string[]; en: string[] };
-};
-
-export type Remedy = {
-  id: string;
-  serialNumber: string;
-  name: { hi: string; en: string };
-  illnessId: string;
-  introduction: LocalizedString;
-  severity?: 'mild' | 'moderate' | 'severe';
-  severityLabel?: { hi: string; en: string };
-  doses: DoseConfig[];
-  ingredients: { hi: string[]; en: string[] };
-  preparation: LocalizedString;
-  usage: LocalizedString;
-  dietEat: LocalizedString;
-  dietAvoid: LocalizedString;
-  strictAvoid?: LocalizedString;
-  routine: {
-    morning: LocalizedString;
-    afternoon: LocalizedString;
-    evening: LocalizedString;
-  };
-  safetyAdvice: LocalizedString;
-  disclaimer: LocalizedString;
-  image: string;
-  keywords: string[];
-};
-
-export const AGE_BRACKETS = {
-  childhood: { hi: "5-12 वर्ष", en: "5-12 Years" },
-  youth: { hi: "13-40 वर्ष", en: "13-40 Years" },
-  middleAge: { hi: "41-60 वर्ष", en: "41-60 Years" },
-  oldAge: { hi: "61-80 वर्ष", en: "61-80 Years" }
-};
+import { Remedy, AGE_BRACKETS } from "./cold-data";
 
 export const COUGH_REMEDIES: Remedy[] = [
   {
-    id: "cough-1",
+    id: "cough_remedy_1",
     serialNumber: "1",
     name: { 
       hi: "सूखी खांसी के लिए शहद और काली मिर्च का अचूक चाटन", 
@@ -65,11 +23,7 @@ export const COUGH_REMEDIES: Remedy[] = [
         "यह दिव्य चाटन सूखी खांसी की सबसे सरल, स्वादिष्ट और तुरंत असर दिखाने वाली अचूक घरेलू दवा है।"
       ],
       en: [
-        "Dry cough increases dryness in the lungs and respiratory tract, causing constant irritation or tickling in the throat.",
-        "No phlegm is produced, but coughing leads to severe pain in the chest, ribs, and abdominal muscles.",
-        "Coughing intensity increases at night, severely disrupting sleep.",
-        "Pure honey creates a protective layer on the irritated throat lining, while roasted black pepper calms respiratory infections and inflammation.",
-        "This divine lick is the simplest, tastiest, and most effective home remedy for dry cough."
+        "Dry cough increases dryness in the lungs and respiratory tract, causing constant irritation in the throat. Honey protects the throat lining while black pepper calms respiratory infections."
       ]
     },
     doses: [
@@ -77,28 +31,28 @@ export const COUGH_REMEDIES: Remedy[] = [
         ageRange: AGE_BRACKETS.childhood, 
         dose: { 
           hi: "तैयार किए गए चाटन में से केवल आधा छोटा चम्मच (मात्रा आधी रखें) ही बच्चे को उंगली से धीरे-धीरे चटाएं।", 
-          en: "Lick only half a teaspoon of the prepared mixture slowly using a finger." 
+          en: "Lick half a teaspoon slowly using a finger." 
         } 
       },
       { 
         ageRange: AGE_BRACKETS.youth, 
         dose: { 
           hi: "1 पूरा छोटा चम्मच भरकर तैयार किया गया चाटन लें और इसे दिन में 3 बार मुंह में रखकर धीरे-धीरे रस निगलें।", 
-          en: "Take 1 full teaspoon and swallow it slowly 3 times a day." 
+          en: "Take 1 full teaspoon and swallow slowly 3 times a day." 
         } 
       },
       { 
         ageRange: AGE_BRACKETS.middleAge, 
         dose: { 
           hi: "1 पूरा छोटा चम्मच तैयार चाटन लें, यह कमज़ोर फेफड़ों की खुश्की को दूर करने में बेहद मददगार है।", 
-          en: "Take 1 full teaspoon; it is highly effective in relieving lung dryness." 
+          en: "Take 1 full teaspoon; highly effective for age-related lung dryness." 
         } 
       },
       { 
         ageRange: AGE_BRACKETS.oldAge, 
         dose: { 
           hi: "1 छोटा चम्मच चाटन (काली मिर्च की मात्रा सिर्फ 1 से 2 चुटकी ही रखें ताकि बुजुर्गों के पेट में जलन या गर्मी न हो)।", 
-          en: "Take 1 teaspoon (keep pepper amount to 1-2 pinches to avoid stomach irritation)." 
+          en: "Take 1 teaspoon with minimal pepper to avoid stomach irritation." 
         } 
       }
     ],
@@ -106,12 +60,12 @@ export const COUGH_REMEDIES: Remedy[] = [
       hi: [
         "शुद्ध प्राकृतिक शहद — 1 छोटा चम्मच",
         "काली मिर्च (मरीच) का बारीक चूर्ण — 2 से 3 चुटकी",
-        "\n\n(ज़रूरी नोट: यह सभी सामग्रियां रसोई में हमेशा उपलब्ध रहती हैं। काली मिर्च को ताजा पीसकर ही इस्तेमाल करें ताकि उसका असर पूरा मिले। ऊपर स्मार्ट खुराक के बटन में अपनी उम्र के अनुसार बताई गई मात्रा ही चाटने के लिए बाहर निकालें।)"
+        "जरूरी नोट: यह सभी सामग्रियां रसोई में हमेशा उपलब्ध रहती हैं। काली मिर्च को ताजा पीसकर ही इस्तेमाल करें ताकि उसका असर पूरा मिले। ऊपर स्मार्ट खुराक के बटन में अपनी उम्र के अनुसार बताई गई मात्रा ही चाटने के लिए बाहर निकालें।"
       ],
       en: [
         "Pure natural honey — 1 teaspoon",
         "Fine black pepper powder — 2 to 3 pinches",
-        "\n\n(Note: Use fresh ground pepper for best results. Use dosage according to selected age group.)"
+        "Note: Use fresh ground pepper for best results. Use dosage according to selected age group."
       ]
     },
     preparation: {
@@ -122,22 +76,17 @@ export const COUGH_REMEDIES: Remedy[] = [
         "इस शहद के ऊपर 2 से 3 चुटकी तैयार काली मिर्च का चूर्ण डालें और उंगली की मदद से दोनों को अच्छी तरह आपस में मिला लें ताकि एक गाढ़ा चाटन बन जाए।"
       ],
       en: [
-        "Lightly dry roast clean, high-quality black peppercorns on a pan over low heat.",
-        "Crush the roasted pepper and sift through a cloth to make a very fine powder.",
-        "Take 1 teaspoon of pure honey in a clean bowl or spoon.",
-        "Add 2-3 pinches of pepper powder to the honey and mix well to form a thick paste."
+        "Dry roast black peppercorns, crush into fine powder, and mix with pure honey to form a thick paste."
       ]
     },
     usage: {
       hi: [
-        "विधि: इस तैयार चाटन को अपनी उम्र के बटन के अनुसार बताई गई चम्मच की मात्रा में निकालें और उंगली से धीरे-धीरे चाटकर खाएं, इसे पानी की तरह एक बार में पूरा न निगलें।",
+        "विधि: इस तैयार चाटन को अपनी उम्र के बटन के अनुसार बताई गई चम्मच की मात्रा में निकालें और उंगली से धीरे-धीरे चटाकर खाएं, इसे पानी की तरह एक बार में पूरा न निगलें।",
         "समय: इसे दिन में 2 से 3 बार (सुबह खाली पेट, दोपहर में और रात को सोने से ठीक पहले) धीरे-धीरे चाटकर लें।",
         "अवधि: इसका नियमित सेवन लगातार 3 से 5 दिनों तक करें, जिससे गले का धसका और पुरानी सूखी खांसी जड़ से खत्म हो जाएगी। दवा लेने के बाद आधे घंटे तक पानी न पिएं।"
       ],
       en: [
-        "Method: Take the prescribed quantity based on age and lick it slowly; do not swallow it all at once like water.",
-        "Timing: Take 2-3 times a day (empty stomach morning, afternoon, and just before bed).",
-        "Duration: Use for 3-5 days to eradicate throat tickling and chronic dry cough. Do not drink water for 30 minutes after."
+        "Lick slowly 2-3 times daily (morning, noon, and night). Use for 3-5 days. Do not drink water for 30 minutes after consumption."
       ]
     },
     dietEat: {
@@ -148,10 +97,7 @@ export const COUGH_REMEDIES: Remedy[] = [
         "पानी: पीने के लिए हमेशा हल्का गुनगुना पानी ही इस्तेमाल करें। गुनगुने पानी में सेंधा नमक डालकर गरारे ज़रूर करें।"
       ],
       en: [
-        "Food: Eat digestible warm food like Moong dal khichdi, hot porridge, or warm pumpkin soup.",
-        "Roti: Eat fresh hot wheat roti with pure desi ghee to maintain throat moisture.",
-        "Fruits: Eat lightly heated raisins or Munakka; highly beneficial for dry cough.",
-        "Water: Always use lukewarm water. Gargle with warm salt water."
+        "Eat digestible warm foods like Moong dal khichdi and warm soups. Use lukewarm water for drinking and gargling."
       ]
     },
     dietAvoid: {
@@ -161,27 +107,25 @@ export const COUGH_REMEDIES: Remedy[] = [
         "भारी प्रोटीन, मांसाहार, अंडा, पनीर और भारी तली-भुनी पूरियां बिल्कुल न खाएं।"
       ],
       en: [
-        "Avoid packaged foods, fried chips, refined flour biscuits, and canned juices as they increase throat dryness.",
-        "Avoid heavy, oily, spicy food, samosas, noodles, and stale food.",
-        "Avoid heavy protein, non-veg, eggs, paneer, and deep-fried items."
+        "Avoid packaged snacks, fried foods, non-veg, and cold beverages that increase throat dryness."
       ]
     },
     strictAvoid: {
       hi: "ठंडी चीजें, फ्रिज का पानी, कोल्ड ड्रिंक, आइसक्रीम, खट्टे फल (नींबू, संतरा) और दही पूरी तरह वर्जित हैं।",
-      en: "Cold items, refrigerated water, sodas, ice cream, sour fruits, and curd are strictly prohibited."
+      en: "Strictly avoid refrigerated water, sodas, ice cream, and sour fruits."
     },
     routine: {
-      morning: { 
-        hi: ["सुबह उठकर सबसे पहले एक गिलास गुनगुना पानी पिएं। ताजी धूप में 10 से 15 मिनट बैठें ताकि छाती को प्राकृतिक गरमाहट मिले।"], 
-        en: ["Morning: Start with a glass of lukewarm water. Sit in fresh sunlight for 10-15 minutes."] 
+      morning: {
+        hi: ["सुबह उठकर सबसे पहले एक गिलास गुनगुना पानी पिएं। ताजी धूप में 10 से 15 मिनट बैठें ताकि छाती को प्राकृतिक गरमाहट मिले।"],
+        en: ["Start with lukewarm water and sit in fresh sunlight for 10-15 minutes."]
       },
-      afternoon: { 
-        hi: ["दोपहर के भोजन के बाद विश्राम करते समय पंखे, कूलर या एसी की सीधी ठंडी हवा अपनी छाती या गले पर बिल्कुल न लगने दें।"], 
-        en: ["Afternoon: Avoid direct fan or AC draft on the chest and throat while resting."] 
+      afternoon: {
+        hi: ["दोपहर के भोजन के बाद विश्राम करते समय पंखे, कूलर या एसी की सीधी हवा अपनी छाती या गले पर बिल्कुल न लगने दें।"],
+        en: ["Avoid direct drafts from fans or AC on the chest area while resting."]
       },
-      evening: { 
-        hi: ["शाम या रात को बाहर निकलते वक्त गले को सूती कपड़े या मफलर से ढककर रखें। रात को सोते समय सिरहाने को थोड़ा ऊंचा रखें ताकि लेटने पर धसका न उठे।"], 
-        en: ["Evening: Keep throat covered with a cotton cloth or muffler outdoors. Use an extra pillow to keep head elevated."] 
+      evening: {
+        hi: ["शाम या रात को बाहर निकलते वक्त गले को सूती कपड़े या मफलर से ढककर रखें। रात को सोते समय सिरहाने को थोड़ा ऊंचा रखें ताकि लेटने पर धसका न उठे।"],
+        en: ["Keep throat covered outdoors. Sleep with head slightly elevated."]
       }
     },
     safetyAdvice: {
@@ -190,26 +134,153 @@ export const COUGH_REMEDIES: Remedy[] = [
         "तो इस घरेलू उपाय के साथ-साथ अपने किसी अच्छे डॉक्टर या वैद्य से मिलकर एक बार अपनी सेहत की जांच अवश्य करवा लें।"
       ],
       en: [
-        "Consult a doctor if high fever, severe chest pain while coughing, or blood in phlegm occurs.",
-        "Ensure a medical check-up alongside these home remedies."
+        "Consult a doctor if you experience high fever, severe chest pain, or blood in phlegm."
       ]
     },
     disclaimer: {
       hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह जरूर लें।",
-      en: "This information is for educational purposes only, please consult your physician."
+      en: "This information is for educational purposes only."
     },
-    image: "https://picsum.photos/seed/cough/600/400",
-    keywords: [
-      "khansi ka gharelu ilaj", 
-      "sukhi khansi ka ilaj", 
-      "dry cough home remedy", 
-      "khansi ki dawa", 
-      "cough syrup gharelu", 
-      "gale me kharas", 
-      "dhaska thik karne ke upay", 
-      "shahad aur kali mirch", 
-      "खांसी का घरेलू इलाज", 
-      "सूखी खांसी"
-    ]
+    image: "https://picsum.photos/seed/cough1/600/400",
+    keywords: ["khansi ka gharelu ilaj", "sukhi khansi ka ilaj", "dry cough home remedy", "shahad aur kali mirch", "सूखी खांसी"]
+  },
+  {
+    id: "cough_remedy_2",
+    serialNumber: "2",
+    name: { 
+      hi: "सूखी खांसी और गले की खुश्की के लिए मुलेठी एवं इलायची का दिव्य चूर्ण", 
+      en: "Divine Mulethi and Cardamom Powder for Dry Cough and Throat Dryness" 
+    },
+    illnessId: "cough",
+    introduction: {
+      hi: [
+        "सूखी खांसी में जब गले की नली पूरी तरह सूख जाती है, तो बार-बार खांसने से गले के अंदर छोटे-छोटे जख्म या छिलन जैसी होने लगती है।",
+        "मुलेठी आयुर्वेद की एक ऐसी जड़ी-बूटी है जो स्वाद में मीठी होती है और गले को तर (Moist) रखने में दुनिया में सबसे बेस्ट मानी जाती है।",
+        "छोटी इलायची के दाने गले की सूजन और छाती की जकड़न को शांत करते हैं, जिससे सूखी धसका उठना तुरंत बंद होता है।",
+        "मिश्री के योग से यह चूर्ण फेफड़ों को ताकत देता है और सूखी खांसी के कारण छाती में होने वाले दर्द को जड़ से मिटाता है।",
+        "यह नुस्खा उन लोगों के लिए रामबाण है जिन्हें खांसते समय गले में कांटे जैसी चुभन महसूस होती है।"
+      ],
+      en: [
+        "Mulethi is excellent for keeping the throat moist, while cardamom calms inflammation and chest tightness. This remedy is ideal for those feeling sharp pain during dry cough."
+      ]
+    },
+    doses: [
+      { 
+        ageRange: AGE_BRACKETS.childhood, 
+        dose: { 
+          hi: "तैयार किए गए चूर्ण में से केवल आधा छोटा चम्मच (मात्रा कम रखें) शहद या गुनगुने पानी के साथ बच्चे को दें।", 
+          en: "Give half a teaspoon with honey or lukewarm water." 
+        } 
+      },
+      { 
+        ageRange: AGE_BRACKETS.youth, 
+        dose: { 
+          hi: "1 पूरा छोटा चम्मच भरकर यह चूर्ण लें और इसे दिन में 3 बार (सुबह, दोपहर, रात) मुंह में रखकर धीरे-धीरे चूसें या गुनगुने पानी से लें।", 
+          en: "Take 1 full teaspoon 3 times a day; suck slowly or take with lukewarm water." 
+        } 
+      },
+      { 
+        ageRange: AGE_BRACKETS.middleAge, 
+        dose: { 
+          hi: "1 पूरा छोटा चम्मच चूर्ण दिन में 3 बार लें, यह उम्र बढ़ने के कारण श्वसन नली में आए सूखेपन को बहुत जल्दी ठीक करता है।", 
+          en: "Take 1 full teaspoon 3 times daily to combat age-related throat dryness." 
+        } 
+      },
+      { 
+        ageRange: AGE_BRACKETS.oldAge, 
+        dose: { 
+          hi: "1 पूरा छोटा चम्मच चूर्ण लें (यदि बुजुर्गों को शुगर/मधुमेह की समस्या हो, तो चूर्ण बनाते समय मिश्री बिल्कुल न मिलाएं, केवल मुलेठी और इलायची ही रखें)।", 
+          en: "Take 1 full teaspoon (omit sugar candy if diabetic)." 
+        } 
+      }
+    ],
+    ingredients: {
+      hi: [
+        "मुलेठी का शुद्ध चूर्ण (पाउडर) — 2 चम्मच",
+        "छोटी इलायची के दाने का चूर्ण — आधा चम्मच",
+        "धागे वाली मिश्री का चूर्ण — 2 चम्मच",
+        "जरूरी नोट: ऊपर बताई गई कुल सामग्री केवल एक बार बनाने का स्टॉक (मात्रा) है। इसे एक बार में पूरा नहीं खाना है। इसे नीचे दी गई विधि से एक बार में तैयार कर लें और फिर ऊपर 'स्मार्ट खुराक' वाले बटन में जो आपकी उम्र हो, उस हिसाब से अपनी खुराक निकाल कर सेवन करें।"
+      ],
+      en: [
+        "Mulethi powder — 2 tsp, Cardamom powder — 1/2 tsp, Sugar candy powder — 2 tsp. Bulk quantity for easy daily dosing."
+      ]
+    },
+    preparation: {
+      hi: [
+        "सबसे पहले मुलेठी की सूखी डंडियों को कूटकर या बाजार से लाया हुआ शुद्ध मुलेठी चूर्ण एक साफ सूखी कटोरी में निकाल लें।",
+        "हरी छोटी इलायची के छिलके उतारकर उसके दानों को ओखली में एकदम बारीक कूटकर पाउडर बना लें।",
+        "धागे वाली मिश्री को भी इमामदस्ते में पहले छोटा-छोटा तोड़ लें और फिर मिक्सी या खरल में पीसकर महीन चूर्ण बना लें।",
+        "अब एक साफ बर्तन में 2 चम्मच मुलेठी चूर्ण, आधा चम्मच इलायची चूर्ण और 2 चम्मच मिश्री चूर्ण को आपस में बहुत अच्छी तरह मिला लें।",
+        "इस तैयार त्रिविध चूर्ण को एक कांच की सूखी शीशी में भरकर रख लें, यह महीनों तक खराब नहीं होता।"
+      ],
+      en: [
+        "Grind cardamom and sugar candy into fine powders. Mix with Mulethi powder and store in a dry glass jar."
+      ]
+    },
+    usage: {
+      hi: [
+        "विधि: इस तैयार चूर्ण को अपनी उम्र के बटन के अनुसार बताई गई चम्मच की मात्रा में निकालें और मुंह में रखकर धीरे-धीरे लार (Saliva) के साथ चूसें, या फिर आधा चम्मच शहद में मिलाकर चाटें।",
+        "समय: इसे दिन में 3 बार हमेशा सुबह, दोपहर और रात को भोजन या कुछ हल्का खाना खाने के 10 से 15 मिनट बाद (यानी भरे पेट) ही लें। खाली पेट इसका सेवन न करें।",
+        "अवधि: इसका नियमित सेवन लगातार 5 से 7 दिनों तक करें। इसे लेने के बाद कम से कम 45 मिनट तक पानी या किसी भी पेय पदार्थ का सेहत बिल्कुल न करें।",
+        "विशेष नोट: मुलेठी और मिश्री की तासीर ठंडी (शीतल) होती है। सूखी खांसी असल में गले के सूखेपन, गर्मी और सूजन के कारण होती है, इसलिए इसकी ठंडी तासीर गले को तर करके सूजन को शांत करती है और खांसी को जड़ से मिटाती है, इससे खांसी बिल्कुल नहीं बढ़ती।"
+      ],
+      en: [
+        "Consume prescribed amount 3 times daily after meals. Suck slowly or mix with honey. Avoid water for 45 minutes after."
+      ]
+    },
+    dietEat: {
+      hi: [
+        "भोजन: हल्का, ताजा और गरम सुपाच्य भोजन लें जैसे—साबुदाने की खिचड़ी, मूंग की दाल का सूप या उबली हुई लौकी-तोरई की सब्जी।",
+        "पेय: दिन में जब भी प्यास लगे, सादे पानी की जगह हल्का गुनगुना पानी ही घूंट-घूंट करके पिएं।",
+        "दूध: रात को सोते समय एक कप गुनगुने दूध में आधा चम्मच शुद्ध गाय का देसी घी मिलाकर पिएं, यह फेफड़ों की खुश्की को तुरंत काटता है।",
+        "कुल्ला: हल्के गरम पानी में एक चुटकी हल्दी और थोड़ा सा सेंधा नमक मिलाकर दिन में दो बार गरारे अवश्य करें।"
+      ],
+      en: [
+        "Eat light warm meals. Drink lukewarm water. Take warm milk with ghee at bedtime. Gargle with turmeric water."
+      ]
+    },
+    dietAvoid: {
+      hi: [
+        "सूखी, कड़क और रूखी चीजें जैसे—खारी बिस्कुट, टोस्ट, भुना हुआ चना, मूंगफली और सूखे मेवे बिना भिगोए बिल्कुल न खाएं, क्योंकि ये गले में फंसकर धसका पैदा करते हैं।",
+        "तीखे मिर्च-मसाले, गरम मसाला, लाल मिर्च, चाट मसाला और अचार का सेवन पूरी तरह बंद रखें।",
+        "बाजार का समोसा, कचौड़ी, पकौड़े और रिफाइंड तेल में बनी चीजें बिल्कुल न छुएं।"
+      ],
+      en: [
+        "Avoid dry snacks, spicy condiments, and fried items that irritate the throat."
+      ]
+    },
+    strictAvoid: {
+      hi: "ठंडी चीजें, फ्रिज का पानी, कोल्ड ड्रिंक, सोडा, खट्टी चीजें (जैसे इमली, अमचूर, सिरका), खट्टे फल और रात के समय दही या मट्ठा लेना सख़्त मना है।",
+      en: "Strictly avoid cold water, sodas, and sour items like vinegar or citrus at night."
+    },
+    routine: {
+      morning: {
+        hi: ["सुबह सोकर उठते ही ठंडे फर्श पर नंगे पैर न चलें, पैरों में चप्पल पहनें और गले को ढककर रखें।"],
+        en: ["Avoid walking barefoot on cold floors; keep throat warm."]
+      },
+      afternoon: {
+        hi: ["भोजन के तुरंत बाद ठंडे पानी से हाथ-मुंह न धोएं, सामान्य या गुनगुने पानी का ही उपयोग करें।"],
+        en: ["Wash up with normal or lukewarm water after lunch."]
+      },
+      evening: {
+        hi: ["शाम ढलने के बाद ठंडी हवा में बाहर न घूमें। रात को सोते समय कमरे का तापमान सामान्य रखें और पंखे की सीधी हवा चेहरे या छाती पर न आने दें।"],
+        en: ["Avoid night drafts and direct airflow from fans while sleeping."]
+      }
+    },
+    safetyAdvice: {
+      hi: [
+        "हमारा यह घरेलू नुस्खा बहुत ही कोमल, मीठा और सुरक्षित है, जो आपके गले को बहुत आराम देगा। फिर भी मुलेठी की प्राकृतिक तासीर को देखते हुए इसे बताई गई सीमित मात्रा में ही लें।",
+        "आप बहुत जल्द बिल्कुल भले-चंगे हो जाएंगे, लेकिन यदि इस उपाय को 4 से 5 दिन लगातार आजमाने के बाद भी आपको राहत न मिले, तो बिल्कुल संकोच न करें। अपने किसी नजदीकी डॉक्टर या नाड़ी वैद्य जी को दिखाकर उनकी सलाह से आगे बढ़ें। आपकी सेहत हमारे लिए सबसे कीमती है।"
+      ],
+      en: [
+        "Use in moderation. If no relief after 4-5 days, consult a qualified physician or Ayurvedic expert."
+      ]
+    },
+    disclaimer: {
+      hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह जरूर लें।",
+      en: "This information is for educational purposes only."
+    },
+    image: "https://picsum.photos/seed/herb1/600/400",
+    keywords: ["khansi ka gharelu ilaj", "mulethi powder for cough", "gale ki khushki के उपाय", "sukhi khansi ki dawa", "मुलेठी"]
   }
 ];
