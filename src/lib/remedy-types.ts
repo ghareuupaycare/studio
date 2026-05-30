@@ -1,6 +1,6 @@
 /**
  * @fileOverview Base Types and Constants for Ayurvedic Remedies.
- * Prevents circular dependencies by providing a common foundation.
+ * This is the single source of truth to prevent circular dependencies.
  */
 
 export type LocalizedString = {
