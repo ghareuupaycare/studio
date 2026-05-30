@@ -38,7 +38,6 @@ export const NotificationsOverlay = ({
     if (illnessId.includes('digestion') || illnessId.includes('acidity')) catId = 'digestion';
     if (illnessId === 'general-fever') catId = 'fever_flu';
 
-    // Mark as read and navigate
     onMarkAsRead(remedyId);
     onSelectRemedy(remedyId, catId);
     onClose();
@@ -100,11 +99,10 @@ export const NotificationsOverlay = ({
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-bold text-lg leading-tight truncate mb-1">
-                          {toEnglishDigits(remedy.name[lang])}
+                          {toEnglishDigits(remedy.name?.[lang] || '')}
                         </h4>
                         <p className="text-[12px] opacity-70 truncate font-medium">
-                          {/* toEnglishDigits handles string arrays by joining them automatically */}
-                          {toEnglishDigits(remedy.introduction[lang])}
+                          {toEnglishDigits(remedy.introduction?.[lang] || '')}
                         </p>
                       </div>
                       <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:text-amber-400 group-hover:translate-x-1 transition-all" />

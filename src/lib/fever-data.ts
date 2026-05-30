@@ -1,57 +1,9 @@
 /**
  * @fileOverview Category 1: General Fever (सामान्य बुखार) Data Store
- * Contains 10 authentic Ayurvedic remedies with full-length detailed parameters.
  * Language standard: Strictly Hindi "और" used for connectives.
  */
 
-export type LocalizedString = {
-  hi: string;
-  en: string;
-};
-
-export type DoseConfig = {
-  ageRange: LocalizedString;
-  dose: LocalizedString;
-  ingredients?: { hi: string[]; en: string[] };
-};
-
-export type Remedy = {
-  id: string;
-  serialNumber: string;
-  name: LocalizedString;
-  illnessId: string;
-  introduction: LocalizedString;
-  severity?: 'mild' | 'moderate' | 'severe';
-  severityLabel?: LocalizedString;
-  doses: DoseConfig[];
-  ingredients: { hi: string[]; en: string[] };
-  preparation: LocalizedString;
-  usage: LocalizedString;
-  dietEat: LocalizedString;
-  dietAvoid: LocalizedString;
-  strictAvoid: LocalizedString;
-  routine: {
-    morning: LocalizedString;
-    afternoon: LocalizedString;
-    evening: LocalizedString;
-  };
-  safetyAdvice: LocalizedString;
-  disclaimer: LocalizedString;
-  image: string;
-  keywords: string[];
-};
-
-const AGE_BRACKETS = {
-  childhood: { hi: "5-12 वर्ष", en: "5-12 Years" },
-  youth: { hi: "13-40 वर्ष", en: "13-40 Years" },
-  middleAge: { hi: "41-60 वर्ष", en: "41-60 Years" },
-  oldAge: { hi: "61-80 वर्ष", en: "61-80 Years" }
-};
-
-const GENERAL_DISCLAIMER: LocalizedString = {
-  hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
-  en: "This information is for educational purposes only, please consult your physician."
-};
+import { Remedy, AGE_BRACKETS, GENERAL_DISCLAIMER } from "./remedy-data";
 
 export const FEVER_REMEDIES: Remedy[] = [
   {
@@ -90,8 +42,8 @@ export const FEVER_REMEDIES: Remedy[] = [
       en: 'Avoid: Packaged snacks like chips, biscuits, and fried street foods. Heavy meals: Cold water, refrigerated food, parathas, and oily preparations.'
     },
     strictAvoid: {
-      hi: 'सख्त परहेज़: कोल्ड ड्रिंक्स, आइसक्रीम, खट्टी चीजें जैसे अचार और रात के समय दही का सेवन पूरी तरह वर्जित है।',
-      en: 'Strict Avoid: Cold drinks, ice cream, sour items like pickles, and curd at night are strictly prohibited.'
+      hi: 'कोल्ड ड्रिंक्स, आइसक्रीम, खट्टी चीजें जैसे अचार और रात के समय दही का सेवन पूरी तरह वर्जित है।',
+      en: 'Cold drinks, ice cream, sour items like pickles, and curd at night are strictly prohibited.'
     },
     routine: {
       morning: { hi: 'सुबह: हल्का उबला हुआ सेब या मूँग की दाल का पतला पानी और गुनगुना पानी पिएं।', en: 'Morning: Have boiled apple pulp or light Moong dal water along with lukewarm water.' },
@@ -99,7 +51,10 @@ export const FEVER_REMEDIES: Remedy[] = [
       evening: { hi: 'शाम/रात: हल्का दलिया या उबली हुई ताजी सब्जियों का सादा सूप लें। रात को जल्दी सोएं।', en: 'Evening: Light porridge or plain vegetable soup. Ensure you sleep early.' }
     },
     safetyAdvice: { hi: 'यदि बुखार 102 डिग्री से अधिक हो या 3 दिन से ज्यादा रहे, तो तुरंत डॉक्टर से संपर्क करें।', en: 'If fever exceeds 102°F or lasts more than 3 days, consult a physician immediately.' },
-    disclaimer: GENERAL_DISCLAIMER,
+    disclaimer: {
+      hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
+      en: "This information is for educational purposes only, please consult your physician."
+    },
     image: "https://picsum.photos/seed/herb1/600/400",
     keywords: ["bukhar ka gharelu ilaj", "fever home remedy", "tulsi aur giloy ka kadha", "giloy kwath", "viral fever dawa", "बुखार का इलाज", "गिलोय", "तुलसी"]
   },
@@ -130,16 +85,19 @@ export const FEVER_REMEDIES: Remedy[] = [
       hi: 'इस पाचक पानी को छानकर दिन में तीन बार सुबह, दोपहर और शाम को भोजन से आधा घंटा पहले घूंट-घूंट करके पिएं।\nअवधि: इसे लगातार 3 से 5 दिनों तक पिएं।',
       en: 'Drink this digestive water thrice daily—morning, noon, and evening—30 minutes before meals. Sip slowly. Duration: Use for 3 to 5 days.'
     },
-    dietEat: { hi: 'भोजन: हल्का सुपाच्य भोजन जैसे मूँग दाल का पानी, उबली हुई लौकी, और ताज़ा बना हुआ गरम खाना।', en: 'Diet: Easily digestible food like Moong dal water, boiled bottle gourd, and fresh hot meals.' },
-    dietAvoid: { hi: 'परहेज़: दूध, भारी घी, और मैदे से बनी भारी मिठाइयों का सेवन बुखार के दौरान बिल्कुल न करें।', en: 'Avoid: Milk, heavy ghee, and sweets made from refined flour during fever.' },
-    strictAvoid: { hi: 'सख्त मनाही: खट्टी चीजें, अचार, और ठंडी ड्रिंक्स का सेवन पाचन को बिगाड़ सकता है।', en: 'Strict Avoid: Sour items, pickles, and cold drinks can worsen digestion.' },
+    dietEat: { hi: 'हल्का सुपाच्य भोजन जैसे मूँग दाल का पानी, उबली हुई लौकी, और ताज़ा बना हुआ गरम खाना।', en: 'Easily digestible food like Moong dal water, boiled bottle gourd, and fresh hot meals.' },
+    dietAvoid: { hi: 'दूध, भारी घी, और मैदे से बनी भारी मिठाइयों का सेवन बुखार के दौरान बिल्कुल न करें।', en: 'Milk, heavy ghee, and sweets made from refined flour during fever.' },
+    strictAvoid: { hi: 'खट्टी चीजें, अचार, और ठंडी ड्रिंक्स का सेवन पाचन को बिगाड़ सकता है।', en: 'Sour items, pickles, and cold drinks can worsen digestion.' },
     routine: {
       morning: { hi: 'सुबह: गुनगुना पानी और यह पाचक पानी लें। हल्का नाश्ता करें।', en: 'Morning: Take lukewarm water followed by this digestive water. Eat a light breakfast.' },
       afternoon: { hi: 'दोपहर: सादा दलिया और उबली सब्जियां।', en: 'Afternoon: Plain porridge and boiled vegetables.' },
       evening: { hi: 'शाम: सब्जियों का सादा सूप और जल्दी डिनर।', en: 'Evening: Plain vegetable soup and an early dinner.' }
     },
     safetyAdvice: { hi: 'यदि पाचन बहुत ज्यादा खराब हो और लगातार उल्टियां हों, तो तुरंत डॉक्टर से मिलें।', en: 'If digestion is severely compromised with continuous vomiting, consult a doctor immediately.' },
-    disclaimer: GENERAL_DISCLAIMER,
+    disclaimer: {
+      hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
+      en: "This information is for educational purposes only, please consult your physician."
+    },
     image: "https://picsum.photos/seed/digestion/600/400",
     keywords: ["bukhar me dhaniya ka pani", "adrak aur dhaniya", "fever digestion remedy", "dhaniya ke beej", "halka bukhar ka upay", "धनिए का पानी", "अदरक"]
   },
@@ -164,16 +122,19 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     preparation: { hi: 'तय मात्रा में चूर्ण को एक चम्मच शहद के साथ मिलाकर एक गाढ़ा पेस्ट बना लें।', en: 'Mix the prescribed amount of churna with a spoonful of honey to create a thick paste.' },
     usage: { hi: 'इस मिश्रण को दिन में दो बार, सुबह नाश्ते के बाद और शाम को भोजन के बाद लें।\nअवधि: बुखार पूरी तरह ठीक होने तक या 5 दिनों तक लें।', en: 'Take this blend twice daily, after breakfast and after dinner. Duration: Use until the fever subsides completely or for 5 days.' },
-    dietEat: { hi: 'भोजन: मूँग दाल, पतली चपाती, और उबली हुई सब्जियां। ताज़ा फल जैसे पपीता खाएं।', en: 'Food: Moong dal, thin rotis, and boiled vegetables. Eat fresh fruits like papaya.' },
-    dietAvoid: { hi: 'परहेज़: बहुत अधिक मसालेदार खाना, मिर्च, और तेल वाले आचार से बचें।', en: 'Avoid: Highly spicy food, chilies, and oily pickles.' },
-    strictAvoid: { hi: 'सख्त मनाही: जंक फूड, कोल्ड ड्रिंक्स और बासी भोजन का सेवन बिल्कुल न करें।', en: 'Strict Avoid: Junk food, cold drinks, and stale food are completely prohibited.' },
+    dietEat: { hi: 'मूँग दाल, पतली चपाती, और उबली हुई सब्जियां। ताज़ा फल जैसे पपीता खाएं।', en: 'Moong dal, thin rotis, and boiled vegetables. Eat fresh fruits like papaya.' },
+    dietAvoid: { hi: 'बहुत अधिक मसालेदार खाना, मिर्च, और तेल वाले आचार से बचें।', en: 'Highly spicy food, chilies, and oily pickles.' },
+    strictAvoid: { hi: 'जंक फूड, कोल्ड ड्रिंक्स और बासी भोजन का सेवन बिल्कुल न करें।', en: 'Junk food, cold drinks, and stale food are completely prohibited.' },
     routine: {
       morning: { hi: 'सुबह: हल्का नाश्ता और चूर्ण का सेवन।', en: 'Morning: Light breakfast followed by churna consumption.' },
       afternoon: { hi: 'दोपहर: सात्विक और ताजा भोजन।', en: 'Afternoon: Sattvic and fresh lunch.' },
       evening: { hi: 'शाम: रात का भोजन जल्दी और हल्का रखें।', en: 'Evening: Keep dinner early and light.' }
     },
     safetyAdvice: { hi: 'गर्भवती महिलाएं और स्तनपान कराने वाली माताएं बिना चिकित्सक की सलाह के इसका सेवन न करें।', en: 'Pregnant and lactating mothers should not consume this without a physician\'s advice.' },
-    disclaimer: GENERAL_DISCLAIMER,
+    disclaimer: {
+      hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
+      en: "This information is for educational purposes only, please consult your physician."
+    },
     image: "https://picsum.photos/seed/vaidya/600/400",
     keywords: ["mahasudarshan churna", "mahasudarshan aur shahad", "ayurvedic fever medicine", "purana bukhar ka ilaj", "महासुदर्शन चूर्ण", "शहद"]
   },
@@ -198,16 +159,19 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     preparation: { hi: 'मुनक्का और किशमिश को धोकर रात भर एक गिलास पानी में भिगो दें। सुबह इन दानों को उसी पानी में अच्छी तरह मसल लें और फिर छान लें।', en: 'Wash Munakka and raisins and soak them overnight in a glass of water. In the morning, mash them thoroughly into the same water and then strain.' },
     usage: { hi: 'इस तैयार पानी को सुबह खाली पेट पिएं। इसे धीरे-धीरे पिएं ताकि शरीर इसे अच्छे से सोख सके।\nअवधि: इसे लगातार 3 से 5 दिनों तक पिएं।', en: 'Drink this prepared water on an empty stomach in the morning. Sip slowly for better absorption. Duration: Use for 3 to 5 days.' },
-    dietEat: { hi: 'भोजन: ठंडी तासीर वाले फल और अनुकूल जैसे अनार और मौसमी फल खाएं।', en: 'Food: Eat cooling fruits like pomegranate and other seasonal fruits.' },
-    dietAvoid: { hi: 'परहेज़: लाल मिर्च, गरम मसाला, और बहुत अधिक गरम चाय-कॉफी।', en: 'Avoid: Red chili, garam masala, and very hot tea or coffee.' },
-    strictAvoid: { hi: 'सख्त मनाही: शराब, धूम्रपान और मांस का सेवन पूरी तरह वर्जित है।', en: 'Strict Avoid: Alcohol, smoking, and non-veg consumption are strictly prohibited.' },
+    dietEat: { hi: 'ठंडी तासीर वाले फल और अनुकूल जैसे अनार और मौसमी फल खाएं।', en: 'Eat cooling fruits like pomegranate and other seasonal fruits.' },
+    dietAvoid: { hi: 'लाल मिर्च, गरम मसाला, और बहुत अधिक गरम चाय-कॉफी।', en: 'Red chili, garam masala, and very hot tea or coffee.' },
+    strictAvoid: { hi: 'शराब, धूम्रपान और मांस का सेवन पूरी तरह वर्जित है।', en: 'Alcohol, smoking, and non-veg consumption are strictly prohibited.' },
     routine: {
       morning: { hi: 'सुबह: मुनक्का और किशमिश का पानी।', en: 'Morning: Munakka and raisin water.' },
       afternoon: { hi: 'दोपहर: हल्की मूंग दाल की खिचड़ी।', en: 'Afternoon: Light Moong dal khichdi.' },
       evening: { hi: 'शाम: उबले हुए फल और पर्याप्त आराम।', en: 'Evening: Boiled fruits and adequate rest.' }
     },
     safetyAdvice: { hi: 'मधुमेह (Diabetes) के रोगी इसकी मात्रा का विशेष ध्यान रखें या डॉक्टर से पूछकर ही लें।', en: 'Diabetic patients should monitor the quantity or consult a doctor before use.' },
-    disclaimer: GENERAL_DISCLAIMER,
+    disclaimer: {
+      hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
+      en: "This information is for educational purposes only, please consult your physician."
+    },
     image: "https://picsum.photos/seed/skin/600/400",
     keywords: ["kishmish aur munakka", "munakka ka pani bukhar", "fever heat reduction", "body temperature down", "मुनक्का का पानी", "शीतल पानी"]
   },
@@ -232,16 +196,19 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     preparation: { hi: 'एक कप पानी में दालचीनी और लौंग डालकर अच्छी तरह उबालें जब तक पानी आधा न हो जाए। इसे उबालते समय ढक कर रखें ताकि मसालों के औषधीय तेल न उड़ें।', en: 'Boil cinnamon and cloves in a cup of water until reduced to half. Keep it covered while boiling to preserve the medicinal volatile oils.' },
     usage: { hi: 'इसे छानकर गर्म-गर्म पिएं। इसे पीने के तुरंत बाद चादर या कंबल ओढ़कर सो जाएं ताकि पसीना आए।\nअवधि: दिन में दो बार, 3 दिनों तक लें।', en: 'Strain and drink hot. Immediately after drinking, lie down and cover yourself with a blanket to induce sweating. Duration: Twice daily for 3 days.' },
-    dietEat: { hi: 'भोजन: गर्म सब्जियां, अदरक वाली चाय, और ताज़ा बना सूप।', en: 'Food: Hot vegetables, ginger tea, and fresh soup.' },
-    dietAvoid: { hi: 'परहेज़: आइसक्रीम, फ्रिज का पानी, और ठंडी दही।', en: 'Avoid: Ice cream, refrigerated water, and cold curd.' },
-    strictAvoid: { hi: 'सख्त मनाही: ठंडी हवा में घूमना और गीले बालों में रहना।', en: 'Strict Avoid: Walking in cold drafts and keeping hair wet.' },
+    dietEat: { hi: 'गर्म सब्जियां, अदरक वाली चाय, और ताज़ा बना सूप।', en: 'Hot vegetables, ginger tea, and fresh soup.' },
+    dietAvoid: { hi: 'आइसक्रीम, फ्रिज का पानी, और ठंडी दही।', en: 'Ice cream, refrigerated water, and cold curd.' },
+    strictAvoid: { hi: 'ठंडी हवा में घूमना और गीले बालों में रहना।', en: 'Walking in cold drafts and keeping hair wet.' },
     routine: {
       morning: { hi: 'सुबह: दालचीनी चाय और हल्का नाश्ता।', en: 'Morning: Cinnamon tea and light breakfast.' },
       afternoon: { hi: 'दोपहर: गर्म मक्का या गेहूं की चपाती।', en: 'Afternoon: Hot corn or wheat chapatis.' },
       evening: { hi: 'शाम: गर्म दलिया और जल्दी नींद।', en: 'Evening: Hot porridge and early sleep.' }
     },
     safetyAdvice: { hi: 'गर्मी के मौसम में इसका अधिक सेवन न करें क्योंकि इसकी तासीर बहुत गर्म होती है।', en: 'Avoid over-consumption during summer due to its highly heating nature.' },
-    disclaimer: GENERAL_DISCLAIMER,
+    disclaimer: {
+      hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
+      en: "This information is for educational purposes only, please consult your physician."
+    },
     image: "https://picsum.photos/seed/cough/600/400",
     keywords: ["dalchini aur laung ki chai", "fever cough remedy", "svedi chai", "sweating remedy for fever", "दालचीनी", "लौंग की चाय"]
   },
@@ -266,16 +233,19 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     preparation: { hi: 'सभी सामग्रियों को पानी में डालकर धीमी आंच पर तब तक उबालें जब तक पानी आधा न रह जाए। इसे छान लें और गुनगुना रहने दें।', en: 'Boil all ingredients in water on low heat until reduced to half. Strain and let it sit until lukewarm.' },
     usage: { hi: 'इसे हल्का गुनगुना पिएं। इसे पीने के बाद आराम करना बहुत ज़रूरी है।\nअवधि: दिन में दो बार, 3-5 दिनों तक।', en: 'Drink it slightly lukewarm. Resting after consumption is essential. Duration: Twice daily for 3-5 days.' },
-    dietEat: { hi: 'भोजन: बाजरे या ज्वार की खिचड़ी, गर्म मांड निकाला हुआ चावल।', en: 'Food: Bajra or Jowar khichdi, hot rice with gruel removed.' },
-    dietAvoid: { hi: 'परहेज़: दही, मट्ठा, और चावल का पानी (ठंडा होने पर)।', en: 'Avoid: Curd, buttercream, and cold rice water.' },
-    strictAvoid: { hi: 'सख्त मनाही: नंगे पैर ठंडी जमीन पर चलना।', en: 'Strict Avoid: Walking barefoot on cold floors.' },
+    dietEat: { hi: 'बाजरे या ज्वार की खिचड़ी, गर्म मांड निकाला हुआ चावल।', en: 'Bajra or Jowar khichdi, hot rice with gruel removed.' },
+    dietAvoid: { hi: 'दही, मट्ठा, और चावल का पानी (ठंडा होने पर)।', en: 'Curd, buttercream, and cold rice water.' },
+    strictAvoid: { hi: 'नंगे पैर ठंडी जमीन पर चलना।', en: 'Walking barefoot on cold floors.' },
     routine: {
       morning: { hi: 'सुबह: काढ़ा और उसके बाद पूर्ण आराम।', en: 'Morning: Brew followed by complete rest.' },
       afternoon: { hi: 'दोपहर: सात्विक और ताजा आहार।', en: 'Afternoon: Sattvic and fresh diet.' },
       evening: { hi: 'शाम: हल्का सूप और गुनगुना पानी।', en: 'Evening: Light soup and lukewarm water.' }
     },
     safetyAdvice: { hi: 'जिन लोगों को एसिडिटी (पित्त) की समस्या अधिक है, वे इसकी मात्रा कम रखें।', en: 'Individuals with high acidity (Pitta) should take this in smaller quantities.' },
-    disclaimer: GENERAL_DISCLAIMER,
+    disclaimer: {
+      hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
+      en: "This information is for educational purposes only, please consult your physician."
+    },
     image: "https://picsum.photos/seed/herb1/600/400",
     keywords: ["ajwain sonth aur gud", "pasina lane wala kadha", "thand lagkar bukhar", "fever chills remedy", "अजवाइन सोंठ", "गुड़ का काढ़ा"]
   },
@@ -300,16 +270,19 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     preparation: { hi: 'तीनों सामग्रियों को बराबर वजन में लेकर एक साथ मिला लें और एक साफ़ कांच की शीशी में भर लें।', en: 'Mix equal weights of all three ingredients and store in a clean glass jar.' },
     usage: { hi: 'इस चूर्ण को गुनगुने पानी के साथ दिन में दो बार सुबह और शाम भोजन के बाद लें।\nअवधि: 5 से 7 दिनों तक नियमित लें।', en: 'Take this powder twice daily, morning and evening after meals, with lukewarm water. Duration: Use regularly for 5 to 7 days.' },
-    dietEat: { hi: 'भोजन: ताजा बना भोजन और उबली हुई सब्जियां।', en: 'Food: Freshly cooked meals and boiled vegetables.' },
-    dietAvoid: { hi: 'परहेज़: भारी तेल वाला खाना और गहरी तली चीजें।', en: 'Avoid: Oily heavy food and deep-fried items.' },
-    strictAvoid: { hi: 'सख्त मनाही: पैकेट वाले ठंडे ड्रिंक्स।', en: 'Strict Avoid: Packaged cold drinks.' },
+    dietEat: { hi: 'ताजा बना भोजन और उबली हुई सब्जियां।', en: 'Freshly cooked meals and boiled vegetables.' },
+    dietAvoid: { hi: 'भारी तेल वाला खाना और गहरी तली चीजें।', en: 'Oily heavy food and deep-fried items.' },
+    strictAvoid: { hi: 'पैकेट वाले ठंडे ड्रिंक्स।', en: 'Packaged cold drinks.' },
     routine: {
       morning: { hi: 'सुबह: चूर्ण और पर्याप्त गुनगुना पानी।', en: 'Morning: Powder and plenty of lukewarm water.' },
       afternoon: { hi: 'दोपहर: सादी मूँग दाल खिचड़ी।', en: 'Afternoon: Plain Moong dal khichdi.' },
       evening: { hi: 'शाम: रात को हल्का और जल्दी भोजन।', en: 'Evening: Early and light dinner.' }
     },
     safetyAdvice: { hi: 'इसे खाली पेट न लें, वरना पेट में जलन हो सकती है।', en: 'Do not take on an empty stomach, as it may cause gastric irritation.' },
-    disclaimer: GENERAL_DISCLAIMER,
+    disclaimer: {
+      hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
+      en: "This information is for educational purposes only, please consult your physician."
+    },
     image: "https://picsum.photos/seed/digestion/600/400",
     keywords: ["methi sonth bhuna jeera", "jwarnashak churna", "fever powder home remedy", "home made paracetamol ayurvedic", "ज्वरनाशक चूर्ण", "मेथी"]
   },
@@ -334,16 +307,19 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     preparation: { hi: 'सबको पानी में डालकर तब तक उबालें जब तक पानी आधा न रह जाए। इसे अच्छी तरह दबाकर छान लें।', en: 'Add all ingredients to water and boil until reduced to half. Press the solids well while straining.' },
     usage: { hi: 'इसे छानकर हल्का गुनगुना पिएं। इसे दिन में दो बार सुबह और शाम लें।\nअवधि: 3 से 5 दिनों तक लें।', en: 'Strain and drink slightly lukewarm twice daily, morning and evening. Duration: Use for 3 to 5 days.' },
-    dietEat: { hi: 'भोजन: हल्का सुपाच्य खाना जैसे मूंग दाल।', en: 'Food: Easily digestible light food like Moong dal.' },
-    dietAvoid: { hi: 'परहेज़: बहुत अधिक भारी और ठंडा भोजन।', en: 'Avoid: Very heavy and cold food.' },
-    strictAvoid: { hi: 'सख्त मनाही: मैदा और मैदे से बनी चीजें।', en: 'Strict Avoid: Refined flour and its products.' },
+    dietEat: { hi: 'हल्का सुपाच्य खाना जैसे मूंग दाल।', en: 'Easily digestible light food like Moong dal.' },
+    dietAvoid: { hi: 'बहुत अधिक भारी और ठंडा भोजन।', en: 'Very heavy and cold food.' },
+    strictAvoid: { hi: 'मैदा और मैदे से बनी चीजें।', en: 'Refined flour and its products.' },
     routine: {
       morning: { hi: 'सुबह: औषधीय काढ़ा।', en: 'Morning: Medicinal brew.' },
       afternoon: { hi: 'दोपहर: सादी मूँग दाल और रोटी।', en: 'Afternoon: Plain Moong dal and roti.' },
       evening: { hi: 'शाम: गरमा-गरम सब्जी का सूप।', en: 'Evening: Piping hot vegetable soup.' }
     },
     safetyAdvice: { hi: ' यदि एसिडिटी या पेट में जलन महसूस हो, तो काली मिर्च की मात्रा कम कर दें।', en: 'If acidity or stomach burning occurs, reduce the quantity of black pepper.' },
-    disclaimer: GENERAL_DISCLAIMER,
+    disclaimer: {
+      hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
+      en: "This information is for educational purposes only, please consult your physician."
+    },
     image: "https://picsum.photos/seed/herb1/600/400",
     keywords: ["kali mirch adrak tulsi", "tikha jwarnashak kadha", "cough aur fever remedy", "gale me kharas aur bukhar", "काली मिर्च", "तीखा काढ़ा"]
   },
@@ -368,16 +344,19 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     preparation: { hi: 'एक मिट्टी के बर्तन में रात भर इन सामग्रियों को पानी में भिगोकर रखें। सुबह इसे अच्छी तरह मसलकर छान लें। यह ठंडी विधि से तैयार किया जाता है।', en: 'Soak all ingredients in an earthen pot overnight. In the morning, mash them well and strain. This is prepared using the cold extraction method.' },
     usage: { hi: 'इसे दिन में तीन बार थोड़ा-थोड़ा करके पिएं।\nअवधि: बुखार की गर्मी कम होने तक 2-3 दिनों तक।', en: 'Drink small portions thrice daily. Duration: Use for 2-3 days until the feverish heat subsides.' },
-    dietEat: { hi: 'भोजन: तरबूज, अनार और ठंडी तासीर वाले ताजे फल।', en: 'Food: Watermelon, pomegranate, and other cooling fresh fruits.' },
-    dietAvoid: { hi: 'परहेज़: सीधी तेज धूप और आग के पास बैठना।', en: 'Avoid: Direct strong sunlight and sitting near fire.' },
-    strictAvoid: { hi: 'सख्त मनाही: शराब और मांसाहारी आहार।', en: 'Strict Avoid: Alcohol and non-veg diet.' },
+    dietEat: { hi: 'तरबूज, अनार और ठंडी तासीर वाले ताजे फल।', en: 'Watermelon, pomegranate, and other cooling fresh fruits.' },
+    dietAvoid: { hi: 'सीधी तेज धूप और आग के पास बैठना।', en: 'Direct strong sunlight and sitting near fire.' },
+    strictAvoid: { hi: 'शराब और मांसाहारी आहार।', en: 'Alcohol and non-veg diet.' },
     routine: {
       morning: { hi: 'सुबह: शीतल हिम का सेवन।', en: 'Morning: Intake of cooling infusion.' },
       afternoon: { hi: 'दोपहर: हल्का और ठंडा भोजन।', en: 'Afternoon: Light and cool meal.' },
       evening: { hi: 'शाम: ठंडे और शांत वातावरण में रहें।', en: 'Evening: Stay in a cool and calm environment.' }
     },
     safetyAdvice: { hi: 'यदि मरीज को ठंड लग रही हो या कफ जमा हो, तो यह शीतल हिम न लें।', en: 'Do not use if the patient is feeling chills or has heavy congestion.' },
-    disclaimer: GENERAL_DISCLAIMER,
+    disclaimer: {
+      hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
+      en: "This information is for educational purposes only, please consult your physician."
+    },
     image: "https://picsum.photos/seed/skin/600/400",
     keywords: ["khas dhaniya sonth", "jwarnashak him", "pitta bukhar", "body burning in fever", "शीतल ज्वरनाशक", "खस का पानी"]
   },
@@ -402,16 +381,19 @@ export const FEVER_REMEDIES: Remedy[] = [
     },
     preparation: { hi: 'खजूर के छोटे टुकड़े कर लें। एक बर्तन में घी डालकर खजूर को हल्का सा भून लें। अब इसमें दूध डालकर एक उबाल आने तक गर्म करें।', en: 'Chop the dates into small pieces. Heat ghee in a pan and lightly roast the dates. Add milk and heat until it reaches a boil.' },
     usage: { hi: 'इसे रात को सोने से पहले गुनगुना पिएं और खजूर को चबा-चबाकर खाएं।\nअवधि: बुखार ठीक होने के बाद 7 से 10 दिनों तक लगातार लें।', en: 'Drink it lukewarm before bedtime and chew the dates thoroughly. Duration: Take for 7 to 10 consecutive days after the fever has subsided.' },
-    dietEat: { hi: 'भोजन: पौष्टिक and संतुलित आहार, हरी पत्तेदार सब्जियां।', en: 'Food: Nutritious and balanced diet, green leafy vegetables.' },
-    dietAvoid: { hi: 'परहेज़: भारी तली-भुनी चीजें and फास्ट फूड।', en: 'Avoid: Deep-fried oily items and fast food.' },
-    strictAvoid: { hi: 'सख्त मनाही: अत्यधिक मानसिक and शारीरिक तनाव।', en: 'Strict Avoid: Excessive mental and physical stress.' },
+    dietEat: { hi: 'पौष्टिक और संतुलित आहार, हरी पत्तेदार सब्जियां।', en: 'Nutritious and balanced diet, green leafy vegetables.' },
+    dietAvoid: { hi: 'भारी तली-भुनी चीजें और फास्ट फूड।', en: 'Deep-fried oily items and fast food.' },
+    strictAvoid: { hi: 'अत्यधिक मानसिक और शारीरिक तनाव।', en: 'Excessive mental and physical stress.' },
     routine: {
       morning: { hi: 'सुबह: ताजी हवा में हल्की सैर।', en: 'Morning: Light walk in fresh air.' },
       afternoon: { hi: 'दोपहर: भरपूर पौष्टिक भोजन।', en: 'Afternoon: Full nutritious lunch.' },
       evening: { hi: 'शाम: यह खजूर वाला दूध लें और समय पर सोएं।', en: 'Evening: Take this dates milk and sleep on time.' }
     },
     safetyAdvice: { hi: 'मधुमेह (Diabetes) के रोगी खजूर की मात्रा कम रखें और डॉक्टर से सलाह लें।', en: 'Diabetic patients should limit dates and consult their doctor.' },
-    disclaimer: GENERAL_DISCLAIMER,
+    disclaimer: {
+      hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
+      en: "This information is for educational purposes only, please consult your physician."
+    },
     image: "https://picsum.photos/seed/vaidya/600/400",
     keywords: ["bukhar ke baad ki kamjori", "fever weakness remedy", "body pain after fever", "immunity booster after fever", "ताकत लाने का उपाय", "कमजोरी"]
   }

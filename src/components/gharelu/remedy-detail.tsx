@@ -326,37 +326,39 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       </div>
 
       {/* Routine */}
-      <div className={cn(
-        "p-10 rounded-[3rem] border shadow-md",
-        isNight ? "bg-black border-white/20" : "bg-[#FDF6E2] border-primary/10"
-      )}>
-        <h3 className={headingClass}>
-          <Utensils className="w-8 h-8 shrink-0" /> {isHindi ? '8. दिनचर्या' : '8. Daily Routine'}
-        </h3>
-        <div className="space-y-12">
-          <div className="flex gap-6">
-            <div className="p-6 rounded-full bg-accent/10 text-accent h-fit shrink-0"><Sun className="w-9 h-9" /></div>
-            <div>
-              <h4 className="text-[22px] font-black uppercase text-accent mb-3">{isHindi ? 'सुबह' : 'Morning'}</h4>
-              <div className={bodyTextClass}>{renderParam(remedy.routine?.morning?.[lang])}</div>
+      {remedy.routine && (
+        <div className={cn(
+          "p-10 rounded-[3rem] border shadow-md",
+          isNight ? "bg-black border-white/20" : "bg-[#FDF6E2] border-primary/10"
+        )}>
+          <h3 className={headingClass}>
+            <Utensils className="w-8 h-8 shrink-0" /> {isHindi ? '8. दिनचर्या' : '8. Daily Routine'}
+          </h3>
+          <div className="space-y-12">
+            <div className="flex gap-6">
+              <div className="p-6 rounded-full bg-accent/10 text-accent h-fit shrink-0"><Sun className="w-9 h-9" /></div>
+              <div>
+                <h4 className="text-[22px] font-black uppercase text-accent mb-3">{isHindi ? 'सुबह' : 'Morning'}</h4>
+                <div className={bodyTextClass}>{renderParam(remedy.routine?.morning?.[lang])}</div>
+              </div>
             </div>
-          </div>
-          <div className="flex gap-6">
-            <div className="p-6 rounded-full bg-primary/10 text-primary h-fit shrink-0"><Coffee className="w-9 h-9" /></div>
-            <div>
-              <h4 className="text-[22px] font-black uppercase text-primary mb-3">{isHindi ? 'दोपहर' : 'Afternoon'}</h4>
-              <div className={bodyTextClass}>{renderParam(remedy.routine?.afternoon?.[lang])}</div>
+            <div className="flex gap-6">
+              <div className="p-6 rounded-full bg-primary/10 text-primary h-fit shrink-0"><Coffee className="w-9 h-9" /></div>
+              <div>
+                <h4 className="text-[22px] font-black uppercase text-primary mb-3">{isHindi ? 'दोपहर' : 'Afternoon'}</h4>
+                <div className={bodyTextClass}>{renderParam(remedy.routine?.afternoon?.[lang])}</div>
+              </div>
             </div>
-          </div>
-          <div className="flex gap-6">
-            <div className="p-6 rounded-full bg-slate-400/10 text-slate-500 h-fit shrink-0"><Moon className="w-9 h-9" /></div>
-            <div>
-              <h4 className="text-[22px] font-black uppercase text-slate-500 mb-3">{isHindi ? 'शाम/रात' : 'Evening/Night'}</h4>
-              <div className={bodyTextClass}>{renderParam(remedy.routine?.evening?.[lang])}</div>
+            <div className="flex gap-6">
+              <div className="p-6 rounded-full bg-slate-400/10 text-slate-500 h-fit shrink-0"><Moon className="w-9 h-9" /></div>
+              <div>
+                <h4 className="text-[22px] font-black uppercase text-slate-500 mb-3">{isHindi ? 'शाम/रात' : 'Evening/Night'}</h4>
+                <div className={bodyTextClass}>{renderParam(remedy.routine?.evening?.[lang])}</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Safety & Disclaimer */}
       <div className="space-y-8">

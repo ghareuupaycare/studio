@@ -9,11 +9,10 @@ export function cn(...inputs: ClassValue[]) {
  * Converts Devanagari digits (०-९) to standard English digits (0-9).
  * Robustly handles strings, arrays of strings, and null/undefined values.
  */
-export function toEnglishDigits(input: string | string[] | any): any {
-  if (!input) return "";
+export function toEnglishDigits(input: string | string[] | any): string {
+  if (input === null || input === undefined) return "";
 
-  // If input is an array, recursively process each item and join with a space
-  // This prevents crashes in components that expect a single string preview.
+  // If input is an array, process each item and join with a space
   if (Array.isArray(input)) {
     return input.map(item => toEnglishDigits(item)).join(' ');
   }

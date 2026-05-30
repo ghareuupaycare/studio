@@ -8,9 +8,14 @@ export type LocalizedString = {
   en: string;
 };
 
+export type FlexibleLocalizedString = {
+  hi: string | string[];
+  en: string | string[];
+};
+
 export type DoseConfig = {
   ageRange: LocalizedString;
-  dose: LocalizedString;
+  dose: FlexibleLocalizedString;
   ingredients?: { hi: string[]; en: string[] };
 };
 
@@ -19,25 +24,25 @@ export type Remedy = {
   serialNumber: string;
   name: LocalizedString;
   illnessId: string;
-  introduction: LocalizedString;
+  introduction: FlexibleLocalizedString;
   severity?: 'mild' | 'moderate' | 'severe';
   severityLabel?: LocalizedString;
   doses: DoseConfig[];
   ingredients: { hi: string[]; en: string[] };
-  preparation: LocalizedString;
-  usage: LocalizedString;
-  dietEat: LocalizedString;
-  dietAvoid: LocalizedString;
-  strictAvoid: LocalizedString;
+  preparation: FlexibleLocalizedString;
+  usage: FlexibleLocalizedString;
+  dietEat: FlexibleLocalizedString;
+  dietAvoid: FlexibleLocalizedString;
+  strictAvoid?: FlexibleLocalizedString;
   routine: {
-    morning: LocalizedString;
-    afternoon: LocalizedString;
-    evening: LocalizedString;
+    morning: FlexibleLocalizedString;
+    afternoon: FlexibleLocalizedString;
+    evening: FlexibleLocalizedString;
   };
-  safetyAdvice: LocalizedString;
-  disclaimer: LocalizedString;
-  image: string;
-  keywords: string | string[];
+  safetyAdvice: FlexibleLocalizedString;
+  disclaimer: FlexibleLocalizedString;
+  image?: string;
+  keywords: string[];
 };
 
 export const AGE_BRACKETS = {
@@ -53,10 +58,8 @@ export const GENERAL_DISCLAIMER: LocalizedString = {
 };
 
 export const CATEGORIES = [
-  { id: 'fever', label: '1. सामान्य बुखार', icon: 'Thermometer', image: "https://picsum.photos/seed/cough/600/400" },
-  { id: 'cold', label: '2. नजला और जुकाम', icon: 'Wind', image: "https://picsum.photos/seed/cold/600/400" },
-  { id: 'respiratory', label: '3. सूखी एवं बलगम वाली खांसी', icon: 'Wind', image: "https://picsum.photos/seed/cough/600/400" },
-  { id: 'digestion', label: '4. पाचन', icon: 'Stomach', image: "https://picsum.photos/seed/digestion/600/400" },
+  { id: 'fever_flu', label: '1. मौसमी बुखार एवं फ्लू', icon: 'Thermometer', image: "https://picsum.photos/seed/cough/600/400" },
+  { id: 'digestion', label: '2. पाचन', icon: 'Stomach', image: "https://picsum.photos/seed/digestion/600/400" },
 ];
 
 import { FEVER_REMEDIES } from "./fever-data";
