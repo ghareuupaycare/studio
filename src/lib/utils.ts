@@ -19,6 +19,8 @@ export function toEnglishDigits(input: string | string[] | any): string {
 
   // Ensure we are working with a string
   const str = String(input);
+  if (!str) return str;
+
   const devanagariDigits = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
   
   return str.split('').map(char => {

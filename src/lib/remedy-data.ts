@@ -1,6 +1,5 @@
 /**
  * @fileOverview Main Data Hub for Ayurvedic Remedies.
- * Aggregates all modular data files for app-wide use.
  */
 
 import { FEVER_REMEDIES } from "./fever-data";

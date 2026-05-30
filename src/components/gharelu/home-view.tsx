@@ -27,19 +27,6 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
           subtitle: 'Authentic Ayurvedic remedies for fever, cold and cough',
         }
       }
-    },
-    {
-      id: 'digestion',
-      translations: {
-        hi: {
-          title: '2. पाचन',
-          subtitle: 'एसिडिटी, गैस और कब्ज के लिए अचूक घरेलू उपाय',
-        },
-        en: {
-          title: '2. Digestion',
-          subtitle: 'Effective remedies for acidity, gas and constipation',
-        }
-      }
     }
   ];
 

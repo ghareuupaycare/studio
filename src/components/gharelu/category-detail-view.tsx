@@ -75,16 +75,6 @@ export const CategoryDetailView = ({
           description: isHindi ? 'हर तरह की सूखी खांसी, बलगम और छाती में जकड़न से राहत के लिए अचूक घरेलू उपचार' : 'Effective remedies for dry cough, phlegm and chest congestion'
         }
       ]
-    },
-    digestion: {
-      title: isHindi ? '2. पाचन' : '2. Digestion',
-      illnesses: [
-        {
-          id: 'acidity',
-          title: isHindi ? 'एसिडिटी और गैस' : 'Acidity & Gas',
-          description: isHindi ? 'पेट की जलन और गैस से तुरंत राहत' : 'Instant relief from stomach burning and gas'
-        }
-      ]
     }
   };
 

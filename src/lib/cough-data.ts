@@ -89,57 +89,6 @@ export const COUGH_REMEDIES: Remedy[] = [
       en: ["Consult doctor if fever or blood occurs."]
     },
     disclaimer: GENERAL_DISCLAIMER,
-    keywords: ["khansi का इलाज", "sukhi khansi", "dry cough", "honey pepper", "शहद काली मिर्च"]
-  },
-  {
-    id: "cough_remedy_2",
-    serialNumber: "2",
-    name: {
-      hi: "सूखी खांसी और गले की खुश्की के लिए मुलेठी एवं इलायची का दिव्य चूर्ण",
-      en: "Mulethi and Cardamom Divine Powder for Dry Cough"
-    },
-    illnessId: "cough",
-    introduction: {
-      hi: [
-        "सूखी खांसी में जब गले की नली सूख जाती है, तो मुलेठी उसे तर रखने में श्रेष्ठ है।",
-        "इलायची सूजन शांत करती है और मिश्री फेफड़ों को ताकत देती है।"
-      ],
-      en: [
-        "Mulethi is best for moisturizing the throat during dry cough.",
-        "Cardamom reduces inflammation and rock candy strengthens lungs."
-      ]
-    },
-    doses: [
-      {
-        ageRange: AGE_BRACKETS.youth,
-        dose: {
-          hi: "1 चम्मच चूर्ण दिन में 3 बार चूसें।",
-          en: "Suck 1 tsp powder 3 times daily."
-        }
-      }
-    ],
-    ingredients: {
-      hi: ["मुलेठी चूर्ण — 2 चम्मच", "इलायची चूर्ण — आधा चम्मच", "मिश्री चूर्ण — 2 चम्मच"],
-      en: ["Mulethi powder — 2 tsp", "Cardamom powder — 1/2 tsp", "Rock candy powder — 2 tsp"]
-    },
-    preparation: {
-      hi: ["सभी चूर्ण को आपस में मिला लें।"],
-      en: ["Mix all powders together."]
-    },
-    usage: {
-      hi: ["दिन में 3 बार धीरे-धीरे लार के साथ चूसें।"],
-      en: ["Suck slowly with saliva 3 times a day."]
-    },
-    dietEat: { hi: ["साबूदाना खिचड़ी और गरम सूप।"], en: ["Sago khichdi and warm soup."] },
-    dietAvoid: { hi: ["रूखी चीजें जैसे टोस्ट या बिस्कुट।"], en: ["Dry items like toast or biscuits."] },
-    strictAvoid: { hi: "खट्टी चीजें और ठंडी ड्रिंक्स।", en: "Sour items and cold drinks." },
-    routine: {
-      morning: { hi: ["पैरों में चप्पल पहनें।"], en: ["Wear slippers."] },
-      afternoon: { hi: ["गुनगुने पानी का प्रयोग करें।"], en: ["Use lukewarm water."] },
-      evening: { hi: ["ठंडी हवा से बचें।"], en: ["Avoid cold air."] }
-    },
-    safetyAdvice: { hi: ["राहत न मिले तो डॉक्टर से मिलें।"], en: ["Consult doctor if no relief."] },
-    disclaimer: GENERAL_DISCLAIMER,
-    keywords: ["mulethi powder", "dry cough", "इलायची", "मुलेठी"]
+    keywords: ["khansi ka ilaj", "sukhi khansi", "dry cough", "honey pepper", "शहद काली मिर्च"]
   }
 ];
