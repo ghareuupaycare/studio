@@ -56,8 +56,3 @@ export const GENERAL_DISCLAIMER: LocalizedString = {
   hi: "यह जानकारी केवल शैक्षिक उद्देश्य के लिए है, कृपया अपने चिकित्सक से सलाह ज़रूर लें।",
   en: "This information is for educational purposes only, please consult your physician."
 };
-
-export const CATEGORIES = [
-  { id: 'fever_flu', label: '1. मौसमी बुखार एवं फ्लू', icon: 'Thermometer', image: "https://picsum.photos/seed/cough/600/400" },
-  { id: 'digestion', label: '2. पाचन', icon: 'Stomach', image: "https://picsum.photos/seed/digestion/600/400" },
-];
