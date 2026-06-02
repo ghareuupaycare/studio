@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Bell, Search, Languages, Moon, Sun, Menu, Heart, Info, Mail, ShieldCheck, FileText, AlertTriangle } from 'lucide-react';
+import { Bell, Languages, Moon, Sun, Menu, Heart, Info, Mail, ShieldCheck, FileText, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Language, Theme } from '@/app/page';
 import { cn } from '@/lib/utils';
@@ -179,8 +179,12 @@ export const TopBar = ({
       <div className="flex-1" />
       
       <div className="flex items-center gap-1 sm:gap-2">
-        <Button variant="ghost" size="icon" onClick={onOpenFavorites} className={cn(headerBtnClass, hasFavorites && "text-accent fill-accent")}>
+        <Button variant="ghost" size="icon" onClick={onOpenFavorites} className={cn(headerBtnClass, hasFavorites && "text-accent")}>
           <Heart className={cn("w-5 h-5", hasFavorites && "fill-current")} />
+        </Button>
+
+        <Button variant="ghost" size="icon" onClick={onOpenNotifications} className={cn(headerBtnClass, hasNotifications && "text-amber-400")}>
+          <Bell className={cn("w-5 h-5", hasNotifications && "fill-current")} />
         </Button>
 
         <Button variant="ghost" size="icon" onClick={onToggleLanguage} className={headerBtnClass}>
@@ -189,10 +193,6 @@ export const TopBar = ({
 
         <Button variant="ghost" size="icon" onClick={onToggleTheme} className={headerBtnClass}>
           {isNight ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-        </Button>
-
-        <Button variant="ghost" size="icon" className={headerBtnClass} onClick={() => setIsSearchOpen(true)}>
-          <Search className="w-5 h-5" />
         </Button>
       </div>
 
