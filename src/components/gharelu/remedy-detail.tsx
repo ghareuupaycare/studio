@@ -4,12 +4,6 @@ import { Language, Theme } from '@/app/page';
 import { 
   Info, 
   CheckCircle, 
-  XCircle, 
-  Utensils, 
-  Sun, 
-  Moon, 
-  Coffee, 
-  AlertTriangle,
   Heart,
   Share2,
   Copy
@@ -47,7 +41,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     isNight ? "text-[#E5E7EB]" : "text-[#1E293B]"
   );
 
-  const renderParam = (content: string | string[] | undefined, withQuotes = false) => {
+  const renderParam = (content: string | string[] | undefined) => {
     if (!content) return null;
     if (Array.isArray(content)) {
       return (
@@ -61,25 +55,67 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </ul>
       );
     }
-    const text = toEnglishDigits(content);
-    return withQuotes ? `"${text}"` : <span className={bodyTextClass}>{text}</span>;
+    return <span className={bodyTextClass}>{toEnglishDigits(content)}</span>;
+  };
+
+  const getShareableText = () => {
+    const title = toEnglishDigits(remedy.name?.[lang] || '');
+    const introContent = remedy.introduction?.[lang];
+    const intro = toEnglishDigits(Array.isArray(introContent) ? introContent[0] : introContent);
+    const ingredientsList = displayIngredients.map(item => `- ${toEnglishDigits(item)}`).join('\n');
+    
+    const cta = isHindi 
+      ? "पूरा नुस्खा, बनाने की विधि और सही खुराक जानने के लिए नीचे दिए गए लिंक पर क्लिक करें👇"
+      : "To know the full recipe, preparation method, and correct dosage, click the link below👇";
+    
+    const introLabel = isHindi ? 'बीमारी का परिचय' : 'Introduction';
+    const ingredientsLabel = isHindi ? 'आवश्यक सामग्री' : 'Key Ingredients';
+
+    return `🌿 *${title}* 🌿\n\n*${introLabel}:*\n${intro}\n\n*${ingredientsLabel}:*\n${ingredientsList}\n\n${cta}\n${window.location.origin}`;
   };
 
   const handleShare = async () => {
+    const shareText = getShareableText();
     const title = toEnglishDigits(remedy.name?.[lang] || '');
-    const shareText = `*घरेलू उपाय केयर*\n🌿 *${title}*`;
-    if (navigator.share) {
-      try { await navigator.share({ title, text: shareText }); } catch (e) {}
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: `Gharelu Upay Care - ${title}`,
+          text: shareText,
+          url: window.location.origin,
+        });
+      } catch (error) {
+        if ((error as any).name !== 'AbortError') {
+          console.error("Sharing failed", error);
+        }
+      }
     } else {
-      navigator.clipboard.writeText(shareText);
-      toast({ description: "Copy ho gaya!" });
+      handleCopy();
+    }
+  };
+
+  const handleCopy = async () => {
+    const shareText = getShareableText();
+    try {
+      await navigator.clipboard.writeText(shareText);
+      toast({
+        description: isHindi ? "नुस्खा विवरण कॉपी हो गया है!" : "Remedy details copied!",
+      });
+    } catch (err) {
+      console.error('Failed to copy: ', err);
     }
   };
 
   return (
     <div className="space-y-12 animate-in fade-in duration-500 pb-32">
       <div className="flex items-center justify-end mb-4">
-        <Button variant="ghost" size="icon" onClick={onToggleFavorite} className={cn("rounded-full h-14 w-14", isFavorite ? "text-accent" : "text-muted-foreground")}>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={onToggleFavorite} 
+          className={cn("rounded-full h-14 w-14 active:scale-90 transition-all duration-200", isFavorite ? "text-accent" : "text-muted-foreground")}
+        >
           <Heart className={cn("w-8 h-8", isFavorite && "fill-current")} />
         </Button>
       </div>
@@ -113,9 +149,22 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </p>
       </div>
 
-      <div className="pt-12 flex flex-col items-center gap-6 px-6">
-        <Button onClick={handleShare} className="w-full max-w-sm h-16 rounded-full font-black uppercase tracking-[0.2em] shadow-xl text-lg bg-accent text-white">
-          <Share2 className="w-6 h-6 mr-2" /> {isHindi ? 'शेयर करें' : 'Share'}
+      <div className="pt-12 flex flex-col sm:flex-row items-center justify-center gap-4 px-6">
+        <Button 
+          onClick={handleShare} 
+          className="w-full sm:w-auto min-w-[160px] h-14 rounded-full font-black uppercase tracking-[0.15em] shadow-xl text-base bg-accent text-white active:scale-95 transition-all duration-200"
+        >
+          <Share2 className="w-5 h-5 mr-2" /> {isHindi ? 'शेयर करें' : 'Share'}
+        </Button>
+        <Button 
+          onClick={handleCopy} 
+          variant="outline"
+          className={cn(
+            "w-full sm:w-auto min-w-[160px] h-14 rounded-full font-black uppercase tracking-[0.15em] shadow-lg text-base active:scale-95 transition-all duration-200",
+            isNight ? "border-white/20 text-white hover:bg-white/10" : "border-primary/20 text-primary hover:bg-primary/5"
+          )}
+        >
+          <Copy className="w-5 h-5 mr-2" /> {isHindi ? 'कॉपी करें' : 'Copy'}
         </Button>
       </div>
     </div>
