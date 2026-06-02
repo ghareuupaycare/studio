@@ -104,14 +104,14 @@ ${window.location.origin}`;
         </span>
       </button>
 
-      {/* Search Button (Center) - Refined Size and Alignment */}
-      <div className="flex justify-center h-full relative">
+      {/* Search Button (Center) - Refined Alignment */}
+      <div className="flex justify-center h-full items-center relative">
         <button
           onClick={() => {
             window.dispatchEvent(new CustomEvent('open-gharelu-search'));
           }}
           className={cn(
-            "absolute -top-4 sm:-top-5 flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:opacity-80"
+            "absolute -top-6 sm:-top-7 flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:opacity-80"
           )}
         >
           <div className={cn(
@@ -120,7 +120,7 @@ ${window.location.origin}`;
           )}>
             <Search className="w-5 h-5 sm:w-6 h-6" />
           </div>
-          <span className="text-[9px] font-black uppercase tracking-[0.1em] text-accent mt-0.5">
+          <span className="text-[9px] font-black uppercase tracking-[0.1em] text-amber-400 mt-0.5">
             {isHindi ? 'घरेलू सर्च' : 'Search'}
           </span>
         </button>

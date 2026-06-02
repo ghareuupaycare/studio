@@ -54,7 +54,7 @@ export const TopBar = ({
     return () => window.removeEventListener('open-gharelu-search', handleOpenSearch);
   }, []);
 
-  const headerBtnClass = "text-white/90 hover:bg-white/5 hover:text-[#FBBF24] active:text-[#B45309] active:scale-95 transition-all duration-200 border-none shadow-none focus-visible:ring-0";
+  const headerBtnClass = "text-white/90 hover:bg-white/5 hover:text-[#FBBF24] active:text-[#B45309] active:scale-95 transition-all duration-200 border-none shadow-none focus-visible:ring-0 flex items-center justify-center";
 
   const legalPages = [
     {
@@ -101,10 +101,10 @@ export const TopBar = ({
 
   return (
     <header className={cn(
-      "sticky top-0 z-50 w-full h-20 flex items-center px-6 shadow-md transition-colors duration-500",
+      "sticky top-0 z-50 w-full h-20 flex items-center px-4 sm:px-6 shadow-md transition-colors duration-500 overflow-hidden",
       isNight ? "bg-black border-b border-white/20" : "bg-[#14532D] border-b border-white/10"
     )}>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className={headerBtnClass}>
@@ -170,15 +170,13 @@ export const TopBar = ({
 
         <h1 className={cn(
           "text-lg font-bold whitespace-nowrap text-[#FDFBF7]",
-          "transition-all duration-300"
+          "transition-all duration-300 truncate max-w-[140px] xs:max-w-[180px] sm:max-w-none"
         )}>
           {isHindi ? 'घरेलू उपाय केयर' : 'Gharelu Upay Care'}
         </h1>
       </div>
       
-      <div className="flex-1" />
-      
-      <div className="flex items-center gap-1 sm:gap-2">
+      <div className="flex items-center gap-1 sm:gap-2 shrink-0">
         <Button variant="ghost" size="icon" onClick={onOpenFavorites} className={cn(headerBtnClass, hasFavorites && "text-accent")}>
           <Heart className={cn("w-5 h-5", hasFavorites && "fill-current")} />
         </Button>
