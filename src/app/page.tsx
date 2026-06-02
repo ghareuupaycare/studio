@@ -81,6 +81,8 @@ export default function GhareluUpayApp() {
   };
 
   const handleSelectRemedy = (remedyId: string, categoryId: string) => {
+    // If the overlay is already showing a different remedy in the same category,
+    // we need to ensure CategoryDetailView reacts to the new remedyId prop.
     setSelectedCategoryId(categoryId);
     setSelectedRemedyId(remedyId);
     setIsDetailView(true);
@@ -154,6 +156,7 @@ export default function GhareluUpayApp() {
                 favorites={favorites}
                 onToggleFavorite={handleToggleFavorite}
                 initialRemedyId={selectedRemedyId}
+                onSelectRemedyId={setSelectedRemedyId}
                 onLevelChange={(level) => setIsDetailView(level === 3)}
               />
             </div>

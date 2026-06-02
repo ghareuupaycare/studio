@@ -30,16 +30,11 @@ export const NotificationsOverlay = ({
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
 
-  const handleResultClick = (remedyId: string, illnessId: string) => {
-    // Correct mapping to match home-view categories
-    let catId = 'fever_flu'; 
-    if (illnessId.includes('joint')) catId = 'joints';
-    if (illnessId.includes('cough') || illnessId.includes('respiratory')) catId = 'fever_flu';
-    if (illnessId.includes('digestion') || illnessId.includes('acidity')) catId = 'digestion';
-    if (illnessId === 'general-fever' || illnessId === 'common-cold') catId = 'fever_flu';
-
+  const handleResultClick = (remedyId: string) => {
+    // Currently all remedies belong to fever_flu
+    const categoryId = 'fever_flu';
     onMarkAsRead(remedyId);
-    onSelectRemedy(remedyId, catId);
+    onSelectRemedy(remedyId, categoryId);
     onClose();
   };
 
@@ -83,7 +78,7 @@ export const NotificationsOverlay = ({
                   {unreadRemedies.map((remedy) => (
                     <button
                       key={remedy.id}
-                      onClick={() => handleResultClick(remedy.id, remedy.illnessId)}
+                      onClick={() => handleResultClick(remedy.id)}
                       className={cn(
                         "w-full p-5 rounded-2xl border transition-all text-left flex items-center gap-5 group cursor-pointer active:scale-[0.98] shadow-sm",
                         isNight 

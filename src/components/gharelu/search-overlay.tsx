@@ -144,15 +144,9 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
     );
   };
 
-  const handleResultClick = (remedyId: string, illnessId: string) => {
-    // Correct mapping to match home-view categories
-    let catId = 'fever_flu'; 
-    if (illnessId.includes('joint')) catId = 'joints';
-    if (illnessId.includes('cough') || illnessId.includes('respiratory')) catId = 'fever_flu';
-    if (illnessId.includes('digestion') || illnessId.includes('acidity')) catId = 'digestion';
-    if (illnessId === 'general-fever' || illnessId === 'common-cold') catId = 'fever_flu';
-
-    onSelectRemedy(remedyId, catId);
+  const handleResultClick = (remedyId: string) => {
+    const categoryId = 'fever_flu';
+    onSelectRemedy(remedyId, categoryId);
     onClose();
     setQuery('');
   };
@@ -233,7 +227,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                   {results.map((remedy) => (
                     <button
                       key={remedy.id}
-                      onClick={() => handleResultClick(remedy.id, remedy.illnessId)}
+                      onClick={() => handleResultClick(remedy.id)}
                       className={cn(
                         "w-full p-4 rounded-xl border transition-all text-left flex items-center gap-4 group cursor-pointer active:scale-[0.98]",
                         isNight 

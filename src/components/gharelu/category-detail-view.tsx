@@ -15,6 +15,7 @@ interface CategoryDetailViewProps {
   favorites: string[];
   onToggleFavorite: (id: string) => void;
   initialRemedyId?: string | null;
+  onSelectRemedyId?: (id: string | null) => void;
   onLevelChange?: (level: 1 | 2 | 3) => void;
 }
 
@@ -26,6 +27,7 @@ export const CategoryDetailView = ({
   favorites, 
   onToggleFavorite,
   initialRemedyId,
+  onSelectRemedyId,
   onLevelChange
 }: CategoryDetailViewProps) => {
   const [selectedIllnessId, setSelectedIllnessId] = useState<string | null>(null);
@@ -34,6 +36,7 @@ export const CategoryDetailView = ({
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
 
+  // React to changes in initialRemedyId from parent (e.g. from Favorites/Search)
   useEffect(() => {
     if (initialRemedyId) {
       const remedy = REMEDIES.find(r => r.id === initialRemedyId);
@@ -42,8 +45,8 @@ export const CategoryDetailView = ({
         setSelectedIllnessId(remedy.illnessId);
       }
     } else {
+      // If parent explicitly clears it, we clear our local state
       setSelectedRemedy(null);
-      setSelectedIllnessId(null);
     }
   }, [initialRemedyId, categoryId]);
 
@@ -81,11 +84,23 @@ export const CategoryDetailView = ({
   const activeCategory = categoryContent[categoryId as keyof typeof categoryContent];
   const illnessRemedies = REMEDIES.filter(r => r.illnessId === selectedIllnessId);
 
-  if (!activeCategory) return null;
+  // Fallback to prevent blank screen if category is not yet fully implemented
+  if (!activeCategory) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center opacity-50">
+        <p className="text-xl font-bold">{isHindi ? 'यह श्रेणी जल्द ही आ रही है' : 'Category coming soon'}</p>
+        <button onClick={onBack} className="mt-4 text-accent font-bold underline">
+          {isHindi ? 'वापस जाएं' : 'Go back'}
+        </button>
+      </div>
+    );
+  }
 
   const handleInternalBack = () => {
     if (selectedRemedy) {
       setSelectedRemedy(null);
+      // Inform parent that we closed the remedy so it can sync its state
+      if (onSelectRemedyId) onSelectRemedyId(null);
     } else if (selectedIllnessId) {
       setSelectedIllnessId(null);
     } else {
@@ -181,7 +196,10 @@ export const CategoryDetailView = ({
           {illnessRemedies.map((remedy) => (
             <button
               key={remedy.id}
-              onClick={() => setSelectedRemedy(remedy)}
+              onClick={() => {
+                setSelectedRemedy(remedy);
+                if (onSelectRemedyId) onSelectRemedyId(remedy.id);
+              }}
               className={cn(
                 "w-full p-6 rounded-3xl border transition-all duration-200 text-left flex items-center gap-5 group cursor-pointer active:scale-[0.98]",
                 isNight 
