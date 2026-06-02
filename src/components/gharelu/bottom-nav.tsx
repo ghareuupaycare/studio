@@ -106,19 +106,19 @@ ${window.location.origin}`;
         </button>
       </div>
 
-      {/* Search Button (Center - Adjusted Positioning) */}
+      {/* Search Button (Center - Slim & Balanced) */}
       <div className="flex-1 flex justify-center h-full items-center relative">
         <button
           onClick={() => {
             window.dispatchEvent(new CustomEvent('open-gharelu-search'));
           }}
           className={cn(
-            "absolute -top-5 sm:-top-6 flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:scale-95"
+            "absolute -top-2 flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:scale-95"
           )}
         >
           <div className={cn(
             "h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center transition-all duration-200 bg-accent text-white shadow-lg border-4 border-[#FDFBF7]",
-            isNight && "border-black"
+            isNight ? "border-black" : "border-[#14532D]/95"
           )}>
             <Search className="w-5 h-5 sm:w-6 h-6" />
           </div>
