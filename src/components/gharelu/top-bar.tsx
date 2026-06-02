@@ -62,46 +62,46 @@ export const TopBar = ({
       icon: <Info className="w-5 h-5" />,
       title: isHindi ? 'हमारे बारे में' : 'About Us',
       content: isHindi 
-        ? "'घरेलू उपाय केयर' पारंपरिक भारतीय आयुर्वेद और सदियों पुराने अचूक घरेलू नुस्खों को पुनर्जीवित करने का एक पावन डिजिटल संग्रह है। हमारा एकमात्र मिशन इंटरनेट पर फैली गलत जानकारियों को हटाकर, आप तक ऋषियों-मुनियों के बताए वो सच्चे, प्रामाणिक और परखे हुए उपाय पहुंचाना है जो आपकी रसोई में ही छिपे हैं। हमारा लक्ष्य बिना किसी रासायनिक दवाओं या साइड-इफेक्ट के, शुद्ध और प्राकृतिक घरेलू पद्धतियों के माध्यम से हर परिवार को एक स्वस्थ, समृद्ध और रोगमुक्त जीवनशैली देना है।"
-        : "Gharelu Upay Care is a sacred digital collection dedicated to reviving traditional Indian Ayurveda and centuries-old home remedies."
+        ? "घरेलू उपाय केयर में आपका स्वागत है। हमारा यह प्रयास भारत के महान ऋषि-मुनियों की पावन परंपरा, वैद्य जी के दिव्य अनुभवों और शास्त्रों के उस अकाट्य ज्ञान का एक आधुनिक संकलन है, जो सदियों से हमारी रसोई के कोनों में छिपा था। हमारा एकमात्र उद्देश्य आपको रसायनों और कड़वी दवाइयों की दुनिया से दूर ले जाकर, प्रकृति की गोद में पूर्ण स्वास्थ्य और दीर्घायु प्रदान करना है। यह सिर्फ एक एप्लीकेशन नहीं, बल्कि आपके पूरे परिवार की निरोगी काया और खुशहाली के लिए समर्पित एक नि:स्वार्थ सेवा है।"
+        : "Welcome to Gharelu Upay Care. This initiative is a humble digital compilation of the sacred heritage of ancient Indian Rishis, the profound clinical experiences of our revered Vaidya Ji, and the timeless wisdom of Ayurvedic scriptures. Our sole objective is to guide you away from chemical-laden synthetic drugs and back to the healing embrace of nature, ensuring absolute wellness and longevity. This is not just an application, but a selfless service dedicated to your family's health and happiness."
     },
     {
       id: 'contact',
       icon: <Mail className="w-5 h-5" />,
       title: isHindi ? 'हमसे संपर्क करें' : 'Contact Us',
       content: isHindi
-        ? "हम अपने पाठकों की मदद के लिए हमेशा तत्पर हैं। यदि आपके पास कोई सुझाव या प्रतिक्रिया है, तो आप हमसे बेझिझक संपर्क कर सकते हैं।"
-        : "We are always ready to help our readers. If you have any questions or suggestions, please feel free to contact us."
+        ? "हमारा यह मंच पूरी तरह से आपकी सेवा और सहायता के लिए हमेशा खुला है। यदि आपके पास हमारे लिए कोई अमूल्य सुझाव, मार्गदर्शन या स्वास्थ्य से जुड़ा कोई विचार है, तो आप हमसे सीधे संपर्क कर सकते हैं। आपके हर एक संदेश का हमारे इस परिवार में पूरे आदर के साथ स्वागत किया जाएगा और हमारी टीम आपकी सेवा में सदैव तत्पर रहेगी। (संपर्क माध्यम भविष्य के अपडेट के लिए सुरक्षित है)।"
+        : "This platform is permanently open and dedicated to serving your wellness journey. If you have any invaluable suggestions, divine guidance, or health insights to share with us, you are most welcome to reach out. Every message from you will be received with the utmost respect within our family, and our team remains thoroughly committed to assisting you at all times. (Contact channel reserved for future updates)."
     },
     {
       id: 'privacy',
       icon: <ShieldCheck className="w-5 h-5" />,
       title: isHindi ? 'गोपनीयता नीति' : 'Privacy Policy',
       content: isHindi
-        ? "हमारे लिए आपकी गोपनीयता सबसे बढ़कर है। 'घरेलू उपाय केयर' वेबसाइट का उपयोग करने के लिए आपको कोई भी लॉग-इन (Login) करने की ज़रूरत नहीं है।"
-        : "Your privacy is paramount. You don't need to log in to use our site. We do not collect personal data."
+        ? "आपकी गोपनीयता और सुरक्षा हमारे लिए उतनी ही पवित्र और महत्वपूर्ण है, जितने कि हमारे ये प्राचीन नुस्खे। सबसे विशेष बात यह है कि इस ऐप का उपयोग करने के लिए आपको किसी भी प्रकार के लॉगिन, रजिस्ट्रेशन या पासवर्ड की कोई आवश्यकता नहीं है। आप बिना किसी झंझट और बिना कोई व्यक्तिगत जानकारी साझा किए, पूरी तरह से स्वतंत्र होकर और एक सुरक्षित वातावरण में इस आयुर्वेद के महासागर का लाभ उठा सकते हैं।"
+        : "Your privacy and digital security are as sacred and paramount to us as our traditional remedies. Most importantly, this application requires absolutely no login, registration, or password creation to access the data. You can explore this vast ocean of Ayurvedic wisdom with complete freedom, total peace of mind, and zero hassle, without ever sharing any personal credentials."
     },
     {
       id: 'terms',
       icon: <FileText className="w-5 h-5" />,
       title: isHindi ? 'नियम और शर्तें' : 'Terms & Conditions',
       content: isHindi
-        ? "इस वेबसाइट पर दी गई सभी सामग्रियां केवल आपकी सामान्य जानकारी के लिए हैं। यहाँ दी गई किसी भी जानकारी का उपयोग आप अपनी स्वेच्छा पर करते हैं।"
-        : "All materials on this site are for general information only. Use the information provided at your own discretion."
+        ? "यह पावन मंच विशुद्ध रूप से आयुर्वेद के प्रचार, प्रसार और जन-कल्याण के उद्देश्य से बनाया गया है। इस ऐप का उपयोग करते समय आप हमारी प्राचीन चिकित्सा पद्धतियों के प्रति पूर्ण सम्मान प्रकट करने और इसके सात्विक दिशा-निर्देशों का पालन करने की सहमति देते हैं। बिना किसी व्यावसायिक रुकावट के, हमारा प्रयास आप तक बिना किसी शुल्क के सर्वश्रेष्ठ ज्ञान को निरंतर पहुंचाते रहना है।"
+        : "This sacred platform has been uniquely crafted for the propagation, promotion, and global welfare of traditional Ayurveda. By utilizing this application, you express your deep respect for our ancient medical traditions and agree to follow its holistic guidelines. Our promise is to continuously deliver this supreme knowledge directly to you without any commercial barriers or fees."
     },
     {
       id: 'disclaimer',
       icon: <AlertTriangle className="w-5 h-5" />,
       title: isHindi ? 'महत्वपूर्ण चेतावनी' : 'Disclaimer',
       content: isHindi
-        ? "इस वेबसाइट पर दिए गए सभी घरेलू नुस्खे पारंपरिक ज्ञान पर आधारित हैं। किसी भी बड़े नुस्खे को आजमाने से पहले डॉक्टर से सलाह ज़रूर लें।"
-        : "These remedies are based on traditional knowledge. Consult a qualified Vaidya or doctor before trying any major remedy."
+        ? "यहाँ दिए गए सभी घरेलू उपाय और नुस्खे शास्त्रों के सार और वैद्य जी के प्रामाणिक अनुभवों पर आधारित हैं, जो केवल आपके सामान्य ज्ञान और शैक्षिक उद्देश्य के लिए हैं। कृपया याद रखें कि यह किसी योग्य डॉक्टर का अंतिम विकल्प नहीं है। किसी भी गंभीर, पुरानी या जटिल बीमारी की स्थिति में, अपने विवेक का उपयोग करते हुए सदैव अपने नजदीकी क्वालिफाइड चिकित्सक या डॉक्टर से परामर्श अवश्य लें।"
+        : "All home remedies and formulations shared here are rooted in scriptural essence and the authentic experiences of Vaidya Ji, intended strictly for educational and informational purposes. Please remember this is not a substitute for professional medical treatment. In case of any chronic, severe, or complex health conditions, always consult a qualified healthcare professional or physician."
     }
   ];
 
   return (
     <header className={cn(
-      "fixed top-0 left-0 right-0 z-50 w-full h-16 flex items-center px-4 sm:px-6 shadow-lg transition-all duration-500 overflow-hidden",
+      "fixed top-0 left-0 right-0 z-50 w-full h-14 flex items-center px-4 sm:px-6 shadow-lg transition-all duration-500 overflow-hidden",
       isNight ? "bg-black/95 backdrop-blur-md border-b border-white/20" : "bg-[#14532D]/95 backdrop-blur-md border-b border-white/10"
     )}>
       <div className="flex items-center gap-1 sm:gap-4 flex-1 min-w-0">
@@ -149,7 +149,7 @@ export const TopBar = ({
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className={cn(
-                        "leading-relaxed text-base pt-2 pb-6 px-2",
+                        "leading-relaxed text-sm pt-2 pb-6 px-2",
                         isNight ? "text-zinc-400" : "text-muted-foreground"
                       )}>
                         {page.content}
@@ -176,7 +176,7 @@ export const TopBar = ({
         </h1>
       </div>
       
-      <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+      <div className="flex items-center gap-1 sm:gap-2 shrink-0 h-full">
         <Button variant="ghost" size="icon" onClick={onOpenFavorites} className={cn(headerBtnClass, hasFavorites && "text-accent")}>
           <Heart className={cn("w-5 h-5", hasFavorites && "fill-current")} />
         </Button>
