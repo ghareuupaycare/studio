@@ -44,10 +44,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
         remedy.name.hi,
         remedy.name.en,
         keywordsStr,
-        remedy.introduction.hi,
-        remedy.introduction.en,
-        toEnglishDigits(remedy.name.hi),
-        toEnglishDigits(remedy.introduction.hi)
+        toEnglishDigits(remedy.name.hi)
       ].join(' ').toLowerCase();
 
       return searchableText.includes(normalizedQuery);
@@ -148,12 +145,12 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
   };
 
   const handleResultClick = (remedyId: string, illnessId: string) => {
+    // Correct mapping to match home-view categories
     let catId = 'fever_flu'; 
     if (illnessId.includes('joint')) catId = 'joints';
-    if (illnessId === 'common-cold') catId = 'fever_flu';
     if (illnessId.includes('cough') || illnessId.includes('respiratory')) catId = 'fever_flu';
     if (illnessId.includes('digestion') || illnessId.includes('acidity')) catId = 'digestion';
-    if (illnessId === 'general-fever') catId = 'fever_flu';
+    if (illnessId === 'general-fever' || illnessId === 'common-cold') catId = 'fever_flu';
 
     onSelectRemedy(remedyId, catId);
     onClose();
@@ -255,7 +252,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy }: 
                           {highlightMatchText(remedy.name[lang], query)}
                         </h4>
                         <p className="text-[11px] opacity-60 truncate mt-0.5 font-medium">
-                          {highlightMatchText(remedy.introduction[lang], query)}
+                          {highlightMatchText(Array.isArray(remedy.introduction[lang]) ? remedy.introduction[lang][0] : remedy.introduction[lang], query)}
                         </p>
                       </div>
                       <ChevronRight className="w-4 h-4 opacity-30 group-hover:opacity-100 group-hover:text-amber-400" />

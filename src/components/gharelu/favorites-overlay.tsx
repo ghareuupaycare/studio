@@ -26,10 +26,12 @@ export const FavoritesOverlay = ({ isOpen, onClose, lang, theme, favorites, onSe
   }, [favorites]);
 
   const handleResultClick = (remedyId: string, illnessId: string) => {
-    let catId = 'fever'; 
+    // Correct mapping to match home-view categories
+    let catId = 'fever_flu'; 
     if (illnessId.includes('joint')) catId = 'joints';
-    if (illnessId.includes('cough') || illnessId.includes('respiratory')) catId = 'respiratory';
+    if (illnessId.includes('cough') || illnessId.includes('respiratory')) catId = 'fever_flu';
     if (illnessId.includes('digestion') || illnessId.includes('acidity')) catId = 'digestion';
+    if (illnessId === 'general-fever' || illnessId === 'common-cold') catId = 'fever_flu';
 
     onSelectRemedy(remedyId, catId);
     onClose();
@@ -86,7 +88,7 @@ export const FavoritesOverlay = ({ isOpen, onClose, lang, theme, favorites, onSe
                         {toEnglishDigits(remedy.name[lang])}
                       </h4>
                       <p className="text-[11px] opacity-60 truncate mt-0.5 font-medium">
-                        {toEnglishDigits(remedy.introduction[lang])}
+                        {toEnglishDigits(Array.isArray(remedy.introduction[lang]) ? remedy.introduction[lang][0] : remedy.introduction[lang])}
                       </p>
                     </div>
                     <ChevronRight className="w-4 h-4 opacity-30 group-hover:opacity-100 group-hover:text-accent" />

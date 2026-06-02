@@ -31,12 +31,12 @@ export const NotificationsOverlay = ({
   const isHindi = lang === 'hi';
 
   const handleResultClick = (remedyId: string, illnessId: string) => {
+    // Correct mapping to match home-view categories
     let catId = 'fever_flu'; 
     if (illnessId.includes('joint')) catId = 'joints';
-    if (illnessId === 'common-cold') catId = 'fever_flu';
     if (illnessId.includes('cough') || illnessId.includes('respiratory')) catId = 'fever_flu';
     if (illnessId.includes('digestion') || illnessId.includes('acidity')) catId = 'digestion';
-    if (illnessId === 'general-fever') catId = 'fever_flu';
+    if (illnessId === 'general-fever' || illnessId === 'common-cold') catId = 'fever_flu';
 
     onMarkAsRead(remedyId);
     onSelectRemedy(remedyId, catId);
@@ -102,7 +102,7 @@ export const NotificationsOverlay = ({
                           {toEnglishDigits(remedy.name?.[lang] || '')}
                         </h4>
                         <p className="text-[12px] opacity-70 truncate font-medium">
-                          {toEnglishDigits(remedy.introduction?.[lang] || '')}
+                          {toEnglishDigits(Array.isArray(remedy.introduction[lang]) ? remedy.introduction[lang][0] : remedy.introduction[lang])}
                         </p>
                       </div>
                       <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:text-amber-400 group-hover:translate-x-1 transition-all" />
