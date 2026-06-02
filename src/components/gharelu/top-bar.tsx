@@ -183,8 +183,8 @@ export const TopBar = ({
           <Heart className={cn("w-5 h-5", hasFavorites && "fill-current")} />
         </Button>
 
-        <Button variant="ghost" size="icon" onClick={onOpenNotifications} className={cn(headerBtnClass, hasNotifications && "text-amber-400")}>
-          <Bell className={cn("w-5 h-5", hasNotifications && "fill-current")} />
+        <Button variant="ghost" size="icon" onClick={onOpenNotifications} className={headerBtnClass}>
+          <Bell className={cn("w-5 h-5 text-white", hasNotifications && "fill-current")} />
         </Button>
 
         <Button variant="ghost" size="icon" onClick={onToggleLanguage} className={headerBtnClass}>

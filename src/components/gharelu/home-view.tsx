@@ -32,32 +32,35 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700 w-full max-w-2xl px-4 sm:px-6">
-      {/* Home Banner - Restored Content */}
+      {/* Home Banner - Premium Redesign */}
       <section className={cn(
-        "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-center justify-center p-6 sm:p-10 text-center transition-all duration-500 border border-amber-400/40",
+        "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-center justify-center py-4 px-3 text-center transition-all duration-500 border border-amber-400/40",
         "aspect-video max-h-[220px] relative",
         isNight ? "bg-black" : "bg-[#14532D]"
       )}>
-        <div className="space-y-2 z-10">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-black leading-tight text-white">
+        <div className="space-y-1 z-10 w-full">
+          <h2 className="text-[24px] font-bold leading-tight text-white">
             {isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions'}
           </h2>
-          <div className="space-y-0.5">
-            <p className="text-sm sm:text-lg md:text-xl font-bold text-amber-400 leading-tight">
+          <div className="flex flex-col gap-0">
+            <p className="text-[16px] font-semibold text-amber-400 leading-tight">
               {isHindi ? 'भारतीय घरेलू उपाय और वैद्य जी' : 'Indian Home Remedies & Vaidya Ji'}
             </p>
-            <p className="hidden sm:block text-xs sm:text-sm font-medium text-amber-400/90 italic">
+            <p className="text-[16px] font-semibold text-amber-400 leading-tight">
               {isHindi ? 'द्वारा संचालित आयुर्वेदिक स्वास्थ्य' : 'Managed by Ayurvedic Health'}
             </p>
           </div>
-          <p className="text-[10px] sm:text-xs md:text-sm font-medium text-white/80 max-w-[280px] sm:max-w-md mx-auto leading-relaxed">
+          <p className={cn(
+            "text-[13px] font-medium max-w-[300px] mx-auto leading-relaxed mt-1",
+            isNight ? "text-white/80" : "text-slate-100"
+          )}>
             {isHindi 
               ? 'शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो आपकी रसोई में छिपे स्वास्थ्य रहने का खज़ाना हैं' 
               : 'Traditional remedies based on scriptures, the hidden treasure of health in your kitchen'}
           </p>
           <div className="pt-2">
             <div className={cn(
-              "inline-block px-4 py-1.5 sm:px-6 sm:py-2.5 rounded-full font-black text-[10px] sm:text-xs md:text-sm shadow-lg", 
+              "inline-block px-4 py-2 rounded-full font-bold text-[13px] shadow-lg", 
               isNight ? "bg-white text-black" : "bg-accent text-white"
             )}>
               {isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Get perfect health at home without medicines'}
@@ -80,7 +83,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
                 key={category.id}
                 onClick={() => onSelectCategory(category.id)}
                 className={cn(
-                  "group relative w-full p-6 sm:p-8 rounded-[2rem] border transition-all duration-500 flex flex-col items-start justify-center text-left space-y-2 shadow-xl hover:-translate-y-1 active:scale-[0.98]",
+                  "group relative w-full p-6 sm:p-8 rounded-[2rem] border transition-all duration-500 flex flex-col items-start justify-center text-left space-y-1 shadow-xl hover:-translate-y-1 active:scale-[0.98]",
                   isNight 
                     ? "bg-black border-white text-white active:bg-white active:text-black" 
                     : "bg-[#FDF6E2] border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
