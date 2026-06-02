@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, Search, Languages, Moon, Sun, Menu, Heart, Info, Mail, ShieldCheck, FileText, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Language, Theme } from '@/app/page';
@@ -48,6 +48,13 @@ export const TopBar = ({
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
 
+  // Listen for the search event from bottom navigation
+  useEffect(() => {
+    const handleOpenSearch = () => setIsSearchOpen(true);
+    window.addEventListener('open-gharelu-search', handleOpenSearch);
+    return () => window.removeEventListener('open-gharelu-search', handleOpenSearch);
+  }, []);
+
   const headerBtnClass = "text-white/90 hover:bg-white/5 hover:text-[#FBBF24] active:text-[#B45309] active:scale-95 transition-all duration-200 border-none shadow-none focus-visible:ring-0";
 
   const legalPages = [
@@ -64,7 +71,7 @@ export const TopBar = ({
       icon: <Mail className="w-5 h-5" />,
       title: isHindi ? 'हमसे संपर्क करें' : 'Contact Us',
       content: isHindi
-        ? "हम अपने पाठकों और दर्शकों की मदद के लिए हमेशा तत्पर हैं। यदि आपके पास हमारे घरेलू नुस्खों, स्वास्थ्य युक्तियों या हमारी वेबसाइट से जुड़ा कोई भी सवाल, सुझाव या प्रतिक्रिया है, तो आप हमसे बेझिझक संपर्क कर सकते हैं। आप हमें हमारे आधिकारिक ईमेल या सोशल मीडिया हैंडल के ज़रie जुड़ सकते हैं। हम आपके संदेश का जवाब 24 से 48 घंटों के भीतर देने का पूरा प्रयास करेंगे।"
+        ? "हम अपने पाठकों और दर्शकों की मदद के लिए हमेशा तत्पर हैं। यदि आपके पास हमारे घरेलू नुस्खों, स्वास्थ्य युक्तियों या हमारी वेबसाइट से जुड़ा कोई भी सवाल, सुझाव या प्रतिक्रिया है, तो आप हमसे बेझिझक संपर्क कर सकते हैं। आप हमें हमारे आधिकारिक ईमेल या सोशल मीडिया हैंडल के ज़रिए जुड़ सकते हैं। हम आपके संदेश का जवाब 24 से 48 घंटों के भीतर देने का पूरा प्रयास करेंगे।"
         : "We are always ready to help our readers. If you have any questions or suggestions regarding our remedies or website, please feel free to contact us. We strive to respond within 24-48 hours."
     },
     {
@@ -189,7 +196,10 @@ export const TopBar = ({
           </SheetContent>
         </Sheet>
 
-        <h1 className="text-2xl font-headline font-black tracking-tight text-[#FDFBF7]">
+        <h1 className={cn(
+          "text-lg font-bold whitespace-nowrap text-[#FDFBF7]",
+          "transition-all duration-300"
+        )}>
           {isHindi ? 'घरेलू उपाय केयर' : 'Gharelu Upay Care'}
         </h1>
       </div>

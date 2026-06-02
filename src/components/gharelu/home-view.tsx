@@ -35,20 +35,21 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
       {/* Top Premium Brand Banner */}
       <section className={cn(
         "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-center justify-center p-8 sm:p-12 text-center transition-all duration-500 border border-amber-400/40",
+        "aspect-video max-h-[220px]",
         isNight 
           ? "bg-black" 
           : "bg-[#14532D]"
       )}>
         
         <h2 className={cn(
-          "text-4xl sm:text-5xl font-black leading-tight mb-6 transition-colors duration-500 whitespace-nowrap",
+          "text-3xl sm:text-4xl font-black leading-tight mb-4 transition-colors duration-500 whitespace-nowrap",
           "text-white"
         )}>
           {isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions'}
         </h2>
 
         <p className={cn(
-          "text-[35px] font-black mb-4 transition-colors duration-500 text-amber-400 text-center leading-tight",
+          "text-xl sm:text-2xl font-black mb-2 transition-colors duration-500 text-amber-400 text-center leading-tight",
           "max-w-prose"
         )}>
           {isHindi ? (
@@ -61,26 +62,11 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
           )}
         </p>
 
-        <p className={cn(
-          "text-xl sm:text-2xl font-bold leading-relaxed mb-8 transition-colors duration-500 text-center",
-          "text-white",
-          "max-w-prose"
-        )}>
-          {isHindi ? (
-            <>
-              शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो <br />
-              आपकी रसोई में छिपे स्वस्थ्य रहने का खज़ाना हैं
-            </>
-          ) : (
-            'Traditional shastra-based remedies, the hidden treasure of health in your kitchen'
-          )}
-        </p>
-
         <div className={cn(
-          "px-10 py-5 rounded-full font-black text-2xl sm:text-3xl transition-all shadow-lg whitespace-nowrap",
+          "px-6 py-3 rounded-full font-black text-lg sm:text-xl transition-all shadow-lg whitespace-nowrap",
           isNight ? "bg-white text-black" : "bg-accent text-white"
         )}>
-          {isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Complete health at home without medicine'}
+          {isHindi ? 'बिना दवा घर बैठे पाएं स्वास्थ्य' : 'Health at home without medicine'}
         </div>
       </section>
 
@@ -102,7 +88,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
                 )}
               >
                 <h3 className={cn(
-                  "text-2xl font-black transition-colors leading-tight",
+                  "text-[20px] font-semibold transition-colors leading-tight",
                   isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
                 )}>
                   {content.title}

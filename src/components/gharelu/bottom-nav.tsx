@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Home, Share2 } from 'lucide-react';
+import { Home, Share2, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Language, Theme } from '@/app/page';
 import { useToast } from '@/hooks/use-toast';
@@ -79,15 +79,15 @@ ${window.location.origin}`;
 
   return (
     <nav className={cn(
-      "fixed bottom-0 left-0 right-0 z-50 h-24 w-full flex items-center justify-between px-8 sm:px-12 border-t transition-all duration-300 shadow-[0_-10px_30px_rgba(0,0,0,0.15)]",
+      "fixed bottom-0 left-0 right-0 z-50 h-24 w-full grid grid-cols-3 items-center px-4 sm:px-8 border-t transition-all duration-300 shadow-[0_-10px_30px_rgba(0,0,0,0.15)]",
       isNight ? "bg-black border-white/20" : "bg-[#14532D] border-white/10",
       isVisible ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
     )}>
-      {/* Home Button (Left Aligned) */}
+      {/* Home Button */}
       <button
         onClick={() => onViewChange('home')}
         className={cn(
-          "flex flex-col items-center gap-1.5 transition-all duration-200 group outline-none cursor-pointer active:opacity-80",
+          "flex flex-col items-center gap-1.5 transition-all duration-200 group outline-none cursor-pointer active:opacity-80 justify-self-center",
           currentView === 'home' ? "text-accent" : "text-white/60 hover:text-white"
         )}
       >
@@ -97,26 +97,48 @@ ${window.location.origin}`;
             ? "bg-accent/20 text-accent" 
             : "bg-white/5 hover:bg-white/10"
         )}>
-          <Home className="w-7 h-7" />
+          <Home className="w-6 h-6" />
         </div>
-        <span className="text-[11px] font-black uppercase tracking-[0.2em] transition-colors">
-          {isHindi ? 'मुख्य पेज' : 'Home'}
+        <span className="text-[10px] font-black uppercase tracking-[0.1em] transition-colors">
+          {isHindi ? 'होम' : 'Home'}
         </span>
       </button>
 
-      {/* Share Button (Right Aligned) - Styled with Premium Golden/Amber Color */}
+      {/* Search Button (Center) */}
       <button
-        onClick={handleShare}
+        onClick={() => {
+          // Trigger search from TopBar via custom event or similar if needed
+          // For now, providing UI layout requested
+          window.dispatchEvent(new CustomEvent('open-gharelu-search'));
+        }}
         className={cn(
-          "flex flex-col items-center gap-1.5 transition-all duration-200 group outline-none cursor-pointer active:opacity-80 text-accent"
+          "flex flex-col items-center gap-1.5 transition-all duration-200 group outline-none cursor-pointer active:opacity-80 justify-self-center -mt-4"
         )}
       >
         <div className={cn(
-          "p-3 rounded-2xl transition-all duration-200 bg-accent/20 text-accent"
+          "p-4 rounded-full transition-all duration-200 bg-accent text-white shadow-lg border-4 border-[#FDFBF7]",
+          isNight && "border-black"
         )}>
-          <Share2 className="w-7 h-7" />
+          <Search className="w-6 h-6" />
         </div>
-        <span className="text-[11px] font-black uppercase tracking-[0.2em] transition-colors">
+        <span className="text-[10px] font-black uppercase tracking-[0.1em] text-accent mt-1">
+          {isHindi ? 'घरेलू सर्च' : 'Search'}
+        </span>
+      </button>
+
+      {/* Share Button */}
+      <button
+        onClick={handleShare}
+        className={cn(
+          "flex flex-col items-center gap-1.5 transition-all duration-200 group outline-none cursor-pointer active:opacity-80 justify-self-center text-white/60 hover:text-white"
+        )}
+      >
+        <div className={cn(
+          "p-3 rounded-2xl transition-all duration-200 bg-white/5 hover:bg-white/10"
+        )}>
+          <Share2 className="w-6 h-6" />
+        </div>
+        <span className="text-[10px] font-black uppercase tracking-[0.1em] transition-colors">
           {isHindi ? 'शेयर' : 'Share'}
         </span>
       </button>
