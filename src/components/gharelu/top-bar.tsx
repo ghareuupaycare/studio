@@ -48,7 +48,6 @@ export const TopBar = ({
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
 
-  // Listen for the search event from bottom navigation
   useEffect(() => {
     const handleOpenSearch = () => setIsSearchOpen(true);
     window.addEventListener('open-gharelu-search', handleOpenSearch);
@@ -63,40 +62,40 @@ export const TopBar = ({
       icon: <Info className="w-5 h-5" />,
       title: isHindi ? 'हमारे बारे में' : 'About Us',
       content: isHindi 
-        ? "'घरेलू उपाय केयर' पारंपरिक भारतीय आयुर्वेद और सदियों पुराने अचूक घरेलू नुस्खों को पुनर्जीवित करने का एक पावन डिजिटल संग्रह है। हमारा एकमात्र मिशन इंटरनेट पर फैली गलत जानकारियों को हटाकर, आप तक ऋषियों-मुनियों के बताए वो सच्चे, प्रामाणिक और परखे हुए उपाय पहुंचाना है जो आपकी रसोई में ही छिपे हैं। हमारा लक्ष्य बिना किसी रासायनिक दवाओं या साइड-इफेक्ट के, शुद्ध और प्राकृतिक घरेलू पद्धतियों के माध्यम से हर परिवार को एक स्वस्थ, समृद्ध और रोगमुक्त जीवनशैली देना है, ताकि आपका घर और आपकी रसोई ही आपकी पहली पाठशाला बने।"
-        : "Gharelu Upay Care is a sacred digital collection dedicated to reviving traditional Indian Ayurveda and centuries-old home remedies. Our mission is to provide authentic, time-tested remedies hidden in your kitchen, ensuring a healthy, chemical-free, and disease-free lifestyle for every family."
+        ? "'घरेलू उपाय केयर' पारंपरिक भारतीय आयुर्वेद और सदियों पुराने अचूक घरेलू नुस्खों को पुनर्जीवित करने का एक पावन डिजिटल संग्रह है। हमारा एकमात्र मिशन इंटरनेट पर फैली गलत जानकारियों को हटाकर, आप तक ऋषियों-मुनियों के बताए वो सच्चे, प्रामाणिक और परखे हुए उपाय पहुंचाना है जो आपकी रसोई में ही छिपे हैं। हमारा लक्ष्य बिना किसी रासायनिक दवाओं या साइड-इफेक्ट के, शुद्ध और प्राकृतिक घरेलू पद्धतियों के माध्यम से हर परिवार को एक स्वस्थ, समृद्ध और रोगमुक्त जीवनशैली देना है।"
+        : "Gharelu Upay Care is a sacred digital collection dedicated to reviving traditional Indian Ayurveda and centuries-old home remedies."
     },
     {
       id: 'contact',
       icon: <Mail className="w-5 h-5" />,
       title: isHindi ? 'हमसे संपर्क करें' : 'Contact Us',
       content: isHindi
-        ? "हम अपने पाठकों और दर्शकों की मदद के लिए हमेशा तत्पर हैं। यदि आपके पास हमारे घरेलू नुस्खों, स्वास्थ्य युक्तियों या हमारी वेबसाइट से जुड़ा कोई भी सवाल, सुझाव या प्रतिक्रिया है, तो आप हमसे बेझिझक संपर्क कर सकते हैं। आप हमें हमारे आधिकारिक ईमेल या सोशल मीडिया हैंडल के ज़रिए जुड़ सकते हैं। हम आपके संदेश का जवाब 24 से 48 घंटों के भीतर देने का पूरा प्रयास करेंगे।"
-        : "We are always ready to help our readers. If you have any questions or suggestions regarding our remedies or website, please feel free to contact us. We strive to respond within 24-48 hours."
+        ? "हम अपने पाठकों की मदद के लिए हमेशा तत्पर हैं। यदि आपके पास कोई सुझाव या प्रतिक्रिया है, तो आप हमसे बेझिझक संपर्क कर सकते हैं।"
+        : "We are always ready to help our readers. If you have any questions or suggestions, please feel free to contact us."
     },
     {
       id: 'privacy',
       icon: <ShieldCheck className="w-5 h-5" />,
       title: isHindi ? 'गोपनीयता नीति' : 'Privacy Policy',
       content: isHindi
-        ? "हमारे लिए आपकी गोपनीयता सबसे बढ़कर है। 'घरेलू उपाय केयर' वेबसाइट का उपयोग करने के लिए आपको कोई भी लॉग-इन (Login), साइन-अप या अपना मोबाइल नंबर/ईमेल देने की बिल्कुल ज़रूरत नहीं है। हम अपने किसी भी दर्शक का कोई व्यक्तिगत डेटा इकट्ठा नहीं करते हैं। आप बिना किसी पाबंदी या डर के, पूरी आज़ादी से सभी नुस्खे देख सकते हैं। हमारी साइट पर जो विज्ञापन भविष्य में दिखेंगे, वे भी गूगल की पूरी तरह सुरक्षित और पारदर्शी नीतियों के तहत ही होंगे।"
-        : "Your privacy is paramount. You don't need to log in or provide any personal details to use our site. We do not collect personal data, and future advertisements will follow Google's secure and transparent policies."
+        ? "हमारे लिए आपकी गोपनीयता सबसे बढ़कर है। 'घरेलू उपाय केयर' वेबसाइट का उपयोग करने के लिए आपको कोई भी लॉग-इन (Login) करने की ज़रूरत नहीं है।"
+        : "Your privacy is paramount. You don't need to log in to use our site. We do not collect personal data."
     },
     {
       id: 'terms',
       icon: <FileText className="w-5 h-5" />,
       title: isHindi ? 'नियम और शर्तें' : 'Terms & Conditions',
       content: isHindi
-        ? "इस वेबसाइट पर दी गई सभी सामग्रियां और नुस्खे केवल आपकी सामान्य जानकारी और ज्ञानवर्धन के लिए हैं। इस साइट का उपयोग करके, आप हमारे नियमों को स्वीकार करते हैं। यहाँ दी गई किसी भी जानकारी या नुस्खे का उपयोग आप अपनी स्वेच्छा और जिम्मेदारी पर करते हैं।"
-        : "All materials on this site are for general information only. By using this site, you agree to our terms. Use the information provided at your own discretion and responsibility."
+        ? "इस वेबसाइट पर दी गई सभी सामग्रियां केवल आपकी सामान्य जानकारी के लिए हैं। यहाँ दी गई किसी भी जानकारी का उपयोग आप अपनी स्वेच्छा पर करते हैं।"
+        : "All materials on this site are for general information only. Use the information provided at your own discretion."
     },
     {
       id: 'disclaimer',
       icon: <AlertTriangle className="w-5 h-5" />,
       title: isHindi ? 'महत्वपूर्ण चेतावनी' : 'Disclaimer',
       content: isHindi
-        ? "एक छोटी सी प्यारी सलाह: इस वेबसाइट पर दिए गए सभी घरेलू नुस्खे हमारे पारंपरिक ज्ञान और बुजुर्गों के अनुभवों पर आधारित हैं। इन्हें आपकी जानकारी बढ़ाने के लिए सरल भाषा में साझा किया गया है। वैसे तो ये उपाय पूरी तरह प्राकृतिक हैं, लेकिन हर व्यक्ति का शरीर और उसकी तासीर अलग होती है। इसलिए किसी भी बड़े नुस्खे को आजमाने से पहले, या यदि समस्या पुरानी और गंभीर है, तो अपने नजदीकी वैद्य जी या डॉक्टर से एक बार सलाह ज़रूर ले लें। स्वस्थ रहें, सुरक्षित रहें!"
-        : "Advice: These remedies are based on traditional knowledge. While natural, everyone's body is different. Consult a qualified Vaidya or doctor before trying any major remedy or if conditions are severe."
+        ? "इस वेबसाइट पर दिए गए सभी घरेलू नुस्खे पारंपरिक ज्ञान पर आधारित हैं। किसी भी बड़े नुस्खे को आजमाने से पहले डॉक्टर से सलाह ज़रूर लें।"
+        : "These remedies are based on traditional knowledge. Consult a qualified Vaidya or doctor before trying any major remedy."
     }
   ];
 
@@ -106,7 +105,6 @@ export const TopBar = ({
       isNight ? "bg-black border-b border-white/20" : "bg-[#14532D] border-b border-white/10"
     )}>
       <div className="flex items-center gap-4">
-        {/* Sidebar Menu Trigger */}
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className={headerBtnClass}>
@@ -117,8 +115,7 @@ export const TopBar = ({
             side="left" 
             className={cn(
               "w-[70%] sm:w-[350px] p-0 overflow-hidden border-none transition-colors duration-500",
-              "[&>button]:text-amber-400 [&>button]:opacity-100 [&>button]:scale-125 [&>button]:transition-all [&>button]:duration-200",
-              isNight ? "bg-[#121b15] shadow-[5px_0_30px_rgba(0,0,0,0.8)]" : "bg-[#FDFBF7] shadow-[5px_0_30px_rgba(0,0,0,0.1)]"
+              isNight ? "bg-[#121b15]" : "bg-[#FDFBF7]"
             )}
           >
             <div className="flex flex-col h-full">
@@ -129,35 +126,22 @@ export const TopBar = ({
                 <SheetTitle className="text-2xl font-headline font-black text-white">
                   {isHindi ? 'घरेलू उपाय केयर' : 'Gharelu Upay Care'}
                 </SheetTitle>
-                <p className="text-xs text-white/70 font-bold uppercase tracking-widest mt-1">
-                  {isHindi ? 'स्वस्थ जीवन की कुंजी' : 'Key to Healthy Living'}
-                </p>
               </SheetHeader>
               
               <ScrollArea className="flex-1 p-6">
                 <Accordion type="single" collapsible className="w-full space-y-4">
                   {legalPages.map((page) => (
-                    <AccordionItem 
-                      key={page.id} 
-                      value={page.id} 
-                      className={cn(
-                        "transition-colors duration-500",
-                        isNight ? "border-b-white/10" : "border-b-primary/10"
-                      )}
-                    >
-                      <AccordionTrigger className={cn(
-                        "hover:no-underline transition-colors py-4",
-                        isNight ? "hover:text-white dark:text-zinc-100" : "hover:text-primary"
-                      )}>
+                    <AccordionItem key={page.id} value={page.id}>
+                      <AccordionTrigger className="hover:no-underline py-4">
                         <div className="flex items-center gap-3">
                           <div className={cn(
-                            "p-2 rounded-xl transition-colors duration-500",
-                            isNight ? "bg-white/10 text-white dark:text-zinc-400" : "bg-primary/5 text-primary"
+                            "p-2 rounded-xl",
+                            isNight ? "bg-white/10 text-white" : "bg-primary/5 text-primary"
                           )}>
                             {page.icon}
                           </div>
                           <span className={cn(
-                            "font-bold text-lg transition-colors duration-500",
+                            "font-bold text-lg",
                             isNight ? "text-zinc-100" : "text-foreground"
                           )}>
                             {page.title}
@@ -165,7 +149,7 @@ export const TopBar = ({
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className={cn(
-                        "leading-relaxed text-base pt-2 pb-6 px-2 transition-colors duration-500",
+                        "leading-relaxed text-base pt-2 pb-6 px-2",
                         isNight ? "text-zinc-400" : "text-muted-foreground"
                       )}>
                         {page.content}
@@ -174,20 +158,8 @@ export const TopBar = ({
                   ))}
                 </Accordion>
                 
-                <div className={cn(
-                  "mt-12 p-6 rounded-[2rem] border transition-colors duration-500",
-                  isNight ? "bg-white/5 border-white/10" : "bg-accent/5 border-accent/10"
-                )}>
-                  <p className={cn(
-                    "text-xs font-black uppercase tracking-widest text-center mb-2",
-                    isNight ? "text-white/60" : "text-accent"
-                  )}>
-                    {isHindi ? 'शुद्ध एवं सात्विक' : 'Pure & Holistic'}
-                  </p>
-                  <p className={cn(
-                    "text-[10px] text-center uppercase tracking-[0.2em]",
-                    isNight ? "text-white/40" : "text-muted-foreground"
-                  )}>
+                <div className="mt-12 p-6 rounded-[2rem] border transition-colors opacity-60">
+                  <p className="text-[12px] text-center uppercase tracking-widest">
                     © 2024 GHARELU UPAY CARE
                   </p>
                 </div>
@@ -207,67 +179,24 @@ export const TopBar = ({
       <div className="flex-1" />
       
       <div className="flex items-center gap-1 sm:gap-2">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={onOpenFavorites}
-          className={cn(
-            headerBtnClass,
-            hasFavorites && "text-accent fill-accent"
-          )}
-        >
+        <Button variant="ghost" size="icon" onClick={onOpenFavorites} className={cn(headerBtnClass, hasFavorites && "text-accent fill-accent")}>
           <Heart className={cn("w-5 h-5", hasFavorites && "fill-current")} />
         </Button>
 
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={onToggleLanguage}
-          className={headerBtnClass}
-        >
+        <Button variant="ghost" size="icon" onClick={onToggleLanguage} className={headerBtnClass}>
           <Languages className="w-5 h-5" />
         </Button>
 
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={onToggleTheme}
-          className={headerBtnClass}
-        >
+        <Button variant="ghost" size="icon" onClick={onToggleTheme} className={headerBtnClass}>
           {isNight ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </Button>
 
-        <div className="relative">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className={headerBtnClass}
-            onClick={onOpenNotifications}
-          >
-            <Bell className="w-5 h-5" />
-          </Button>
-          {hasNotifications && (
-            <span className="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse pointer-events-none" />
-          )}
-        </div>
-
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className={headerBtnClass}
-          onClick={() => setIsSearchOpen(true)}
-        >
+        <Button variant="ghost" size="icon" className={headerBtnClass} onClick={() => setIsSearchOpen(true)}>
           <Search className="w-5 h-5" />
         </Button>
       </div>
 
-      <SearchOverlay 
-        isOpen={isSearchOpen} 
-        onClose={() => setIsSearchOpen(false)} 
-        lang={lang} 
-        theme={theme}
-        onSelectRemedy={(rId, cId) => onSelectRemedy?.(rId, cId)}
-      />
+      <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} lang={lang} theme={theme} onSelectRemedy={(rId, cId) => onSelectRemedy?.(rId, cId)} />
     </header>
   );
 };
