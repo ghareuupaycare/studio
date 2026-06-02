@@ -59,12 +59,12 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
               : 'Traditional remedies based on scriptures, the hidden treasure of health in your kitchen'}
           </p>
           <div className="pt-2">
-            <div className={cn(
-              "inline-block px-4 py-2 rounded-full font-bold text-[13px] shadow-lg", 
+            <button className={cn(
+              "inline-block px-4 py-2 rounded-full font-bold text-[13px] shadow-lg active:scale-95 transition-all duration-200 cursor-pointer", 
               isNight ? "bg-white text-black" : "bg-accent text-white"
             )}>
               {isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Get perfect health at home without medicines'}
-            </div>
+            </button>
           </div>
         </div>
         
@@ -86,7 +86,8 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
                   "group relative w-full p-6 sm:p-8 rounded-[2rem] border transition-all duration-500 flex flex-col items-start justify-center text-left space-y-1 shadow-xl hover:-translate-y-1 active:scale-[0.98]",
                   isNight 
                     ? "bg-black border-white text-white active:bg-white active:text-black" 
-                    : "bg-[#FDF6E2] border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
+                    : "bg-[#FDF6E2] border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]",
+                  "border-amber-100/40 shadow-sm shadow-amber-950/5"
                 )}
               >
                 <h3 className={cn(

@@ -80,14 +80,14 @@ ${window.location.origin}`;
   return (
     <nav className={cn(
       "fixed bottom-0 left-0 right-0 z-50 h-14 sm:h-16 w-full grid grid-cols-3 items-center px-4 sm:px-8 border-t transition-all duration-300 shadow-[0_-10px_30px_rgba(0,0,0,0.15)]",
-      isNight ? "bg-black border-white/20" : "bg-[#14532D] border-white/10",
+      isNight ? "bg-black/90 backdrop-blur-md border-white/20" : "bg-[#14532D]/95 backdrop-blur-md border-white/10",
       isVisible ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
     )}>
       {/* Home Button */}
       <button
         onClick={() => onViewChange('home')}
         className={cn(
-          "flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:opacity-80 justify-self-center",
+          "flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:scale-90 justify-self-center",
           currentView === 'home' ? "text-accent" : "text-white/60 hover:text-white"
         )}
       >
@@ -104,14 +104,14 @@ ${window.location.origin}`;
         </span>
       </button>
 
-      {/* Search Button (Center) - Refined Alignment */}
+      {/* Search Button (Center) */}
       <div className="flex justify-center h-full items-center relative">
         <button
           onClick={() => {
             window.dispatchEvent(new CustomEvent('open-gharelu-search'));
           }}
           className={cn(
-            "absolute -top-6 sm:-top-7 flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:opacity-80"
+            "absolute -top-6 sm:-top-7 flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:scale-95"
           )}
         >
           <div className={cn(
@@ -130,7 +130,7 @@ ${window.location.origin}`;
       <button
         onClick={handleShare}
         className={cn(
-          "flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:opacity-80 justify-self-center text-white/60 hover:text-white"
+          "flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:scale-90 justify-self-center text-white/60 hover:text-white"
         )}
       >
         <div className={cn(

@@ -139,11 +139,11 @@ export default function GhareluUpayApp() {
       
       <main 
         className={cn(
-          "flex-1 w-full transition-colors duration-500 relative",
+          "flex-1 w-full transition-colors duration-500 relative pt-20 pb-24",
           isNight ? "bg-black" : "bg-[#FDFBF7]"
         )}
       >
-        <div className="w-full py-8 pb-40">
+        <div className="w-full">
           {selectedCategoryId ? (
             <div className="max-w-2xl mx-auto px-6">
               <CategoryDetailView 
