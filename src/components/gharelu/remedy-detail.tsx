@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Remedy } from '@/lib/remedy-types';
 import { Language, Theme } from '@/app/page';
@@ -21,15 +23,12 @@ interface RemedyDetailProps {
 }
 
 export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite }: RemedyDetailProps) => {
-  const [selectedAgeRangeKey, setSelectedAgeRangeKey] = useState(
-    remedy.doses?.[0]?.ageRange?.[lang] || ''
-  );
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
   const { toast } = useToast();
 
-  const currentDose = remedy.doses?.find(d => d.ageRange?.[lang] === selectedAgeRangeKey) || remedy.doses?.[0];
-  const displayIngredients = currentDose?.ingredients?.[lang] || remedy.ingredients?.[lang] || [];
+  const currentDose = remedy.doses?.[0];
+  const displayIngredients = remedy.ingredients?.[lang] || [];
 
   const headingClass = cn(
     "text-[18px] font-bold mb-4 flex items-center gap-3 leading-[1.4]",
@@ -71,7 +70,10 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     const introLabel = isHindi ? 'बीमारी का परिचय' : 'Introduction';
     const ingredientsLabel = isHindi ? 'आवश्यक सामग्री' : 'Key Ingredients';
 
-    return `🌿 *${title}* 🌿\n\n*${introLabel}:*\n${intro}\n\n*${ingredientsLabel}:*\n${ingredientsList}\n\n${cta}\n${window.location.origin}`;
+    // Generate dynamic deep link for the specific remedy
+    const deepLink = `${window.location.origin}?remedyId=${remedy.id}`;
+
+    return `🌿 *${title}* 🌿\n\n*${introLabel}:*\n${intro}\n\n*${ingredientsLabel}:*\n${ingredientsList}\n\n${cta}\n${deepLink}`;
   };
 
   const handleShare = async () => {
@@ -83,7 +85,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         await navigator.share({
           title: `Gharelu Upay Care - ${title}`,
           text: shareText,
-          url: window.location.origin,
+          url: `${window.location.origin}?remedyId=${remedy.id}`,
         });
       } catch (error) {
         if ((error as any).name !== 'AbortError') {

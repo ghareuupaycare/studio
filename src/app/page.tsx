@@ -28,8 +28,9 @@ export default function GhareluUpayApp() {
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-  // Load persistence data from local storage on mount
+  // Load persistence data and handle deep links from URL on mount
   useEffect(() => {
+    // 1. Persistence
     const savedFavs = localStorage.getItem('gharelu-favorites');
     if (savedFavs) {
       try {
@@ -45,6 +46,21 @@ export default function GhareluUpayApp() {
         setReadRemedyIds(JSON.parse(savedReadIds));
       } catch (e) {
         console.error("Failed to load read IDs", e);
+      }
+    }
+    
+    // 2. Handle Deep Linking from URL Parameters
+    const params = new URLSearchParams(window.location.search);
+    const remedyIdFromUrl = params.get('remedyId');
+    if (remedyIdFromUrl) {
+      const remedy = REMEDIES.find(r => r.id === remedyIdFromUrl);
+      if (remedy) {
+        // Standardize category lookup: Currently all fever, cold, and cough remedies belong to fever_flu
+        setSelectedCategoryId('fever_flu');
+        setSelectedRemedyId(remedyIdFromUrl);
+        setIsDetailView(true);
+        // Clear query params to keep URL clean after loading
+        window.history.replaceState({}, '', window.location.pathname);
       }
     }
     
@@ -81,8 +97,6 @@ export default function GhareluUpayApp() {
   };
 
   const handleSelectRemedy = (remedyId: string, categoryId: string) => {
-    // If the overlay is already showing a different remedy in the same category,
-    // we need to ensure CategoryDetailView reacts to the new remedyId prop.
     setSelectedCategoryId(categoryId);
     setSelectedRemedyId(remedyId);
     setIsDetailView(true);
