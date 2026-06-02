@@ -85,7 +85,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         await navigator.share({
           title: `Gharelu Upay Care - ${title}`,
           text: shareText,
-          url: `${window.location.origin}?remedyId=${remedy.id}`,
+          // url is omitted or set to empty string to prevent link duplication in apps like WhatsApp
+          url: '', 
         });
       } catch (error) {
         if ((error as any).name !== 'AbortError') {
