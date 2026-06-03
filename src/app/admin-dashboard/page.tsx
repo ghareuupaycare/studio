@@ -22,7 +22,8 @@ import {
   ClipboardList,
   Settings,
   Users,
-  CheckCircle2
+  CheckCircle2,
+  Languages
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase';
@@ -31,31 +32,44 @@ import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
 type DoseEntry = {
-  ageRange: string;
-  dose: string;
+  ageRangeHi: string;
+  ageRangeEn: string;
+  doseHi: string;
+  doseEn: string;
 };
 
 type ViewState = 'overview' | 'manage' | 'add-recipe';
 
 const INITIAL_FORM_DATA = {
-  mainCategory: '',
-  diseaseName: '',
-  remedyTitle: '',
-  introduction: '',
-  ingredients: '',
-  preparation: '',
-  usage: '',
-  dietEat: '',
-  dietAvoid: '',
-  routine: '',
-  safetyAdvice: '',
+  mainCategoryHi: '',
+  mainCategoryEn: '',
+  diseaseNameHi: '',
+  diseaseNameEn: '',
+  remedyTitleHi: '',
+  remedyTitleEn: '',
+  introductionHi: '',
+  introductionEn: '',
+  ingredientsHi: '',
+  ingredientsEn: '',
+  preparationHi: '',
+  preparationEn: '',
+  usageHi: '',
+  usageEn: '',
+  dietEatHi: '',
+  dietEatEn: '',
+  dietAvoidHi: '',
+  dietAvoidEn: '',
+  routineHi: '',
+  routineEn: '',
+  safetyAdviceHi: '',
+  safetyAdviceEn: '',
 };
 
 const INITIAL_DOSES: DoseEntry[] = [
-  { ageRange: '5-12 वर्ष', dose: '' },
-  { ageRange: '13-40 वर्ष', dose: '' },
-  { ageRange: '41-60 वर्ष', dose: '' },
-  { ageRange: '61-80 वर्ष', dose: '' },
+  { ageRangeHi: '5-12 वर्ष', ageRangeEn: '5-12 Years', doseHi: '', doseEn: '' },
+  { ageRangeHi: '13-40 वर्ष', ageRangeEn: '13-40 Years', doseHi: '', doseEn: '' },
+  { ageRangeHi: '41-60 वर्ष', ageRangeEn: '41-60 Years', doseHi: '', doseEn: '' },
+  { ageRangeHi: '61-80 वर्ष', ageRangeEn: '61-80 Years', doseHi: '', doseEn: '' },
 ];
 
 export default function AdminDashboard() {
@@ -113,7 +127,7 @@ export default function AdminDashboard() {
   };
 
   const addDoseField = () => {
-    setDoses([...doses, { ageRange: '', dose: '' }]);
+    setDoses([...doses, { ageRangeHi: '', ageRangeEn: '', doseHi: '', doseEn: '' }]);
   };
 
   const removeDoseField = (index: number) => {
@@ -126,8 +140,21 @@ export default function AdminDashboard() {
     setIsSubmitting(true);
 
     const submissionData = {
-      ...formData,
-      doses: doses.filter(d => d.ageRange && d.dose),
+      mainCategory: { hi: formData.mainCategoryHi, en: formData.mainCategoryEn },
+      diseaseName: { hi: formData.diseaseNameHi, en: formData.diseaseNameEn },
+      remedyTitle: { hi: formData.remedyTitleHi, en: formData.remedyTitleEn },
+      introduction: { hi: formData.introductionHi, en: formData.introductionEn },
+      ingredients: { hi: formData.ingredientsHi, en: formData.ingredientsEn },
+      preparation: { hi: formData.preparationHi, en: formData.preparationEn },
+      usage: { hi: formData.usageHi, en: formData.usageEn },
+      dietEat: { hi: formData.dietEatHi, en: formData.dietEatEn },
+      dietAvoid: { hi: formData.dietAvoidHi, en: formData.dietAvoidEn },
+      routine: { hi: formData.routineHi, en: formData.routineEn },
+      safetyAdvice: { hi: formData.safetyAdviceHi, en: formData.safetyAdviceEn },
+      doses: doses.filter(d => (d.ageRangeHi || d.ageRangeEn) && (d.doseHi || d.doseEn)).map(d => ({
+        ageRange: { hi: d.ageRangeHi, en: d.ageRangeEn },
+        dose: { hi: d.doseHi, en: d.doseEn }
+      })),
       timestamp: serverTimestamp(),
     };
 
@@ -136,7 +163,7 @@ export default function AdminDashboard() {
       .then(() => {
         toast({
           title: "नुस्खा सुरक्षित हो गया!",
-          description: `${formData.remedyTitle} को सफलतापूर्वक डेटाबेस में जोड़ दिया गया है।`,
+          description: `${formData.remedyTitleHi} को सफलतापूर्वक डेटाबेस में जोड़ दिया गया है।`,
         });
         setIsSubmitting(false);
         setView('manage');
@@ -282,13 +309,13 @@ export default function AdminDashboard() {
                     {liveRecipes.map((recipe) => (
                       <div key={recipe.id} className="p-4 flex items-center justify-between hover:bg-muted/5 transition-colors">
                         <div>
-                          <h4 className="font-bold text-primary">{recipe.remedyTitle}</h4>
-                          <p className="text-xs text-muted-foreground">{recipe.mainCategory} &gt; {recipe.diseaseName}</p>
+                          <h4 className="font-bold text-primary">{recipe.remedyTitle?.hi || 'शीर्षक उपलब्ध नहीं'}</h4>
+                          <p className="text-xs text-muted-foreground">{recipe.mainCategory?.hi} &gt; {recipe.diseaseName?.hi}</p>
                         </div>
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          onClick={() => handleDelete(recipe.id, recipe.remedyTitle)}
+                          onClick={() => handleDelete(recipe.id, recipe.remedyTitle?.hi)}
                           className="text-destructive hover:bg-destructive/10"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -319,8 +346,8 @@ export default function AdminDashboard() {
                 <ChevronLeft className="w-6 h-6 text-primary" />
               </Button>
               <div>
-                <h2 className="text-2xl font-headline font-black text-primary">नया नुस्खा अपलोड करें</h2>
-                <p className="text-sm text-muted-foreground">सभी 9 चरणों को विस्तार से भरें</p>
+                <h2 className="text-2xl font-headline font-black text-primary">नया नुस्खा अपलोड करें (द्विभाषी)</h2>
+                <p className="text-sm text-muted-foreground">हिंदी और अंग्रेजी दोनों भाषाओं में जानकारी भरें</p>
               </div>
             </div>
 
@@ -329,47 +356,91 @@ export default function AdminDashboard() {
                 <CardHeader className="bg-primary text-white p-6">
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Stethoscope className="w-5 h-5" />
-                    श्रेणी और वर्गीकरण
+                    श्रेणी और वर्गीकरण | Category
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="mainCategory" className="font-bold">मुख्य श्रेणी</Label>
-                      <Input 
-                        id="mainCategory"
-                        name="mainCategory"
-                        placeholder="उदा: पेट रोग, बुखार, त्वचा रोग"
-                        required
-                        value={formData.mainCategory}
-                        onChange={handleInputChange}
-                        className="h-12 border-primary/20"
-                      />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="mainCategoryHi" className="font-bold">मुख्य श्रेणी (Hindi)</Label>
+                        <Input 
+                          id="mainCategoryHi"
+                          name="mainCategoryHi"
+                          placeholder="उदा: पेट रोग, बुखार"
+                          required
+                          value={formData.mainCategoryHi}
+                          onChange={handleInputChange}
+                          className="h-11 border-primary/20"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="mainCategoryEn" className="font-bold text-muted-foreground">Main Category (English)</Label>
+                        <Input 
+                          id="mainCategoryEn"
+                          name="mainCategoryEn"
+                          placeholder="e.g. Stomach Ailments, Fever"
+                          required
+                          value={formData.mainCategoryEn}
+                          onChange={handleInputChange}
+                          className="h-11 border-primary/10"
+                        />
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="diseaseName" className="font-bold">उप-श्रेणी / बीमारी</Label>
-                      <Input 
-                        id="diseaseName"
-                        name="diseaseName"
-                        placeholder="उदा: गैस, एसिडिटी, कब्ज"
-                        required
-                        value={formData.diseaseName}
-                        onChange={handleInputChange}
-                        className="h-12 border-primary/20"
-                      />
+
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="diseaseNameHi" className="font-bold">उप-श्रेणी / बीमारी (Hindi)</Label>
+                        <Input 
+                          id="diseaseNameHi"
+                          name="diseaseNameHi"
+                          placeholder="उदा: गैस, एसिडिटी"
+                          required
+                          value={formData.diseaseNameHi}
+                          onChange={handleInputChange}
+                          className="h-11 border-primary/20"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="diseaseNameEn" className="font-bold text-muted-foreground">Disease Name (English)</Label>
+                        <Input 
+                          id="diseaseNameEn"
+                          name="diseaseNameEn"
+                          placeholder="e.g. Gas, Acidity"
+                          required
+                          value={formData.diseaseNameEn}
+                          onChange={handleInputChange}
+                          className="h-11 border-primary/10"
+                        />
+                      </div>
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="remedyTitle" className="font-bold">नुस्खे का शीर्षक/नाम</Label>
-                    <Input 
-                      id="remedyTitle"
-                      name="remedyTitle"
-                      placeholder="उदा: हींग और अजवाइन का चूर्ण"
-                      required
-                      value={formData.remedyTitle}
-                      onChange={handleInputChange}
-                      className="h-12 border-primary/20"
-                    />
+
+                  <div className="space-y-4 pt-4 border-t">
+                    <div className="space-y-2">
+                      <Label htmlFor="remedyTitleHi" className="font-bold">नुस्खे का शीर्षक/नाम (Hindi)</Label>
+                      <Input 
+                        id="remedyTitleHi"
+                        name="remedyTitleHi"
+                        placeholder="उदा: हींग और अजवाइन का चूर्ण"
+                        required
+                        value={formData.remedyTitleHi}
+                        onChange={handleInputChange}
+                        className="h-11 border-primary/20"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="remedyTitleEn" className="font-bold text-muted-foreground">Remedy Title (English)</Label>
+                      <Input 
+                        id="remedyTitleEn"
+                        name="remedyTitleEn"
+                        placeholder="e.g. Hing and Ajwain Powder"
+                        required
+                        value={formData.remedyTitleEn}
+                        onChange={handleInputChange}
+                        className="h-11 border-primary/10"
+                      />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -378,79 +449,131 @@ export default function AdminDashboard() {
                 <CardHeader className="bg-[#14532D] text-white p-6">
                   <CardTitle className="text-lg flex items-center gap-2">
                     <BookOpen className="w-5 h-5" />
-                    नुस्खे की विस्तृत जानकारी (9 स्टेप्स)
+                    नुस्खे की विस्तृत जानकारी | Recipe Details
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 space-y-8">
-                  <div className="space-y-3">
-                    <Label htmlFor="introduction" className="font-black text-primary">1. बीमारी का परिचय</Label>
-                    <Textarea 
-                      id="introduction"
-                      name="introduction"
-                      placeholder="बीमारी के लक्षण और कारणों का विस्तार से वर्णन करें..."
-                      className="min-h-[150px] border-primary/10 bg-[#FDFBF7]/50"
-                      value={formData.introduction}
-                      onChange={handleInputChange}
-                      required
-                    />
+                <CardContent className="p-6 space-y-12">
+                  
+                  {/* 1. INTRODUCTION */}
+                  <div className="space-y-4">
+                    <Label className="font-black text-primary text-base">1. बीमारी का परिचय | Disease Introduction</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Textarea 
+                        name="introductionHi"
+                        placeholder="हिंदी में बीमारी का परिचय लिखें..."
+                        className="min-h-[120px] border-primary/10 bg-[#FDFBF7]/50"
+                        value={formData.introductionHi}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <Textarea 
+                        name="introductionEn"
+                        placeholder="Write disease introduction in English..."
+                        className="min-h-[120px] border-primary/10 bg-muted/20"
+                        value={formData.introductionEn}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <Label htmlFor="ingredients" className="font-black text-primary">2. आवश्यक सामग्री</Label>
-                    <Textarea 
-                      id="ingredients"
-                      name="ingredients"
-                      placeholder="सामग्री की सूची और उनकी सटीक मात्रा यहाँ लिखें..."
-                      className="min-h-[120px] border-primary/10 bg-[#FDFBF7]/50"
-                      value={formData.ingredients}
-                      onChange={handleInputChange}
-                      required
-                    />
+                  {/* 2. INGREDIENTS */}
+                  <div className="space-y-4">
+                    <Label className="font-black text-primary text-base">2. आवश्यक सामग्री | Required Ingredients</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Textarea 
+                        name="ingredientsHi"
+                        placeholder="हिंदी में सामग्री की सूची लिखें..."
+                        className="min-h-[100px] border-primary/10 bg-[#FDFBF7]/50"
+                        value={formData.ingredientsHi}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <Textarea 
+                        name="ingredientsEn"
+                        placeholder="Write list of ingredients in English..."
+                        className="min-h-[100px] border-primary/10 bg-muted/20"
+                        value={formData.ingredientsEn}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <Label htmlFor="preparation" className="font-black text-primary">3. बनाने की विधि</Label>
-                    <Textarea 
-                      id="preparation"
-                      name="preparation"
-                      placeholder="नुस्खा तैयार करने के एक-एक चरण को विस्तार से लिखें..."
-                      className="min-h-[150px] border-primary/10 bg-[#FDFBF7]/50"
-                      value={formData.preparation}
-                      onChange={handleInputChange}
-                      required
-                    />
+                  {/* 3. PREPARATION */}
+                  <div className="space-y-4">
+                    <Label className="font-black text-primary text-base">3. बनाने की विधि | Preparation Method</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Textarea 
+                        name="preparationHi"
+                        placeholder="हिंदी में बनाने की विधि लिखें..."
+                        className="min-h-[120px] border-primary/10 bg-[#FDFBF7]/50"
+                        value={formData.preparationHi}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <Textarea 
+                        name="preparationEn"
+                        placeholder="Write preparation method in English..."
+                        className="min-h-[120px] border-primary/10 bg-muted/20"
+                        value={formData.preparationEn}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
                   </div>
 
+                  {/* 4. DOSAGE (DYNAMIC) */}
                   <div className="space-y-4 pt-4 border-t border-primary/10">
-                    <div className="flex items-center justify-between">
-                      <Label className="font-black text-primary text-base">4. स्मार्ट खुराक और मात्रा</Label>
+                    <div className="flex items-center justify-between mb-4">
+                      <Label className="font-black text-primary text-base">4. स्मार्ट खुराक और मात्रा | Smart Dosage</Label>
                       <Button type="button" variant="outline" size="sm" onClick={addDoseField} className="rounded-full border-primary/30 text-primary">
-                        <Plus className="w-4 h-4 mr-1" /> उम्र जोड़ें
+                        <Plus className="w-4 h-4 mr-1" /> उम्र जोड़ें | Add Age
                       </Button>
                     </div>
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       {doses.map((dose, index) => (
-                        <div key={index} className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end p-4 rounded-2xl bg-primary/5 border border-primary/10">
-                          <div className="sm:col-span-4 space-y-2">
-                            <Label className="text-xs font-bold uppercase tracking-wider text-primary/60">उम्र समूह</Label>
-                            <Input 
-                              value={dose.ageRange}
-                              onChange={(e) => handleDoseChange(index, 'ageRange', e.target.value)}
-                              placeholder="उदा: 5-12 वर्ष"
-                              className="bg-white border-primary/10 h-11"
-                            />
+                        <div key={index} className="p-5 rounded-2xl bg-primary/5 border border-primary/10 space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label className="text-xs font-bold uppercase text-primary/60">उम्र समूह (Hindi)</Label>
+                              <Input 
+                                value={dose.ageRangeHi}
+                                onChange={(e) => handleDoseChange(index, 'ageRangeHi', e.target.value)}
+                                placeholder="उदा: 5-12 वर्ष"
+                                className="bg-white border-primary/10 h-10"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-xs font-bold uppercase text-primary/60">Age Group (English)</Label>
+                              <Input 
+                                value={dose.ageRangeEn}
+                                onChange={(e) => handleDoseChange(index, 'ageRangeEn', e.target.value)}
+                                placeholder="e.g. 5-12 Years"
+                                className="bg-white border-primary/10 h-10"
+                              />
+                            </div>
                           </div>
-                          <div className="sm:col-span-7 space-y-2">
-                            <Label className="text-xs font-bold uppercase tracking-wider text-primary/60">खुराक की मात्रा</Label>
-                            <Input 
-                              value={dose.dose}
-                              onChange={(e) => handleDoseChange(index, 'dose', e.target.value)}
-                              placeholder="उदा: आधा चम्मच"
-                              className="bg-white border-primary/10 h-11"
-                            />
-                          </div>
-                          <div className="sm:col-span-1 flex justify-end">
-                            <Button type="button" variant="ghost" size="icon" onClick={() => removeDoseField(index)} className="text-destructive hover:bg-destructive/10">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
+                            <div className="space-y-2">
+                              <Label className="text-xs font-bold uppercase text-primary/60">खुराक (Hindi)</Label>
+                              <Input 
+                                value={dose.doseHi}
+                                onChange={(e) => handleDoseChange(index, 'doseHi', e.target.value)}
+                                placeholder="उदा: आधा चम्मच"
+                                className="bg-white border-primary/10 h-10"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-xs font-bold uppercase text-primary/60">Dosage (English)</Label>
+                              <Input 
+                                value={dose.doseEn}
+                                onChange={(e) => handleDoseChange(index, 'doseEn', e.target.value)}
+                                placeholder="e.g. Half Teaspoon"
+                                className="bg-white border-primary/10 h-10"
+                              />
+                            </div>
+                            <Button type="button" variant="ghost" size="icon" onClick={() => removeDoseField(index)} className="absolute -top-1 -right-1 text-destructive hover:bg-destructive/10">
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
@@ -459,70 +582,121 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <Label htmlFor="usage" className="font-black text-primary">5. सेवन विधि</Label>
-                    <Textarea 
-                      id="usage"
-                      name="usage"
-                      placeholder="दवा लेने का सही समय और तरीका..."
-                      className="min-h-[120px] border-primary/10 bg-[#FDFBF7]/50"
-                      value={formData.usage}
-                      onChange={handleInputChange}
-                      required
-                    />
+                  {/* 5. USAGE */}
+                  <div className="space-y-4">
+                    <Label className="font-black text-primary text-base">5. सेवन विधि | Consumption Method</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Textarea 
+                        name="usageHi"
+                        placeholder="हिंदी में सेवन विधि लिखें..."
+                        className="min-h-[100px] border-primary/10 bg-[#FDFBF7]/50"
+                        value={formData.usageHi}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <Textarea 
+                        name="usageEn"
+                        placeholder="Write consumption method in English..."
+                        className="min-h-[100px] border-primary/10 bg-muted/20"
+                        value={formData.usageEn}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <Label htmlFor="dietEat" className="font-black text-primary">6. क्या खाएं</Label>
-                    <Textarea 
-                      id="dietEat"
-                      name="dietEat"
-                      placeholder="लाभकारी भोजन और फलों की सूची..."
-                      className="min-h-[100px] border-primary/10 bg-[#FDFBF7]/50"
-                      value={formData.dietEat}
-                      onChange={handleInputChange}
-                      required
-                    />
+                  {/* 6. DIET EAT */}
+                  <div className="space-y-4">
+                    <Label className="font-black text-primary text-base">6. क्या खाएं | What to Eat</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Textarea 
+                        name="dietEatHi"
+                        placeholder="हिंदी में लाभकारी भोजन लिखें..."
+                        className="min-h-[100px] border-primary/10 bg-[#FDFBF7]/50"
+                        value={formData.dietEatHi}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <Textarea 
+                        name="dietEatEn"
+                        placeholder="Write beneficial foods in English..."
+                        className="min-h-[100px] border-primary/10 bg-muted/20"
+                        value={formData.dietEatEn}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <Label htmlFor="dietAvoid" className="font-black text-primary">7. क्या न खाएं</Label>
-                    <Textarea 
-                      id="dietAvoid"
-                      name="dietAvoid"
-                      placeholder="नुक्सानदायक भोजन से बचने के निर्देश..."
-                      className="min-h-[100px] border-primary/10 bg-[#FDFBF7]/50"
-                      value={formData.dietAvoid}
-                      onChange={handleInputChange}
-                      required
-                    />
+                  {/* 7. DIET AVOID */}
+                  <div className="space-y-4">
+                    <Label className="font-black text-primary text-base">7. क्या न खाएं | What to Avoid</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Textarea 
+                        name="dietAvoidHi"
+                        placeholder="हिंदी में वर्जित भोजन लिखें..."
+                        className="min-h-[100px] border-primary/10 bg-[#FDFBF7]/50"
+                        value={formData.dietAvoidHi}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <Textarea 
+                        name="dietAvoidEn"
+                        placeholder="Write foods to avoid in English..."
+                        className="min-h-[100px] border-primary/10 bg-muted/20"
+                        value={formData.dietAvoidEn}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <Label htmlFor="routine" className="font-black text-primary">8. दिनचर्या</Label>
-                    <Textarea 
-                      id="routine"
-                      name="routine"
-                      placeholder="जीवनशैली में बदलाव के सुझाव..."
-                      className="min-h-[120px] border-primary/10 bg-[#FDFBF7]/50"
-                      value={formData.routine}
-                      onChange={handleInputChange}
-                      required
-                    />
+                  {/* 8. ROUTINE */}
+                  <div className="space-y-4">
+                    <Label className="font-black text-primary text-base">8. दिनचर्या | Daily Routine</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Textarea 
+                        name="routineHi"
+                        placeholder="हिंदी में दिनचर्या के सुझाव लिखें..."
+                        className="min-h-[100px] border-primary/10 bg-[#FDFBF7]/50"
+                        value={formData.routineHi}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <Textarea 
+                        name="routineEn"
+                        placeholder="Write lifestyle tips in English..."
+                        className="min-h-[100px] border-primary/10 bg-muted/20"
+                        value={formData.routineEn}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <Label htmlFor="safetyAdvice" className="font-black text-primary">9. सुरक्षा सूचना</Label>
-                    <Textarea 
-                      id="safetyAdvice"
-                      name="safetyAdvice"
-                      placeholder="महत्वपूर्ण सावधानियां और चेतावनी..."
-                      className="min-h-[120px] border-primary/10 bg-[#FDFBF7]/50"
-                      value={formData.safetyAdvice}
-                      onChange={handleInputChange}
-                      required
-                    />
+                  {/* 9. SAFETY */}
+                  <div className="space-y-4">
+                    <Label className="font-black text-primary text-base">9. सुरक्षा सूचना | Safety Information</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Textarea 
+                        name="safetyAdviceHi"
+                        placeholder="हिंदी में सावधानियां लिखें..."
+                        className="min-h-[100px] border-primary/10 bg-[#FDFBF7]/50"
+                        value={formData.safetyAdviceHi}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <Textarea 
+                        name="safetyAdviceEn"
+                        placeholder="Write safety warnings in English..."
+                        className="min-h-[100px] border-primary/10 bg-muted/20"
+                        value={formData.safetyAdviceEn}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
                   </div>
+
                 </CardContent>
               </Card>
 
@@ -540,7 +714,7 @@ export default function AdminDashboard() {
                   ) : (
                     <>
                       <Save className="w-6 h-6 mr-2" />
-                      नुस्खा सुरक्षित करें
+                      नुस्खा सुरक्षित करें | Save Recipe
                     </>
                   )}
                 </Button>
@@ -550,7 +724,7 @@ export default function AdminDashboard() {
                   onClick={() => setView('manage')}
                   className="h-14 px-8 border-primary/20 text-primary font-bold rounded-2xl"
                 >
-                  रद्द करें
+                  रद्द करें | Cancel
                 </Button>
               </div>
             </form>
@@ -560,3 +734,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+

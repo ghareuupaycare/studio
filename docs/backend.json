@@ -28,51 +28,108 @@
     },
     "Recipe": {
       "title": "Recipe",
-      "description": "A complete record of a traditional Ayurvedic remedy.",
+      "description": "A complete record of a traditional Ayurvedic remedy in dual languages.",
       "type": "object",
       "properties": {
         "mainCategory": {
-          "type": "string",
-          "description": "Primary health category."
+          "type": "object",
+          "properties": {
+            "hi": { "type": "string" },
+            "en": { "type": "string" }
+          }
         },
         "diseaseName": {
-          "type": "string",
-          "description": "Specific illness or sub-category."
+          "type": "object",
+          "properties": {
+            "hi": { "type": "string" },
+            "en": { "type": "string" }
+          }
         },
         "remedyTitle": {
-          "type": "string",
-          "description": "The title of the remedy."
+          "type": "object",
+          "properties": {
+            "hi": { "type": "string" },
+            "en": { "type": "string" }
+          }
         },
         "introduction": {
-          "type": "string",
-          "description": "Detailed introduction to the disease."
+          "type": "object",
+          "properties": {
+            "hi": { "type": "string" },
+            "en": { "type": "string" }
+          }
         },
         "ingredients": {
-          "type": "string",
-          "description": "List of required ingredients."
+          "type": "object",
+          "properties": {
+            "hi": { "type": "string" },
+            "en": { "type": "string" }
+          }
         },
         "preparation": {
-          "type": "string",
-          "description": "Step-by-step preparation instructions."
+          "type": "object",
+          "properties": {
+            "hi": { "type": "string" },
+            "en": { "type": "string" }
+          }
         },
         "usage": {
-          "type": "string",
-          "description": "Instructions for consumption."
+          "type": "object",
+          "properties": {
+            "hi": { "type": "string" },
+            "en": { "type": "string" }
+          }
         },
         "doses": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "ageRange": { "type": "string" },
-              "dose": { "type": "string" }
+              "ageRange": {
+                "type": "object",
+                "properties": {
+                  "hi": { "type": "string" },
+                  "en": { "type": "string" }
+                }
+              },
+              "dose": {
+                "type": "object",
+                "properties": {
+                  "hi": { "type": "string" },
+                  "en": { "type": "string" }
+                }
+              }
             }
           }
         },
-        "dietEat": { "type": "string" },
-        "dietAvoid": { "type": "string" },
-        "routine": { "type": "string" },
-        "safetyAdvice": { "type": "string" },
+        "dietEat": {
+          "type": "object",
+          "properties": {
+            "hi": { "type": "string" },
+            "en": { "type": "string" }
+          }
+        },
+        "dietAvoid": {
+          "type": "object",
+          "properties": {
+            "hi": { "type": "string" },
+            "en": { "type": "string" }
+          }
+        },
+        "routine": {
+          "type": "object",
+          "properties": {
+            "hi": { "type": "string" },
+            "en": { "type": "string" }
+          }
+        },
+        "safetyAdvice": {
+          "type": "object",
+          "properties": {
+            "hi": { "type": "string" },
+            "en": { "type": "string" }
+          }
+        },
         "timestamp": { "type": "string", "format": "date-time" }
       },
       "required": ["mainCategory", "diseaseName", "remedyTitle"]
