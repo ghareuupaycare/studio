@@ -1,16 +1,18 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Bell, Languages, Moon, Sun, Menu, Heart, Info, Mail, ShieldCheck, FileText, AlertTriangle } from 'lucide-react';
+import { Bell, Languages, Moon, Sun, Menu, Heart, Info, Mail, ShieldCheck, FileText, AlertTriangle, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Language, Theme } from '@/app/page';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetClose,
 } from "@/components/ui/sheet";
 import {
   Accordion,
@@ -47,6 +49,7 @@ export const TopBar = ({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
+  const router = useRouter();
 
   useEffect(() => {
     const handleOpenSearch = () => setIsSearchOpen(true);
@@ -158,7 +161,24 @@ export const TopBar = ({
                   ))}
                 </Accordion>
                 
-                <div className="mt-12 p-6 rounded-[2rem] border transition-colors opacity-60">
+                {/* Admin Entry Point */}
+                <div className="mt-8 px-2">
+                  <SheetClose asChild>
+                    <Button
+                      variant="ghost"
+                      className={cn(
+                        "w-full justify-start gap-3 h-12 rounded-xl font-bold text-sm transition-all active:scale-95",
+                        isNight ? "text-zinc-500 hover:text-white" : "text-muted-foreground hover:text-primary"
+                      )}
+                      onClick={() => router.push('/admin-login')}
+                    >
+                      <Lock className="w-4 h-4" />
+                      {isHindi ? 'एडमिन लॉगिन' : 'Admin Login'}
+                    </Button>
+                  </SheetClose>
+                </div>
+
+                <div className="mt-8 p-6 rounded-[2rem] border transition-colors opacity-60">
                   <p className="text-[12px] text-center uppercase tracking-widest">
                     © 2024 GHARELU UPAY CARE
                   </p>
