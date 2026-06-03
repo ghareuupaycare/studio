@@ -19,9 +19,10 @@ import {
   Trash2,
   Stethoscope,
   BookOpen,
-  ClipboardList
+  ClipboardList,
+  Settings,
+  Users
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
 type DoseEntry = {
@@ -29,11 +30,13 @@ type DoseEntry = {
   dose: string;
 };
 
+type ViewState = 'overview' | 'manage' | 'add-recipe';
+
 export default function AdminDashboard() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [view, setView] = useState<'overview' | 'add-recipe'>('overview');
+  const [view, setView] = useState<ViewState>('overview');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form State
@@ -103,7 +106,7 @@ export default function AdminDashboard() {
         description: `${formData.remedyTitle} को सफलतापूर्वक डेटाबेस में जोड़ दिया गया है।`,
       });
       setIsSubmitting(false);
-      setView('overview');
+      setView('manage');
       // Reset form
       setFormData({
         mainCategory: '',
@@ -126,15 +129,15 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-[#FDFBF7] flex flex-col">
       {/* Admin Header */}
-      <header className="h-16 bg-primary text-white flex items-center justify-between px-6 shadow-md shrink-0 sticky top-0 z-50">
+      <header className="h-14 bg-primary text-white flex items-center justify-between px-6 shadow-md shrink-0 sticky top-0 z-50">
         <div className="flex items-center gap-3">
           <LayoutDashboard className="w-5 h-5 text-accent" />
-          <h1 className="font-headline font-black text-xl tracking-wide">एडमिन डैशबोर्ड</h1>
+          <h1 className="font-headline font-black text-lg tracking-wide">एडमिन कंट्रोल पैनल</h1>
         </div>
         <Button 
           variant="ghost" 
           onClick={handleLogout}
-          className="text-white hover:bg-white/10 gap-2 font-bold"
+          className="text-white hover:bg-white/10 gap-2 font-bold h-9 text-sm"
         >
           <LogOut className="w-4 h-4" />
           लॉगआउट
@@ -142,66 +145,133 @@ export default function AdminDashboard() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-4 sm:p-6 max-w-4xl mx-auto w-full">
-        {view === 'overview' ? (
+      <main className="flex-1 p-4 sm:p-6 max-w-5xl mx-auto w-full">
+        
+        {/* VIEW 1: ROOT DASHBOARD OVERVIEW */}
+        {view === 'overview' && (
           <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-2xl font-headline font-black text-primary">कंट्रोल पैनल</h2>
-                <p className="text-muted-foreground font-medium">नुस्खे और डेटा प्रबंधित करें</p>
-              </div>
-              <Button 
-                onClick={() => setView('add-recipe')}
-                className="bg-accent hover:bg-accent/90 text-white font-bold rounded-full gap-2 py-6 px-6 shadow-lg active:scale-95 transition-all"
-              >
-                <PlusCircle className="w-5 h-5" />
-                नया नुस्खा अपलोड करें
-              </Button>
+            <div>
+              <h2 className="text-2xl font-headline font-black text-primary">डैशबोर्ड ओवरव्यू</h2>
+              <p className="text-muted-foreground font-medium text-sm">घरेलू उपाय केयर के मुख्य फीचर्स का प्रबंधन करें</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-              <Card className="border-primary/10 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => setView('add-recipe')}>
-                <CardHeader className="pb-2">
-                  <div className="p-3 w-fit rounded-2xl bg-primary/5 text-primary mb-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Card 1: Manage Recipes */}
+              <Card 
+                className="border-primary/20 shadow-sm hover:shadow-md transition-all cursor-pointer group active:scale-[0.98]" 
+                onClick={() => setView('manage')}
+              >
+                <CardHeader className="pb-4">
+                  <div className="p-3 w-fit rounded-2xl bg-primary/10 text-primary mb-3 group-hover:bg-primary group-hover:text-white transition-colors">
                     <BookOpen className="w-6 h-6" />
                   </div>
-                  <CardTitle className="text-xl">नुस्खा जोड़ें</CardTitle>
-                  <CardDescription>नया आयुर्वेदिक उपचार डेटाबेस में जोड़ें</CardDescription>
+                  <CardTitle className="text-xl">नुस्खे प्रबंधित करें</CardTitle>
+                  <CardDescription>नए नुस्खे जोड़ें या पुराने उपचारों को मैनेज करें</CardDescription>
                 </CardHeader>
               </Card>
 
-              <Card className="border-primary/10 shadow-sm opacity-50 cursor-not-allowed">
-                <CardHeader className="pb-2">
-                  <div className="p-3 w-fit rounded-2xl bg-amber-500/5 text-amber-500 mb-2">
-                    <ClipboardList className="w-6 h-6" />
+              {/* Card 2: User Requests */}
+              <Card className="border-border/50 bg-muted/30 shadow-none opacity-80">
+                <CardHeader className="pb-4">
+                  <div className="p-3 w-fit rounded-2xl bg-amber-500/10 text-amber-600 mb-3">
+                    <Users className="w-6 h-6" />
                   </div>
-                  <CardTitle className="text-xl">सभी नुस्खे</CardTitle>
-                  <CardDescription>पुराने नुस्खे देखें या एडिट करें (जल्द आ रहा है)</CardDescription>
+                  <CardTitle className="text-xl">यूजर अनुरोध</CardTitle>
+                  <CardDescription className="flex items-center gap-2">
+                    <span className="inline-block w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                    जल्द आ रहा है
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+
+              {/* Card 3: App Settings */}
+              <Card className="border-border/50 bg-muted/30 shadow-none opacity-80">
+                <CardHeader className="pb-4">
+                  <div className="p-3 w-fit rounded-2xl bg-blue-500/10 text-blue-600 mb-3">
+                    <Settings className="w-6 h-6" />
+                  </div>
+                  <CardTitle className="text-xl">ऐप सेटिंग्स</CardTitle>
+                  <CardDescription className="flex items-center gap-2">
+                    <span className="inline-block w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                    जल्द आ रहा है
+                  </CardDescription>
                 </CardHeader>
               </Card>
             </div>
           </div>
-        ) : (
+        )}
+
+        {/* VIEW 2: MANAGE RECIPES PANEL */}
+        {view === 'manage' && (
+          <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setView('overview')}
+                  className="rounded-full hover:bg-primary/5"
+                >
+                  <ChevronLeft className="w-6 h-6 text-primary" />
+                </Button>
+                <div>
+                  <h2 className="text-2xl font-headline font-black text-primary">नुस्खे प्रबंधित करें</h2>
+                  <p className="text-muted-foreground font-medium text-sm">नुस्खे जोड़ें और लाइव डेटा देखें</p>
+                </div>
+              </div>
+              <Button 
+                onClick={() => setView('add-recipe')}
+                className="bg-accent hover:bg-accent/90 text-white font-bold rounded-full gap-2 py-5 px-6 shadow-lg active:scale-95 transition-all"
+              >
+                <PlusCircle className="w-5 h-5" />
+                नुस्खा जोड़ें
+              </Button>
+            </div>
+
+            <Card className="border-primary/10 overflow-hidden">
+              <CardHeader className="bg-primary/5 border-b border-primary/10">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <ClipboardList className="w-5 h-5 text-primary" />
+                  सभी लाइव नुस्खे
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="divide-y divide-border">
+                  {/* Placeholder for recipe list */}
+                  <div className="p-8 text-center text-muted-foreground italic bg-muted/10">
+                    अभी कोई नया नुस्खा डेटाबेस में नहीं है। 'नुस्खा जोड़ें' बटन दबाकर शुरुआत करें।
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* VIEW 3: ADD NEW RECIPE FORM (9 STEPS) */}
+        {view === 'add-recipe' && (
           <div className="space-y-6 animate-in slide-in-from-right-4 duration-500 pb-20">
             <div className="flex items-center gap-4">
               <Button 
                 variant="ghost" 
                 size="icon" 
-                onClick={() => setView('overview')}
+                onClick={() => setView('manage')}
                 className="rounded-full hover:bg-primary/5"
               >
                 <ChevronLeft className="w-6 h-6 text-primary" />
               </Button>
-              <h2 className="text-2xl font-headline font-black text-primary">नया नुस्खा अपलोड करें</h2>
+              <div>
+                <h2 className="text-2xl font-headline font-black text-primary">नया नुस्खा अपलोड करें</h2>
+                <p className="text-sm text-muted-foreground">सभी 9 चरणों को विस्तार से भरें</p>
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Step 1: Classification */}
+              {/* Classification Section */}
               <Card className="border-primary/20 shadow-xl overflow-hidden rounded-[2rem]">
-                <CardHeader className="bg-primary text-white">
+                <CardHeader className="bg-primary text-white p-6">
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Stethoscope className="w-5 h-5" />
-                    श्रेणी और बीमारी का चयन
+                    श्रेणी और वर्गीकरण
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-6">
@@ -246,21 +316,22 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
 
-              {/* Step 2: Detailed Information */}
+              {/* Detailed 9 Steps Section */}
               <Card className="border-primary/20 shadow-xl overflow-hidden rounded-[2rem]">
-                <CardHeader className="bg-[#14532D] text-white">
+                <CardHeader className="bg-[#14532D] text-white p-6">
                   <CardTitle className="text-lg flex items-center gap-2">
                     <BookOpen className="w-5 h-5" />
-                    नुस्खे का विस्तृत विवरण
+                    नुस्खे की विस्तृत जानकारी (9 स्टेप्स)
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-8">
+                  {/* Step 1 */}
                   <div className="space-y-3">
                     <Label htmlFor="introduction" className="font-black text-primary">1. बीमारी का परिचय</Label>
                     <Textarea 
                       id="introduction"
                       name="introduction"
-                      placeholder="बीमारी के लक्षण और कारणों का विस्तार से वर्णन करें..."
+                      placeholder="बीमारी के लक्षण और कारणों का विस्तार से वर्णन करें (कोई शब्द सीमा नहीं)..."
                       className="min-h-[150px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.introduction}
                       onChange={handleInputChange}
@@ -268,12 +339,13 @@ export default function AdminDashboard() {
                     />
                   </div>
 
+                  {/* Step 2 */}
                   <div className="space-y-3">
                     <Label htmlFor="ingredients" className="font-black text-primary">2. आवश्यक सामग्री (कुल स्टॉक या बनाने के लिए)</Label>
                     <Textarea 
                       id="ingredients"
                       name="ingredients"
-                      placeholder="सामग्री की सूची और उनकी मात्रा लिखें..."
+                      placeholder="सामग्री की सूची और उनकी सटीक मात्रा यहाँ लिखें..."
                       className="min-h-[120px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.ingredients}
                       onChange={handleInputChange}
@@ -281,12 +353,13 @@ export default function AdminDashboard() {
                     />
                   </div>
 
+                  {/* Step 3 */}
                   <div className="space-y-3">
                     <Label htmlFor="preparation" className="font-black text-primary">3. बनाने की विधि</Label>
                     <Textarea 
                       id="preparation"
                       name="preparation"
-                      placeholder="नुस्खा तैयार करने के चरण लिखें..."
+                      placeholder="नुस्खा तैयार करने के एक-एक चरण को विस्तार से लिखें..."
                       className="min-h-[150px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.preparation}
                       onChange={handleInputChange}
@@ -294,7 +367,7 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  {/* Dosage Section */}
+                  {/* Step 4: Dosage breakdown */}
                   <div className="space-y-4 pt-4 border-t border-primary/10">
                     <div className="flex items-center justify-between">
                       <Label className="font-black text-primary text-base">4. स्मार्ट खुराक और मात्रा</Label>
@@ -315,7 +388,7 @@ export default function AdminDashboard() {
                               value={dose.ageRange}
                               onChange={(e) => handleDoseChange(index, 'ageRange', e.target.value)}
                               placeholder="उदा: 5-12 वर्ष"
-                              className="bg-white border-primary/10"
+                              className="bg-white border-primary/10 h-11"
                             />
                           </div>
                           <div className="sm:col-span-7 space-y-2">
@@ -324,7 +397,7 @@ export default function AdminDashboard() {
                               value={dose.dose}
                               onChange={(e) => handleDoseChange(index, 'dose', e.target.value)}
                               placeholder="उदा: आधा चम्मच दिन में दो बार"
-                              className="bg-white border-primary/10"
+                              className="bg-white border-primary/10 h-11"
                             />
                           </div>
                           <div className="sm:col-span-1 flex justify-end">
@@ -343,12 +416,13 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
+                  {/* Step 5 */}
                   <div className="space-y-3">
                     <Label htmlFor="usage" className="font-black text-primary">5. सेवन विधि</Label>
                     <Textarea 
                       id="usage"
                       name="usage"
-                      placeholder="दवा लेने का सही समय और तरीका (जैसे गुनगुने पानी के साथ)..."
+                      placeholder="दवा लेने का सही समय, तरीका और सावधानी (जैसे खाली पेट या खाना खाने के बाद)..."
                       className="min-h-[120px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.usage}
                       onChange={handleInputChange}
@@ -356,12 +430,13 @@ export default function AdminDashboard() {
                     />
                   </div>
 
+                  {/* Step 6 */}
                   <div className="space-y-3">
                     <Label htmlFor="dietEat" className="font-black text-primary">6. क्या खाएं</Label>
                     <Textarea 
                       id="dietEat"
                       name="dietEat"
-                      placeholder="लाभदायक भोजन और फलों की सूची..."
+                      placeholder="नुस्खे के साथ लाभकारी भोजन और फलों की सूची..."
                       className="min-h-[100px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.dietEat}
                       onChange={handleInputChange}
@@ -369,12 +444,13 @@ export default function AdminDashboard() {
                     />
                   </div>
 
+                  {/* Step 7 */}
                   <div className="space-y-3">
                     <Label htmlFor="dietAvoid" className="font-black text-primary">7. क्या न खाएं (सख़्त परहेज़)</Label>
                     <Textarea 
                       id="dietAvoid"
                       name="dietAvoid"
-                      placeholder="नुकसानदायक भोजन और आदतों से बचें..."
+                      placeholder="नुक्सानदायक भोजन और आदतों से बचने के सख़्त निर्देश..."
                       className="min-h-[100px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.dietAvoid}
                       onChange={handleInputChange}
@@ -382,12 +458,13 @@ export default function AdminDashboard() {
                     />
                   </div>
 
+                  {/* Step 8 */}
                   <div className="space-y-3">
                     <Label htmlFor="routine" className="font-black text-primary">8. दिनचर्या</Label>
                     <Textarea 
                       id="routine"
                       name="routine"
-                      placeholder="जीवनशैली और दैनिक आदतों में बदलाव के सुझाव..."
+                      placeholder="बीमारी के दौरान जीवनशैली और दैनिक आदतों में बदलाव के सुझाव..."
                       className="min-h-[120px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.routine}
                       onChange={handleInputChange}
@@ -395,12 +472,13 @@ export default function AdminDashboard() {
                     />
                   </div>
 
+                  {/* Step 9 */}
                   <div className="space-y-3">
                     <Label htmlFor="safetyAdvice" className="font-black text-primary">9. सुरक्षा सूचना</Label>
                     <Textarea 
                       id="safetyAdvice"
                       name="safetyAdvice"
-                      placeholder="सावधानियां, चेतावनी और डॉक्टर से परामर्श की सलाह..."
+                      placeholder="महत्वपूर्ण सावधानियां, चेतावनी और डॉक्टर से परामर्श कब लें..."
                       className="min-h-[120px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.safetyAdvice}
                       onChange={handleInputChange}
@@ -410,8 +488,8 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
 
-              {/* Submit Action */}
-              <div className="flex gap-4 pt-4 pb-12">
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-4 pb-12">
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
@@ -432,7 +510,7 @@ export default function AdminDashboard() {
                 <Button 
                   type="button" 
                   variant="outline"
-                  onClick={() => setView('overview')}
+                  onClick={() => setView('manage')}
                   className="h-14 px-8 border-primary/20 text-primary font-bold rounded-2xl"
                 >
                   रद्द करें
