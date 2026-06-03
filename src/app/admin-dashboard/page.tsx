@@ -134,9 +134,17 @@ export default function AdminDashboard() {
     setDoses(doses.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!db) return;
+    if (!db) {
+      toast({
+        variant: "destructive",
+        title: "त्रुटि",
+        description: "डेटाबेस कनेक्शन उपलब्ध नहीं है।",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     const submissionData = {
@@ -158,40 +166,57 @@ export default function AdminDashboard() {
       timestamp: serverTimestamp(),
     };
 
-    const recipesRef = collection(db, 'recipes');
-    addDoc(recipesRef, submissionData)
-      .then(() => {
-        toast({
-          title: "नुस्खा सुरक्षित हो गया!",
-          description: `${formData.remedyTitleHi} को सफलतापूर्वक डेटाबेस में जोड़ दिया गया है।`,
-        });
-        setIsSubmitting(false);
-        setView('manage');
-        setFormData(INITIAL_FORM_DATA);
-        setDoses(INITIAL_DOSES);
-      })
-      .catch(async (error) => {
-        const permissionError = new FirestorePermissionError({
-          path: 'recipes',
-          operation: 'write',
-          requestResourceData: submissionData,
-        } satisfies SecurityRuleContext);
-        errorEmitter.emit('permission-error', permissionError);
-        setIsSubmitting(false);
+    try {
+      const recipesRef = collection(db, 'recipes');
+      await addDoc(recipesRef, submissionData);
+      
+      toast({
+        title: "नुस्खा सुरक्षित हो गया! | Recipe Saved!",
+        description: `${formData.remedyTitleHi} को सफलतापूर्वक डेटाबेस में जोड़ दिया गया है।`,
       });
+      
+      // Reset and redirect
+      setFormData(INITIAL_FORM_DATA);
+      setDoses(INITIAL_DOSES);
+      setView('manage');
+    } catch (error: any) {
+      console.error("Submission error:", error);
+      
+      const permissionError = new FirestorePermissionError({
+        path: 'recipes',
+        operation: 'write',
+        requestResourceData: submissionData,
+      } satisfies SecurityRuleContext);
+      
+      errorEmitter.emit('permission-error', permissionError);
+      
+      toast({
+        variant: "destructive",
+        title: "सबमिशन विफल",
+        description: "डेटा सुरक्षित नहीं किया जा सका। कृपया अनुमति या इंटरनेट चेक करें।",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleDelete = (recipeId: string, title: string) => {
+  const handleDelete = async (recipeId: string, title: string) => {
     if (!db) return;
     if (confirm(`क्या आप वाकई "${title}" को हटाना चाहते हैं?`)) {
-      const docRef = doc(db, 'recipes', recipeId);
-      deleteDoc(docRef).catch(async (error) => {
+      try {
+        const docRef = doc(db, 'recipes', recipeId);
+        await deleteDoc(docRef);
+        toast({
+          title: "हटा दिया गया",
+          description: "नुस्खा सफलतापूर्वक हटा दिया गया है।",
+        });
+      } catch (error) {
         const permissionError = new FirestorePermissionError({
           path: `recipes/${recipeId}`,
           operation: 'delete',
         } satisfies SecurityRuleContext);
         errorEmitter.emit('permission-error', permissionError);
-      });
+      }
     }
   };
 
@@ -310,7 +335,9 @@ export default function AdminDashboard() {
                       <div key={recipe.id} className="p-4 flex items-center justify-between hover:bg-muted/5 transition-colors">
                         <div>
                           <h4 className="font-bold text-primary">{recipe.remedyTitle?.hi || 'शीर्षक उपलब्ध नहीं'}</h4>
-                          <p className="text-xs text-muted-foreground">{recipe.mainCategory?.hi} &gt; {recipe.diseaseName?.hi}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {recipe.mainCategory?.hi} &gt; {recipe.diseaseName?.hi}
+                          </p>
                         </div>
                         <Button 
                           variant="ghost" 
@@ -734,4 +761,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-
