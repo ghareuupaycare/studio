@@ -22,7 +22,6 @@ import {
   ClipboardList,
   Settings,
   Users,
-  CheckCircle2,
   Languages
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -166,21 +165,12 @@ export default function AdminDashboard() {
       timestamp: serverTimestamp(),
     };
 
-    const recipesRef = collection(db, 'recipes');
-    
-    // 4-second race timeout implementation
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error("TIMEOUT")), 4000)
-    );
-
     try {
-      await Promise.race([
-        addDoc(recipesRef, submissionData),
-        timeoutPromise
-      ]);
+      const recipesRef = collection(db, 'recipes');
+      await addDoc(recipesRef, submissionData);
       
       toast({
-        title: "नुस्खा सुरक्षित हो गया! | Recipe Saved!",
+        title: "नुस्खा सफलतापूर्वक सुरक्षित किया गया! | Recipe Saved Successfully!",
         description: `${formData.remedyTitleHi} को सफलतापूर्वक डेटाबेस में जोड़ दिया गया है।`,
       });
       
@@ -191,23 +181,19 @@ export default function AdminDashboard() {
     } catch (error: any) {
       console.error("Submission error:", error);
       
-      if (error.message === "TIMEOUT") {
-        alert("डेटाबेस से कनेक्शन नहीं हो पाया या नेटवर्क धीमा है! | Database Timeout");
-      } else {
-        const permissionError = new FirestorePermissionError({
-          path: 'recipes',
-          operation: 'write',
-          requestResourceData: submissionData,
-        } satisfies SecurityRuleContext);
-        
-        errorEmitter.emit('permission-error', permissionError);
-        
-        toast({
-          variant: "destructive",
-          title: "सबमिशन विफल",
-          description: "डेटा सुरक्षित नहीं किया जा सका। कृपया अनुमति या इंटरनेट चेक करें।",
-        });
-      }
+      const permissionError = new FirestorePermissionError({
+        path: 'recipes',
+        operation: 'write',
+        requestResourceData: submissionData,
+      } satisfies SecurityRuleContext);
+      
+      errorEmitter.emit('permission-error', permissionError);
+      
+      toast({
+        variant: "destructive",
+        title: "सबमिशन विफल",
+        description: "डेटा सुरक्षित नहीं किया जा सका। कृपया अनुमति या इंटरनेट चेक करें।",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -352,14 +338,16 @@ export default function AdminDashboard() {
                             {recipe.mainCategory?.hi} &gt; {recipe.diseaseName?.hi}
                           </p>
                         </div>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => handleDelete(recipe.id, recipe.remedyTitle?.hi)}
-                          className="text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => handleDelete(recipe.id, recipe.remedyTitle?.hi)}
+                            className="text-destructive hover:bg-destructive/10"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -485,6 +473,7 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
 
+              {/* Step 1 to 9 */}
               <Card className="border-primary/20 shadow-xl overflow-hidden rounded-[2rem]">
                 <CardHeader className="bg-[#14532D] text-white p-6">
                   <CardTitle className="text-lg flex items-center gap-2">
