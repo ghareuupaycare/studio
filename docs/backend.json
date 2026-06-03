@@ -25,6 +25,57 @@
         "timestamp",
         "count"
       ]
+    },
+    "Recipe": {
+      "title": "Recipe",
+      "description": "A complete record of a traditional Ayurvedic remedy.",
+      "type": "object",
+      "properties": {
+        "mainCategory": {
+          "type": "string",
+          "description": "Primary health category."
+        },
+        "diseaseName": {
+          "type": "string",
+          "description": "Specific illness or sub-category."
+        },
+        "remedyTitle": {
+          "type": "string",
+          "description": "The title of the remedy."
+        },
+        "introduction": {
+          "type": "string",
+          "description": "Detailed introduction to the disease."
+        },
+        "ingredients": {
+          "type": "string",
+          "description": "List of required ingredients."
+        },
+        "preparation": {
+          "type": "string",
+          "description": "Step-by-step preparation instructions."
+        },
+        "usage": {
+          "type": "string",
+          "description": "Instructions for consumption."
+        },
+        "doses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ageRange": { "type": "string" },
+              "dose": { "type": "string" }
+            }
+          }
+        },
+        "dietEat": { "type": "string" },
+        "dietAvoid": { "type": "string" },
+        "routine": { "type": "string" },
+        "safetyAdvice": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["mainCategory", "diseaseName", "remedyTitle"]
     }
   },
   "auth": {
@@ -36,6 +87,10 @@
     "/requested_remedies/{queryId}": {
       "schema": "#/backend/entities/RequestedRemedy",
       "description": "Collection of search terms that yielded no results."
+    },
+    "/recipes/{recipeId}": {
+      "schema": "#/backend/entities/Recipe",
+      "description": "Collection of all recipes added by admin."
     }
   }
 }

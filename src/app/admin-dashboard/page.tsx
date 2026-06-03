@@ -21,9 +21,14 @@ import {
   BookOpen,
   ClipboardList,
   Settings,
-  Users
+  Users,
+  CheckCircle2
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useFirestore } from '@/firebase';
+import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
 type DoseEntry = {
   ageRange: string;
@@ -32,34 +37,39 @@ type DoseEntry = {
 
 type ViewState = 'overview' | 'manage' | 'add-recipe';
 
+const INITIAL_FORM_DATA = {
+  mainCategory: '',
+  diseaseName: '',
+  remedyTitle: '',
+  introduction: '',
+  ingredients: '',
+  preparation: '',
+  usage: '',
+  dietEat: '',
+  dietAvoid: '',
+  routine: '',
+  safetyAdvice: '',
+};
+
+const INITIAL_DOSES: DoseEntry[] = [
+  { ageRange: '5-12 वर्ष', dose: '' },
+  { ageRange: '13-40 वर्ष', dose: '' },
+  { ageRange: '41-60 वर्ष', dose: '' },
+  { ageRange: '61-80 वर्ष', dose: '' },
+];
+
 export default function AdminDashboard() {
   const router = useRouter();
   const { toast } = useToast();
+  const db = useFirestore();
   const [isLoaded, setIsLoaded] = useState(false);
   const [view, setView] = useState<ViewState>('overview');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [liveRecipes, setLiveRecipes] = useState<any[]>([]);
 
   // Form State
-  const [formData, setFormData] = useState({
-    mainCategory: '',
-    diseaseName: '',
-    remedyTitle: '',
-    introduction: '',
-    ingredients: '',
-    preparation: '',
-    usage: '',
-    dietEat: '',
-    dietAvoid: '',
-    routine: '',
-    safetyAdvice: '',
-  });
-
-  const [doses, setDoses] = useState<DoseEntry[]>([
-    { ageRange: '5-12 वर्ष', dose: '' },
-    { ageRange: '13-40 वर्ष', dose: '' },
-    { ageRange: '41-60 वर्ष', dose: '' },
-    { ageRange: '61-80 वर्ष', dose: '' },
-  ]);
+  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+  const [doses, setDoses] = useState<DoseEntry[]>(INITIAL_DOSES);
 
   useEffect(() => {
     const isAuth = localStorage.getItem('gharelu_admin_auth');
@@ -69,6 +79,22 @@ export default function AdminDashboard() {
       setIsLoaded(true);
     }
   }, [router]);
+
+  // Real-time listener for recipes
+  useEffect(() => {
+    if (!db) return;
+    const recipesRef = collection(db, 'recipes');
+    const q = query(recipesRef, orderBy('timestamp', 'desc'));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setLiveRecipes(docs);
+    }, (error) => {
+      console.error("Listener error:", error);
+    });
+
+    return () => unsubscribe();
+  }, [db]);
 
   const handleLogout = () => {
     localStorage.removeItem('gharelu_admin_auth');
@@ -96,32 +122,50 @@ export default function AdminDashboard() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!db) return;
     setIsSubmitting(true);
 
-    // Simulate save
-    setTimeout(() => {
-      console.log('Form Submitted:', { ...formData, doses });
-      toast({
-        title: "नुस्खा सुरक्षित हो गया!",
-        description: `${formData.remedyTitle} को सफलतापूर्वक डेटाबेस में जोड़ दिया गया है।`,
+    const submissionData = {
+      ...formData,
+      doses: doses.filter(d => d.ageRange && d.dose),
+      timestamp: serverTimestamp(),
+    };
+
+    const recipesRef = collection(db, 'recipes');
+    addDoc(recipesRef, submissionData)
+      .then(() => {
+        toast({
+          title: "नुस्खा सुरक्षित हो गया!",
+          description: `${formData.remedyTitle} को सफलतापूर्वक डेटाबेस में जोड़ दिया गया है।`,
+        });
+        setIsSubmitting(false);
+        setView('manage');
+        setFormData(INITIAL_FORM_DATA);
+        setDoses(INITIAL_DOSES);
+      })
+      .catch(async (error) => {
+        const permissionError = new FirestorePermissionError({
+          path: 'recipes',
+          operation: 'write',
+          requestResourceData: submissionData,
+        } satisfies SecurityRuleContext);
+        errorEmitter.emit('permission-error', permissionError);
+        setIsSubmitting(false);
       });
-      setIsSubmitting(false);
-      setView('manage');
-      // Reset form
-      setFormData({
-        mainCategory: '',
-        diseaseName: '',
-        remedyTitle: '',
-        introduction: '',
-        ingredients: '',
-        preparation: '',
-        usage: '',
-        dietEat: '',
-        dietAvoid: '',
-        routine: '',
-        safetyAdvice: '',
+  };
+
+  const handleDelete = (recipeId: string, title: string) => {
+    if (!db) return;
+    if (confirm(`क्या आप वाकई "${title}" को हटाना चाहते हैं?`)) {
+      const docRef = doc(db, 'recipes', recipeId);
+      deleteDoc(docRef).catch(async (error) => {
+        const permissionError = new FirestorePermissionError({
+          path: `recipes/${recipeId}`,
+          operation: 'delete',
+        } satisfies SecurityRuleContext);
+        errorEmitter.emit('permission-error', permissionError);
       });
-    }, 1500);
+    }
   };
 
   if (!isLoaded) return null;
@@ -156,7 +200,6 @@ export default function AdminDashboard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Card 1: Manage Recipes */}
               <Card 
                 className="border-primary/20 shadow-sm hover:shadow-md transition-all cursor-pointer group active:scale-[0.98]" 
                 onClick={() => setView('manage')}
@@ -170,7 +213,6 @@ export default function AdminDashboard() {
                 </CardHeader>
               </Card>
 
-              {/* Card 2: User Requests */}
               <Card className="border-border/50 bg-muted/30 shadow-none opacity-80">
                 <CardHeader className="pb-4">
                   <div className="p-3 w-fit rounded-2xl bg-amber-500/10 text-amber-600 mb-3">
@@ -184,7 +226,6 @@ export default function AdminDashboard() {
                 </CardHeader>
               </Card>
 
-              {/* Card 3: App Settings */}
               <Card className="border-border/50 bg-muted/30 shadow-none opacity-80">
                 <CardHeader className="pb-4">
                   <div className="p-3 w-fit rounded-2xl bg-blue-500/10 text-blue-600 mb-3">
@@ -232,22 +273,40 @@ export default function AdminDashboard() {
               <CardHeader className="bg-primary/5 border-b border-primary/10">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <ClipboardList className="w-5 h-5 text-primary" />
-                  सभी लाइव नुस्खे
+                  सभी लाइव नुस्खे ({liveRecipes.length})
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="divide-y divide-border">
-                  {/* Placeholder for recipe list */}
+                {liveRecipes.length > 0 ? (
+                  <div className="divide-y divide-border">
+                    {liveRecipes.map((recipe) => (
+                      <div key={recipe.id} className="p-4 flex items-center justify-between hover:bg-muted/5 transition-colors">
+                        <div>
+                          <h4 className="font-bold text-primary">{recipe.remedyTitle}</h4>
+                          <p className="text-xs text-muted-foreground">{recipe.mainCategory} > {recipe.diseaseName}</p>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => handleDelete(recipe.id, recipe.remedyTitle)}
+                          className="text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
                   <div className="p-8 text-center text-muted-foreground italic bg-muted/10">
                     अभी कोई नया नुस्खा डेटाबेस में नहीं है। 'नुस्खा जोड़ें' बटन दबाकर शुरुआत करें।
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </div>
         )}
 
-        {/* VIEW 3: ADD NEW RECIPE FORM (9 STEPS) */}
+        {/* VIEW 3: ADD NEW RECIPE FORM */}
         {view === 'add-recipe' && (
           <div className="space-y-6 animate-in slide-in-from-right-4 duration-500 pb-20">
             <div className="flex items-center gap-4">
@@ -266,7 +325,6 @@ export default function AdminDashboard() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Classification Section */}
               <Card className="border-primary/20 shadow-xl overflow-hidden rounded-[2rem]">
                 <CardHeader className="bg-primary text-white p-6">
                   <CardTitle className="text-lg flex items-center gap-2">
@@ -316,7 +374,6 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
 
-              {/* Detailed 9 Steps Section */}
               <Card className="border-primary/20 shadow-xl overflow-hidden rounded-[2rem]">
                 <CardHeader className="bg-[#14532D] text-white p-6">
                   <CardTitle className="text-lg flex items-center gap-2">
@@ -325,13 +382,12 @@ export default function AdminDashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-8">
-                  {/* Step 1 */}
                   <div className="space-y-3">
                     <Label htmlFor="introduction" className="font-black text-primary">1. बीमारी का परिचय</Label>
                     <Textarea 
                       id="introduction"
                       name="introduction"
-                      placeholder="बीमारी के लक्षण और कारणों का विस्तार से वर्णन करें (कोई शब्द सीमा नहीं)..."
+                      placeholder="बीमारी के लक्षण और कारणों का विस्तार से वर्णन करें..."
                       className="min-h-[150px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.introduction}
                       onChange={handleInputChange}
@@ -339,9 +395,8 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  {/* Step 2 */}
                   <div className="space-y-3">
-                    <Label htmlFor="ingredients" className="font-black text-primary">2. आवश्यक सामग्री (कुल स्टॉक या बनाने के लिए)</Label>
+                    <Label htmlFor="ingredients" className="font-black text-primary">2. आवश्यक सामग्री</Label>
                     <Textarea 
                       id="ingredients"
                       name="ingredients"
@@ -353,7 +408,6 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  {/* Step 3 */}
                   <div className="space-y-3">
                     <Label htmlFor="preparation" className="font-black text-primary">3. बनाने की विधि</Label>
                     <Textarea 
@@ -367,7 +421,6 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  {/* Step 4: Dosage breakdown */}
                   <div className="space-y-4 pt-4 border-t border-primary/10">
                     <div className="flex items-center justify-between">
                       <Label className="font-black text-primary text-base">4. स्मार्ट खुराक और मात्रा</Label>
@@ -375,10 +428,6 @@ export default function AdminDashboard() {
                         <Plus className="w-4 h-4 mr-1" /> उम्र जोड़ें
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground italic mb-4">
-                      (उपरोक्त कुल सामग्री में से अपनी उम्र के अनुसार केवल नीचे चुनी गई खुराक ही लें:)
-                    </p>
-                    
                     <div className="space-y-4">
                       {doses.map((dose, index) => (
                         <div key={index} className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end p-4 rounded-2xl bg-primary/5 border border-primary/10">
@@ -396,18 +445,12 @@ export default function AdminDashboard() {
                             <Input 
                               value={dose.dose}
                               onChange={(e) => handleDoseChange(index, 'dose', e.target.value)}
-                              placeholder="उदा: आधा चम्मच दिन में दो बार"
+                              placeholder="उदा: आधा चम्मच"
                               className="bg-white border-primary/10 h-11"
                             />
                           </div>
                           <div className="sm:col-span-1 flex justify-end">
-                            <Button 
-                              type="button" 
-                              variant="ghost" 
-                              size="icon" 
-                              onClick={() => removeDoseField(index)}
-                              className="text-destructive hover:bg-destructive/10"
-                            >
+                            <Button type="button" variant="ghost" size="icon" onClick={() => removeDoseField(index)} className="text-destructive hover:bg-destructive/10">
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
@@ -416,13 +459,12 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  {/* Step 5 */}
                   <div className="space-y-3">
                     <Label htmlFor="usage" className="font-black text-primary">5. सेवन विधि</Label>
                     <Textarea 
                       id="usage"
                       name="usage"
-                      placeholder="दवा लेने का सही समय, तरीका और सावधानी (जैसे खाली पेट या खाना खाने के बाद)..."
+                      placeholder="दवा लेने का सही समय और तरीका..."
                       className="min-h-[120px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.usage}
                       onChange={handleInputChange}
@@ -430,13 +472,12 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  {/* Step 6 */}
                   <div className="space-y-3">
                     <Label htmlFor="dietEat" className="font-black text-primary">6. क्या खाएं</Label>
                     <Textarea 
                       id="dietEat"
                       name="dietEat"
-                      placeholder="नुस्खे के साथ लाभकारी भोजन और फलों की सूची..."
+                      placeholder="लाभकारी भोजन और फलों की सूची..."
                       className="min-h-[100px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.dietEat}
                       onChange={handleInputChange}
@@ -444,13 +485,12 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  {/* Step 7 */}
                   <div className="space-y-3">
-                    <Label htmlFor="dietAvoid" className="font-black text-primary">7. क्या न खाएं (सख़्त परहेज़)</Label>
+                    <Label htmlFor="dietAvoid" className="font-black text-primary">7. क्या न खाएं</Label>
                     <Textarea 
                       id="dietAvoid"
                       name="dietAvoid"
-                      placeholder="नुक्सानदायक भोजन और आदतों से बचने के सख़्त निर्देश..."
+                      placeholder="नुक्सानदायक भोजन से बचने के निर्देश..."
                       className="min-h-[100px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.dietAvoid}
                       onChange={handleInputChange}
@@ -458,13 +498,12 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  {/* Step 8 */}
                   <div className="space-y-3">
                     <Label htmlFor="routine" className="font-black text-primary">8. दिनचर्या</Label>
                     <Textarea 
                       id="routine"
                       name="routine"
-                      placeholder="बीमारी के दौरान जीवनशैली और दैनिक आदतों में बदलाव के सुझाव..."
+                      placeholder="जीवनशैली में बदलाव के सुझाव..."
                       className="min-h-[120px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.routine}
                       onChange={handleInputChange}
@@ -472,13 +511,12 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  {/* Step 9 */}
                   <div className="space-y-3">
                     <Label htmlFor="safetyAdvice" className="font-black text-primary">9. सुरक्षा सूचना</Label>
                     <Textarea 
                       id="safetyAdvice"
                       name="safetyAdvice"
-                      placeholder="महत्वपूर्ण सावधानियां, चेतावनी और डॉक्टर से परामर्श कब लें..."
+                      placeholder="महत्वपूर्ण सावधानियां और चेतावनी..."
                       className="min-h-[120px] border-primary/10 bg-[#FDFBF7]/50"
                       value={formData.safetyAdvice}
                       onChange={handleInputChange}
@@ -488,12 +526,11 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
 
-              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 pt-4 pb-12">
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="flex-1 h-14 bg-accent hover:bg-accent/90 text-white font-black text-lg uppercase tracking-widest rounded-2xl shadow-xl active:scale-95 transition-all"
+                  className="flex-1 h-14 bg-accent hover:bg-accent/90 text-white font-black text-lg uppercase tracking-widest rounded-2xl shadow-xl transition-all"
                 >
                   {isSubmitting ? (
                     <>
