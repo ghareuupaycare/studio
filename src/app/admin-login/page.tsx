@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Lock, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
+import { Lock, ShieldCheck, AlertCircle, Loader2, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
@@ -28,9 +28,8 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Using a static credential or env variable check
-    // For production, you'd want to use Firebase Auth, but for now we follow the "static master" request.
-    const MASTER_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'vaidya2024';
+    // Updated Master Password as requested
+    const MASTER_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'irfan9450@#$';
 
     setTimeout(() => {
       if (password === MASTER_PASSWORD) {
@@ -52,7 +51,19 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6 relative">
+      {/* Close Button to return to Home */}
+      <div className="absolute top-6 right-6">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={() => router.push('/')}
+          className="rounded-full hover:bg-primary/10 text-primary transition-all active:scale-90"
+        >
+          <X className="w-8 h-8" />
+        </Button>
+      </div>
+
       <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
         <div className="text-center mb-8 space-y-2">
           <div className="inline-flex items-center justify-center p-3 rounded-full bg-primary/10 text-primary mb-4">
