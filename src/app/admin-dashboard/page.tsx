@@ -103,7 +103,7 @@ export default function AdminDashboard() {
       const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setLiveRecipes(docs);
     }, (error) => {
-      console.error("Listener error:", error);
+      console.error("Firestore Listener error:", error);
     });
 
     return () => unsubscribe();
@@ -135,11 +135,16 @@ export default function AdminDashboard() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    console.log("Submit initiated...");
+
     if (!db) {
+      const errorMsg = "डेटाबेस कनेक्शन उपलब्ध नहीं है। | Database connection not available.";
+      console.error(errorMsg);
       toast({
         variant: "destructive",
         title: "त्रुटि",
-        description: "डेटाबेस कनेक्शन उपलब्ध नहीं है।",
+        description: errorMsg,
       });
       return;
     }
@@ -166,9 +171,13 @@ export default function AdminDashboard() {
     };
 
     try {
+      console.log("Attempting to write to Firestore collection 'recipes'...");
       const recipesRef = collection(db, 'recipes');
-      await addDoc(recipesRef, submissionData);
       
+      const docRef = await addDoc(recipesRef, submissionData);
+      
+      console.log("Firebase Save Success! Document ID:", docRef.id);
+
       toast({
         title: "नुस्खा सफलतापूर्वक सुरक्षित किया गया! | Recipe Saved Successfully!",
         description: `${formData.remedyTitleHi} को सफलतापूर्वक डेटाबेस में जोड़ दिया गया है।`,
@@ -179,8 +188,10 @@ export default function AdminDashboard() {
       setDoses(INITIAL_DOSES);
       setView('manage');
     } catch (error: any) {
-      console.error("Submission error:", error);
+      // Explicitly log the error for debugging
+      console.error("Firebase Save Error:", error);
       
+      // Emit permission error if relevant
       const permissionError = new FirestorePermissionError({
         path: 'recipes',
         operation: 'write',
@@ -192,10 +203,11 @@ export default function AdminDashboard() {
       toast({
         variant: "destructive",
         title: "सबमिशन विफल",
-        description: "डेटा सुरक्षित नहीं किया जा सका। कृपया अनुमति या इंटरनेट चेक करें।",
+        description: `डेटा सुरक्षित नहीं किया जा सका: ${error.message || 'Unknown error'}`,
       });
     } finally {
       setIsSubmitting(false);
+      console.log("Submit process finished.");
     }
   };
 
@@ -209,7 +221,8 @@ export default function AdminDashboard() {
           title: "हटा दिया गया",
           description: "नुस्खा सफलतापूर्वक हटा दिया गया है।",
         });
-      } catch (error) {
+      } catch (error: any) {
+        console.error("Firebase Delete Error:", error);
         const permissionError = new FirestorePermissionError({
           path: `recipes/${recipeId}`,
           operation: 'delete',
@@ -473,7 +486,7 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
 
-              {/* Step 1 to 9 */}
+              {/* Steps 1 to 9 */}
               <Card className="border-primary/20 shadow-xl overflow-hidden rounded-[2rem]">
                 <CardHeader className="bg-[#14532D] text-white p-6">
                   <CardTitle className="text-lg flex items-center gap-2">
