@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -28,8 +27,8 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Updated Master Password as requested
-    const MASTER_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'irfan9450@#$';
+    // Syncing with the new env variable name provided by user
+    const MASTER_PASSWORD = process.env.NEXT_PUBLIC_FIREBASE_ADMIN_PASSWORD || 'irfan9450@#$';
 
     setTimeout(() => {
       if (password === MASTER_PASSWORD) {
