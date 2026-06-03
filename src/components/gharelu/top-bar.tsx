@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Bell, Languages, Moon, Sun, Menu, Heart, Info, Mail, ShieldCheck, FileText, AlertTriangle, Lock } from 'lucide-react';
+import { Bell, Languages, Moon, Sun, Menu, Heart, Info, Mail, ShieldCheck, FileText, AlertTriangle, Lock, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Language, Theme } from '@/app/page';
 import { cn } from '@/lib/utils';
@@ -62,7 +62,7 @@ export const TopBar = ({
   const legalPages = [
     {
       id: 'about',
-      icon: <Info className="w-5 h-5" />,
+      icon: <Info className="w-4 h-4" />,
       title: isHindi ? 'हमारे बारे में' : 'About Us',
       content: isHindi 
         ? "घरेलू उपाय केयर में आपका स्वागत है। हमारा यह प्रयास भारत के महान ऋषि-मुनियों की पावन परंपरा, वैद्य जी के दिव्य अनुभवों और शास्त्रों के उस अकाट्य ज्ञान का एक आधुनिक संकलन है, जो सदियों से हमारी रसोई के कोनों में छिपा था। हमारा एकमात्र उद्देश्य आपको रसायनों और कड़वी दवाइयों की दुनिया से दूर ले जाकर, प्रकृति की गोद में पूर्ण स्वास्थ्य और दीर्घायु प्रदान करना है। यह सिर्फ एक एप्लीकेशन नहीं, बल्कि आपके पूरे परिवार की निरोगी काया और खुशहाली के लिए समर्पित एक नि:स्वार्थ सेवा है।"
@@ -70,7 +70,7 @@ export const TopBar = ({
     },
     {
       id: 'contact',
-      icon: <Mail className="w-5 h-5" />,
+      icon: <Mail className="w-4 h-4" />,
       title: isHindi ? 'हमसे संपर्क करें' : 'Contact Us',
       content: isHindi
         ? "हमारा यह मंच पूरी तरह से आपकी सेवा और सहायता के लिए हमेशा खुला है। यदि आपके पास हमारे लिए कोई अमूल्य सुझाव, मार्गदर्शन या स्वास्थ्य से जुड़ा कोई विचार है, तो आप हमसे सीधे संपर्क कर सकते हैं। आपके हर एक संदेश का हमारे इस परिवार में पूरे आदर के साथ स्वागत किया जाएगा और हमारी टीम आपकी सेवा में सदैव तत्पर रहेगी। (संपर्क माध्यम भविष्य के अपडेट के लिए सुरक्षित है)।"
@@ -78,7 +78,7 @@ export const TopBar = ({
     },
     {
       id: 'privacy',
-      icon: <ShieldCheck className="w-5 h-5" />,
+      icon: <ShieldCheck className="w-4 h-4" />,
       title: isHindi ? 'गोपनीयता नीति' : 'Privacy Policy',
       content: isHindi
         ? "आपकी गोपनीयता और सुरक्षा हमारे लिए उतनी ही पवित्र और महत्वपूर्ण है, जितने कि हमारे ये प्राचीन नुस्खे। सबसे विशेष बात यह है कि इस ऐप का उपयोग करने के लिए आपको किसी भी प्रकार के लॉगिन, रजिस्ट्रेशन या पासवर्ड की कोई आवश्यकता नहीं है। आप बिना किसी झंझट और बिना कोई व्यक्तिगत जानकारी साझा किए, पूरी तरह से स्वतंत्र होकर और एक सुरक्षित वातावरण में इस आयुर्वेद के महासागर का लाभ उठा सकते हैं।"
@@ -86,7 +86,7 @@ export const TopBar = ({
     },
     {
       id: 'terms',
-      icon: <FileText className="w-5 h-5" />,
+      icon: <FileText className="w-4 h-4" />,
       title: isHindi ? 'नियम और शर्तें' : 'Terms & Conditions',
       content: isHindi
         ? "यह पावन मंच विशुद्ध रूप से आयुर्वेद के प्रचार, प्रसार और जन-कल्याण के उद्देश्य से बनाया गया है। इस ऐप का उपयोग करते समय आप हमारी प्राचीन चिकित्सा पद्धतियों के प्रति पूर्ण सम्मान प्रकट करने और इसके सात्विक दिशा-निर्देशों का पालन करने की सहमति देते हैं। बिना किसी व्यावसायिक रुकावट के, हमारा प्रयास आप तक बिना किसी शुल्क के सर्वश्रेष्ठ ज्ञान को निरंतर पहुंचाते रहना है।"
@@ -94,7 +94,7 @@ export const TopBar = ({
     },
     {
       id: 'disclaimer',
-      icon: <AlertTriangle className="w-5 h-5" />,
+      icon: <AlertTriangle className="w-4 h-4" />,
       title: isHindi ? 'महत्वपूर्ण चेतावनी' : 'Disclaimer',
       content: isHindi
         ? "यहाँ दिए गए सभी घरेलू उपाय और नुस्खे शास्त्रों के सार और वैद्य जी के प्रामाणिक अनुभवों पर आधारित हैं, जो केवल आपके सामान्य ज्ञान और शैक्षिक उद्देश्य के लिए हैं। कृपया याद रखें कि यह किसी योग्य डॉक्टर का अंतिम विकल्प नहीं है। किसी भी गंभीर, पुरानी या जटिल बीमारी की स्थिति में, अपने विवेक का उपयोग करते हुए सदैव अपने नजदीकी क्वालिफाइड चिकित्सक या डॉक्टर से परामर्श अवश्य लें।"
@@ -117,34 +117,39 @@ export const TopBar = ({
           <SheetContent 
             side="left" 
             className={cn(
-              "w-[70%] sm:w-[350px] p-0 overflow-hidden border-none transition-colors duration-500",
+              "w-[85%] sm:w-[350px] p-0 overflow-hidden border-none transition-colors duration-500",
               isNight ? "bg-[#121b15]" : "bg-[#FDFBF7]"
             )}
           >
             <div className="flex flex-col h-full">
               <SheetHeader className={cn(
-                "p-8 text-white transition-colors duration-500",
-                isNight ? "bg-black border-b border-white/10" : "bg-primary"
+                "p-6 text-white transition-colors duration-500 flex flex-row items-center justify-between",
+                isNight ? "bg-black border-b border-white/10" : "bg-[#14532D]"
               )}>
-                <SheetTitle className="text-2xl font-headline font-black text-white">
+                <SheetTitle className="text-lg font-headline font-black text-white truncate pr-2">
                   {isHindi ? 'घरेलू उपाय केयर' : 'Gharelu Upay Care'}
                 </SheetTitle>
+                <SheetClose asChild>
+                  <Button variant="ghost" size="icon" className="text-white/80 hover:bg-white/10 hover:text-white rounded-full h-9 w-9 shrink-0">
+                    <X className="w-5 h-5" />
+                  </Button>
+                </SheetClose>
               </SheetHeader>
               
-              <ScrollArea className="flex-1 p-6">
-                <Accordion type="single" collapsible className="w-full space-y-4">
+              <ScrollArea className="flex-1 p-5">
+                <Accordion type="single" collapsible className="w-full space-y-2">
                   {legalPages.map((page) => (
-                    <AccordionItem key={page.id} value={page.id}>
-                      <AccordionTrigger className="hover:no-underline py-4">
+                    <AccordionItem key={page.id} value={page.id} className="border-none">
+                      <AccordionTrigger className="hover:no-underline py-3">
                         <div className="flex items-center gap-3">
                           <div className={cn(
-                            "p-2 rounded-xl",
+                            "p-1.5 rounded-lg",
                             isNight ? "bg-white/10 text-white" : "bg-primary/5 text-primary"
                           )}>
                             {page.icon}
                           </div>
                           <span className={cn(
-                            "font-bold text-lg",
+                            "font-bold text-sm text-left",
                             isNight ? "text-zinc-100" : "text-foreground"
                           )}>
                             {page.title}
@@ -152,7 +157,7 @@ export const TopBar = ({
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className={cn(
-                        "leading-relaxed text-sm pt-2 pb-6 px-2",
+                        "leading-relaxed text-sm pt-1 pb-4 px-1 opacity-90",
                         isNight ? "text-zinc-400" : "text-muted-foreground"
                       )}>
                         {page.content}
@@ -162,12 +167,12 @@ export const TopBar = ({
                 </Accordion>
                 
                 {/* Admin Entry Point */}
-                <div className="mt-8 px-2">
+                <div className="mt-6 px-1">
                   <SheetClose asChild>
                     <Button
                       variant="ghost"
                       className={cn(
-                        "w-full justify-start gap-3 h-12 rounded-xl font-bold text-sm transition-all active:scale-95",
+                        "w-full justify-start gap-3 h-11 rounded-xl font-bold text-sm transition-all active:scale-95",
                         isNight ? "text-zinc-500 hover:text-white" : "text-muted-foreground hover:text-primary"
                       )}
                       onClick={() => router.push('/admin-login')}
@@ -178,8 +183,8 @@ export const TopBar = ({
                   </SheetClose>
                 </div>
 
-                <div className="mt-8 p-6 rounded-[2rem] border transition-colors opacity-60">
-                  <p className="text-[12px] text-center uppercase tracking-widest">
+                <div className="mt-8 p-4 rounded-[1.5rem] border transition-colors opacity-40">
+                  <p className="text-[10px] text-center uppercase tracking-widest font-black">
                     © 2024 GHARELU UPAY CARE
                   </p>
                 </div>
