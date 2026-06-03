@@ -166,9 +166,18 @@ export default function AdminDashboard() {
       timestamp: serverTimestamp(),
     };
 
+    const recipesRef = collection(db, 'recipes');
+    
+    // 4-second race timeout implementation
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("TIMEOUT")), 4000)
+    );
+
     try {
-      const recipesRef = collection(db, 'recipes');
-      await addDoc(recipesRef, submissionData);
+      await Promise.race([
+        addDoc(recipesRef, submissionData),
+        timeoutPromise
+      ]);
       
       toast({
         title: "नुस्खा सुरक्षित हो गया! | Recipe Saved!",
@@ -182,19 +191,23 @@ export default function AdminDashboard() {
     } catch (error: any) {
       console.error("Submission error:", error);
       
-      const permissionError = new FirestorePermissionError({
-        path: 'recipes',
-        operation: 'write',
-        requestResourceData: submissionData,
-      } satisfies SecurityRuleContext);
-      
-      errorEmitter.emit('permission-error', permissionError);
-      
-      toast({
-        variant: "destructive",
-        title: "सबमिशन विफल",
-        description: "डेटा सुरक्षित नहीं किया जा सका। कृपया अनुमति या इंटरनेट चेक करें।",
-      });
+      if (error.message === "TIMEOUT") {
+        alert("डेटाबेस से कनेक्शन नहीं हो पाया या नेटवर्क धीमा है! | Database Timeout");
+      } else {
+        const permissionError = new FirestorePermissionError({
+          path: 'recipes',
+          operation: 'write',
+          requestResourceData: submissionData,
+        } satisfies SecurityRuleContext);
+        
+        errorEmitter.emit('permission-error', permissionError);
+        
+        toast({
+          variant: "destructive",
+          title: "सबमिशन विफल",
+          description: "डेटा सुरक्षित नहीं किया जा सका। कृपया अनुमति या इंटरनेट चेक करें।",
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
