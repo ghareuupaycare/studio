@@ -283,7 +283,7 @@ export default function AdminDashboard() {
                       <div key={recipe.id} className="p-4 flex items-center justify-between hover:bg-muted/5 transition-colors">
                         <div>
                           <h4 className="font-bold text-primary">{recipe.remedyTitle}</h4>
-                          <p className="text-xs text-muted-foreground">{recipe.mainCategory} > {recipe.diseaseName}</p>
+                          <p className="text-xs text-muted-foreground">{recipe.mainCategory} &gt; {recipe.diseaseName}</p>
                         </div>
                         <Button 
                           variant="ghost" 
