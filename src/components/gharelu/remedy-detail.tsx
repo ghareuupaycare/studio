@@ -84,6 +84,14 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const renderSection = (icon: React.ReactNode, title: string, content: any, variant: SectionVariant, customHeader?: string, appendDisclaimer?: boolean) => {
     if (!content) return null;
 
+    // Normalize content into an array of strings for list rendering
+    let points: string[] = [];
+    if (Array.isArray(content)) {
+      points = content.filter(item => typeof item === 'string' && item.trim() !== '');
+    } else if (typeof content === 'string') {
+      points = content.split('\n').filter(line => line.trim() !== '');
+    }
+
     return (
       <div className={cn(
         "p-6 rounded-[2rem] border shadow-md space-y-4 mb-6 transition-all duration-300",
@@ -108,23 +116,19 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           </div>
         </div>
         <div className="text-[15px] leading-relaxed font-medium space-y-2">
-          {Array.isArray(content) ? (
-            <ul className="space-y-3 list-none p-0 m-0">
-              {content.map((item, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <span className={cn(
-                    "w-1.5 h-1.5 rounded-full mt-2 shrink-0",
-                    variant === 'green' ? "bg-emerald-600" :
-                    variant === 'red' ? "bg-red-600" :
-                    "bg-amber-600"
-                  )} />
-                  <span>{toEnglishDigits(item)}</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>{toEnglishDigits(content)}</p>
-          )}
+          <ul className="space-y-3 list-none p-0 m-0">
+            {points.map((item, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <span className={cn(
+                  "w-1.5 h-1.5 rounded-full mt-2 shrink-0",
+                  variant === 'green' ? "bg-emerald-600" :
+                  variant === 'red' ? "bg-red-600" :
+                  "bg-amber-600"
+                )} />
+                <span>{toEnglishDigits(item)}</span>
+              </li>
+            ))}
+          </ul>
 
           {appendDisclaimer && (
             <div className="pt-4 border-t border-red-200/50 mt-4 italic text-[14px] leading-relaxed">
@@ -257,7 +261,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               ))}
             </div>
 
-            {/* Dynamic Content Display */}
+            {/* Dynamic Content Display with Bullet Points */}
             <div className={cn(
               "p-5 rounded-2xl border-l-4 transition-all duration-500 animate-in fade-in slide-in-from-top-2",
               isNight ? "bg-white/5 border-accent" : "bg-white/60 border-accent"
@@ -266,9 +270,19 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 <span className="text-[10px] uppercase font-black tracking-widest opacity-60">
                   {isHindi ? 'निर्धारित खुराक' : 'Prescribed Dosage'}
                 </span>
-                <p className="text-[16px] font-bold leading-relaxed">
-                  {toEnglishDigits(remedy.doses[selectedDoseIndex].dose[lang])}
-                </p>
+                <div className="text-[16px] font-bold leading-relaxed">
+                  <ul className="space-y-2 list-none p-0 m-0">
+                    {(Array.isArray(remedy.doses[selectedDoseIndex].dose[lang]) 
+                      ? (remedy.doses[selectedDoseIndex].dose[lang] as string[]) 
+                      : (remedy.doses[selectedDoseIndex].dose[lang] as string).split('\n')
+                    ).filter(p => p.trim() !== '').map((point, idx) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
+                        <span>{toEnglishDigits(point)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -295,16 +309,26 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               </div>
               <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {['morning', 'afternoon', 'evening'].map((time) => (
                 remedy.routine[time as keyof typeof remedy.routine] && (
                   <div key={time} className="flex items-start gap-3">
                     <span className="text-[13px] font-bold text-accent w-20 pt-1 shrink-0">
                       {routineSegmentLabels[time]}
                     </span>
-                    <p className="text-[14px] flex-1 font-medium">
-                      {toEnglishDigits(remedy.routine[time as keyof typeof remedy.routine][lang])}
-                    </p>
+                    <div className="flex-1">
+                      <ul className="space-y-2 list-none p-0 m-0">
+                        {(Array.isArray(remedy.routine[time as keyof typeof remedy.routine][lang])
+                          ? (remedy.routine[time as keyof typeof remedy.routine][lang] as string[])
+                          : (remedy.routine[time as keyof typeof remedy.routine][lang] as string).split('\n')
+                        ).filter(p => p.trim() !== '').map((point, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-[14px] font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-2 shrink-0" />
+                            <span>{toEnglishDigits(point)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 )
               ))}
