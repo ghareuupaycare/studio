@@ -6,6 +6,7 @@ import { Language, Theme } from '@/app/page';
 import { 
   Heart,
   Share2,
+  Copy,
   Info,
   Beaker,
   ChefHat,
@@ -15,7 +16,8 @@ import {
   AlertTriangle,
   Clock,
   ShieldCheck,
-  User
+  User,
+  Check
 } from 'lucide-react';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -36,6 +38,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const isHindi = lang === 'hi';
   const { toast } = useToast();
   const [selectedDoseIndex, setSelectedDoseIndex] = useState(0);
+  const [copied, setCopied] = useState(false);
 
   const labels = {
     introduction: isHindi ? '1. बीमारी का परिचय' : '1. Introduction',
@@ -53,6 +56,10 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     ? "उपरोक्त कुल सामग्री में से अपनी उम्र के अनुसार केवल नीचे चुनी गई खुराक ही लें:"
     : "From the above ingredients, take only the dosage selected below according to your age:";
 
+  const disclaimerText = isHindi 
+    ? "विशेष परामर्श: प्रिय पाठक, यह घरेलू उपाय शैक्षिक उद्देश्य से साझा किए गए हैं। किसी भी गंभीर स्थिति में हों, तो कृपया किसी योग्य डॉक्टर या वैद्य से व्यक्तिगत सलाह ज़रूर लें। सुरक्षित रहें, स्वस्थ रहें, आपका स्वास्थ्य सर्वोपरि है।"
+    : "Special Advice: Dear Reader, these home remedies are shared solely for educational purposes. In case of any serious condition, please consult a qualified doctor or Vaidya for personal advice. Stay safe, stay healthy, your health is our supreme priority.";
+
   const getVariantStyles = (variant: SectionVariant) => {
     if (isNight) {
       return "bg-white/5 border-white/10 text-white";
@@ -68,7 +75,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     }
   };
 
-  const renderSection = (icon: React.ReactNode, title: string, content: any, variant: SectionVariant, customHeader?: string) => {
+  const renderSection = (icon: React.ReactNode, title: string, content: any, variant: SectionVariant, customHeader?: string, appendDisclaimer?: boolean) => {
     if (!content) return null;
 
     return (
@@ -112,9 +119,37 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           ) : (
             <p>{toEnglishDigits(content)}</p>
           )}
+
+          {appendDisclaimer && (
+            <div className="pt-4 border-t border-red-200/50 mt-4 italic text-[14px]">
+              {disclaimerText}
+            </div>
+          )}
         </div>
       </div>
     );
+  };
+
+  const getFullRecipeText = () => {
+    const title = toEnglishDigits(remedy.name[lang]);
+    let text = `🌿 *${title}* 🌿\n\n`;
+    
+    text += `📌 ${labels.introduction}\n${toEnglishDigits(remedy.introduction[lang])}\n\n`;
+    text += `📦 ${labels.ingredients}\n${Array.isArray(remedy.ingredients[lang]) ? remedy.ingredients[lang].join(', ') : remedy.ingredients[lang]}\n\n`;
+    text += `🥣 ${labels.preparation}\n${toEnglishDigits(remedy.preparation[lang])}\n\n`;
+    
+    if (remedy.doses && remedy.doses[selectedDoseIndex]) {
+      text += `⚖️ ${labels.dosage} (${toEnglishDigits(remedy.doses[selectedDoseIndex].ageRange[lang])})\n${toEnglishDigits(remedy.doses[selectedDoseIndex].dose[lang])}\n\n`;
+    }
+    
+    text += `🔄 ${labels.usage}\n${toEnglishDigits(remedy.usage[lang])}\n\n`;
+    text += `✅ ${labels.dietEat}\n${toEnglishDigits(remedy.dietEat[lang])}\n\n`;
+    text += `🚫 ${labels.dietAvoid}\n${toEnglishDigits(remedy.dietAvoid[lang])}\n\n`;
+    text += `⚠️ ${labels.safety}\n${toEnglishDigits(remedy.safetyAdvice[lang])}\n\n`;
+    text += `📜 ${disclaimerText}\n\n`;
+    text += `🔗 ${window.location.origin}?remedyId=${remedy.id}`;
+    
+    return text;
   };
 
   const handleShare = async () => {
@@ -131,6 +166,18 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     } else {
       await navigator.clipboard.writeText(shareText);
       toast({ description: isHindi ? "लिंक कॉपी हो गया है!" : "Link copied!" });
+    }
+  };
+
+  const handleCopy = async () => {
+    const fullText = getFullRecipeText();
+    try {
+      await navigator.clipboard.writeText(fullText);
+      setCopied(true);
+      toast({ description: isHindi ? "पूरा नुस्खा कॉपी हो गया है!" : "Full recipe copied!" });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
     }
   };
 
@@ -246,17 +293,30 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           </div>
         )}
 
-        {/* 9. Safety Information - Red */}
-        {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red')}
+        {/* 9. Safety Information - Red with Disclaimer */}
+        {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red', undefined, true)}
       </div>
 
       <div className="pt-8 flex flex-col items-center gap-4">
-        <Button 
-          onClick={handleShare} 
-          className="w-full h-14 rounded-full font-black uppercase tracking-widest shadow-xl bg-accent text-white active:scale-95 transition-all"
-        >
-          <Share2 className="w-5 h-5 mr-2" /> {isHindi ? 'शेयर करें' : 'Share'}
-        </Button>
+        <div className="grid grid-cols-2 gap-4 w-full">
+          <Button 
+            onClick={handleCopy} 
+            variant="outline"
+            className={cn(
+              "h-14 rounded-full font-black uppercase tracking-widest transition-all active:scale-95 border-2",
+              isNight ? "border-white/20 text-white" : "border-accent text-accent hover:bg-accent/5"
+            )}
+          >
+            {copied ? <Check className="w-5 h-5 mr-2" /> : <Copy className="w-5 h-5 mr-2" />}
+            {isHindi ? 'कॉपी करें' : 'Copy'}
+          </Button>
+          <Button 
+            onClick={handleShare} 
+            className="h-14 rounded-full font-black uppercase tracking-widest shadow-xl bg-accent text-white active:scale-95 transition-all"
+          >
+            <Share2 className="w-5 h-5 mr-2" /> {isHindi ? 'शेयर करें' : 'Share'}
+          </Button>
+        </div>
       </div>
     </div>
   );
