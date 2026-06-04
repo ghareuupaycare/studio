@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
@@ -54,10 +53,10 @@ export default function GhareluUpayApp() {
           name: data.remedyTitle,
           illnessId: "live", // Virtual ID for live remedies
           introduction: data.introduction,
-          doses: data.doses.map((d: any) => ({
+          doses: data.doses?.map((d: any) => ({
             ageRange: d.ageRange,
             dose: d.dose
-          })),
+          })) || [],
           ingredients: {
             hi: Array.isArray(data.ingredients?.hi) ? data.ingredients.hi : [data.ingredients?.hi || ''],
             en: Array.isArray(data.ingredients?.en) ? data.ingredients.en : [data.ingredients?.en || '']
@@ -100,12 +99,6 @@ export default function GhareluUpayApp() {
       } catch (e) {
         console.error("Failed to load read IDs", e);
       }
-    }
-    
-    const params = new URLSearchParams(window.location.search);
-    const remedyIdFromUrl = params.get('remedyId');
-    if (remedyIdFromUrl) {
-      // Logic handled after live recipes load to ensure search works for dynamic IDs
     }
     
     setIsLoaded(true);
@@ -235,7 +228,7 @@ export default function GhareluUpayApp() {
               lang={lang} 
               theme={theme} 
               onSelectCategory={handleSelectCategory} 
-              liveRemedies={liveRemedies}
+              liveRemedies={liveRecipes}
               onSelectRemedy={handleSelectRemedy}
             />
           )}
