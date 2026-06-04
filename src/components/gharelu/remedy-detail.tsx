@@ -1,14 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Remedy } from '@/lib/remedy-types';
 import { Language, Theme } from '@/app/page';
 import { 
-  Info, 
-  CheckCircle, 
   Heart,
   Share2,
-  Copy
+  Copy,
+  Info,
+  Beaker,
+  ChefHat,
+  Stethoscope,
+  Activity,
+  Apple,
+  AlertTriangle,
+  Clock,
+  ShieldCheck
 } from 'lucide-react';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -27,147 +34,163 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const isHindi = lang === 'hi';
   const { toast } = useToast();
 
-  const currentDose = remedy.doses?.[0];
-  const displayIngredients = remedy.ingredients?.[lang] || [];
-
-  const headingClass = cn(
-    "text-[18px] font-bold mb-4 flex items-center gap-3 leading-[1.4]",
-    isNight ? "text-white" : "text-[#14532D]"
-  );
-
-  const bodyTextClass = cn(
-    "text-[16px] leading-relaxed font-medium",
-    isNight ? "text-[#E5E7EB]" : "text-[#1E293B]"
-  );
-
-  const renderParam = (content: string | string[] | undefined) => {
-    if (!content) return null;
-    if (Array.isArray(content)) {
-      return (
-        <ul className="space-y-4 list-none m-0 p-0">
-          {content.map((item, i) => (
-            <li key={i} className="flex items-start gap-4">
-              <span className="w-2.5 h-2.5 rounded-full bg-accent mt-2 shrink-0 shadow-sm" />
-              <span className={bodyTextClass}>{toEnglishDigits(item)}</span>
-            </li>
-          ))}
-        </ul>
-      );
-    }
-    return <span className={bodyTextClass}>{toEnglishDigits(content)}</span>;
+  const labels = {
+    introduction: isHindi ? '1. बीमारी का परिचय' : '1. Introduction',
+    ingredients: isHindi ? '2. आवश्यक सामग्री (कुल स्टॉक या बनाने के लिए)' : '2. Required Ingredients',
+    preparation: isHindi ? '3. बनाने की विधि' : '3. Preparation Method',
+    dosage: isHindi ? '4. स्मार्ट खुराक और मात्रा' : '4. Smart Dosage & Quantity',
+    usage: isHindi ? '5. सेवन विधि' : '5. Consumption Method',
+    dietEat: isHindi ? '6. क्या खाएं' : '6. What to Eat',
+    dietAvoid: isHindi ? '7. क्या न खाएं (सख़्त परहेज़)' : '7. What to Avoid (Strict)',
+    routine: isHindi ? '8. दिनचर्या' : '8. Daily Routine',
+    safety: isHindi ? '9. सुरक्षा सूचना' : '9. Safety Information',
   };
 
-  const getShareableText = () => {
-    const title = toEnglishDigits(remedy.name?.[lang] || '');
-    const introContent = remedy.introduction?.[lang];
-    const intro = toEnglishDigits(Array.isArray(introContent) ? introContent[0] : introContent);
-    const ingredientsList = displayIngredients.map(item => `- ${toEnglishDigits(item)}`).join('\n');
-    
-    const cta = isHindi 
-      ? "पूरा नुस्खा, बनाने की विधि और सही खुराक जानने के लिए नीचे दिए गए लिंक पर क्लिक करें👇"
-      : "To know the full recipe, preparation method, and correct dosage, click the link below👇";
-    
-    const introLabel = isHindi ? 'बीमारी का परिचय' : 'Introduction';
-    const ingredientsLabel = isHindi ? 'आवश्यक सामग्री' : 'Key Ingredients';
+  const dosageWarning = isHindi 
+    ? "(उपरोक्त कुल सामग्री में से अपनी उम्र के अनुसार केवल नीचे चुनी गई खुराक ही लें:)"
+    : "(From the above ingredients, take only the dosage selected below according to your age:)";
 
-    // Generate dynamic deep link for the specific remedy
-    const deepLink = `${window.location.origin}?remedyId=${remedy.id}`;
+  const renderSection = (icon: React.ReactNode, title: string, content: any, customHeader?: string) => {
+    if (!content) return null;
 
-    return `🌿 *${title}* 🌿\n\n*${introLabel}:*\n${intro}\n\n*${ingredientsLabel}:*\n${ingredientsList}\n\n${cta}\n${deepLink}`;
+    return (
+      <div className={cn(
+        "p-6 rounded-[2rem] border shadow-sm space-y-4 mb-6",
+        isNight ? "bg-white/5 border-white/10" : "bg-white border-primary/10"
+      )}>
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-accent/10 text-accent">
+            {icon}
+          </div>
+          <div className="flex flex-col">
+            <h3 className={cn("text-[18px] font-bold leading-tight", isNight ? "text-white" : "text-[#14532D]")}>
+              {title}
+            </h3>
+            {customHeader && (
+              <p className="text-[11px] font-bold text-accent mt-0.5 leading-tight">{customHeader}</p>
+            )}
+          </div>
+        </div>
+        <div className={cn("text-[15px] leading-relaxed font-medium space-y-2", isNight ? "text-[#E5E7EB]" : "text-[#1E293B]")}>
+          {Array.isArray(content) ? (
+            <ul className="space-y-3 list-none p-0 m-0">
+              {content.map((item, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
+                  <span>{toEnglishDigits(item)}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>{toEnglishDigits(content)}</p>
+          )}
+        </div>
+      </div>
+    );
   };
 
   const handleShare = async () => {
-    const shareText = getShareableText();
-    const title = toEnglishDigits(remedy.name?.[lang] || '');
+    const title = toEnglishDigits(remedy.name[lang]);
+    const deepLink = `${window.location.origin}?remedyId=${remedy.id}`;
+    const shareText = `🌿 *${title}* 🌿\n\nपूरी जानकारी और बनाने की विधि यहाँ देखें: \n${deepLink}`;
 
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
-        await navigator.share({
-          title: `Gharelu Upay Care - ${title}`,
-          text: shareText,
-          // url is omitted or set to empty string to prevent link duplication in apps like WhatsApp
-          url: '', 
-        });
+        await navigator.share({ title, text: shareText });
       } catch (error) {
-        if ((error as any).name !== 'AbortError') {
-          console.error("Sharing failed", error);
-        }
+        if ((error as any).name !== 'AbortError') console.error(error);
       }
     } else {
-      handleCopy();
-    }
-  };
-
-  const handleCopy = async () => {
-    const shareText = getShareableText();
-    try {
       await navigator.clipboard.writeText(shareText);
-      toast({
-        description: isHindi ? "नुस्खा विवरण कॉपी हो गया है!" : "Remedy details copied!",
-      });
-    } catch (err) {
-      console.error('Failed to copy: ', err);
+      toast({ description: isHindi ? "लिंक कॉपी हो गया है!" : "Link copied!" });
     }
   };
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-500 pb-32">
-      <div className="flex items-center justify-end mb-4">
+    <div className="space-y-6 animate-in fade-in duration-500 pb-32 max-w-2xl mx-auto">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className={cn("text-[26px] font-black tracking-wide leading-tight flex-1", isNight ? "text-white" : "text-[#14532D]")}>
+          {toEnglishDigits(remedy.name[lang])}
+        </h2>
         <Button 
           variant="ghost" 
           size="icon" 
           onClick={onToggleFavorite} 
-          className={cn("rounded-full h-14 w-14 active:scale-90 transition-all duration-200", isFavorite ? "text-accent" : "text-muted-foreground")}
+          className={cn("rounded-full h-12 w-12", isFavorite ? "text-accent" : "text-muted-foreground")}
         >
-          <Heart className={cn("w-8 h-8", isFavorite && "fill-current")} />
+          <Heart className={cn("w-7 h-7", isFavorite && "fill-current")} />
         </Button>
       </div>
 
-      <h2 className={cn("text-[28px] font-black tracking-wide leading-tight mb-8", isNight ? "text-white" : "text-[#14532D]")}>
-        {toEnglishDigits(remedy.name?.[lang] || '')}
-      </h2>
+      <div className="space-y-0">
+        {renderSection(<Info className="w-5 h-5" />, labels.introduction, remedy.introduction[lang])}
+        {renderSection(<Beaker className="w-5 h-5" />, labels.ingredients, remedy.ingredients[lang])}
+        {renderSection(<ChefHat className="w-5 h-5" />, labels.preparation, remedy.preparation[lang])}
+        
+        {/* Dosage Section */}
+        {remedy.doses && remedy.doses.length > 0 && (
+          <div className={cn(
+            "p-6 rounded-[2rem] border shadow-sm space-y-4 mb-6",
+            isNight ? "bg-white/5 border-white/10" : "bg-white border-primary/10"
+          )}>
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-accent/10 text-accent"><Stethoscope className="w-5 h-5" /></div>
+              <div className="flex flex-col">
+                <h3 className={cn("text-[18px] font-bold leading-tight", isNight ? "text-white" : "text-[#14532D]")}>
+                  {labels.dosage}
+                </h3>
+                <p className="text-[11px] font-bold text-accent mt-0.5 leading-tight">{dosageWarning}</p>
+              </div>
+            </div>
+            <div className="space-y-4">
+              {remedy.doses.map((dose, i) => (
+                <div key={i} className="flex items-center justify-between p-3 rounded-2xl bg-accent/5 border border-accent/10">
+                  <span className="font-bold text-sm">{toEnglishDigits(dose.ageRange[lang])}</span>
+                  <span className="text-sm font-medium">{toEnglishDigits(dose.dose[lang])}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-      <div className={cn("p-6 rounded-[2rem] border shadow-sm", isNight ? "bg-white/5" : "bg-primary/5")}>
-        <h3 className={headingClass}><Info className="w-6 h-6 shrink-0" /> {isHindi ? '1. बीमारी का परिचय' : '1. Introduction'}</h3>
-        <div>{renderParam(remedy.introduction?.[lang])}</div>
+        {renderSection(<Activity className="w-5 h-5" />, labels.usage, remedy.usage[lang])}
+        {renderSection(<Apple className="w-5 h-5" />, labels.dietEat, remedy.dietEat[lang])}
+        {renderSection(<AlertTriangle className="w-5 h-5" />, labels.dietAvoid, remedy.dietAvoid[lang])}
+        
+        {/* Routine Section */}
+        {remedy.routine && (
+          <div className={cn(
+            "p-6 rounded-[2rem] border shadow-sm space-y-4 mb-6",
+            isNight ? "bg-white/5 border-white/10" : "bg-white border-primary/10"
+          )}>
+             <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-accent/10 text-accent"><Clock className="w-5 h-5" /></div>
+              <h3 className={cn("text-[18px] font-bold leading-tight", isNight ? "text-white" : "text-[#14532D]")}>
+                {labels.routine}
+              </h3>
+            </div>
+            <div className="space-y-3">
+              {['morning', 'afternoon', 'evening'].map((time) => (
+                remedy.routine[time as keyof typeof remedy.routine] && (
+                  <div key={time} className="flex items-start gap-3">
+                    <span className="text-[11px] font-black uppercase tracking-widest text-accent w-16 pt-1">{time}</span>
+                    <p className="text-[14px] flex-1 font-medium">{toEnglishDigits(remedy.routine[time as keyof typeof remedy.routine][lang])}</p>
+                  </div>
+                )
+              ))}
+            </div>
+          </div>
+        )}
+
+        {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang])}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className={cn("p-6 rounded-[2rem] border shadow-sm", isNight ? "bg-black" : "bg-[#FDF6E2]")}>
-          <h3 className={cn(headingClass, "text-accent")}>{isHindi ? '3. आवश्यक सामग्री' : '3. Ingredients'}</h3>
-          <ul className="space-y-4">
-            {displayIngredients.map((item, i) => (
-              <li key={i} className={cn("flex items-start gap-3", bodyTextClass)}>
-                <CheckCircle className="w-6 h-6 mt-0.5 text-accent shrink-0" />
-                <span>{toEnglishDigits(item)}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className={cn("p-8 rounded-[2.5rem] border border-accent/40 shadow-sm opacity-60 mt-10 text-center")}>
-        <p className="text-[12px] italic uppercase tracking-widest">
-          {toEnglishDigits(remedy.disclaimer?.[lang] || '')}
-        </p>
-      </div>
-
-      <div className="pt-12 flex flex-col sm:flex-row items-center justify-center gap-4 px-6">
+      <div className="pt-8 flex flex-col items-center gap-4">
         <Button 
           onClick={handleShare} 
-          className="w-full sm:w-auto min-w-[160px] h-14 rounded-full font-black uppercase tracking-[0.15em] shadow-xl text-base bg-accent text-white active:scale-95 transition-all duration-200"
+          className="w-full h-14 rounded-full font-black uppercase tracking-widest shadow-xl bg-accent text-white active:scale-95 transition-all"
         >
           <Share2 className="w-5 h-5 mr-2" /> {isHindi ? 'शेयर करें' : 'Share'}
-        </Button>
-        <Button 
-          onClick={handleCopy} 
-          variant="outline"
-          className={cn(
-            "w-full sm:w-auto min-w-[160px] h-14 rounded-full font-black uppercase tracking-[0.15em] shadow-lg text-base active:scale-95 transition-all duration-200",
-            isNight ? "border-white/20 text-white hover:bg-white/10" : "border-primary/20 text-primary hover:bg-primary/5"
-          )}
-        >
-          <Copy className="w-5 h-5 mr-2" /> {isHindi ? 'कॉपी करें' : 'Copy'}
         </Button>
       </div>
     </div>

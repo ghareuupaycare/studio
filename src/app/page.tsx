@@ -23,7 +23,6 @@ export default function GhareluUpayApp() {
   const [lang, setLang] = useState<Language>('hi');
   const [theme, setTheme] = useState<Theme>('cream');
   
-  // State for persistence and data
   const [liveRecipes, setLiveRecipes] = useState<Remedy[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [readRemedyIds, setReadRemedyIds] = useState<string[]>([]);
@@ -32,12 +31,10 @@ export default function GhareluUpayApp() {
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-  // Combine static and live remedies
   const allRemedies = useMemo(() => {
     return [...STATIC_REMEDIES, ...liveRecipes];
   }, [liveRecipes]);
 
-  // Fetch live recipes from Firestore
   useEffect(() => {
     if (!db) return;
     const recipesRef = collection(db, 'recipes');
@@ -46,32 +43,25 @@ export default function GhareluUpayApp() {
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const docs = snapshot.docs.map(doc => {
         const data = doc.data();
-        // Map Firestore Recipe to frontend Remedy type
         return {
           id: doc.id,
           serialNumber: "Live",
           name: data.remedyTitle,
-          illnessId: "live", // Virtual ID for live remedies
+          illnessId: data.diseaseName?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
+          categoryId: data.mainCategory?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
           introduction: data.introduction,
           doses: data.doses?.map((d: any) => ({
             ageRange: d.ageRange,
             dose: d.dose
           })) || [],
-          ingredients: {
-            hi: Array.isArray(data.ingredients?.hi) ? data.ingredients.hi : [data.ingredients?.hi || ''],
-            en: Array.isArray(data.ingredients?.en) ? data.ingredients.en : [data.ingredients?.en || '']
-          },
+          ingredients: data.ingredients,
           preparation: data.preparation,
           usage: data.usage,
           dietEat: data.dietEat,
           dietAvoid: data.dietAvoid,
-          routine: {
-            morning: data.routine,
-            afternoon: data.routine,
-            evening: data.routine
-          },
+          routine: data.routine,
           safetyAdvice: data.safetyAdvice,
-          disclaimer: { hi: "वैद्य जी द्वारा सत्यापित", en: "Verified by Vaidya Ji" },
+          disclaimer: { hi: "", en: "" }, // Removed as per request
           keywords: []
         } as Remedy;
       });
@@ -81,7 +71,6 @@ export default function GhareluUpayApp() {
     return () => unsubscribe();
   }, [db]);
 
-  // Load persistence data and handle deep links
   useEffect(() => {
     const savedFavs = localStorage.getItem('gharelu-favorites');
     if (savedFavs) {
@@ -104,15 +93,14 @@ export default function GhareluUpayApp() {
     setIsLoaded(true);
   }, []);
 
-  // Handle deep linking for dynamic IDs after load
   useEffect(() => {
-    if (isLoaded && allRemedies.length > STATIC_REMEDIES.length) {
+    if (isLoaded && allRemedies.length > 0) {
       const params = new URLSearchParams(window.location.search);
       const remedyIdFromUrl = params.get('remedyId');
       if (remedyIdFromUrl) {
         const remedy = allRemedies.find(r => r.id === remedyIdFromUrl);
         if (remedy) {
-          setSelectedCategoryId(remedy.illnessId === 'live' ? 'live' : 'fever_flu');
+          setSelectedCategoryId(remedy.categoryId || 'fever_flu');
           setSelectedRemedyId(remedyIdFromUrl);
           setIsDetailView(true);
           window.history.replaceState({}, '', window.location.pathname);
@@ -228,8 +216,6 @@ export default function GhareluUpayApp() {
               lang={lang} 
               theme={theme} 
               onSelectCategory={handleSelectCategory} 
-              liveRemedies={liveRecipes}
-              onSelectRemedy={handleSelectRemedy}
             />
           )}
         </div>

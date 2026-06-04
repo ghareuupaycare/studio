@@ -1,7 +1,6 @@
-
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { ChevronLeft, ArrowRight, BookOpen } from 'lucide-react';
@@ -46,10 +45,8 @@ export const CategoryDetailView = ({
         setSelectedRemedy(remedy);
         setSelectedIllnessId(remedy.illnessId);
       }
-    } else if (!selectedRemedy && !initialRemedyId) {
-       // Only clear if explicitly navigating away from a remedy
     }
-  }, [initialRemedyId, categoryId, allRemedies]);
+  }, [initialRemedyId, allRemedies]);
 
   useEffect(() => {
     if (onLevelChange) {
@@ -63,37 +60,43 @@ export const CategoryDetailView = ({
     fever_flu: {
       title: isHindi ? '1. मौसमी बुखार एवं फ्लू' : '1. Seasonal Fever & Flu',
       illnesses: [
-        {
-          id: 'general-fever',
-          title: isHindi ? '1. सामान्य बुखार' : '1. General Fever',
-          description: isHindi ? 'हल्के बुखार और शारीरिक थकान के लिए प्राकृतिक उपचार' : 'Natural treatments for mild fever and physical fatigue'
-        },
-        {
-          id: 'common-cold',
-          title: isHindi ? '2. नजला और जुकाम' : '2. Cold & Flu',
-          description: isHindi ? 'नाक बहना, छींकें और बंद नाक के लिए अचूक घरेलू उपचार' : 'Effective remedies for runny nose, sneezing and congestion'
-        },
-        {
-          id: 'cough',
-          title: isHindi ? '3. सूखी एवं बलगम वाली खांसी' : '3. Dry and Productive Cough',
-          description: isHindi ? 'हर तरह की सूखी खांसी, बलगम और छाती में जकड़न से राहत के लिए अचूक घरेलू उपचार' : 'Effective remedies for dry cough, phlegm and chest congestion'
-        }
+        { id: 'general-fever', title: isHindi ? '1. सामान्य बुखार' : '1. General Fever' },
+        { id: 'common-cold', title: isHindi ? '2. नजला और जुकाम' : '2. Cold & Flu' },
+        { id: 'cough', title: isHindi ? '3. सूखी एवं बलगम वाली खांसी' : '3. Cough' }
       ]
     },
-    live: {
-      title: isHindi ? 'नवीनतम नुस्खे' : 'Latest Remedies',
+    stomach_diseases: {
+      title: isHindi ? '2. पेट रोग (Stomach Diseases)' : '2. Stomach Diseases',
       illnesses: [
-        {
-          id: 'live',
-          title: isHindi ? 'हाल ही में जोड़े गए' : 'Recently Added',
-          description: isHindi ? 'वैद्य जी द्वारा प्रमाणित नए पारंपरिक नुस्खे' : 'New traditional remedies certified by Vaidya Ji'
-        }
+        { id: 'gas_acidity', title: isHindi ? '1. गैस और एसिडिटी' : '1. Gas & Acidity' },
+        { id: 'indigestion', title: isHindi ? '2. अपच (Indigestion)' : '2. Indigestion' }
       ]
     }
   };
 
   const activeCategory = categoryContent[categoryId as keyof typeof categoryContent];
-  const illnessRemedies = allRemedies.filter(r => r.illnessId === selectedIllnessId);
+  
+  // Dynamically group illnesses if they are from Firestore (live recipes)
+  const illnessList = useMemo(() => {
+    if (!activeCategory) return [];
+    
+    // Add dynamic illnesses found in the remedies that match this categoryId
+    const dynamicIllnesses = allRemedies
+      .filter(r => r.categoryId === categoryId || r.illnessId === 'live')
+      .map(r => ({ id: r.illnessId, title: r.name[lang] }));
+
+    // Merge with static ones, avoiding duplicates by ID
+    const merged = [...activeCategory.illnesses];
+    dynamicIllnesses.forEach(di => {
+      if (!merged.find(m => m.id === di.id)) merged.push(di);
+    });
+    
+    return merged;
+  }, [activeCategory, allRemedies, categoryId, lang]);
+
+  const illnessRemedies = useMemo(() => {
+    return allRemedies.filter(r => r.illnessId === selectedIllnessId || (r.categoryId === categoryId && selectedIllnessId === r.illnessId));
+  }, [allRemedies, selectedIllnessId, categoryId]);
 
   if (!activeCategory) {
     return (
@@ -117,59 +120,46 @@ export const CategoryDetailView = ({
     }
   };
 
-  const currentIllness = activeCategory.illnesses.find(i => i.id === selectedIllnessId);
+  const currentIllness = illnessList.find(i => i.id === selectedIllnessId);
 
   return (
-    <div className="space-y-10 animate-in slide-in-from-right-4 duration-500 pb-10">
+    <div className="space-y-10 animate-in slide-in-from-right-4 duration-500 pb-10 max-w-2xl mx-auto">
       {/* Header */}
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-4">
         <button 
           onClick={handleInternalBack}
           className={cn(
-            "p-4 rounded-full transition-all active:scale-95 shadow-lg cursor-pointer",
-            isNight ? "bg-white text-black hover:bg-white/90" : "bg-[#14532D] text-white hover:bg-[#166534]"
+            "p-3 rounded-full transition-all active:scale-95 shadow-md cursor-pointer",
+            isNight ? "bg-white text-black" : "bg-[#14532D] text-white"
           )}
         >
-          <ChevronLeft className="w-7 h-7" />
+          <ChevronLeft className="w-6 h-6" />
         </button>
         <div className="flex flex-col text-left">
           <h2 className={cn(
-            "font-black font-headline leading-tight tracking-wide text-2xl sm:text-3xl",
+            "font-black font-headline leading-tight tracking-wide text-2xl",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
             {toEnglishDigits(selectedRemedy ? selectedRemedy.name[lang] : (selectedIllnessId ? (currentIllness?.title || '') : activeCategory.title))}
           </h2>
-          {(selectedIllnessId || selectedRemedy) && (
-            <span className={cn(
-              "text-[12px] font-bold uppercase tracking-[0.2em] opacity-60 mt-1",
-              isNight ? "text-white" : "text-[#14532D]"
-            )}>
-              {selectedRemedy ? (isHindi ? 'नुस्खा विवरण' : 'Remedy Detail') : activeCategory.title}
-            </span>
-          )}
         </div>
       </div>
 
       {!selectedIllnessId ? (
-        <div className="grid grid-cols-1 gap-6">
-          {activeCategory.illnesses.map((illness) => (
+        <div className="grid grid-cols-1 gap-4">
+          {illnessList.map((illness) => (
             <button
               key={illness.id}
               onClick={() => setSelectedIllnessId(illness.id)}
               className={cn(
-                "group relative w-full p-8 rounded-[2.5rem] border transition-all duration-300 text-left cursor-pointer shadow-xl",
+                "group relative w-full p-6 rounded-[2rem] border transition-all duration-300 text-left cursor-pointer shadow-lg flex items-center justify-between",
                 isNight 
                   ? "bg-black border-white text-white active:bg-white active:text-black" 
                   : "bg-white border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
               )}
             >
-              <div className="space-y-2">
-                <h3 className="text-[24px] font-black leading-tight">{toEnglishDigits(illness.title)}</h3>
-                <p className="text-base font-bold opacity-70 leading-relaxed">{toEnglishDigits(illness.description)}</p>
-              </div>
-              <div className="p-4 rounded-full bg-accent/10 ml-4 shrink-0 shadow-md">
-                <ArrowRight className="w-6 h-6 text-accent group-active:text-white" />
-              </div>
+              <h3 className="text-[20px] font-bold leading-tight">{toEnglishDigits(illness.title)}</h3>
+              <ArrowRight className="w-5 h-5 text-accent group-active:text-white" />
             </button>
           ))}
         </div>
@@ -183,24 +173,23 @@ export const CategoryDetailView = ({
                 if (onSelectRemedyId) onSelectRemedyId(remedy.id);
               }}
               className={cn(
-                "w-full p-6 rounded-3xl border transition-all duration-200 text-left flex items-center gap-5 group cursor-pointer active:scale-[0.98] shadow-xl",
+                "w-full p-5 rounded-2xl border transition-all duration-200 text-left flex items-center gap-4 group cursor-pointer active:scale-[0.98] shadow-md",
                 isNight 
                   ? "bg-black border-white/20 text-white hover:border-white" 
                   : "bg-white border-primary/10 hover:border-primary/30 text-primary"
               )}
             >
-              <div className={cn(
-                "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shrink-0 shadow-inner",
-                isNight ? "bg-white/10 text-white" : "bg-primary/5 text-primary"
-              )}>
-                {toEnglishDigits(remedy.serialNumber)}
-              </div>
               <div className="flex-1">
-                <h4 className="font-bold text-[22px] leading-snug">{toEnglishDigits(remedy.name[lang])}</h4>
+                <h4 className="font-bold text-[18px] leading-snug">{toEnglishDigits(remedy.name[lang])}</h4>
               </div>
-              <BookOpen className="w-6 h-6 opacity-40 group-hover:opacity-100 transition-opacity" />
+              <BookOpen className="w-5 h-5 opacity-40 group-hover:opacity-100 transition-opacity" />
             </button>
           ))}
+          {illnessRemedies.length === 0 && (
+            <p className="text-center opacity-50 py-10 italic">
+              {isHindi ? 'अभी कोई नुस्खा उपलब्ध नहीं है' : 'No recipes available yet'}
+            </p>
+          )}
         </div>
       ) : (
         <RemedyDetail 
