@@ -46,14 +46,14 @@ export const FavoritesOverlay = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
         className={cn(
-          "fixed top-0 right-0 translate-x-0 translate-y-0 w-full md:w-1/2 h-full max-w-none p-0 border-none flex flex-col rounded-none shadow-2xl z-[100] outline-none transition-all duration-300 [&>button]:hidden",
+          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[50vh] max-w-none p-0 border-none flex flex-col rounded-none shadow-2xl z-[100] outline-none transition-all duration-300 ease-in-out [&>button]:hidden",
           isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7] text-foreground"
         )}
       >
         {/* Header */}
         <div className={cn(
-          "shrink-0 p-6 pt-12 pb-6 relative",
-          isNight ? "bg-black/80 border-b border-white/10" : "bg-primary border-b border-white/10"
+          "shrink-0 p-6 pt-10 pb-6 relative",
+          isNight ? "bg-black/80 border-b border-white/10" : "bg-[#14532D] border-b border-white/10"
         )}>
           {/* Custom Golden Close Button */}
           <div className="absolute top-4 right-6">
@@ -80,8 +80,8 @@ export const FavoritesOverlay = ({
         </div>
 
         {/* Scrollable List Content */}
-        <ScrollArea className="flex-1 w-full overflow-y-auto">
-          <div className="p-4 max-w-2xl mx-auto w-full pb-24">
+        <ScrollArea className="flex-1 w-full bg-transparent">
+          <div className="p-4 max-w-2xl mx-auto w-full pb-10">
             {favoriteRemedies.length > 0 ? (
               <div className="grid grid-cols-1 gap-3">
                 {favoriteRemedies.map((remedy) => (
@@ -112,13 +112,13 @@ export const FavoritesOverlay = ({
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 opacity-30 text-center space-y-4">
-                <HeartOff className="w-20 h-20" />
+              <div className="flex flex-col items-center justify-center py-10 opacity-30 text-center space-y-4">
+                <HeartOff className="w-16 h-16" />
                 <div className="space-y-1">
-                  <p className="font-black text-xl">
+                  <p className="font-black text-lg">
                     {isHindi ? 'अभी कोई पसंदीदा नुस्खा नहीं है' : 'No favorites yet'}
                   </p>
-                  <p className="text-sm">
+                  <p className="text-xs">
                     {isHindi ? 'नुस्खों को सहेजने के लिए दिल (Heart) आइकन पर क्लिक करें।' : 'Click the heart icon to save remedies.'}
                   </p>
                 </div>
