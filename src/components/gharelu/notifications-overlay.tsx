@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -30,11 +31,10 @@ export const NotificationsOverlay = ({
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
 
-  const handleResultClick = (remedyId: string) => {
-    // Currently all remedies belong to fever_flu
-    const categoryId = 'fever_flu';
-    onMarkAsRead(remedyId);
-    onSelectRemedy(remedyId, categoryId);
+  const handleResultClick = (remedy: Remedy) => {
+    const categoryId = remedy.categoryId || 'fever_flu';
+    onMarkAsRead(remedy.id);
+    onSelectRemedy(remedy.id, categoryId);
     onClose();
   };
 
@@ -42,15 +42,13 @@ export const NotificationsOverlay = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
         className={cn(
-          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[60vh] max-w-none p-0 border-none flex flex-col transition-all duration-300 ease-in-out rounded-none shadow-2xl z-[100]",
-          "active:ring-0 focus:ring-0 focus-visible:ring-0 outline-none",
-          "[&>button]:text-amber-400 [&>button]:opacity-100 [&>button]:scale-125",
+          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[70vh] max-w-none p-0 border-none flex flex-col transition-all duration-300 ease-in-out rounded-none shadow-2xl z-[100] outline-none",
           isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7] text-foreground"
         )}
       >
         <div className={cn(
-          "shrink-0 p-6 pt-8",
-          isNight ? "bg-black/40 border-b border-white/10" : "bg-[#14532D] border-b border-white/10"
+          "shrink-0 p-6 pt-10",
+          isNight ? "bg-black/60 border-b border-white/10" : "bg-[#14532D] border-b border-white/10"
         )}>
           <div className="flex items-center gap-3">
             <Bell className="w-6 h-6 text-amber-400" />
@@ -78,7 +76,7 @@ export const NotificationsOverlay = ({
                   {unreadRemedies.map((remedy) => (
                     <button
                       key={remedy.id}
-                      onClick={() => handleResultClick(remedy.id)}
+                      onClick={() => handleResultClick(remedy)}
                       className={cn(
                         "w-full p-5 rounded-2xl border transition-all text-left flex items-center gap-5 group cursor-pointer active:scale-[0.98] shadow-sm",
                         isNight 
@@ -90,7 +88,7 @@ export const NotificationsOverlay = ({
                         "w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg shrink-0 transition-colors duration-500",
                         isNight ? "bg-white/5 text-amber-400" : "bg-amber-400/10 text-amber-400"
                       )}>
-                        {toEnglishDigits(remedy.serialNumber)}
+                        {toEnglishDigits(remedy.serialNumber === "Live" ? "★" : remedy.serialNumber)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-bold text-lg leading-tight truncate mb-1">

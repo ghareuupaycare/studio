@@ -19,7 +19,15 @@ interface FavoritesOverlayProps {
   allRemedies: Remedy[];
 }
 
-export const FavoritesOverlay = ({ isOpen, onClose, lang, theme, favorites, onSelectRemedy, allRemedies }: FavoritesOverlayProps) => {
+export const FavoritesOverlay = ({ 
+  isOpen, 
+  onClose, 
+  lang, 
+  theme, 
+  favorites, 
+  onSelectRemedy, 
+  allRemedies 
+}: FavoritesOverlayProps) => {
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
 
@@ -28,37 +36,78 @@ export const FavoritesOverlay = ({ isOpen, onClose, lang, theme, favorites, onSe
   }, [favorites, allRemedies]);
 
   const handleResultClick = (remedy: Remedy) => {
-    onSelectRemedy(remedy.id, remedy.illnessId === 'live' ? 'live' : 'fever_flu');
+    // Determine category: if it's from static data it usually has a categoryId, 
+    // if it's 'live' it might be 'live' or use its original category
+    const categoryId = remedy.categoryId || 'fever_flu';
+    onSelectRemedy(remedy.id, categoryId);
     onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={cn("fixed top-0 left-0 w-full h-[60vh] p-0 border-none flex flex-col rounded-none shadow-2xl z-[100]", isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7] text-foreground")}>
-        <div className={cn("shrink-0 p-6 pt-8", isNight ? "bg-black/40 border-b border-white/10" : "bg-primary border-b border-white/10")}>
+      <DialogContent 
+        className={cn(
+          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[70vh] max-w-none p-0 border-none flex flex-col rounded-none shadow-2xl z-[100] outline-none",
+          isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7] text-foreground"
+        )}
+      >
+        <div className={cn(
+          "shrink-0 p-6 pt-10",
+          isNight ? "bg-black/60 border-b border-white/10" : "bg-primary border-b border-white/10"
+        )}>
           <div className="flex items-center gap-3">
             <Heart className="w-6 h-6 text-accent fill-current" />
-            <DialogTitle className="text-white text-xl font-headline font-black">{isHindi ? 'पसंदीदा नुस्खे' : 'Favorite Remedies'}</DialogTitle>
+            <DialogTitle className="text-white text-xl font-headline font-black">
+              {isHindi ? 'पसंदीदा नुस्खे' : 'Favorite Remedies'}
+            </DialogTitle>
           </div>
+          <p className="text-white/60 text-xs mt-1 font-medium">
+            {isHindi ? 'आपके द्वारा सहेजे गए स्वास्थ्य समाधान' : 'Your saved health solutions'}
+          </p>
         </div>
-        <ScrollArea className="flex-1">
-          <div className="p-4 max-w-2xl mx-auto">
+
+        <ScrollArea className="flex-1 w-full">
+          <div className="p-4 max-w-2xl mx-auto w-full">
             {favoriteRemedies.length > 0 ? (
-              <div className="space-y-2">
+              <div className="grid grid-cols-1 gap-3">
                 {favoriteRemedies.map((remedy) => (
-                  <button key={remedy.id} onClick={() => handleResultClick(remedy)} className={cn("w-full p-4 rounded-xl border flex items-center gap-4 text-left", isNight ? "bg-white/5 border-white/5" : "bg-white border-primary/5")}>
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-accent/10 text-accent font-black">{toEnglishDigits(remedy.serialNumber)}</div>
-                    <div className="flex-1 truncate">
-                      <h4 className="font-bold text-base">{toEnglishDigits(remedy.name[lang])}</h4>
+                  <button 
+                    key={remedy.id} 
+                    onClick={() => handleResultClick(remedy)} 
+                    className={cn(
+                      "w-full p-5 rounded-2xl border flex items-center gap-5 text-left transition-all active:scale-[0.98] group shadow-sm",
+                      isNight ? "bg-white/5 border-white/5" : "bg-white border-primary/5"
+                    )}
+                  >
+                    <div className={cn(
+                      "w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg shrink-0",
+                      isNight ? "bg-white/5 text-accent" : "bg-accent/10 text-accent"
+                    )}>
+                      {toEnglishDigits(remedy.serialNumber === "Live" ? "★" : remedy.serialNumber)}
                     </div>
-                    <ChevronRight className="w-4 h-4 opacity-30" />
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-lg leading-tight truncate">
+                        {toEnglishDigits(remedy.name[lang])}
+                      </h4>
+                      <p className="text-xs opacity-60 mt-1 font-medium">
+                        {isHindi ? 'विवरण देखने के लिए क्लिक करें' : 'Click to view details'}
+                      </p>
+                    </div>
+                    <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                   </button>
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 opacity-30 text-center">
-                <HeartOff className="w-16 h-16 mb-4" />
-                <p>{isHindi ? 'अभी कोई पसंदीदा नुस्खा नहीं है' : 'No favorites yet'}</p>
+              <div className="flex flex-col items-center justify-center py-20 opacity-30 text-center space-y-4">
+                <HeartOff className="w-20 h-20" />
+                <div className="space-y-1">
+                  <p className="font-black text-xl">
+                    {isHindi ? 'अभी कोई पसंदीदा नुस्खा नहीं है' : 'No favorites yet'}
+                  </p>
+                  <p className="text-sm">
+                    {isHindi ? 'नुस्खों को सहेजने के लिए दिल (Heart) आइकन पर क्लिक करें।' : 'Click the heart icon to save remedies.'}
+                  </p>
+                </div>
               </div>
             )}
           </div>
