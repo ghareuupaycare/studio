@@ -1,16 +1,21 @@
+
 'use client';
 
 import React from 'react';
 import { Language, Theme } from '@/app/page';
-import { cn } from '@/lib/utils';
+import { cn, toEnglishDigits } from '@/lib/utils';
+import { Remedy } from '@/lib/remedy-data';
+import { Sparkles, ArrowRight } from 'lucide-react';
 
 interface HomeViewProps {
   lang: Language;
   theme: Theme;
   onSelectCategory: (id: string) => void;
+  liveRemedies?: Remedy[];
+  onSelectRemedy?: (id: string, catId: string) => void;
 }
 
-export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
+export const HomeView = ({ lang, theme, onSelectCategory, liveRemedies = [], onSelectRemedy }: HomeViewProps) => {
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
 
@@ -32,7 +37,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700 w-full max-w-2xl px-4 sm:px-6">
-      {/* Home Banner - Premium Redesign */}
+      {/* Home Banner */}
       <section className={cn(
         "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-center justify-center py-4 px-3 text-center transition-all duration-500 border border-amber-400/40",
         "aspect-video max-h-[220px] relative",
@@ -58,23 +63,19 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
               ? 'शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो आपकी रसोई में छिपे स्वास्थ्य रहने का खज़ाना हैं' 
               : 'Traditional remedies based on scriptures, the hidden treasure of health in your kitchen'}
           </p>
-          <div className="pt-2">
-            <button className={cn(
-              "inline-block px-4 py-2 rounded-full font-bold text-[13px] shadow-lg active:scale-95 transition-all duration-200 cursor-pointer", 
-              isNight ? "bg-white text-black" : "bg-accent text-white"
-            )}>
-              {isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Get perfect health at home without medicines'}
-            </button>
-          </div>
         </div>
-        
-        {/* Subtle background decoration */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16" />
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -ml-12 -mb-12" />
       </section>
 
       {/* Category Cards */}
       <div className="space-y-8 w-full text-left">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-1.5 h-6 bg-accent rounded-full" />
+          <h3 className={cn("text-lg font-black uppercase tracking-widest", isNight ? "text-white/60" : "text-primary/60")}>
+            {isHindi ? 'उपचार श्रेणियां' : 'Remedy Categories'}
+          </h3>
+        </div>
         <div className="grid grid-cols-1 gap-6 w-full">
           {categories.map((category) => {
             const content = category.translations[lang];
@@ -87,7 +88,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
                   isNight 
                     ? "bg-black border-white text-white active:bg-white active:text-black" 
                     : "bg-[#FDF6E2] border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]",
-                  "border-amber-100/40 shadow-sm shadow-amber-950/5"
+                  "border-amber-100/40"
                 )}
               >
                 <h3 className={cn(
@@ -107,6 +108,50 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
           })}
         </div>
       </div>
+
+      {/* Live / New Remedies Section */}
+      {liveRemedies.length > 0 && (
+        <div className="space-y-6 w-full text-left pb-10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-accent animate-pulse" />
+              <h3 className={cn("text-lg font-black uppercase tracking-widest", isNight ? "text-white/60" : "text-primary/60")}>
+                {isHindi ? 'नवीनतम नुस्खे' : 'Latest Remedies'}
+              </h3>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-4 w-full">
+            {liveRemedies.map((remedy) => (
+              <button
+                key={remedy.id}
+                onClick={() => onSelectRemedy?.(remedy.id, 'live')}
+                className={cn(
+                  "w-full p-5 rounded-3xl border transition-all text-left flex items-center gap-4 group cursor-pointer active:scale-[0.98] shadow-lg",
+                  isNight 
+                    ? "bg-white/5 border-white/10 text-white hover:border-accent" 
+                    : "bg-white border-primary/5 hover:border-accent text-primary"
+                )}
+              >
+                <div className={cn(
+                  "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg shrink-0 transition-colors",
+                  isNight ? "bg-white/10 text-accent" : "bg-accent/10 text-accent"
+                )}>
+                  {toEnglishDigits(remedy.serialNumber)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-bold text-lg leading-tight truncate">
+                    {toEnglishDigits(remedy.name[lang])}
+                  </h4>
+                  <p className="text-[12px] opacity-60 truncate mt-1 font-medium italic">
+                    {isHindi ? 'वैद्य जी द्वारा हाल ही में जोड़ा गया' : 'Recently added by Vaidya Ji'}
+                  </p>
+                </div>
+                <ArrowRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:text-accent group-hover:translate-x-1 transition-all" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

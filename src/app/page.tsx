@@ -1,6 +1,7 @@
+
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { TopBar } from '@/components/gharelu/top-bar';
 import { BottomNav } from '@/components/gharelu/bottom-nav';
 import { HomeView } from '@/components/gharelu/home-view';
@@ -8,19 +9,23 @@ import { CategoryDetailView } from '@/components/gharelu/category-detail-view';
 import { FavoritesOverlay } from '@/components/gharelu/favorites-overlay';
 import { NotificationsOverlay } from '@/components/gharelu/notifications-overlay';
 import { cn } from '@/lib/utils';
-import { REMEDIES } from '@/lib/remedy-data';
+import { REMEDIES as STATIC_REMEDIES, Remedy } from '@/lib/remedy-data';
+import { useFirestore } from '@/firebase';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 
 export type Language = 'hi' | 'en';
 export type Theme = 'cream' | 'night';
 
 export default function GhareluUpayApp() {
+  const db = useFirestore();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [selectedRemedyId, setSelectedRemedyId] = useState<string | null>(null);
   const [isDetailView, setIsDetailView] = useState(false);
   const [lang, setLang] = useState<Language>('hi');
   const [theme, setTheme] = useState<Theme>('cream');
   
-  // State for persistence
+  // State for persistence and data
+  const [liveRecipes, setLiveRecipes] = useState<Remedy[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [readRemedyIds, setReadRemedyIds] = useState<string[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -28,9 +33,57 @@ export default function GhareluUpayApp() {
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-  // Load persistence data and handle deep links from URL on mount
+  // Combine static and live remedies
+  const allRemedies = useMemo(() => {
+    return [...STATIC_REMEDIES, ...liveRecipes];
+  }, [liveRecipes]);
+
+  // Fetch live recipes from Firestore
   useEffect(() => {
-    // 1. Persistence
+    if (!db) return;
+    const recipesRef = collection(db, 'recipes');
+    const q = query(recipesRef, orderBy('timestamp', 'desc'));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const docs = snapshot.docs.map(doc => {
+        const data = doc.data();
+        // Map Firestore Recipe to frontend Remedy type
+        return {
+          id: doc.id,
+          serialNumber: "Live",
+          name: data.remedyTitle,
+          illnessId: "live", // Virtual ID for live remedies
+          introduction: data.introduction,
+          doses: data.doses.map((d: any) => ({
+            ageRange: d.ageRange,
+            dose: d.dose
+          })),
+          ingredients: {
+            hi: Array.isArray(data.ingredients?.hi) ? data.ingredients.hi : [data.ingredients?.hi || ''],
+            en: Array.isArray(data.ingredients?.en) ? data.ingredients.en : [data.ingredients?.en || '']
+          },
+          preparation: data.preparation,
+          usage: data.usage,
+          dietEat: data.dietEat,
+          dietAvoid: data.dietAvoid,
+          routine: {
+            morning: data.routine,
+            afternoon: data.routine,
+            evening: data.routine
+          },
+          safetyAdvice: data.safetyAdvice,
+          disclaimer: { hi: "वैद्य जी द्वारा सत्यापित", en: "Verified by Vaidya Ji" },
+          keywords: []
+        } as Remedy;
+      });
+      setLiveRecipes(docs);
+    });
+
+    return () => unsubscribe();
+  }, [db]);
+
+  // Load persistence data and handle deep links
+  useEffect(() => {
     const savedFavs = localStorage.getItem('gharelu-favorites');
     if (savedFavs) {
       try {
@@ -49,40 +102,45 @@ export default function GhareluUpayApp() {
       }
     }
     
-    // 2. Handle Deep Linking from URL Parameters
     const params = new URLSearchParams(window.location.search);
     const remedyIdFromUrl = params.get('remedyId');
     if (remedyIdFromUrl) {
-      const remedy = REMEDIES.find(r => r.id === remedyIdFromUrl);
-      if (remedy) {
-        // Standardize category lookup: Currently all fever, cold, and cough remedies belong to fever_flu
-        setSelectedCategoryId('fever_flu');
-        setSelectedRemedyId(remedyIdFromUrl);
-        setIsDetailView(true);
-        // Clear query params to keep URL clean after loading
-        window.history.replaceState({}, '', window.location.pathname);
-      }
+      // Logic handled after live recipes load to ensure search works for dynamic IDs
     }
     
     setIsLoaded(true);
   }, []);
 
-  // Persist favorites to local storage
+  // Handle deep linking for dynamic IDs after load
+  useEffect(() => {
+    if (isLoaded && allRemedies.length > STATIC_REMEDIES.length) {
+      const params = new URLSearchParams(window.location.search);
+      const remedyIdFromUrl = params.get('remedyId');
+      if (remedyIdFromUrl) {
+        const remedy = allRemedies.find(r => r.id === remedyIdFromUrl);
+        if (remedy) {
+          setSelectedCategoryId(remedy.illnessId === 'live' ? 'live' : 'fever_flu');
+          setSelectedRemedyId(remedyIdFromUrl);
+          setIsDetailView(true);
+          window.history.replaceState({}, '', window.location.pathname);
+        }
+      }
+    }
+  }, [isLoaded, allRemedies]);
+
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem('gharelu-favorites', JSON.stringify(favorites));
     }
   }, [favorites, isLoaded]);
 
-  // Persist read remedy IDs to local storage
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem('gharelu-read-remedy-ids', JSON.stringify(readRemedyIds));
     }
   }, [readRemedyIds, isLoaded]);
 
-  // Calculate unread remedies (What's New?)
-  const unreadRemedies = REMEDIES.filter(r => !readRemedyIds.includes(r.id)).reverse();
+  const unreadRemedies = allRemedies.filter(r => !readRemedyIds.includes(r.id)).reverse();
   const hasNewNotifications = isLoaded && unreadRemedies.length > 0;
 
   const toggleLanguage = () => setLang((prev) => (prev === 'hi' ? 'en' : 'hi'));
@@ -119,10 +177,6 @@ export default function GhareluUpayApp() {
     }
   };
 
-  const handleOpenNotifications = () => {
-    setIsNotificationsOpen(true);
-  };
-
   const handleBackToCategories = () => {
     setSelectedCategoryId(null);
     setSelectedRemedyId(null);
@@ -148,9 +202,10 @@ export default function GhareluUpayApp() {
         onToggleTheme={toggleTheme} 
         onSelectRemedy={handleSelectRemedy}
         onOpenFavorites={() => setIsFavoritesOpen(true)}
-        onOpenNotifications={handleOpenNotifications}
+        onOpenNotifications={() => setIsNotificationsOpen(true)}
         hasFavorites={favorites.length > 0}
         hasNotifications={hasNewNotifications}
+        allRemedies={allRemedies}
       />
       
       <main 
@@ -172,10 +227,17 @@ export default function GhareluUpayApp() {
                 initialRemedyId={selectedRemedyId}
                 onSelectRemedyId={setSelectedRemedyId}
                 onLevelChange={(level) => setIsDetailView(level === 3)}
+                allRemedies={allRemedies}
               />
             </div>
           ) : (
-            <HomeView lang={lang} theme={theme} onSelectCategory={handleSelectCategory} />
+            <HomeView 
+              lang={lang} 
+              theme={theme} 
+              onSelectCategory={handleSelectCategory} 
+              liveRemedies={liveRemedies}
+              onSelectRemedy={handleSelectRemedy}
+            />
           )}
         </div>
       </main>
@@ -187,6 +249,7 @@ export default function GhareluUpayApp() {
         theme={theme}
         favorites={favorites}
         onSelectRemedy={handleSelectRemedy}
+        allRemedies={allRemedies}
       />
 
       <NotificationsOverlay

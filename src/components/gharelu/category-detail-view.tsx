@@ -1,10 +1,11 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { ChevronLeft, ArrowRight, BookOpen } from 'lucide-react';
-import { REMEDIES, Remedy } from '@/lib/remedy-data';
+import { Remedy } from '@/lib/remedy-data';
 import { RemedyDetail } from './remedy-detail';
 
 interface CategoryDetailViewProps {
@@ -17,6 +18,7 @@ interface CategoryDetailViewProps {
   initialRemedyId?: string | null;
   onSelectRemedyId?: (id: string | null) => void;
   onLevelChange?: (level: 1 | 2 | 3) => void;
+  allRemedies: Remedy[];
 }
 
 export const CategoryDetailView = ({ 
@@ -28,7 +30,8 @@ export const CategoryDetailView = ({
   onToggleFavorite,
   initialRemedyId,
   onSelectRemedyId,
-  onLevelChange
+  onLevelChange,
+  allRemedies
 }: CategoryDetailViewProps) => {
   const [selectedIllnessId, setSelectedIllnessId] = useState<string | null>(null);
   const [selectedRemedy, setSelectedRemedy] = useState<Remedy | null>(null);
@@ -36,19 +39,17 @@ export const CategoryDetailView = ({
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
 
-  // React to changes in initialRemedyId from parent (e.g. from Favorites/Search)
   useEffect(() => {
     if (initialRemedyId) {
-      const remedy = REMEDIES.find(r => r.id === initialRemedyId);
+      const remedy = allRemedies.find(r => r.id === initialRemedyId);
       if (remedy) {
         setSelectedRemedy(remedy);
         setSelectedIllnessId(remedy.illnessId);
       }
-    } else {
-      // If parent explicitly clears it, we clear our local state
-      setSelectedRemedy(null);
+    } else if (!selectedRemedy && !initialRemedyId) {
+       // Only clear if explicitly navigating away from a remedy
     }
-  }, [initialRemedyId, categoryId]);
+  }, [initialRemedyId, categoryId, allRemedies]);
 
   useEffect(() => {
     if (onLevelChange) {
@@ -78,13 +79,22 @@ export const CategoryDetailView = ({
           description: isHindi ? 'हर तरह की सूखी खांसी, बलगम और छाती में जकड़न से राहत के लिए अचूक घरेलू उपचार' : 'Effective remedies for dry cough, phlegm and chest congestion'
         }
       ]
+    },
+    live: {
+      title: isHindi ? 'नवीनतम नुस्खे' : 'Latest Remedies',
+      illnesses: [
+        {
+          id: 'live',
+          title: isHindi ? 'हाल ही में जोड़े गए' : 'Recently Added',
+          description: isHindi ? 'वैद्य जी द्वारा प्रमाणित नए पारंपरिक नुस्खे' : 'New traditional remedies certified by Vaidya Ji'
+        }
+      ]
     }
   };
 
   const activeCategory = categoryContent[categoryId as keyof typeof categoryContent];
-  const illnessRemedies = REMEDIES.filter(r => r.illnessId === selectedIllnessId);
+  const illnessRemedies = allRemedies.filter(r => r.illnessId === selectedIllnessId);
 
-  // Fallback to prevent blank screen if category is not yet fully implemented
   if (!activeCategory) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center opacity-50">
@@ -99,7 +109,6 @@ export const CategoryDetailView = ({
   const handleInternalBack = () => {
     if (selectedRemedy) {
       setSelectedRemedy(null);
-      // Inform parent that we closed the remedy so it can sync its state
       if (onSelectRemedyId) onSelectRemedyId(null);
     } else if (selectedIllnessId) {
       setSelectedIllnessId(null);
@@ -125,14 +134,14 @@ export const CategoryDetailView = ({
         </button>
         <div className="flex flex-col text-left">
           <h2 className={cn(
-            "font-black font-headline leading-tight tracking-wide text-3xl sm:text-4xl",
+            "font-black font-headline leading-tight tracking-wide text-2xl sm:text-3xl",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
             {toEnglishDigits(selectedRemedy ? selectedRemedy.name[lang] : (selectedIllnessId ? (currentIllness?.title || '') : activeCategory.title))}
           </h2>
           {(selectedIllnessId || selectedRemedy) && (
             <span className={cn(
-              "text-[14px] font-bold uppercase tracking-[0.2em] opacity-60 mt-1",
+              "text-[12px] font-bold uppercase tracking-[0.2em] opacity-60 mt-1",
               isNight ? "text-white" : "text-[#14532D]"
             )}>
               {selectedRemedy ? (isHindi ? 'नुस्खा विवरण' : 'Remedy Detail') : activeCategory.title}
@@ -142,56 +151,29 @@ export const CategoryDetailView = ({
       </div>
 
       {!selectedIllnessId ? (
-        /* Level 1: List of Illnesses */
         <div className="grid grid-cols-1 gap-6">
-          {activeCategory.illnesses.length > 0 ? (
-            activeCategory.illnesses.map((illness) => (
-              <button
-                key={illness.id}
-                onClick={() => setSelectedIllnessId(illness.id)}
-                className={cn(
-                  "group relative w-full p-8 rounded-[2.5rem] border transition-all duration-300 text-left cursor-pointer",
-                  "flex items-center justify-between shadow-xl hover:-translate-y-1 active:scale-[0.98]",
-                  isNight 
-                    ? "bg-black border-white text-white active:bg-white active:text-black" 
-                    : "bg-white border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
-                )}
-              >
-                <div className="space-y-2">
-                  <h3 className={cn(
-                    "text-[24px] font-black transition-colors leading-tight",
-                    isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
-                  )}>
-                    {toEnglishDigits(illness.title)}
-                  </h3>
-                  <p className={cn(
-                    "text-base font-bold opacity-70 transition-colors leading-relaxed",
-                    isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
-                  )}>
-                    {toEnglishDigits(illness.description)}
-                  </p>
-                </div>
-                <div className={cn(
-                  "p-4 rounded-full transition-all shadow-md ml-4 shrink-0",
-                  isNight 
-                    ? "bg-white/10 group-active:bg-black/20" 
-                    : "bg-accent/10 group-active:bg-white/20"
-                )}>
-                  <ArrowRight className={cn(
-                    "w-6 h-6",
-                    isNight ? "text-white group-active:text-black" : "text-accent group-active:text-white"
-                  )} />
-                </div>
-              </button>
-            ))
-          ) : (
-            <div className="p-12 text-center rounded-[2.5rem] border border-dashed border-muted-foreground/30 opacity-50">
-              {isHindi ? 'जल्द आ रहा है...' : 'Coming soon...'}
-            </div>
-          )}
+          {activeCategory.illnesses.map((illness) => (
+            <button
+              key={illness.id}
+              onClick={() => setSelectedIllnessId(illness.id)}
+              className={cn(
+                "group relative w-full p-8 rounded-[2.5rem] border transition-all duration-300 text-left cursor-pointer shadow-xl",
+                isNight 
+                  ? "bg-black border-white text-white active:bg-white active:text-black" 
+                  : "bg-white border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
+              )}
+            >
+              <div className="space-y-2">
+                <h3 className="text-[24px] font-black leading-tight">{toEnglishDigits(illness.title)}</h3>
+                <p className="text-base font-bold opacity-70 leading-relaxed">{toEnglishDigits(illness.description)}</p>
+              </div>
+              <div className="p-4 rounded-full bg-accent/10 ml-4 shrink-0 shadow-md">
+                <ArrowRight className="w-6 h-6 text-accent group-active:text-white" />
+              </div>
+            </button>
+          ))}
         </div>
       ) : !selectedRemedy ? (
-        /* Level 2: Remedy List */
         <div className="space-y-4">
           {illnessRemedies.map((remedy) => (
             <button
@@ -201,32 +183,26 @@ export const CategoryDetailView = ({
                 if (onSelectRemedyId) onSelectRemedyId(remedy.id);
               }}
               className={cn(
-                "w-full p-6 rounded-3xl border transition-all duration-200 text-left flex items-center gap-5 group cursor-pointer active:scale-[0.98]",
+                "w-full p-6 rounded-3xl border transition-all duration-200 text-left flex items-center gap-5 group cursor-pointer active:scale-[0.98] shadow-xl",
                 isNight 
-                  ? "bg-black border-white/20 text-white hover:border-white shadow-none" 
-                  : "bg-white border-primary/10 hover:border-primary/30 text-primary shadow-xl"
+                  ? "bg-black border-white/20 text-white hover:border-white" 
+                  : "bg-white border-primary/10 hover:border-primary/30 text-primary"
               )}
             >
               <div className={cn(
                 "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shrink-0 shadow-inner",
                 isNight ? "bg-white/10 text-white" : "bg-primary/5 text-primary"
               )}>
-                {remedy.serialNumber}
+                {toEnglishDigits(remedy.serialNumber)}
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-[24px] leading-snug">{toEnglishDigits(remedy.name[lang])}</h4>
+                <h4 className="font-bold text-[22px] leading-snug">{toEnglishDigits(remedy.name[lang])}</h4>
               </div>
               <BookOpen className="w-6 h-6 opacity-40 group-hover:opacity-100 transition-opacity" />
             </button>
           ))}
-          {illnessRemedies.length === 0 && (
-            <div className="p-12 text-center rounded-[2.5rem] border border-dashed border-muted-foreground/30 opacity-50">
-              {isHindi ? 'जल्द आ रहा है...' : 'Coming soon...'}
-            </div>
-          )}
         </div>
       ) : (
-        /* Level 3: Remedy Detail Matrix */
         <RemedyDetail 
           remedy={selectedRemedy} 
           theme={theme} 
