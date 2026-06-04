@@ -52,6 +52,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     safety: isHindi ? '9. सुरक्षा सूचना' : '9. Safety Information',
   };
 
+  const routineSegmentLabels: Record<string, string> = {
+    morning: isHindi ? 'सुबह:' : 'Morning:',
+    afternoon: isHindi ? 'दोपहर:' : 'Afternoon:',
+    evening: isHindi ? 'शाम:' : 'Evening:',
+  };
+
   const dosageWarning = isHindi 
     ? "उपरोक्त कुल सामग्री में से अपनी उम्र के अनुसार केवल नीचे चुनी गई खुराक ही लें:"
     : "From the above ingredients, take only the dosage selected below according to your age:";
@@ -121,7 +127,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           )}
 
           {appendDisclaimer && (
-            <div className="pt-4 border-t border-red-200/50 mt-4 italic text-[14px]">
+            <div className="pt-4 border-t border-red-200/50 mt-4 italic text-[14px] leading-relaxed">
               {disclaimerText}
             </div>
           )}
@@ -145,6 +151,15 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     text += `🔄 ${labels.usage}\n${toEnglishDigits(remedy.usage[lang])}\n\n`;
     text += `✅ ${labels.dietEat}\n${toEnglishDigits(remedy.dietEat[lang])}\n\n`;
     text += `🚫 ${labels.dietAvoid}\n${toEnglishDigits(remedy.dietAvoid[lang])}\n\n`;
+
+    if (remedy.routine) {
+      text += `🕒 ${labels.routine}\n`;
+      if (remedy.routine.morning) text += `${routineSegmentLabels.morning} ${toEnglishDigits(remedy.routine.morning[lang])}\n`;
+      if (remedy.routine.afternoon) text += `${routineSegmentLabels.afternoon} ${toEnglishDigits(remedy.routine.afternoon[lang])}\n`;
+      if (remedy.routine.evening) text += `${routineSegmentLabels.evening} ${toEnglishDigits(remedy.routine.evening[lang])}\n`;
+      text += `\n`;
+    }
+
     text += `⚠️ ${labels.safety}\n${toEnglishDigits(remedy.safetyAdvice[lang])}\n\n`;
     text += `📜 ${disclaimerText}\n\n`;
     text += `🔗 ${window.location.origin}?remedyId=${remedy.id}`;
@@ -284,8 +299,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               {['morning', 'afternoon', 'evening'].map((time) => (
                 remedy.routine[time as keyof typeof remedy.routine] && (
                   <div key={time} className="flex items-start gap-3">
-                    <span className="text-[11px] font-black uppercase tracking-widest text-accent w-16 pt-1 shrink-0">{time}</span>
-                    <p className="text-[14px] flex-1 font-medium">{toEnglishDigits(remedy.routine[time as keyof typeof remedy.routine][lang])}</p>
+                    <span className="text-[13px] font-bold text-accent w-20 pt-1 shrink-0">
+                      {routineSegmentLabels[time]}
+                    </span>
+                    <p className="text-[14px] flex-1 font-medium">
+                      {toEnglishDigits(remedy.routine[time as keyof typeof remedy.routine][lang])}
+                    </p>
                   </div>
                 )
               ))}
