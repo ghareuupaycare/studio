@@ -141,11 +141,7 @@ export default function AdminDashboard() {
     if (!db) {
       const errorMsg = "डेटाबेस कनेक्शन उपलब्ध नहीं है। | Database connection not available.";
       console.error(errorMsg);
-      toast({
-        variant: "destructive",
-        title: "त्रुटि",
-        description: errorMsg,
-      });
+      alert(errorMsg);
       return;
     }
 
@@ -188,8 +184,9 @@ export default function AdminDashboard() {
       setDoses(INITIAL_DOSES);
       setView('manage');
     } catch (error: any) {
-      // Explicitly log the error for debugging
+      // Explicitly log and alert the error for debugging
       console.error("Firebase Save Error:", error);
+      alert("Firebase Error: " + (error.message || "Unknown error occurred during save."));
       
       // Emit permission error if relevant
       const permissionError = new FirestorePermissionError({
@@ -199,12 +196,6 @@ export default function AdminDashboard() {
       } satisfies SecurityRuleContext);
       
       errorEmitter.emit('permission-error', permissionError);
-      
-      toast({
-        variant: "destructive",
-        title: "सबमिशन विफल",
-        description: `डेटा सुरक्षित नहीं किया जा सका: ${error.message || 'Unknown error'}`,
-      });
     } finally {
       setIsSubmitting(false);
       console.log("Submit process finished.");
@@ -223,6 +214,7 @@ export default function AdminDashboard() {
         });
       } catch (error: any) {
         console.error("Firebase Delete Error:", error);
+        alert("Delete Error: " + error.message);
         const permissionError = new FirestorePermissionError({
           path: `recipes/${recipeId}`,
           operation: 'delete',
