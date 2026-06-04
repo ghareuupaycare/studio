@@ -6,7 +6,6 @@ import { Language, Theme } from '@/app/page';
 import { 
   Heart,
   Share2,
-  Copy,
   Info,
   Beaker,
   ChefHat,

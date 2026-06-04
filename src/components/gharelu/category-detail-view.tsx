@@ -66,26 +66,23 @@ export const CategoryDetailView = ({
       ]
     },
     stomach_diseases: {
-      title: isHindi ? '2. पेट रोग (Stomach Diseases)' : '2. Stomach Diseases',
+      title: isHindi ? '2. पेट रोग' : '2. Stomach Diseases',
       illnesses: [
         { id: 'gas_acidity', title: isHindi ? '1. गैस और एसिडिटी' : '1. Gas & Acidity' },
-        { id: 'indigestion', title: isHindi ? '2. अपच (Indigestion)' : '2. Indigestion' }
+        { id: 'indigestion', title: isHindi ? '2. अपच' : '2. Indigestion' }
       ]
     }
   };
 
   const activeCategory = categoryContent[categoryId as keyof typeof categoryContent];
   
-  // Dynamically group illnesses if they are from Firestore (live recipes)
   const illnessList = useMemo(() => {
     if (!activeCategory) return [];
     
-    // Add dynamic illnesses found in the remedies that match this categoryId
     const dynamicIllnesses = allRemedies
       .filter(r => r.categoryId === categoryId || r.illnessId === 'live')
       .map(r => ({ id: r.illnessId, title: r.name[lang] }));
 
-    // Merge with static ones, avoiding duplicates by ID
     const merged = [...activeCategory.illnesses];
     dynamicIllnesses.forEach(di => {
       if (!merged.find(m => m.id === di.id)) merged.push(di);
