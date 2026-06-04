@@ -3,7 +3,6 @@
 import React from 'react';
 import { Language, Theme } from '@/app/page';
 import { cn } from '@/lib/utils';
-import { Sparkles } from 'lucide-react';
 
 interface HomeViewProps {
   lang: Language;
@@ -52,17 +51,14 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
         isNight ? "bg-black" : "bg-[#14532D]"
       )}>
         <div className="space-y-4 z-10 w-full flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-400 text-[10px] font-black uppercase tracking-widest border border-amber-400/30">
-            <Sparkles className="w-3 h-3" />
-            {isHindi ? 'शुद्ध आयुर्वेद' : 'Pure Ayurveda'}
-          </div>
+          {/* Floating Badge Removed */}
           
           <h2 className="text-[24px] sm:text-[28px] font-bold leading-tight text-white max-w-[300px]">
             {isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions'}
           </h2>
           
           <p className="text-[16px] font-semibold text-amber-400 leading-tight">
-            {isHindi ? 'भारतीय घरेलू उपाय और वैद्य जी' : 'Indian Home Remedies & Vaidya Ji'}
+            {isHindi ? 'भारतीय घरेलू उपाय और वैद्य जी द्वारा संचालित आयुर्वेदिक स्वास्थ्य' : 'Indian Home Remedies & Ayurvedic Health Powered by Vaidya Ji'}
           </p>
           
           <p className={cn(
@@ -70,12 +66,12 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
             isNight ? "text-white/80" : "text-slate-100"
           )}>
             {isHindi 
-              ? 'शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो आपकी रसोई में छिपे स्वास्थ्य रहने का खज़ाना हैं' 
+              ? 'शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो आपकी रसोई में छिपे स्वास्थ्य रहने का ख़ज़ाना हैं' 
               : 'Traditional remedies based on scriptures, the hidden treasure of health in your kitchen'}
           </p>
 
           <button className="mt-4 bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-full font-black text-[13px] uppercase tracking-wider shadow-xl transition-all active:scale-95 border-b-4 border-amber-700">
-            {isHindi ? 'बिना डॉक्टर भेंट पाएँ संपूर्ण स्वास्थ्य' : 'Get Complete Health Naturally'}
+            {isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Get Complete Health Naturally at Home'}
           </button>
         </div>
       </section>
