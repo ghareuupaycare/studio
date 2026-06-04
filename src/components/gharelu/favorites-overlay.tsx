@@ -2,12 +2,13 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { Heart, X, ChevronRight, HeartOff } from 'lucide-react';
 import { Remedy } from '@/lib/remedy-data';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 
 interface FavoritesOverlayProps {
   isOpen: boolean;
@@ -36,8 +37,6 @@ export const FavoritesOverlay = ({
   }, [favorites, allRemedies]);
 
   const handleResultClick = (remedy: Remedy) => {
-    // Determine category: if it's from static data it usually has a categoryId, 
-    // if it's 'live' it might be 'live' or use its original category
     const categoryId = remedy.categoryId || 'fever_flu';
     onSelectRemedy(remedy.id, categoryId);
     onClose();
@@ -47,14 +46,28 @@ export const FavoritesOverlay = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
         className={cn(
-          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[70vh] max-w-none p-0 border-none flex flex-col rounded-none shadow-2xl z-[100] outline-none",
+          "fixed top-0 right-0 translate-x-0 translate-y-0 w-full md:w-1/2 h-full max-w-none p-0 border-none flex flex-col rounded-none shadow-2xl z-[100] outline-none transition-all duration-300 [&>button]:hidden",
           isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7] text-foreground"
         )}
       >
+        {/* Header */}
         <div className={cn(
-          "shrink-0 p-6 pt-10",
-          isNight ? "bg-black/60 border-b border-white/10" : "bg-primary border-b border-white/10"
+          "shrink-0 p-6 pt-12 pb-6 relative",
+          isNight ? "bg-black/80 border-b border-white/10" : "bg-primary border-b border-white/10"
         )}>
+          {/* Custom Golden Close Button */}
+          <div className="absolute top-4 right-6">
+            <DialogClose asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full hover:bg-white/10 text-accent transition-all active:scale-90 h-10 w-10"
+              >
+                <X className="w-8 h-8 stroke-[3]" />
+              </Button>
+            </DialogClose>
+          </div>
+
           <div className="flex items-center gap-3">
             <Heart className="w-6 h-6 text-accent fill-current" />
             <DialogTitle className="text-white text-xl font-headline font-black">
@@ -66,8 +79,9 @@ export const FavoritesOverlay = ({
           </p>
         </div>
 
-        <ScrollArea className="flex-1 w-full">
-          <div className="p-4 max-w-2xl mx-auto w-full">
+        {/* Scrollable List Content */}
+        <ScrollArea className="flex-1 w-full overflow-y-auto">
+          <div className="p-4 max-w-2xl mx-auto w-full pb-24">
             {favoriteRemedies.length > 0 ? (
               <div className="grid grid-cols-1 gap-3">
                 {favoriteRemedies.map((remedy) => (
@@ -76,7 +90,7 @@ export const FavoritesOverlay = ({
                     onClick={() => handleResultClick(remedy)} 
                     className={cn(
                       "w-full p-5 rounded-2xl border flex items-center gap-5 text-left transition-all active:scale-[0.98] group shadow-sm",
-                      isNight ? "bg-white/5 border-white/5" : "bg-white border-primary/5"
+                      isNight ? "bg-white/5 border-white/5" : "bg-white border-primary/5 hover:border-accent/40"
                     )}
                   >
                     <div className={cn(
