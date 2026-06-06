@@ -16,7 +16,6 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
   const isNight = theme === 'night';
 
   // Master Data Template for Categories
-  // This can be easily extended or fetched from an API/Firestore in the future
   const categories = [
     {
       id: 'fever_flu',
@@ -24,12 +23,10 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
         hi: {
           title: '1. मौसमी बुखार एवं फ्लू',
           subtitle: 'बुखार, जुकाम और खांसी के लिए प्रामाणिक आयुर्वेदिक उपचार',
-          button: 'नुस्खे देखें'
         },
         en: {
           title: '1. Seasonal Fever & Flu',
           subtitle: 'Authentic Ayurvedic remedies for fever, cold and cough',
-          button: 'View Remedies'
         }
       }
     },
@@ -39,12 +36,10 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
         hi: {
           title: '2. पेट रोग',
           subtitle: 'पाचन, गैस और पेट की समस्याओं के लिए घरेलू उपाय',
-          button: 'नुस्खे देखें'
         },
         en: {
           title: '2. Stomach Diseases',
           subtitle: 'Home remedies for digestion, gas and stomach issues',
-          button: 'View Remedies'
         }
       }
     }
@@ -52,7 +47,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700 w-full max-w-2xl px-4 sm:px-6 mx-auto">
-      {/* Home Banner - Fixed Structure */}
+      {/* Home Banner */}
       <section className={cn(
         "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-center justify-center py-10 px-6 text-center transition-all duration-500 border border-amber-400/40 relative",
         isNight ? "bg-black" : "bg-[#14532D]"
@@ -63,26 +58,24 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
           </h2>
           
           <p className="text-[17px] sm:text-[19px] font-bold text-amber-400 leading-tight max-w-[90%]">
-            {isHindi ? 'भारतीय घरेलू उपाय और वैद्य जी द्वारा संचालित आयुर्वेदिक स्वास्थ्य' : 'Indian Home Remedies & Ayurvedic Health Powered by Vaidya Ji'}
+            भारतीय घरेलू उपाय और वैद्य जी द्वारा संचालित आयुर्वेदिक स्वास्थ्य
           </p>
           
           <p className={cn(
             "text-[14px] font-medium max-w-[300px] mx-auto leading-relaxed",
             isNight ? "text-white/80" : "text-slate-100"
           )}>
-            {isHindi 
-              ? 'शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो आपकी रसोई में छिपे स्वास्थ्य रहने का ख़ज़ाना हैं' 
-              : 'Traditional remedies based on scriptures, the hidden treasure of health in your kitchen'}
+            शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो आपकी रसोई में छिपे स्वास्थ्य रहने का ख़ज़ाना हैं
           </p>
 
           <button className="mt-4 bg-accent hover:bg-accent/90 text-white px-8 py-4 rounded-full font-black text-[14px] uppercase tracking-wider shadow-xl transition-all active:scale-95 border-b-4 border-amber-700">
-            {isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Get Complete Health Naturally at Home'}
+            बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य
           </button>
         </div>
       </section>
 
       {/* Dynamic Master Template for Category Cards */}
-      <div className="space-y-6 w-full text-left pb-12">
+      <div className="space-y-4 w-full text-left pb-12">
         <div className="flex items-center gap-3 px-2 mb-2">
           <div className="w-2 h-7 bg-[#14532D] rounded-full" />
           <h3 className={cn("text-[15px] font-black uppercase tracking-[0.2em]", isNight ? "text-white/60" : "text-[#14532D]/60")}>
@@ -90,48 +83,45 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
           </h3>
         </div>
 
-        {/* Master Map Loop */}
-        <div className="grid grid-cols-1 gap-4 w-full max-w-xl mx-auto">
+        {/* Master Map Loop - Strictly Locked Template */}
+        <div className="grid grid-cols-1 gap-3 w-full max-w-xl mx-auto">
           {categories.map((category) => {
             const content = category.translations[lang];
             return (
               <div
                 key={category.id}
+                onClick={() => onSelectCategory(category.id)}
                 className={cn(
-                  "group relative w-full p-6 sm:p-7 rounded-[2rem] border-[1.5px] transition-all duration-500 flex flex-col items-center justify-center text-center space-y-4 shadow-xl",
+                  "group relative w-full p-5 sm:p-6 rounded-[2rem] border-[1.5px] transition-all duration-500 flex flex-row items-center justify-between text-left cursor-pointer shadow-lg active:scale-[0.98]",
                   isNight 
                     ? "bg-black border-white/20 text-white" 
-                    : "bg-[#FDF6E2] border-[#14532D] text-[#1E293B]"
+                    : "bg-[#FDFBF7] border-[#14532D] text-[#1E293B] hover:border-[#14532D]/80"
                 )}
               >
-                <div className="space-y-2">
+                <div className="flex-1 pr-4">
                   <h3 className={cn(
-                    "text-[20px] font-black transition-colors leading-tight",
+                    "text-[19px] sm:text-[21px] font-black transition-colors leading-tight",
                     isNight ? "text-white" : "text-[#14532D]"
                   )}>
                     {content.title}
                   </h3>
                   <p className={cn(
-                    "text-[14px] font-medium tracking-tight leading-relaxed max-w-[90%] mx-auto transition-colors",
+                    "text-[13px] sm:text-[14px] font-medium tracking-tight leading-snug mt-1 transition-colors",
                     isNight ? "text-white/60" : "text-muted-foreground"
                   )}>
                     {content.subtitle}
                   </p>
                 </div>
 
-                {/* Styled Neem Green Action Button */}
-                <button
-                  onClick={() => onSelectCategory(category.id)}
-                  className={cn(
-                    "flex items-center justify-center gap-2 px-8 py-3 rounded-full font-black text-[13px] uppercase tracking-widest transition-all active:scale-95 shadow-md group-hover:shadow-lg",
-                    isNight 
-                      ? "bg-white text-black hover:bg-amber-400 hover:text-white" 
-                      : "bg-[#14532D] text-white hover:bg-[#14532D]/90"
-                  )}
-                >
-                  {content.button}
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                {/* Circular Neem Green Arrow Button */}
+                <div className={cn(
+                  "flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full transition-all shrink-0 shadow-md",
+                  isNight 
+                    ? "bg-white text-black" 
+                    : "bg-[#14532D] text-white"
+                )}>
+                  <ArrowRight className="w-5 h-5 sm:w-6 h-6" />
+                </div>
               </div>
             );
           })}
