@@ -47,28 +47,33 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700 w-full max-w-2xl px-4 sm:px-6 mx-auto">
-      {/* Home Banner */}
+      {/* Home Banner - Premium 16:9 Layout with Shiny Gold Border */}
       <section className={cn(
-        "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-center justify-center py-10 px-6 text-center transition-all duration-500 border border-amber-400/40 relative",
-        isNight ? "bg-black" : "bg-[#14532D]"
+        "w-full aspect-video rounded-[2.5rem] shadow-[0_0_40px_rgba(0,0,0,0.2)] overflow-hidden flex flex-col items-center justify-center px-6 text-center transition-all duration-500 relative border-[3.5px]",
+        isNight 
+          ? "bg-black border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.3)]" 
+          : "bg-[#14532D] border-amber-400 shadow-[0_0_30px_rgba(251,191,36,0.3)]"
       )}>
-        <div className="space-y-5 z-10 w-full flex flex-col items-center">
-          <h2 className="text-[26px] sm:text-[32px] font-black leading-tight text-white max-w-[320px]">
+        {/* Subtle Shine Effect Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
+        
+        <div className="space-y-3 z-10 w-full flex flex-col items-center">
+          <h2 className="text-[22px] sm:text-[30px] font-black leading-tight text-white max-w-[320px] drop-shadow-md">
             {isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions'}
           </h2>
           
-          <p className="text-[17px] sm:text-[19px] font-bold text-amber-400 leading-tight max-w-[90%]">
+          <p className="text-[14px] sm:text-[17px] font-bold text-amber-400 leading-tight max-w-[90%] uppercase tracking-wide">
             भारतीय घरेलू उपाय और वैद्य जी द्वारा संचालित आयुर्वेदिक स्वास्थ्य
           </p>
           
           <p className={cn(
-            "text-[14px] font-medium max-w-[300px] mx-auto leading-relaxed",
+            "text-[12px] sm:text-[14px] font-medium max-w-[280px] mx-auto leading-relaxed opacity-90",
             isNight ? "text-white/80" : "text-slate-100"
           )}>
             शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो आपकी रसोई में छिपे स्वास्थ्य रहने का ख़ज़ाना हैं
           </p>
 
-          <button className="mt-4 bg-accent hover:bg-accent/90 text-white px-8 py-4 rounded-full font-black text-[14px] uppercase tracking-wider shadow-xl transition-all active:scale-95 border-b-4 border-amber-700">
+          <button className="mt-2 bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-full font-black text-[12px] uppercase tracking-wider shadow-xl transition-all active:scale-95 border-b-[3px] border-amber-700">
             बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य
           </button>
         </div>
@@ -92,7 +97,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
                 key={category.id}
                 onClick={() => onSelectCategory(category.id)}
                 className={cn(
-                  "group relative w-full p-5 sm:p-6 rounded-[2rem] border-[1.5px] transition-all duration-500 flex flex-row items-center justify-between text-left cursor-pointer shadow-lg active:scale-[0.98]",
+                  "group relative w-full p-4 sm:p-5 rounded-[2rem] border-[1.5px] transition-all duration-500 flex flex-row items-center justify-between text-left cursor-pointer shadow-lg active:scale-[0.98]",
                   isNight 
                     ? "bg-black border-white/20 text-white" 
                     : "bg-[#FDFBF7] border-[#14532D] text-[#1E293B] hover:border-[#14532D]/80"
@@ -100,13 +105,13 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
               >
                 <div className="flex-1 pr-4">
                   <h3 className={cn(
-                    "text-[19px] sm:text-[21px] font-black transition-colors leading-tight",
+                    "text-[18px] sm:text-[20px] font-black transition-colors leading-tight",
                     isNight ? "text-white" : "text-[#14532D]"
                   )}>
                     {content.title}
                   </h3>
                   <p className={cn(
-                    "text-[13px] sm:text-[14px] font-medium tracking-tight leading-snug mt-1 transition-colors",
+                    "text-[12px] sm:text-[13px] font-medium tracking-tight leading-snug mt-1 transition-colors",
                     isNight ? "text-white/60" : "text-muted-foreground"
                   )}>
                     {content.subtitle}
@@ -115,12 +120,12 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
 
                 {/* Circular Neem Green Arrow Button */}
                 <div className={cn(
-                  "flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full transition-all shrink-0 shadow-md",
+                  "flex items-center justify-center w-10 h-10 sm:w-11 h-11 rounded-full transition-all shrink-0 shadow-md",
                   isNight 
                     ? "bg-white text-black" 
                     : "bg-[#14532D] text-white"
                 )}>
-                  <ArrowRight className="w-5 h-5 sm:w-6 h-6" />
+                  <ArrowRight className="w-5 h-5" />
                 </div>
               </div>
             );
