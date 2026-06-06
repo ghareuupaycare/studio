@@ -3,6 +3,7 @@
 import React from 'react';
 import { Language, Theme } from '@/app/page';
 import { cn } from '@/lib/utils';
+import { ArrowRight } from 'lucide-react';
 
 interface HomeViewProps {
   lang: Language;
@@ -14,6 +15,8 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
 
+  // Master Data Template for Categories
+  // This can be easily extended or fetched from an API/Firestore in the future
   const categories = [
     {
       id: 'fever_flu',
@@ -21,10 +24,12 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
         hi: {
           title: '1. मौसमी बुखार एवं फ्लू',
           subtitle: 'बुखार, जुकाम और खांसी के लिए प्रामाणिक आयुर्वेदिक उपचार',
+          button: 'नुस्खे देखें'
         },
         en: {
           title: '1. Seasonal Fever & Flu',
           subtitle: 'Authentic Ayurvedic remedies for fever, cold and cough',
+          button: 'View Remedies'
         }
       }
     },
@@ -34,35 +39,35 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
         hi: {
           title: '2. पेट रोग',
           subtitle: 'पाचन, गैस और पेट की समस्याओं के लिए घरेलू उपाय',
+          button: 'नुस्खे देखें'
         },
         en: {
           title: '2. Stomach Diseases',
           subtitle: 'Home remedies for digestion, gas and stomach issues',
+          button: 'View Remedies'
         }
       }
     }
   ];
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-700 w-full max-w-2xl px-4 sm:px-6 mx-auto">
-      {/* Home Banner */}
+    <div className="space-y-10 animate-in fade-in duration-700 w-full max-w-2xl px-4 sm:px-6 mx-auto">
+      {/* Home Banner - Fixed Structure */}
       <section className={cn(
-        "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-center justify-center py-8 px-6 text-center transition-all duration-500 border border-amber-400/40 relative",
+        "w-full rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col items-center justify-center py-10 px-6 text-center transition-all duration-500 border border-amber-400/40 relative",
         isNight ? "bg-black" : "bg-[#14532D]"
       )}>
-        <div className="space-y-4 z-10 w-full flex flex-col items-center">
-          {/* Floating Badge Removed */}
-          
-          <h2 className="text-[24px] sm:text-[28px] font-bold leading-tight text-white max-w-[300px]">
+        <div className="space-y-5 z-10 w-full flex flex-col items-center">
+          <h2 className="text-[26px] sm:text-[32px] font-black leading-tight text-white max-w-[320px]">
             {isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions'}
           </h2>
           
-          <p className="text-[16px] font-semibold text-amber-400 leading-tight">
+          <p className="text-[17px] sm:text-[19px] font-bold text-amber-400 leading-tight max-w-[90%]">
             {isHindi ? 'भारतीय घरेलू उपाय और वैद्य जी द्वारा संचालित आयुर्वेदिक स्वास्थ्य' : 'Indian Home Remedies & Ayurvedic Health Powered by Vaidya Ji'}
           </p>
           
           <p className={cn(
-            "text-[13px] font-medium max-w-[280px] mx-auto leading-relaxed",
+            "text-[14px] font-medium max-w-[300px] mx-auto leading-relaxed",
             isNight ? "text-white/80" : "text-slate-100"
           )}>
             {isHindi 
@@ -70,48 +75,64 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
               : 'Traditional remedies based on scriptures, the hidden treasure of health in your kitchen'}
           </p>
 
-          <button className="mt-4 bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-full font-black text-[13px] uppercase tracking-wider shadow-xl transition-all active:scale-95 border-b-4 border-amber-700">
+          <button className="mt-4 bg-accent hover:bg-accent/90 text-white px-8 py-4 rounded-full font-black text-[14px] uppercase tracking-wider shadow-xl transition-all active:scale-95 border-b-4 border-amber-700">
             {isHindi ? 'बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य' : 'Get Complete Health Naturally at Home'}
           </button>
         </div>
       </section>
 
-      {/* Category Cards */}
-      <div className="space-y-8 w-full text-left pb-10">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-1.5 h-6 bg-accent rounded-full" />
-          <h3 className={cn("text-lg font-black uppercase tracking-widest", isNight ? "text-white/60" : "text-primary/60")}>
+      {/* Dynamic Master Template for Category Cards */}
+      <div className="space-y-6 w-full text-left pb-12">
+        <div className="flex items-center gap-3 px-2 mb-2">
+          <div className="w-2 h-7 bg-[#14532D] rounded-full" />
+          <h3 className={cn("text-[15px] font-black uppercase tracking-[0.2em]", isNight ? "text-white/60" : "text-[#14532D]/60")}>
             {isHindi ? 'उपचार श्रेणियां' : 'Remedy Categories'}
           </h3>
         </div>
-        <div className="grid grid-cols-1 gap-6 w-full">
+
+        {/* Master Map Loop */}
+        <div className="grid grid-cols-1 gap-4 w-full max-w-xl mx-auto">
           {categories.map((category) => {
             const content = category.translations[lang];
             return (
-              <button
+              <div
                 key={category.id}
-                onClick={() => onSelectCategory(category.id)}
                 className={cn(
-                  "group relative w-full p-6 sm:p-8 rounded-[2rem] border transition-all duration-500 flex flex-col items-start justify-center text-left space-y-1 shadow-xl hover:-translate-y-1 active:scale-[0.98]",
+                  "group relative w-full p-6 sm:p-7 rounded-[2rem] border-[1.5px] transition-all duration-500 flex flex-col items-center justify-center text-center space-y-4 shadow-xl",
                   isNight 
-                    ? "bg-black border-white text-white active:bg-white active:text-black" 
-                    : "bg-[#FDF6E2] border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]",
-                  "border-amber-100/40"
+                    ? "bg-black border-white/20 text-white" 
+                    : "bg-[#FDF6E2] border-[#14532D] text-[#1E293B]"
                 )}
               >
-                <h3 className={cn(
-                  "text-[18px] font-semibold transition-colors leading-tight",
-                  isNight ? "text-white group-active:text-black" : "text-[#1E293B] group-active:text-white"
-                )}>
-                  {content.title}
-                </h3>
-                <p className={cn(
-                  "text-[13px] font-normal tracking-tight leading-relaxed max-w-[95%] transition-colors",
-                  isNight ? "text-white/60 group-active:text-black/60" : "text-muted-foreground group-active:text-white/80"
-                )}>
-                  {content.subtitle}
-                </p>
-              </button>
+                <div className="space-y-2">
+                  <h3 className={cn(
+                    "text-[20px] font-black transition-colors leading-tight",
+                    isNight ? "text-white" : "text-[#14532D]"
+                  )}>
+                    {content.title}
+                  </h3>
+                  <p className={cn(
+                    "text-[14px] font-medium tracking-tight leading-relaxed max-w-[90%] mx-auto transition-colors",
+                    isNight ? "text-white/60" : "text-muted-foreground"
+                  )}>
+                    {content.subtitle}
+                  </p>
+                </div>
+
+                {/* Styled Neem Green Action Button */}
+                <button
+                  onClick={() => onSelectCategory(category.id)}
+                  className={cn(
+                    "flex items-center justify-center gap-2 px-8 py-3 rounded-full font-black text-[13px] uppercase tracking-widest transition-all active:scale-95 shadow-md group-hover:shadow-lg",
+                    isNight 
+                      ? "bg-white text-black hover:bg-amber-400 hover:text-white" 
+                      : "bg-[#14532D] text-white hover:bg-[#14532D]/90"
+                  )}
+                >
+                  {content.button}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             );
           })}
         </div>
