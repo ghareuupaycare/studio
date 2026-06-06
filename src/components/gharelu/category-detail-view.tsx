@@ -80,7 +80,7 @@ export const CategoryDetailView = ({
     if (!activeCategory) return [];
     
     const dynamicIllnesses = allRemedies
-      .filter(r => r.categoryId === categoryId || r.illnessId === 'live')
+      .filter(r => r.categoryId === categoryId || (r.illnessId === 'live' && r.categoryId === categoryId))
       .map(r => ({ id: r.illnessId, title: r.name[lang] }));
 
     const merged = [...activeCategory.illnesses];
@@ -143,44 +143,70 @@ export const CategoryDetailView = ({
       </div>
 
       {!selectedIllnessId ? (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-3">
           {illnessList.map((illness) => (
-            <button
+            <div
               key={illness.id}
               onClick={() => setSelectedIllnessId(illness.id)}
               className={cn(
-                "group relative w-full p-6 rounded-[2rem] border transition-all duration-300 text-left cursor-pointer shadow-lg flex items-center justify-between",
+                "group relative w-full p-5 sm:p-6 rounded-[2rem] border-[1.5px] transition-all duration-500 flex flex-row items-center justify-between text-left cursor-pointer shadow-lg active:scale-[0.98]",
                 isNight 
-                  ? "bg-black border-white text-white active:bg-white active:text-black" 
-                  : "bg-white border-primary/10 hover:border-accent/40 text-[#1E293B] active:bg-[#B45309] active:text-[#FDFBF7]"
+                  ? "bg-black border-white/20 text-white" 
+                  : "bg-[#FDFBF7] border-[#14532D] text-[#1E293B] hover:border-[#14532D]/80"
               )}
             >
-              <h3 className="text-[20px] font-bold leading-tight">{toEnglishDigits(illness.title)}</h3>
-              <ArrowRight className="w-5 h-5 text-accent group-active:text-white" />
-            </button>
+              <div className="flex-1 pr-4">
+                <h3 className={cn(
+                  "text-[19px] sm:text-[21px] font-black leading-tight",
+                  isNight ? "text-white" : "text-[#14532D]"
+                )}>
+                  {toEnglishDigits(illness.title)}
+                </h3>
+              </div>
+              <div className={cn(
+                "flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full transition-all shrink-0 shadow-md",
+                isNight 
+                  ? "bg-white text-black" 
+                  : "bg-[#14532D] text-white"
+              )}>
+                <ArrowRight className="w-5 h-5 sm:w-6 h-6" />
+              </div>
+            </div>
           ))}
         </div>
       ) : !selectedRemedy ? (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-3">
           {illnessRemedies.map((remedy) => (
-            <button
+            <div
               key={remedy.id}
               onClick={() => {
                 setSelectedRemedy(remedy);
                 if (onSelectRemedyId) onSelectRemedyId(remedy.id);
               }}
               className={cn(
-                "w-full p-5 rounded-2xl border transition-all duration-200 text-left flex items-center gap-4 group cursor-pointer active:scale-[0.98] shadow-md",
+                "group relative w-full p-5 sm:p-6 rounded-[2rem] border-[1.5px] transition-all duration-500 flex flex-row items-center justify-between text-left cursor-pointer shadow-lg active:scale-[0.98]",
                 isNight 
-                  ? "bg-black border-white/20 text-white hover:border-white" 
-                  : "bg-white border-primary/10 hover:border-primary/30 text-primary"
+                  ? "bg-black border-white/20 text-white" 
+                  : "bg-[#FDFBF7] border-[#14532D] text-[#1E293B] hover:border-[#14532D]/80"
               )}
             >
-              <div className="flex-1">
-                <h4 className="font-bold text-[18px] leading-snug">{toEnglishDigits(remedy.name[lang])}</h4>
+              <div className="flex-1 pr-4">
+                <h3 className={cn(
+                  "text-[18px] sm:text-[20px] font-black leading-tight",
+                  isNight ? "text-white" : "text-[#14532D]"
+                )}>
+                  {toEnglishDigits(remedy.name[lang])}
+                </h3>
               </div>
-              <BookOpen className="w-5 h-5 opacity-40 group-hover:opacity-100 transition-opacity" />
-            </button>
+              <div className={cn(
+                "flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full transition-all shrink-0 shadow-md",
+                isNight 
+                  ? "bg-white text-black" 
+                  : "bg-[#14532D] text-white"
+              )}>
+                <ArrowRight className="w-5 h-5 sm:w-6 h-6" />
+              </div>
+            </div>
           ))}
           {illnessRemedies.length === 0 && (
             <p className="text-center opacity-50 py-10 italic">
