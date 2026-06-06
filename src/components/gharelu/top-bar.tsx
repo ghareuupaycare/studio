@@ -116,9 +116,9 @@ export const TopBar = ({
             <Button variant="ghost" size="icon" className={headerBtnClass}><Menu className="w-6 h-6" /></Button>
           </SheetTrigger>
           <SheetContent 
-            side="top" 
+            side="left" 
             className={cn(
-              "w-full h-[50vh] max-h-[50vh] p-0 border-none transition-all duration-300 ease-in-out [&>button]:hidden rounded-none shadow-2xl", 
+              "w-[50vw] max-w-[50vw] h-full p-0 border-none transition-all duration-300 ease-in-out [&>button]:hidden rounded-none shadow-2xl", 
               isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7]"
             )}
           >
@@ -149,7 +149,7 @@ export const TopBar = ({
               
               {/* Scrollable Menu Content */}
               <ScrollArea className="flex-1 bg-transparent">
-                <div className="p-5 max-w-2xl mx-auto w-full">
+                <div className="p-5 max-w-full mx-auto w-full">
                   <Accordion type="single" collapsible className="w-full space-y-3">
                     {legalPages.map((page) => (
                       <AccordionItem key={page.id} value={page.id} className="border-none">
@@ -178,7 +178,7 @@ export const TopBar = ({
                       </AccordionItem>
                     ))}
                   </Accordion>
-                  <div className="mt-8 mb-10">
+                  <div className="mt-8 mb-10 px-4">
                     <SheetClose asChild>
                       <Button 
                         variant="ghost" 
