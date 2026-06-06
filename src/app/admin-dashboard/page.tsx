@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,13 +22,18 @@ import {
   ClipboardList,
   Users,
   Settings,
-  ExternalLink
+  ExternalLink,
+  ChevronDown,
+  ChevronRight,
+  Pencil,
+  X
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase';
-import { collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
+import { cn } from '@/lib/utils';
 
 type DoseEntry = {
   ageRangeHi: string;
@@ -79,6 +84,11 @@ export default function AdminDashboard() {
   const [view, setView] = useState<ViewState>('overview');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [liveRecipes, setLiveRecipes] = useState<any[]>([]);
+  
+  // Edit & Tree States
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [expandedDisease, setExpandedDisease] = useState<string | null>(null);
 
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [doses, setDoses] = useState<DoseEntry[]>(INITIAL_DOSES);
@@ -107,6 +117,19 @@ export default function AdminDashboard() {
     return () => unsubscribe();
   }, [db]);
 
+  // Group recipes for Tree View
+  const groupedRecipes = useMemo(() => {
+    const groups: Record<string, Record<string, any[]>> = {};
+    liveRecipes.forEach(recipe => {
+      const cat = recipe.mainCategory?.hi || 'अन्य';
+      const dis = recipe.diseaseName?.hi || 'सामान्य';
+      if (!groups[cat]) groups[cat] = {};
+      if (!groups[cat][dis]) groups[cat][dis] = [];
+      groups[cat][dis].push(recipe);
+    });
+    return groups;
+  }, [liveRecipes]);
+
   const handleLogout = () => {
     localStorage.removeItem('gharelu_admin_auth');
     router.push('/admin-login');
@@ -129,6 +152,12 @@ export default function AdminDashboard() {
 
   const removeDoseField = (index: number) => {
     setDoses(doses.filter((_, i) => i !== index));
+  };
+
+  const resetForm = () => {
+    setFormData(INITIAL_FORM_DATA);
+    setDoses(INITIAL_DOSES);
+    setEditingId(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -160,23 +189,23 @@ export default function AdminDashboard() {
     };
 
     try {
-      const recipesRef = collection(db, 'recipes');
-      await addDoc(recipesRef, submissionData);
+      if (editingId) {
+        const docRef = doc(db, 'recipes', editingId);
+        await setDoc(docRef, submissionData, { merge: true });
+        toast({ title: "सफलता!", description: "नुस्खा सफलतापूर्वक अपडेट किया गया!" });
+      } else {
+        const recipesRef = collection(db, 'recipes');
+        await addDoc(recipesRef, submissionData);
+        toast({ title: "सफलता!", description: "नया नुस्खा सफलतापूर्वक सुरक्षित किया गया!" });
+      }
       
-      toast({
-        title: "सफलता!",
-        description: "नुस्खा सफलतापूर्वक सुरक्षित किया गया!",
-      });
-      
-      setFormData(INITIAL_FORM_DATA);
-      setDoses(INITIAL_DOSES);
+      resetForm();
       setView('manage');
     } catch (error: any) {
       console.error("Firebase Save Error:", error);
-      alert("Firebase Error: " + error.message);
       const permissionError = new FirestorePermissionError({
-        path: 'recipes',
-        operation: 'write',
+        path: editingId ? `recipes/${editingId}` : 'recipes',
+        operation: editingId ? 'update' : 'create',
         requestResourceData: submissionData,
       } satisfies SecurityRuleContext);
       errorEmitter.emit('permission-error', permissionError);
@@ -185,17 +214,56 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleEdit = (recipe: any) => {
+    setFormData({
+      mainCategoryHi: recipe.mainCategory?.hi || '',
+      mainCategoryEn: recipe.mainCategory?.en || '',
+      diseaseNameHi: recipe.diseaseName?.hi || '',
+      diseaseNameEn: recipe.diseaseName?.en || '',
+      remedyTitleHi: recipe.remedyTitle?.hi || '',
+      remedyTitleEn: recipe.remedyTitle?.en || '',
+      introductionHi: recipe.introduction?.hi || '',
+      introductionEn: recipe.introduction?.en || '',
+      ingredientsHi: recipe.ingredients?.hi || '',
+      ingredientsEn: recipe.ingredients?.en || '',
+      preparationHi: recipe.preparation?.hi || '',
+      preparationEn: recipe.preparation?.en || '',
+      usageHi: recipe.usage?.hi || '',
+      usageEn: recipe.usage?.en || '',
+      dietEatHi: recipe.dietEat?.hi || '',
+      dietEatEn: recipe.dietEat?.en || '',
+      dietAvoidHi: recipe.dietAvoid?.hi || '',
+      dietAvoidEn: recipe.dietAvoid?.en || '',
+      routineHi: recipe.routine?.hi || '',
+      routineEn: recipe.routine?.en || '',
+      safetyAdviceHi: recipe.safetyAdvice?.hi || '',
+      safetyAdviceEn: recipe.safetyAdvice?.en || '',
+    });
+
+    if (recipe.doses && Array.isArray(recipe.doses)) {
+      setDoses(recipe.doses.map((d: any) => ({
+        ageRangeHi: d.ageRange?.hi || '',
+        ageRangeEn: d.ageRange?.en || '',
+        doseHi: d.dose?.hi || '',
+        doseEn: d.dose?.en || '',
+      })));
+    } else {
+      setDoses(INITIAL_DOSES);
+    }
+
+    setEditingId(recipe.id);
+    setView('add-recipe');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleDelete = async (e: React.MouseEvent, recipeId: string, title: string) => {
-    e.stopPropagation(); // Prevent navigation click
+    e.stopPropagation();
     if (!db) return;
     if (confirm(`क्या आप वाकई "${title}" को हटाना चाहते हैं?`)) {
       try {
         const docRef = doc(db, 'recipes', recipeId);
         await deleteDoc(docRef);
-        toast({
-          title: "हटा दिया गया",
-          description: "नुस्खा सफलतापूर्वक हटा दिया गया है।",
-        });
+        toast({ title: "हटा दिया गया", description: "नुस्खा सफलतापूर्वक हटा दिया गया है।" });
       } catch (error: any) {
         console.error("Firebase Delete Error:", error);
         const permissionError = new FirestorePermissionError({
@@ -207,8 +275,13 @@ export default function AdminDashboard() {
     }
   };
 
-  const navigateToRemedy = (id: string) => {
-    router.push(`/?remedyId=${id}`);
+  const toggleCategory = (cat: string) => {
+    setExpandedCategory(expandedCategory === cat ? null : cat);
+    setExpandedDisease(null);
+  };
+
+  const toggleDisease = (dis: string) => {
+    setExpandedDisease(expandedDisease === dis ? null : dis);
   };
 
   if (!isLoaded) return null;
@@ -236,7 +309,7 @@ export default function AdminDashboard() {
                     <BookOpen className="w-6 h-6" />
                   </div>
                   <CardTitle className="text-xl">नुस्खे प्रबंधित करें</CardTitle>
-                  <CardDescription>नए नुस्खे जोड़ें या लाइव डेटा देखें</CardDescription>
+                  <CardDescription>लाइव डेटा देखें, एडिट करें या हटाएँ</CardDescription>
                 </CardHeader>
               </Card>
               <Card className="opacity-80 grayscale">
@@ -264,10 +337,10 @@ export default function AdminDashboard() {
                 <Button variant="ghost" size="icon" onClick={() => setView('overview')} className="rounded-full"><ChevronLeft /></Button>
                 <div>
                   <h2 className="text-2xl font-headline font-black text-primary">नुस्खे प्रबंधित करें</h2>
-                  <p className="text-sm text-muted-foreground">नुस्खे जोड़ें और लाइव डेटा देखें</p>
+                  <p className="text-sm text-muted-foreground">श्रेणीवार नुस्खे देखें और एडिट करें</p>
                 </div>
               </div>
-              <Button onClick={() => setView('add-recipe')} className="bg-accent hover:bg-accent/90 rounded-full gap-2 shadow-lg">
+              <Button onClick={() => { resetForm(); setView('add-recipe'); }} className="bg-accent hover:bg-accent/90 rounded-full gap-2 shadow-lg">
                 <PlusCircle className="w-5 h-5" /> नुस्खा जोड़ें
               </Button>
             </div>
@@ -276,30 +349,83 @@ export default function AdminDashboard() {
               <CardHeader className="bg-primary/5 border-b">
                 <CardTitle className="text-lg flex items-center gap-2"><ClipboardList className="w-5 h-5 text-primary" /> सभी लाइव नुस्खे ({liveRecipes.length})</CardTitle>
               </CardHeader>
-              <CardContent className="p-0">
-                {liveRecipes.length > 0 ? (
-                  <div className="divide-y">
-                    {liveRecipes.map((recipe) => (
-                      <div 
-                        key={recipe.id} 
-                        onClick={() => navigateToRemedy(recipe.id)}
-                        className="p-4 flex items-center justify-between hover:bg-muted/30 transition-colors cursor-pointer group"
-                      >
-                        <div className="flex-1">
-                          <h4 className="font-bold text-primary flex items-center gap-2">
-                            {recipe.remedyTitle?.hi || 'शीर्षक उपलब्ध नहीं'}
-                            <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-40 transition-opacity" />
-                          </h4>
-                          <p className="text-xs text-muted-foreground">{recipe.mainCategory?.hi} &gt; {recipe.diseaseName?.hi}</p>
-                        </div>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={(e) => handleDelete(e, recipe.id, recipe.remedyTitle?.hi)}
-                          className="text-destructive hover:bg-destructive/10"
+              <CardContent className="p-4">
+                {Object.keys(groupedRecipes).length > 0 ? (
+                  <div className="space-y-3">
+                    {Object.entries(groupedRecipes).map(([category, diseases]) => (
+                      <div key={category} className="border rounded-xl overflow-hidden shadow-sm">
+                        <button 
+                          onClick={() => toggleCategory(category)}
+                          className="w-full flex items-center justify-between p-4 bg-primary/5 hover:bg-primary/10 transition-colors font-bold text-primary"
                         >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                          <div className="flex items-center gap-3">
+                            {expandedCategory === category ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+                            {category}
+                          </div>
+                          <span className="bg-primary/20 text-primary px-3 py-0.5 rounded-full text-xs">
+                            {Object.values(diseases).flat().length} नुस्खे
+                          </span>
+                        </button>
+                        
+                        {expandedCategory === category && (
+                          <div className="bg-white divide-y">
+                            {Object.entries(diseases).map(([disease, recipes]) => (
+                              <div key={disease} className="pl-4">
+                                <button 
+                                  onClick={() => toggleDisease(disease)}
+                                  className="w-full flex items-center justify-between p-4 hover:bg-muted/30 transition-colors font-medium text-slate-700"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    {expandedDisease === disease ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                                    {disease}
+                                  </div>
+                                  <span className="text-xs text-muted-foreground">{recipes.length} नुस्खे</span>
+                                </button>
+                                
+                                {expandedDisease === disease && (
+                                  <div className="bg-slate-50/50 divide-y border-t">
+                                    {recipes.map((recipe) => (
+                                      <div key={recipe.id} className="p-4 flex items-center justify-between group">
+                                        <div className="flex-1">
+                                          <h4 className="font-bold text-primary flex items-center gap-2">
+                                            {recipe.remedyTitle?.hi || 'शीर्षक उपलब्ध नहीं'}
+                                            <button 
+                                              onClick={() => router.push(`/?remedyId=${recipe.id}`)}
+                                              className="p-1 rounded hover:bg-primary/10 text-primary/40 hover:text-primary transition-colors"
+                                              title="ऐप में देखें"
+                                            >
+                                              <ExternalLink className="w-3 h-3" />
+                                            </button>
+                                          </h4>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                          <Button 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            onClick={() => handleEdit(recipe)}
+                                            className="text-blue-600 hover:bg-blue-50"
+                                            title="एडिट करें"
+                                          >
+                                            <Pencil className="w-4 h-4" />
+                                          </Button>
+                                          <Button 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            onClick={(e) => handleDelete(e, recipe.id, recipe.remedyTitle?.hi)}
+                                            className="text-destructive hover:bg-destructive/10"
+                                            title="हटाएँ"
+                                          >
+                                            <Trash2 className="w-4 h-4" />
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -313,10 +439,20 @@ export default function AdminDashboard() {
 
         {view === 'add-recipe' && (
           <div className="space-y-6 pb-20">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" onClick={() => setView('manage')} className="rounded-full"><ChevronLeft /></Button>
-              <h2 className="text-2xl font-headline font-black text-primary">नया नुस्खा अपलोड करें</h2>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Button variant="ghost" size="icon" onClick={() => { resetForm(); setView('manage'); }} className="rounded-full"><ChevronLeft /></Button>
+                <h2 className="text-2xl font-headline font-black text-primary">
+                  {editingId ? 'नुस्खा अपडेट करें' : 'नया नुस्खा अपलोड करें'}
+                </h2>
+              </div>
+              {editingId && (
+                <Button variant="outline" onClick={resetForm} className="gap-2 border-destructive text-destructive hover:bg-destructive/10">
+                  <X className="w-4 h-4" /> एडिट रद्द करें
+                </Button>
+              )}
             </div>
+            
             <form onSubmit={handleSubmit} className="space-y-8">
               <Card className="border-primary/20 shadow-xl overflow-hidden rounded-[2rem]">
                 <CardHeader className="bg-primary text-white">
@@ -348,7 +484,6 @@ export default function AdminDashboard() {
                    <CardTitle className="text-lg flex items-center gap-2"><BookOpen className="w-5 h-5" /> विस्तृत जानकारी</CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-8">
-                  {/* Reuse the logic for steps 1-9 with Hindi and English */}
                   <div className="space-y-4">
                     <Label className="font-bold text-primary">1. बीमारी का परिचय | Disease Introduction</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -370,7 +505,6 @@ export default function AdminDashboard() {
                       <Textarea name="preparationEn" placeholder="English" value={formData.preparationEn} onChange={handleInputChange} required />
                     </div>
                   </div>
-                  {/* ... other steps follow the same pattern ... */}
                   <div className="space-y-4">
                     <Label className="font-bold text-primary">5. सेवन विधि | Consumption Method</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -390,9 +524,10 @@ export default function AdminDashboard() {
 
               <div className="flex gap-4">
                 <Button type="submit" disabled={isSubmitting} className="flex-1 h-14 bg-accent hover:bg-accent/90 rounded-2xl shadow-xl text-lg font-bold">
-                  {isSubmitting ? <Loader2 className="animate-spin" /> : <Save className="mr-2" />} नुस्खा सुरक्षित करें
+                  {isSubmitting ? <Loader2 className="animate-spin" /> : <Save className="mr-2" />} 
+                  {editingId ? 'अपडेट सुरक्षित करें' : 'नुस्खा सुरक्षित करें'}
                 </Button>
-                <Button type="button" variant="outline" onClick={() => setView('manage')} className="h-14 px-8 rounded-2xl">रद्द करें</Button>
+                <Button type="button" variant="outline" onClick={() => { resetForm(); setView('manage'); }} className="h-14 px-8 rounded-2xl">रद्द करें</Button>
               </div>
             </form>
           </div>
