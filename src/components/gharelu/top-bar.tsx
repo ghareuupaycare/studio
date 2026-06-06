@@ -1,8 +1,7 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Bell, Languages, Moon, Sun, Menu, Heart, Info, Mail, ShieldCheck, FileText, AlertTriangle, Lock, X, ChevronDown } from 'lucide-react';
+import { Bell, Languages, Moon, Sun, Menu, Heart, Info, Mail, ShieldCheck, FileText, AlertTriangle, Lock, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Language, Theme } from '@/app/page';
 import { cn } from '@/lib/utils';
@@ -128,7 +127,7 @@ export const TopBar = ({
                 "p-6 pt-10 pb-6 relative transition-colors shrink-0", 
                 isNight ? "bg-black border-b border-white/10" : "bg-[#14532D]"
               )}>
-                {/* Golden Close Button */}
+                {/* Golden Close Button - Large and Premium */}
                 <div className="absolute top-4 right-6">
                   <SheetClose asChild>
                     <Button 
@@ -148,6 +147,7 @@ export const TopBar = ({
                 </p>
               </SheetHeader>
               
+              {/* Scrollable Menu Content */}
               <ScrollArea className="flex-1 bg-transparent">
                 <div className="p-5 max-w-2xl mx-auto w-full">
                   <Accordion type="single" collapsible className="w-full space-y-3">
