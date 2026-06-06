@@ -118,7 +118,7 @@ export const TopBar = ({
           <SheetContent 
             side="left" 
             className={cn(
-              "w-[50vw] max-w-[50vw] h-full p-0 border-none transition-all duration-300 ease-in-out [&>button]:hidden rounded-none shadow-2xl", 
+              "w-[70vw] max-w-[70vw] h-full p-0 border-none transition-all duration-300 ease-in-out [&>button]:hidden rounded-none shadow-2xl", 
               isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7]"
             )}
           >
@@ -127,7 +127,6 @@ export const TopBar = ({
                 "p-6 pt-10 pb-6 relative transition-colors shrink-0", 
                 isNight ? "bg-black border-b border-white/10" : "bg-[#14532D]"
               )}>
-                {/* Golden Close Button - Large and Premium */}
                 <div className="absolute top-4 right-6">
                   <SheetClose asChild>
                     <Button 
@@ -147,7 +146,6 @@ export const TopBar = ({
                 </p>
               </SheetHeader>
               
-              {/* Scrollable Menu Content */}
               <ScrollArea className="flex-1 bg-transparent">
                 <div className="p-5 max-w-full mx-auto w-full">
                   <Accordion type="single" collapsible className="w-full space-y-3">
@@ -164,7 +162,7 @@ export const TopBar = ({
                             )}>
                               {page.icon}
                             </div>
-                            <span className={cn("font-bold text-base", isNight ? "text-zinc-100" : "text-foreground")}>
+                            <span className={cn("font-bold text-[15px]", isNight ? "text-zinc-100" : "text-foreground")}>
                               {page.title}
                             </span>
                           </div>
