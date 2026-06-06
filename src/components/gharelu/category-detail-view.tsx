@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
-import { ChevronLeft, ArrowRight, BookOpen } from 'lucide-react';
+import { ChevronLeft, ArrowRight } from 'lucide-react';
 import { Remedy } from '@/lib/remedy-data';
 import { RemedyDetail } from './remedy-detail';
 
@@ -56,55 +56,45 @@ export const CategoryDetailView = ({
     }
   }, [selectedRemedy, selectedIllnessId, onLevelChange]);
 
-  const categoryContent = {
-    fever_flu: {
-      title: isHindi ? '1. मौसमी बुखार एवं फ्लू' : '1. Seasonal Fever & Flu',
-      illnesses: [
-        { id: 'general-fever', title: isHindi ? '1. सामान्य बुखार' : '1. General Fever' },
-        { id: 'common-cold', title: isHindi ? '2. नजला और जुकाम' : '2. Cold & Flu' },
-        { id: 'cough', title: isHindi ? '3. सूखी एवं बलगम वाली खांसी' : '3. Cough' }
-      ]
-    },
-    stomach_diseases: {
-      title: isHindi ? '2. पेट रोग' : '2. Stomach Diseases',
-      illnesses: [
-        { id: 'gas_acidity', title: isHindi ? '1. गैस और एसिडिटी' : '1. Gas & Acidity' },
-        { id: 'indigestion', title: isHindi ? '2. अपच' : '2. Indigestion' }
-      ]
-    }
-  };
+  const activeCategoryMeta = useMemo(() => {
+    const meta: Record<string, any> = {
+      fever_flu: {
+        title: isHindi ? '1. मौसमी बुखार एवं फ्लू' : '1. Seasonal Fever & Flu',
+        staticIllnesses: [
+          { id: 'general-fever', title: isHindi ? '1. सामान्य बुखार' : '1. General Fever' },
+          { id: 'common-cold', title: isHindi ? '2. नजला और जुकाम' : '2. Cold & Flu' },
+          { id: 'cough', title: isHindi ? '3. सूखी एवं बलगम वाली खांसी' : '3. Cough' }
+        ]
+      }
+    };
+    return meta[categoryId];
+  }, [categoryId, isHindi]);
 
-  const activeCategory = categoryContent[categoryId as keyof typeof categoryContent];
-  
   const illnessList = useMemo(() => {
-    if (!activeCategory) return [];
+    const illnesses: Record<string, string> = {};
     
-    const dynamicIllnesses = allRemedies
-      .filter(r => r.categoryId === categoryId || (r.illnessId === 'live' && r.categoryId === categoryId))
-      .map(r => ({ id: r.illnessId, title: r.name[lang] }));
+    // Add static illnesses if any
+    if (activeCategoryMeta?.staticIllnesses) {
+      activeCategoryMeta.staticIllnesses.forEach((i: any) => {
+        illnesses[i.id] = i.title;
+      });
+    }
 
-    const merged = [...activeCategory.illnesses];
-    dynamicIllnesses.forEach(di => {
-      if (!merged.find(m => m.id === di.id)) merged.push(di);
-    });
-    
-    return merged;
-  }, [activeCategory, allRemedies, categoryId, lang]);
+    // Add dynamic illnesses from remedies
+    allRemedies
+      .filter(r => r.categoryId === categoryId)
+      .forEach(r => {
+        if (!illnesses[r.illnessId]) {
+          illnesses[r.illnessId] = r.name[lang];
+        }
+      });
+
+    return Object.entries(illnesses).map(([id, title]) => ({ id, title }));
+  }, [allRemedies, categoryId, lang, activeCategoryMeta]);
 
   const illnessRemedies = useMemo(() => {
-    return allRemedies.filter(r => r.illnessId === selectedIllnessId || (r.categoryId === categoryId && selectedIllnessId === r.illnessId));
+    return allRemedies.filter(r => r.categoryId === categoryId && r.illnessId === selectedIllnessId);
   }, [allRemedies, selectedIllnessId, categoryId]);
-
-  if (!activeCategory) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-center opacity-50">
-        <p className="text-xl font-bold">{isHindi ? 'यह श्रेणी जल्द ही आ रही है' : 'Category coming soon'}</p>
-        <button onClick={onBack} className="mt-4 text-accent font-bold underline">
-          {isHindi ? 'वापस जाएं' : 'Go back'}
-        </button>
-      </div>
-    );
-  }
 
   const handleInternalBack = () => {
     if (selectedRemedy) {
@@ -117,11 +107,20 @@ export const CategoryDetailView = ({
     }
   };
 
-  const currentIllness = illnessList.find(i => i.id === selectedIllnessId);
+  const currentTitle = useMemo(() => {
+    if (selectedRemedy) return selectedRemedy.name[lang];
+    if (selectedIllnessId) {
+      const illness = illnessList.find(i => i.id === selectedIllnessId);
+      return illness?.title || '';
+    }
+    if (activeCategoryMeta) return activeCategoryMeta.title;
+    
+    const firstRemedy = allRemedies.find(r => r.categoryId === categoryId);
+    return firstRemedy?.mainCategory?.[lang] || categoryId;
+  }, [selectedRemedy, selectedIllnessId, illnessList, activeCategoryMeta, lang, categoryId, allRemedies]);
 
   return (
     <div className="space-y-10 animate-in slide-in-from-right-4 duration-500 pb-10 max-w-2xl mx-auto">
-      {/* Header */}
       <div className="flex items-center gap-4">
         <button 
           onClick={handleInternalBack}
@@ -137,7 +136,7 @@ export const CategoryDetailView = ({
             "font-black font-headline leading-tight tracking-wide text-2xl",
             isNight ? "text-white" : "text-[#14532D]"
           )}>
-            {toEnglishDigits(selectedRemedy ? selectedRemedy.name[lang] : (selectedIllnessId ? (currentIllness?.title || '') : activeCategory.title))}
+            {toEnglishDigits(currentTitle)}
           </h2>
         </div>
       </div>

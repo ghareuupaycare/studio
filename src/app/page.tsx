@@ -49,6 +49,7 @@ export default function GhareluUpayApp() {
           name: data.remedyTitle,
           illnessId: data.diseaseName?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
           categoryId: data.mainCategory?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
+          mainCategory: data.mainCategory, // Store raw category info
           introduction: data.introduction,
           doses: data.doses?.map((d: any) => ({
             ageRange: d.ageRange,
@@ -61,7 +62,7 @@ export default function GhareluUpayApp() {
           dietAvoid: data.dietAvoid,
           routine: data.routine,
           safetyAdvice: data.safetyAdvice,
-          disclaimer: { hi: "", en: "" }, // Removed as per request
+          disclaimer: { hi: "", en: "" },
           keywords: []
         } as Remedy;
       });
@@ -216,6 +217,7 @@ export default function GhareluUpayApp() {
               lang={lang} 
               theme={theme} 
               onSelectCategory={handleSelectCategory} 
+              allRemedies={allRemedies}
             />
           )}
         </div>
