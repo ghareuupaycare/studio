@@ -49,7 +49,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
     <div className="space-y-10 animate-in fade-in duration-700 w-full max-w-2xl px-4 sm:px-6 mx-auto">
       {/* Home Banner - Premium 16:9 Layout with Shiny Gold Border */}
       <section className={cn(
-        "w-full aspect-video rounded-[2.5rem] shadow-[0_0_40px_rgba(0,0,0,0.2)] overflow-hidden flex flex-col items-center justify-center px-6 text-center transition-all duration-500 relative border-[3.5px]",
+        "w-full aspect-video rounded-[2.5rem] shadow-[0_0_40px_rgba(0,0,0,0.2)] overflow-hidden flex flex-col items-center justify-center px-4 text-center transition-all duration-500 relative border-[3.5px]",
         isNight 
           ? "bg-black border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.3)]" 
           : "bg-[#14532D] border-amber-400 shadow-[0_0_30px_rgba(251,191,36,0.3)]"
@@ -57,26 +57,28 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
         {/* Subtle Shine Effect Overlay */}
         <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
         
-        <div className="space-y-3 z-10 w-full flex flex-col items-center pt-2">
+        <div className="space-y-1.5 z-10 w-full flex flex-col items-center pt-4 pb-2">
           {/* Heading with fixed line-height and padding to prevent Hindi accent clipping */}
-          <h2 className="text-[22px] sm:text-[30px] font-black leading-[1.4] text-white max-w-[320px] drop-shadow-md py-1">
+          <h2 className="text-[20px] sm:text-[28px] font-black leading-[1.3] text-white max-w-[320px] drop-shadow-md pt-2">
             {isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions'}
           </h2>
           
-          <p className="text-[14px] sm:text-[17px] font-bold text-amber-400 leading-tight max-w-[90%] uppercase tracking-wide">
+          <p className="text-[13px] sm:text-[16px] font-bold text-amber-400 leading-tight max-w-[90%] uppercase tracking-wide">
             भारतीय घरेलू उपाय और वैद्य जी द्वारा संचालित आयुर्वेदिक स्वास्थ्य
           </p>
           
           <p className={cn(
-            "text-[12px] sm:text-[14px] font-medium max-w-[280px] mx-auto leading-relaxed opacity-90",
+            "text-[11px] sm:text-[13px] font-medium max-w-[280px] mx-auto leading-tight opacity-90",
             isNight ? "text-white/80" : "text-slate-100"
           )}>
             शास्त्रों पर आधारित पारंपरिक घरेलू उपाय, जो आपकी रसोई में छिपे स्वास्थ्य रहने का ख़ज़ाना हैं
           </p>
 
-          <button className="mt-2 bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-full font-black text-[12px] uppercase tracking-wider shadow-xl transition-all active:scale-95 border-b-[3px] border-amber-700">
-            बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य
-          </button>
+          <div className="pt-1">
+            <button className="bg-accent hover:bg-accent/90 text-white px-5 py-2.5 rounded-full font-black text-[11px] uppercase tracking-wider shadow-xl transition-all active:scale-95 border-b-[3px] border-amber-700 whitespace-nowrap">
+              बिना दवा घर बैठे पाएं संपूर्ण स्वास्थ्य
+            </button>
+          </div>
         </div>
       </section>
 
