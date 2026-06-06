@@ -57,8 +57,9 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
         {/* Subtle Shine Effect Overlay */}
         <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
         
-        <div className="space-y-3 z-10 w-full flex flex-col items-center">
-          <h2 className="text-[22px] sm:text-[30px] font-black leading-tight text-white max-w-[320px] drop-shadow-md">
+        <div className="space-y-3 z-10 w-full flex flex-col items-center pt-2">
+          {/* Heading with fixed line-height and padding to prevent Hindi accent clipping */}
+          <h2 className="text-[22px] sm:text-[30px] font-black leading-[1.4] text-white max-w-[320px] drop-shadow-md py-1">
             {isHindi ? 'आयुर्वेदिक समाधान' : 'Ayurvedic Solutions'}
           </h2>
           
@@ -88,7 +89,7 @@ export const HomeView = ({ lang, theme, onSelectCategory }: HomeViewProps) => {
           </h3>
         </div>
 
-        {/* Master Map Loop - Strictly Locked Template */}
+        {/* Master Map Loop - Strictly Locked Template with Compact Height & Right-aligned circular button */}
         <div className="grid grid-cols-1 gap-3 w-full max-w-xl mx-auto">
           {categories.map((category) => {
             const content = category.translations[lang];
