@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
@@ -49,7 +50,10 @@ const INITIAL_FORM_DATA = {
 };
 
 const INITIAL_DOSES: DoseEntry[] = [
-  { ageRangeHi: '5-12 वर्ष', ageRangeEn: '5-12 Years', doseHi: '', doseEn: '' },
+  { ageRangeHi: '5 वर्ष से 12 वर्ष', ageRangeEn: '5 Years to 12 Years', doseHi: '', doseEn: '' },
+  { ageRangeHi: '13 वर्ष से 40 वर्ष', ageRangeEn: '13 Years to 40 Years', doseHi: '', doseEn: '' },
+  { ageRangeHi: '41 वर्ष से 60 वर्ष', ageRangeEn: '41 Years to 60 Years', doseHi: '', doseEn: '' },
+  { ageRangeHi: '61 वर्ष से 80 वर्ष', ageRangeEn: '61 Years to 80 Years', doseHi: '', doseEn: '' },
 ];
 
 export default function AdminDashboard() {
@@ -84,13 +88,8 @@ export default function AdminDashboard() {
       const cat = recipe.mainCategory?.hi || 'अन्य';
       const dis = recipe.diseaseName?.hi || 'सामान्य';
       if (!groups[cat]) groups[cat] = {};
-      if (!groups[cat][dis]) groups[cat][dis] = {};
       if (!groups[cat][dis]) groups[cat][dis] = [];
-      if (Array.isArray(groups[cat][dis])) {
-        groups[cat][dis].push(recipe);
-      } else {
-        groups[cat][dis] = [recipe];
-      }
+      groups[cat][dis].push(recipe);
     });
     return groups;
   }, [liveRecipes]);
@@ -187,12 +186,16 @@ export default function AdminDashboard() {
       safetyAdviceEn: recipe.safetyAdvice?.en || '',
       seoKeywords: Array.isArray(recipe.keywords) ? recipe.keywords.join(', ') : '',
     });
-    setDoses(recipe.doses?.map((d: any) => ({ 
+    
+    // Ensure all 4 tiers are present, fill missing ones if necessary
+    const loadedDoses = recipe.doses?.map((d: any) => ({ 
       ageRangeHi: d.ageRange?.hi || '', 
       ageRangeEn: d.ageRange?.en || '', 
       doseHi: d.dose?.hi || '', 
       doseEn: d.dose?.en || '' 
-    })) || INITIAL_DOSES);
+    })) || INITIAL_DOSES;
+    
+    setDoses(loadedDoses);
     setEditingId(recipe.id);
     setView('add-recipe');
   };

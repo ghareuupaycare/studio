@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -6,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Save, Loader2, Stethoscope, BookOpen, Plus, Trash2, X, Globe } from 'lucide-react';
+import { Save, Loader2, Stethoscope, BookOpen, Plus, Trash2, X, Globe, User } from 'lucide-react';
 
 interface DoseEntry {
   ageRangeHi: string;
@@ -53,10 +54,10 @@ export const AdminForm = ({
         )}
       </div>
 
-      {/* 1. Classifications */}
+      {/* Basic Classification */}
       <Card className="border-primary/20 shadow-xl overflow-hidden rounded-[2rem]">
         <CardHeader className="bg-primary text-white">
-          <CardTitle className="text-lg flex items-center gap-2"><Stethoscope className="w-5 h-5" /> 1. श्रेणी और वर्गीकरण</CardTitle>
+          <CardTitle className="text-lg flex items-center gap-2"><Stethoscope className="w-5 h-5" /> श्रेणी और वर्गीकरण</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -115,95 +116,117 @@ export const AdminForm = ({
         </CardContent>
       </Card>
 
-      {/* 2-9. Detailed Content */}
+      {/* Sequential 1-9 Content Sections */}
       <Card className="border-primary/20 shadow-xl overflow-hidden rounded-[2rem]">
         <CardHeader className="bg-[#14532D] text-white">
-           <CardTitle className="text-lg flex items-center gap-2"><BookOpen className="w-5 h-5" /> विस्तृत जानकारी (2-9)</CardTitle>
+           <CardTitle className="text-lg flex items-center gap-2"><BookOpen className="w-5 h-5" /> विस्तृत जानकारी (1-9)</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-8">
+          
+          {/* 1. Disease Introduction */}
           <div className="space-y-4">
-            <Label className="font-bold text-primary">2. परिचय | Introduction</Label>
+            <Label className="font-bold text-primary">1. बीमारी का परिचय | Disease Introduction</Label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Textarea name="introductionHi" placeholder="Hindi Description" value={formData.introductionHi} onChange={onInputChange} required />
-              <Textarea name="introductionEn" placeholder="English Description" value={formData.introductionEn} onChange={onInputChange} required />
-            </div>
-          </div>
-          <div className="space-y-4">
-            <Label className="font-bold text-primary">3. सामग्री | Ingredients</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Textarea name="ingredientsHi" placeholder="सामग्री की सूची (एक लाइन में एक)" value={formData.ingredientsHi} onChange={onInputChange} required />
-              <Textarea name="ingredientsEn" placeholder="List of ingredients (one per line)" value={formData.ingredientsEn} onChange={onInputChange} required />
-            </div>
-          </div>
-          <div className="space-y-4">
-            <Label className="font-bold text-primary">4. बनाने की विधि | Preparation</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Textarea name="preparationHi" placeholder="Hindi Method" value={formData.preparationHi} onChange={onInputChange} required />
-              <Textarea name="preparationEn" placeholder="English Method" value={formData.preparationEn} onChange={onInputChange} required />
+              <Textarea name="introductionHi" placeholder="हिंदी में बीमारी का परिचय लिखें..." value={formData.introductionHi} onChange={onInputChange} required />
+              <Textarea name="introductionEn" placeholder="Write disease introduction in English..." value={formData.introductionEn} onChange={onInputChange} required />
             </div>
           </div>
 
+          {/* 2. Required Ingredients */}
+          <div className="space-y-4">
+            <Label className="font-bold text-primary">2. आवश्यक सामग्री (कुल स्टॉक बनाने के लिए) | Required Ingredients</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Textarea name="ingredientsHi" placeholder="हिंदी में आवश्यक सामग्री और कुल स्टॉक की सूची लिखें..." value={formData.ingredientsHi} onChange={onInputChange} required />
+              <Textarea name="ingredientsEn" placeholder="Write list of required ingredients in English..." value={formData.ingredientsEn} onChange={onInputChange} required />
+            </div>
+          </div>
+
+          {/* 3. Preparation Method */}
+          <div className="space-y-4">
+            <Label className="font-bold text-primary">3. बनाने की विधि | Preparation Method</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Textarea name="preparationHi" placeholder="हिंदी में बनाने की विधि लिखें..." value={formData.preparationHi} onChange={onInputChange} required />
+              <Textarea name="preparationEn" placeholder="Write preparation method in English..." value={formData.preparationEn} onChange={onInputChange} required />
+            </div>
+          </div>
+
+          {/* 4. Smart Dosage (Fixed Tiers) */}
           <div className="space-y-4 pt-4 border-t">
-            <Label className="font-bold text-primary">5. खुराक | Smart Dosage</Label>
+            <Label className="font-bold text-primary">4. स्मार्ट खुराक और मात्रा (उपरोक्त कुल सामग्री में से अपनी उम्र के अनुसार केवल चुनी गई खुराक ही लें:) | Smart Dosage</Label>
             <div className="space-y-4">
               {doses.map((dose, index) => (
                 <div key={index} className="p-4 border rounded-xl space-y-4 bg-muted/20">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold text-primary">खुराक #{index + 1}</span>
-                    <Button type="button" variant="ghost" size="icon" onClick={() => onRemoveDose(index)} className="text-destructive"><Trash2 className="w-4 h-4" /></Button>
+                    <span className="text-sm font-bold text-primary flex items-center gap-2">
+                      <User className="w-4 h-4" /> खुराक वर्ग #{index + 1}
+                    </span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="text-xs">आयु वर्ग (Hindi / English)</Label>
-                      <Input placeholder="उदा: 5-12 वर्ष" value={dose.ageRangeHi} onChange={(e) => onDoseChange(index, 'ageRangeHi', e.target.value)} />
-                      <Input placeholder="e.g. 5-12 Years" value={dose.ageRangeEn} onChange={(e) => onDoseChange(index, 'ageRangeEn', e.target.value)} />
+                      <Label className="text-xs">उम्र समूह (Hindi / English)</Label>
+                      <Input readOnly className="bg-muted/50 font-bold" value={dose.ageRangeHi} />
+                      <Input readOnly className="bg-muted/50 font-bold" value={dose.ageRangeEn} />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-xs">खुराक (Hindi / English)</Label>
-                      <Input placeholder="उदा: आधा चम्मच" value={dose.doseHi} onChange={(e) => onDoseChange(index, 'doseHi', e.target.value)} />
-                      <Input placeholder="e.g. Half Teaspoon" value={dose.doseEn} onChange={(e) => onDoseChange(index, 'doseEn', e.target.value)} />
+                      <Input placeholder="उदा: आधा चम्मच" value={dose.doseHi} onChange={(e) => onDoseChange(index, 'doseHi', e.target.value)} required />
+                      <Input placeholder="e.g. Half Teaspoon" value={dose.doseEn} onChange={(e) => onDoseChange(index, 'doseEn', e.target.value)} required />
                     </div>
                   </div>
                 </div>
               ))}
-              <Button type="button" variant="outline" onClick={onAddDose} className="w-full gap-2 border-dashed"><Plus className="w-4 h-4" /> और खुराक जोड़ें</Button>
             </div>
           </div>
 
+          {/* 5. Consumption Method */}
           <div className="space-y-4">
-            <Label className="font-bold text-primary">6. सेवन विधि | Usage</Label>
+            <Label className="font-bold text-primary">5. सेवन विधि | Consumption Method</Label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Textarea name="usageHi" placeholder="Hindi Usage" value={formData.usageHi} onChange={onInputChange} required />
-              <Textarea name="usageEn" placeholder="English Usage" value={formData.usageEn} onChange={onInputChange} required />
+              <Textarea name="usageHi" placeholder="हिंदी में सेवन विधि लिखें..." value={formData.usageHi} onChange={onInputChange} required />
+              <Textarea name="usageEn" placeholder="Write consumption method in English..." value={formData.usageEn} onChange={onInputChange} required />
             </div>
           </div>
+
+          {/* 6. What to Eat */}
           <div className="space-y-4">
-            <Label className="font-bold text-primary">7. क्या खाएं / परहेज़ | Diet</Label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Input name="dietEatHi" placeholder="क्या खाएं (Hi)" value={formData.dietEatHi} onChange={onInputChange} />
-              <Input name="dietEatEn" placeholder="Eat (En)" value={formData.dietEatEn} onChange={onInputChange} />
-              <Input name="dietAvoidHi" placeholder="परहेज़ (Hi)" value={formData.dietAvoidHi} onChange={onInputChange} />
-              <Input name="dietAvoidEn" placeholder="Avoid (En)" value={formData.dietAvoidEn} onChange={onInputChange} />
-            </div>
-          </div>
-          <div className="space-y-4">
-            <Label className="font-bold text-primary">8. दिनचर्या | Routine</Label>
+            <Label className="font-bold text-primary">6. क्या खाएं | What to Eat</Label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Textarea name="routineHi" placeholder="दिनचर्या (Hi)" value={formData.routineHi} onChange={onInputChange} />
-              <Textarea name="routineEn" placeholder="Routine (En)" value={formData.routineEn} onChange={onInputChange} />
+              <Textarea name="dietEatHi" placeholder="हिंदी में क्या खाएं उसकी सूची लिखें..." value={formData.dietEatHi} onChange={onInputChange} required />
+              <Textarea name="dietEatEn" placeholder="Write what to eat list in English..." value={formData.dietEatEn} onChange={onInputChange} required />
             </div>
           </div>
+
+          {/* 7. What Not to Eat */}
           <div className="space-y-4">
-            <Label className="font-bold text-primary">9. सुरक्षा | Safety</Label>
+            <Label className="font-bold text-primary">7. क्या न खाएं (सख़्त परहेज़) | What Not to Eat</Label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Textarea name="safetyAdviceHi" placeholder="सुरक्षा सलाह (Hi)" value={formData.safetyAdviceHi} onChange={onInputChange} required />
-              <Textarea name="safetyAdviceEn" placeholder="Safety Advice (En)" value={formData.safetyAdviceEn} onChange={onInputChange} required />
+              <Textarea name="dietAvoidHi" placeholder="हिंदी में क्या न खाएं और सख़्त परहेज़ लिखें..." value={formData.dietAvoidHi} onChange={onInputChange} required />
+              <Textarea name="dietAvoidEn" placeholder="Write what not to eat and strict restrictions in English..." value={formData.dietAvoidEn} onChange={onInputChange} required />
             </div>
           </div>
+
+          {/* 8. Daily Routine */}
+          <div className="space-y-4">
+            <Label className="font-bold text-primary">8. दिनचर्या | Daily Routine</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Textarea name="routineHi" placeholder="हिंदी में दिनचर्या के नियम लिखें..." value={formData.routineHi} onChange={onInputChange} required />
+              <Textarea name="routineEn" placeholder="Write daily routine guidelines in English..." value={formData.routineEn} onChange={onInputChange} required />
+            </div>
+          </div>
+
+          {/* 9. Safety Information */}
+          <div className="space-y-4">
+            <Label className="font-bold text-primary">9. सुरक्षा सूचना | Safety Information</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Textarea name="safetyAdviceHi" placeholder="हिंदी में सुरक्षा सूचना और चेतावनियां लिखें..." value={formData.safetyAdviceHi} onChange={onInputChange} required />
+              <Textarea name="safetyAdviceEn" placeholder="Write safety information and warnings in English..." value={formData.safetyAdviceEn} onChange={onInputChange} required />
+            </div>
+          </div>
+
         </CardContent>
       </Card>
 
-      {/* SEO Section */}
+      {/* Global SEO Keywords Section - PROTECTED */}
       <Card className="border-accent/20 shadow-xl overflow-hidden rounded-[2rem]">
         <CardHeader className="bg-accent text-white">
            <CardTitle className="text-lg flex items-center gap-2"><Globe className="w-5 h-5" /> ग्लोबल सर्चिंग कीवर्ड्स (Global SEO Keywords)</CardTitle>
