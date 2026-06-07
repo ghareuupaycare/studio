@@ -60,7 +60,9 @@ export const TopBar = ({
           </SheetTrigger>
           <SidebarMenu lang={lang} theme={theme} />
         </Sheet>
-        <h1 className="text-lg font-bold text-[#FDFBF7] truncate">{isHindi ? 'घरेलू उपाय केयर' : 'Gharelu Upay Care'}</h1>
+        <h1 className="text-lg font-bold text-[#FDFBF7] truncate">
+          {isHindi ? 'घरेलू उपाय केयर' : 'Gharelu Upay Care'}
+        </h1>
       </div>
       
       <HeaderActions 
@@ -70,7 +72,6 @@ export const TopBar = ({
         onToggleTheme={onToggleTheme}
         onOpenFavorites={onOpenFavorites || (() => {})}
         onOpenNotifications={onOpenNotifications || (() => {})}
-        onOpenSearch={() => setIsSearchOpen(true)}
         hasFavorites={!!hasFavorites}
         hasNotifications={!!hasNotifications}
       />

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Bell, Languages, Moon, Sun, Heart, Search } from 'lucide-react';
+import { Bell, Languages, Moon, Sun, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Language, Theme } from '@/app/page';
@@ -13,7 +13,6 @@ interface HeaderActionsProps {
   onToggleTheme: () => void;
   onOpenFavorites: () => void;
   onOpenNotifications: () => void;
-  onOpenSearch: () => void;
   hasFavorites: boolean;
   hasNotifications: boolean;
 }
@@ -25,7 +24,6 @@ export const HeaderActions = ({
   onToggleTheme,
   onOpenFavorites,
   onOpenNotifications,
-  onOpenSearch,
   hasFavorites,
   hasNotifications
 }: HeaderActionsProps) => {
@@ -34,9 +32,6 @@ export const HeaderActions = ({
 
   return (
     <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-      <Button variant="ghost" size="icon" onClick={onOpenSearch} className={headerBtnClass}>
-        <Search className="w-5 h-5" />
-      </Button>
       <Button variant="ghost" size="icon" onClick={onOpenFavorites} className={cn(headerBtnClass, hasFavorites && "text-accent")}>
         <Heart className={cn("w-5 h-5", hasFavorites && "fill-current")} />
       </Button>
