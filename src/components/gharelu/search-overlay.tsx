@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
@@ -93,7 +92,6 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
           "shrink-0 p-6 pt-10 relative",
           isNight ? "bg-black/60 border-b border-white/10" : "bg-primary border-b border-white/10"
         )}>
-          {/* Premium Golden Close Button */}
           <div className="absolute top-4 right-6">
             <DialogClose asChild>
               <Button 
@@ -139,8 +137,8 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
                     )}>
                       {toEnglishDigits(remedy.serialNumber === "Live" ? "★" : remedy.serialNumber)}
                     </div>
-                    <div className="flex-1 truncate">
-                      <h4 className="font-bold text-base">
+                    <div className="flex-1 min-w-0 truncate">
+                      <h4 className="font-bold text-base truncate">
                         {highlightMatchText(remedy.name[lang], query)}
                       </h4>
                       <p className="text-[11px] opacity-60 truncate">

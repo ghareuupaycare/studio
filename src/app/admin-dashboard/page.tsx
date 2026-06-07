@@ -3,7 +3,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase';
 import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
@@ -221,7 +222,7 @@ export default function AdminDashboard() {
         {view === 'manage' && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <Button variant="ghost" onClick={() => setView('overview')} className="gap-2"><ChevronLeft /> पीछे</Button>
+              <Button variant="ghost" onClick={() => setView('overview')} className="gap-2 text-primary font-bold"><ChevronLeft /> पीछे</Button>
               <Button onClick={() => { resetForm(); setView('add-recipe'); }} className="bg-accent hover:bg-accent/90">नुस्खा जोड़ें</Button>
             </div>
             <AdminRemedyList groupedRecipes={groupedRecipes} onEdit={handleEdit} onDelete={handleDelete} />
@@ -230,7 +231,7 @@ export default function AdminDashboard() {
 
         {view === 'add-recipe' && (
           <div className="space-y-6">
-            <Button variant="ghost" onClick={() => setView('manage')} className="gap-2"><ChevronLeft /> रद्द करें</Button>
+            <Button variant="ghost" onClick={() => setView('manage')} className="gap-2 text-primary font-bold"><ChevronLeft /> रद्द करें</Button>
             <AdminForm 
               formData={formData} doses={doses} isSubmitting={isSubmitting} editingId={editingId}
               onInputChange={handleInputChange} onDoseChange={handleDoseChange} 
