@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -35,12 +36,23 @@ export const HeaderActions = ({
       <Button variant="ghost" size="icon" onClick={onOpenFavorites} className={cn(headerBtnClass, hasFavorites && "text-accent")}>
         <Heart className={cn("w-5 h-5", hasFavorites && "fill-current")} />
       </Button>
-      <Button variant="ghost" size="icon" onClick={onOpenNotifications} className={headerBtnClass}>
-        <Bell className={cn("w-5 h-5 text-white", hasNotifications && "fill-current")} />
+      
+      <Button variant="ghost" size="icon" onClick={onOpenNotifications} className={cn(headerBtnClass, "relative")}>
+        <div className="relative">
+          <Bell className="w-5 h-5 text-white" />
+          {hasNotifications && (
+            <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border border-white"></span>
+            </span>
+          )}
+        </div>
       </Button>
+
       <Button variant="ghost" size="icon" onClick={onToggleLanguage} className={headerBtnClass}>
         <Languages className="w-5 h-5" />
       </Button>
+      
       <Button variant="ghost" size="icon" onClick={onToggleTheme} className={headerBtnClass}>
         {isNight ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
       </Button>

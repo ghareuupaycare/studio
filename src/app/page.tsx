@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
@@ -26,6 +27,7 @@ export default function GhareluUpayApp() {
   const [liveRecipes, setLiveRecipes] = useState<Remedy[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [readRemedyIds, setReadRemedyIds] = useState<string[]>([]);
+  const [lastCheckedTime, setLastCheckedTime] = useState<number>(0);
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
@@ -47,7 +49,7 @@ export default function GhareluUpayApp() {
           id: doc.id,
           serialNumber: "Live",
           name: data.remedyTitle,
-          diseaseName: data.diseaseName, // Explicitly map diseaseName for correct illness list mapping
+          diseaseName: data.diseaseName,
           illnessId: data.diseaseName?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
           categoryId: data.mainCategory?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
           mainCategory: data.mainCategory,
@@ -64,7 +66,8 @@ export default function GhareluUpayApp() {
           routine: data.routine,
           safetyAdvice: data.safetyAdvice,
           disclaimer: { hi: "", en: "" },
-          keywords: data.keywords || []
+          keywords: data.keywords || [],
+          timestamp: data.timestamp?.toMillis() || Date.now()
         } as Remedy;
       });
       setLiveRecipes(docs);
@@ -91,25 +94,14 @@ export default function GhareluUpayApp() {
         console.error("Failed to load read IDs", e);
       }
     }
+
+    const savedLastCheck = localStorage.getItem('gharelu-last-check-time');
+    if (savedLastCheck) {
+      setLastCheckedTime(parseInt(savedLastCheck));
+    }
     
     setIsLoaded(true);
   }, []);
-
-  useEffect(() => {
-    if (isLoaded && allRemedies.length > 0) {
-      const params = new URLSearchParams(window.location.search);
-      const remedyIdFromUrl = params.get('remedyId');
-      if (remedyIdFromUrl) {
-        const remedy = allRemedies.find(r => r.id === remedyIdFromUrl);
-        if (remedy) {
-          setSelectedCategoryId(remedy.categoryId || 'fever_flu');
-          setSelectedRemedyId(remedyIdFromUrl);
-          setIsDetailView(true);
-          window.history.replaceState({}, '', window.location.pathname);
-        }
-      }
-    }
-  }, [isLoaded, allRemedies]);
 
   useEffect(() => {
     if (isLoaded) {
@@ -123,8 +115,13 @@ export default function GhareluUpayApp() {
     }
   }, [readRemedyIds, isLoaded]);
 
+  const latestRemedyTime = useMemo(() => {
+    if (liveRecipes.length === 0) return 0;
+    return Math.max(...liveRecipes.map(r => (r as any).timestamp || 0));
+  }, [liveRecipes]);
+
+  const hasNewNotifications = isLoaded && latestRemedyTime > lastCheckedTime;
   const unreadRemedies = allRemedies.filter(r => !readRemedyIds.includes(r.id)).reverse();
-  const hasNewNotifications = isLoaded && unreadRemedies.length > 0;
 
   const toggleLanguage = () => setLang((prev) => (prev === 'hi' ? 'en' : 'hi'));
   const toggleTheme = () => setTheme((prev) => (prev === 'cream' ? 'night' : 'cream'));
@@ -160,6 +157,13 @@ export default function GhareluUpayApp() {
     }
   };
 
+  const handleOpenNotifications = () => {
+    setIsNotificationsOpen(true);
+    const now = Date.now();
+    setLastCheckedTime(now);
+    localStorage.setItem('gharelu-last-check-time', now.toString());
+  };
+
   const handleBackToCategories = () => {
     setSelectedCategoryId(null);
     setSelectedRemedyId(null);
@@ -185,7 +189,7 @@ export default function GhareluUpayApp() {
         onToggleTheme={toggleTheme} 
         onSelectRemedy={handleSelectRemedy}
         onOpenFavorites={() => setIsFavoritesOpen(true)}
-        onOpenNotifications={() => setIsNotificationsOpen(true)}
+        onOpenNotifications={handleOpenNotifications}
         hasFavorites={favorites.length > 0}
         hasNotifications={hasNewNotifications}
         allRemedies={allRemedies}
