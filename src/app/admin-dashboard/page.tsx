@@ -45,6 +45,7 @@ const INITIAL_FORM_DATA = {
   routineEn: '',
   safetyAdviceHi: '',
   safetyAdviceEn: '',
+  seoKeywords: '',
 };
 
 const INITIAL_DOSES: DoseEntry[] = [
@@ -83,8 +84,13 @@ export default function AdminDashboard() {
       const cat = recipe.mainCategory?.hi || 'अन्य';
       const dis = recipe.diseaseName?.hi || 'सामान्य';
       if (!groups[cat]) groups[cat] = {};
+      if (!groups[cat][dis]) groups[cat][dis] = {};
       if (!groups[cat][dis]) groups[cat][dis] = [];
-      groups[cat][dis].push(recipe);
+      if (Array.isArray(groups[cat][dis])) {
+        groups[cat][dis].push(recipe);
+      } else {
+        groups[cat][dis] = [recipe];
+      }
     });
     return groups;
   }, [liveRecipes]);
@@ -113,6 +119,16 @@ export default function AdminDashboard() {
     if (!db) return;
     setIsSubmitting(true);
 
+    const keywordArray = formData.seoKeywords
+      .split(',')
+      .map(k => k.trim())
+      .filter(k => k !== '');
+
+    const slug = `${formData.mainCategoryEn}-${formData.remedyTitleEn}`
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
     const submissionData = {
       mainCategory: { hi: formData.mainCategoryHi, en: formData.mainCategoryEn },
       diseaseName: { hi: formData.diseaseNameHi, en: formData.diseaseNameEn },
@@ -126,6 +142,8 @@ export default function AdminDashboard() {
       routine: { hi: formData.routineHi, en: formData.routineEn },
       safetyAdvice: { hi: formData.safetyAdviceHi, en: formData.safetyAdviceEn },
       doses: doses.map(d => ({ ageRange: { hi: d.ageRangeHi, en: d.ageRangeEn }, dose: { hi: d.doseHi, en: d.doseEn } })),
+      keywords: keywordArray,
+      slug: slug,
       timestamp: serverTimestamp(),
     };
 
@@ -167,8 +185,14 @@ export default function AdminDashboard() {
       routineEn: recipe.routine?.en || '',
       safetyAdviceHi: recipe.safetyAdvice?.hi || '',
       safetyAdviceEn: recipe.safetyAdvice?.en || '',
+      seoKeywords: Array.isArray(recipe.keywords) ? recipe.keywords.join(', ') : '',
     });
-    setDoses(recipe.doses?.map((d: any) => ({ ageRangeHi: d.ageRange?.hi, ageRangeEn: d.ageRange?.en, doseHi: d.dose?.hi, doseEn: d.dose?.en })) || INITIAL_DOSES);
+    setDoses(recipe.doses?.map((d: any) => ({ 
+      ageRangeHi: d.ageRange?.hi || '', 
+      ageRangeEn: d.ageRange?.en || '', 
+      doseHi: d.dose?.hi || '', 
+      doseEn: d.dose?.en || '' 
+    })) || INITIAL_DOSES);
     setEditingId(recipe.id);
     setView('add-recipe');
   };
