@@ -355,7 +355,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             variant="outline"
             className={cn(
               "h-14 rounded-full font-black uppercase tracking-widest transition-all active:scale-95 border-2",
-              isNight ? "border-white/20 text-white" : "border-accent text-accent hover:bg-accent/5"
+              isNight 
+                ? "bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700" 
+                : "border-accent text-accent hover:bg-accent/5"
             )}
           >
             {copied ? <Check className="w-5 h-5 mr-2" /> : <Copy className="w-5 h-5 mr-2" />}
@@ -363,7 +365,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           </Button>
           <Button 
             onClick={handleShare} 
-            className="h-14 rounded-full font-black uppercase tracking-widest shadow-xl bg-accent text-white active:scale-95 transition-all"
+            className={cn(
+              "h-14 rounded-full font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all",
+              isNight 
+                ? "bg-amber-600/90 text-zinc-100 hover:bg-amber-600" 
+                : "bg-accent text-white hover:bg-accent/90"
+            )}
           >
             <Share2 className="w-5 h-5 mr-2" /> {isHindi ? 'शेयर करें' : 'Share'}
           </Button>
