@@ -51,7 +51,7 @@ export const NotificationsOverlay = ({
           "shrink-0 p-6 pt-10 relative",
           isNight ? "bg-black/60 border-b border-white/10" : "bg-[#14532D] border-b border-white/10"
         )}>
-          {/* Custom Golden Close Button */}
+          {/* Premium Golden Close Button */}
           <div className="absolute top-4 right-6">
             <DialogClose asChild>
               <Button 
@@ -65,7 +65,7 @@ export const NotificationsOverlay = ({
           </div>
 
           <div className="flex items-center gap-3">
-            <Bell className="w-6 h-6 text-amber-400" />
+            <Bell className="w-6 h-6 text-accent" />
             <DialogTitle className="text-white text-xl font-headline font-black">
               {isHindi ? 'क्या नया है?' : "What's New?"}
             </DialogTitle>
@@ -80,7 +80,7 @@ export const NotificationsOverlay = ({
             {unreadRemedies.length > 0 ? (
               <div className="space-y-4 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="flex items-center gap-2 px-2 py-1 mb-2">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <Sparkles className="w-4 h-4 text-accent" />
                   <span className="text-[11px] font-black uppercase tracking-[0.2em] opacity-60">
                     {isHindi ? 'अपठित नुस्खे और अपडेट' : 'Unread Remedies & Updates'}
                   </span>
@@ -94,13 +94,13 @@ export const NotificationsOverlay = ({
                       className={cn(
                         "w-full p-5 rounded-2xl border transition-all text-left flex items-center gap-5 group cursor-pointer active:scale-[0.98] shadow-sm",
                         isNight 
-                          ? "bg-white/5 border-white/5 hover:border-amber-400/50 text-white" 
-                          : "bg-white border-primary/5 hover:border-amber-400/50 text-primary"
+                          ? "bg-white/5 border-white/5 hover:border-accent/50 text-white" 
+                          : "bg-white border-primary/5 hover:border-accent/50 text-primary"
                       )}
                     >
                       <div className={cn(
                         "w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg shrink-0 transition-colors duration-500",
-                        isNight ? "bg-white/5 text-amber-400" : "bg-amber-400/10 text-amber-400"
+                        isNight ? "bg-white/5 text-accent" : "bg-accent/10 text-accent"
                       )}>
                         {toEnglishDigits(remedy.serialNumber === "Live" ? "★" : remedy.serialNumber)}
                       </div>
@@ -112,7 +112,7 @@ export const NotificationsOverlay = ({
                           {toEnglishDigits(Array.isArray(remedy.introduction[lang]) ? remedy.introduction[lang][0] : remedy.introduction[lang])}
                         </p>
                       </div>
-                      <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:text-amber-400 group-hover:translate-x-1 transition-all" />
+                      <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:text-accent group-hover:translate-x-1 transition-all" />
                     </button>
                   ))}
                 </div>

@@ -2,13 +2,14 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Search, ChevronRight } from 'lucide-react';
+import { Search, ChevronRight, X } from 'lucide-react';
 import { Remedy } from '@/lib/remedy-data';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 import { useFirestore } from '@/firebase';
 import { doc, setDoc, increment, serverTimestamp } from 'firebase/firestore';
 
@@ -84,14 +85,27 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
         className={cn(
-          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[70vh] max-w-none p-0 border-none flex flex-col rounded-none shadow-2xl z-[100] outline-none",
+          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[70vh] max-w-none p-0 border-none flex flex-col rounded-none shadow-2xl z-[100] outline-none [&>button]:hidden",
           isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7] text-foreground"
         )}
       >
         <div className={cn(
-          "shrink-0 p-6 pt-10",
+          "shrink-0 p-6 pt-10 relative",
           isNight ? "bg-black/60 border-b border-white/10" : "bg-primary border-b border-white/10"
         )}>
+          {/* Premium Golden Close Button */}
+          <div className="absolute top-4 right-6">
+            <DialogClose asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full hover:bg-white/10 text-accent transition-all active:scale-90 h-10 w-10"
+              >
+                <X className="w-8 h-8 stroke-[3]" />
+              </Button>
+            </DialogClose>
+          </div>
+
           <DialogTitle className="text-white text-xl font-headline font-black mb-4">
             {isHindi ? 'बीमारी या नुस्खा खोजें' : 'Search Remedy or Illness'}
           </DialogTitle>
@@ -106,7 +120,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
             />
           </div>
         </div>
-        <ScrollArea className="flex-1 w-full">
+        <ScrollArea className="flex-1 w-full bg-transparent">
           <div className="p-4 max-w-2xl mx-auto w-full">
             {results.length > 0 ? (
               <div className="space-y-2">

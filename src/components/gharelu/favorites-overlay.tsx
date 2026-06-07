@@ -50,12 +50,11 @@ export const FavoritesOverlay = ({
           isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7] text-foreground"
         )}
       >
-        {/* Header */}
         <div className={cn(
           "shrink-0 p-6 pt-10 pb-6 relative",
           isNight ? "bg-black/80 border-b border-white/10" : "bg-[#14532D] border-b border-white/10"
         )}>
-          {/* Custom Golden Close Button */}
+          {/* Premium Golden Close Button */}
           <div className="absolute top-4 right-6">
             <DialogClose asChild>
               <Button 
@@ -79,7 +78,6 @@ export const FavoritesOverlay = ({
           </p>
         </div>
 
-        {/* Scrollable List Content */}
         <ScrollArea className="flex-1 w-full bg-transparent">
           <div className="p-4 max-w-2xl mx-auto w-full pb-10">
             {favoriteRemedies.length > 0 ? (
