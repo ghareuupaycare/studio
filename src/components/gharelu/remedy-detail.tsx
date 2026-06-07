@@ -157,10 +157,14 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     text += `🚫 ${labels.dietAvoid}\n${toEnglishDigits(remedy.dietAvoid[lang])}\n\n`;
 
     if (remedy.routine) {
-      text += `🕒 ${labels.routine}\n`;
-      if (remedy.routine.morning) text += `${routineSegmentLabels.morning} ${toEnglishDigits(remedy.routine.morning[lang])}\n`;
-      if (remedy.routine.afternoon) text += `${routineSegmentLabels.afternoon} ${toEnglishDigits(remedy.routine.afternoon[lang])}\n`;
-      if (remedy.routine.evening) text += `${routineSegmentLabels.evening} ${toEnglishDigits(remedy.routine.evening[lang])}\n`;
+      if ('morning' in remedy.routine || 'afternoon' in remedy.routine || 'evening' in remedy.routine) {
+        text += `🕒 ${labels.routine}\n`;
+        if (remedy.routine.morning) text += `${routineSegmentLabels.morning} ${toEnglishDigits(remedy.routine.morning[lang])}\n`;
+        if (remedy.routine.afternoon) text += `${routineSegmentLabels.afternoon} ${toEnglishDigits(remedy.routine.afternoon[lang])}\n`;
+        if (remedy.routine.evening) text += `${routineSegmentLabels.evening} ${toEnglishDigits(remedy.routine.evening[lang])}\n`;
+      } else {
+        text += `🕒 ${labels.routine}\n${toEnglishDigits((remedy.routine as any)[lang])}\n`;
+      }
       text += `\n`;
     }
 
@@ -299,41 +303,45 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         
         {/* 8. Routine - Yellow */}
         {remedy.routine && (
-          <div className={cn(
-            "p-6 rounded-[2rem] border shadow-sm space-y-4 mb-6 transition-all duration-300",
-            getVariantStyles('yellow')
-          )}>
-             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-amber-500/10 text-amber-700">
-                <Clock className="w-5 h-5" />
+          ('morning' in remedy.routine || 'afternoon' in remedy.routine || 'evening' in remedy.routine) ? (
+            <div className={cn(
+              "p-6 rounded-[2rem] border shadow-sm space-y-4 mb-6 transition-all duration-300",
+              getVariantStyles('yellow')
+            )}>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-amber-500/10 text-amber-700">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
               </div>
-              <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
-            </div>
-            <div className="space-y-4">
-              {['morning', 'afternoon', 'evening'].map((time) => (
-                remedy.routine[time as keyof typeof remedy.routine] && (
-                  <div key={time} className="flex items-start gap-3">
-                    <span className="text-[13px] font-bold text-accent w-20 pt-1 shrink-0">
-                      {routineSegmentLabels[time]}
-                    </span>
-                    <div className="flex-1">
-                      <ul className="space-y-2 list-none p-0 m-0">
-                        {(Array.isArray(remedy.routine[time as keyof typeof remedy.routine][lang])
-                          ? (remedy.routine[time as keyof typeof remedy.routine][lang] as string[])
-                          : (remedy.routine[time as keyof typeof remedy.routine][lang] as string).split('\n')
-                        ).filter(p => p.trim() !== '').map((point, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-[14px] font-medium">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-2 shrink-0" />
-                            <span>{toEnglishDigits(point)}</span>
-                          </li>
-                        ))}
-                      </ul>
+              <div className="space-y-4">
+                {['morning', 'afternoon', 'evening'].map((time) => (
+                  (remedy.routine as any)[time] && (
+                    <div key={time} className="flex items-start gap-3">
+                      <span className="text-[13px] font-bold text-accent w-20 pt-1 shrink-0">
+                        {routineSegmentLabels[time]}
+                      </span>
+                      <div className="flex-1">
+                        <ul className="space-y-2 list-none p-0 m-0">
+                          {(Array.isArray((remedy.routine as any)[time][lang])
+                            ? (remedy.routine as any)[time][lang] as string[]
+                            : ((remedy.routine as any)[time][lang] as string).split('\n')
+                          ).filter(p => p.trim() !== '').map((point, idx) => (
+                            <li key={idx} className="flex items-start gap-2 text-[14px] font-medium">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-2 shrink-0" />
+                              <span>{toEnglishDigits(point)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
-                  </div>
-                )
-              ))}
+                  )
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            renderSection(<Clock className="w-5 h-5" />, labels.routine, (remedy.routine as any)[lang], 'yellow')
+          )
         )}
 
         {/* 9. Safety Information - Red with Disclaimer */}
