@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
@@ -187,7 +186,6 @@ export default function AdminDashboard() {
       seoKeywords: Array.isArray(recipe.keywords) ? recipe.keywords.join(', ') : '',
     });
     
-    // Ensure all 4 tiers are present, fill missing ones if necessary
     const loadedDoses = recipe.doses?.map((d: any) => ({ 
       ageRangeHi: d.ageRange?.hi || '', 
       ageRangeEn: d.ageRange?.en || '', 
@@ -197,6 +195,25 @@ export default function AdminDashboard() {
     
     setDoses(loadedDoses);
     setEditingId(recipe.id);
+    setView('add-recipe');
+  };
+
+  const handleQuickAdd = (category?: any, disease?: any) => {
+    resetForm();
+    if (category) {
+      setFormData(prev => ({
+        ...prev,
+        mainCategoryHi: category.hi || '',
+        mainCategoryEn: category.en || '',
+      }));
+    }
+    if (disease) {
+      setFormData(prev => ({
+        ...prev,
+        diseaseNameHi: disease.hi || '',
+        diseaseNameEn: disease.en || '',
+      }));
+    }
     setView('add-recipe');
   };
 
@@ -252,7 +269,12 @@ export default function AdminDashboard() {
               <Button variant="ghost" onClick={() => setView('overview')} className="gap-2 text-primary font-bold"><ChevronLeft /> पीछे</Button>
               <Button onClick={() => { resetForm(); setView('add-recipe'); }} className="bg-accent hover:bg-accent/90">नुस्खा जोड़ें</Button>
             </div>
-            <AdminRemedyList groupedRecipes={groupedRecipes} onEdit={handleEdit} onDelete={handleDelete} />
+            <AdminRemedyList 
+              groupedRecipes={groupedRecipes} 
+              onEdit={handleEdit} 
+              onDelete={handleDelete} 
+              onQuickAdd={handleQuickAdd}
+            />
           </div>
         )}
 
