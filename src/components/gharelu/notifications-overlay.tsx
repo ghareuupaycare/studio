@@ -2,12 +2,13 @@
 'use client';
 
 import React from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { Bell, ChevronRight, Sparkles, MessageCircleOff } from 'lucide-react';
+import { Dialog, DialogContent, DialogTitle, DialogClose } from '@/components/ui/dialog';
+import { Bell, ChevronRight, Sparkles, MessageCircleOff, X } from 'lucide-react';
 import { Remedy } from '@/lib/remedy-data';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 
 interface NotificationsOverlayProps {
   isOpen: boolean;
@@ -42,14 +43,27 @@ export const NotificationsOverlay = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
         className={cn(
-          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[70vh] max-w-none p-0 border-none flex flex-col transition-all duration-300 ease-in-out rounded-none shadow-2xl z-[100] outline-none",
+          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[70vh] max-w-none p-0 border-none flex flex-col transition-all duration-300 ease-in-out rounded-none shadow-2xl z-[100] outline-none [&>button]:hidden",
           isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7] text-foreground"
         )}
       >
         <div className={cn(
-          "shrink-0 p-6 pt-10",
+          "shrink-0 p-6 pt-10 relative",
           isNight ? "bg-black/60 border-b border-white/10" : "bg-[#14532D] border-b border-white/10"
         )}>
+          {/* Custom Golden Close Button */}
+          <div className="absolute top-4 right-6">
+            <DialogClose asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full hover:bg-white/10 text-accent transition-all active:scale-90 h-10 w-10"
+              >
+                <X className="w-8 h-8 stroke-[3]" />
+              </Button>
+            </DialogClose>
+          </div>
+
           <div className="flex items-center gap-3">
             <Bell className="w-6 h-6 text-amber-400" />
             <DialogTitle className="text-white text-xl font-headline font-black">
