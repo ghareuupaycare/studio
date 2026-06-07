@@ -47,9 +47,10 @@ export default function GhareluUpayApp() {
           id: doc.id,
           serialNumber: "Live",
           name: data.remedyTitle,
+          diseaseName: data.diseaseName, // Explicitly map diseaseName for correct illness list mapping
           illnessId: data.diseaseName?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
           categoryId: data.mainCategory?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
-          mainCategory: data.mainCategory, // Store raw category info
+          mainCategory: data.mainCategory,
           introduction: data.introduction,
           doses: data.doses?.map((d: any) => ({
             ageRange: d.ageRange,
@@ -63,7 +64,7 @@ export default function GhareluUpayApp() {
           routine: data.routine,
           safetyAdvice: data.safetyAdvice,
           disclaimer: { hi: "", en: "" },
-          keywords: []
+          keywords: data.keywords || []
         } as Remedy;
       });
       setLiveRecipes(docs);

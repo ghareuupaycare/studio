@@ -29,6 +29,7 @@ async function getRemedyData(id: string): Promise<Remedy | null> {
         id: docSnap.id,
         serialNumber: "Live",
         name: data.remedyTitle,
+        diseaseName: data.diseaseName, // Correct mapping for illness display
         illnessId: data.diseaseName?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
         categoryId: data.mainCategory?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
         mainCategory: data.mainCategory,
@@ -80,11 +81,6 @@ export default async function RemedyPage({ params }: RemedyPageProps) {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] pb-24">
-      {/* 
-         Note: Using server-side rendering for SEO, but the TopBar/BottomNav 
-         might need adjustments for standalone routes if they rely on full state.
-         This page is primarily for SEO indexing.
-      */}
       <div className="h-14 bg-primary flex items-center px-6">
         <a href="/" className="text-white font-bold text-lg">घरेलू उपाय केयर</a>
       </div>

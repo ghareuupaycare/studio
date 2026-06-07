@@ -85,7 +85,8 @@ export const CategoryDetailView = ({
       .filter(r => r.categoryId === categoryId)
       .forEach(r => {
         if (!illnesses[r.illnessId]) {
-          illnesses[r.illnessId] = r.name[lang];
+          // FIX: Prioritize diseaseName over remedy name for category cards
+          illnesses[r.illnessId] = r.diseaseName?.[lang] || r.name[lang];
         }
       });
 

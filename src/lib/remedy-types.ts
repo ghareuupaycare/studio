@@ -22,7 +22,8 @@ export type DoseConfig = {
 export type Remedy = {
   id: string;
   serialNumber: string;
-  name: LocalizedString;
+  name: LocalizedString; // This is the Remedy Title
+  diseaseName?: LocalizedString; // The actual Sub-category/Disease name
   illnessId: string;
   introduction: FlexibleLocalizedString;
   severity?: 'mild' | 'moderate' | 'severe';
@@ -43,6 +44,8 @@ export type Remedy = {
   disclaimer: FlexibleLocalizedString;
   image?: string;
   keywords: string[];
+  mainCategory?: LocalizedString;
+  categoryId?: string;
 };
 
 export const AGE_BRACKETS = {
