@@ -177,7 +177,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
     text += `⚠️ ${labels.safety}\n${toEnglishDigits(remedy.safetyAdvice[lang])}\n\n`;
     text += `📜 ${disclaimerText}\n\n`;
-    text += `🔗 पूरा नुस्खा यहाँ देखें:\n${getFullRecipeLink()}`;
+    text += `🔗 पूरा नुस्खा यहाँ देखें: ${getFullRecipeLink()}`;
     
     return text.trim();
   };
@@ -348,12 +348,11 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         <div className="grid grid-cols-2 gap-4 w-full">
           <Button 
             onClick={handleCopy} 
-            variant="outline"
             className={cn(
-              "h-14 rounded-full font-black uppercase tracking-widest transition-all active:scale-95 border-2",
+              "h-14 rounded-full font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all",
               isNight 
-                ? "bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700" 
-                : "border-accent text-accent hover:bg-accent/5"
+                ? "bg-zinc-800 text-zinc-100 hover:bg-zinc-700" 
+                : "bg-[#14532D] text-white hover:bg-[#0d381e]"
             )}
           >
             {copied ? <Check className="w-5 h-5 mr-2" /> : <Copy className="w-5 h-5 mr-2" />}
@@ -364,7 +363,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             className={cn(
               "h-14 rounded-full font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all",
               isNight 
-                ? "bg-amber-600/90 text-zinc-100 hover:bg-amber-600" 
+                ? "bg-amber-700 text-zinc-100 hover:bg-amber-600" 
                 : "bg-accent text-white hover:bg-accent/90"
             )}
           >
