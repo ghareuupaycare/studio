@@ -7,9 +7,9 @@ import { Card } from '@/components/ui/card';
 import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase';
-import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, writeBatch } from 'firebase/firestore';
+import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
+import { FirestorePermissionError } from '@/firebase/errors';
 import { AdminForm } from '@/components/admin/admin-form';
 import { AdminRemedyList } from '@/components/admin/admin-remedy-list';
 
@@ -68,7 +68,7 @@ export default function AdminDashboard() {
   const [doses, setDoses] = useState<DoseEntry[]>(INITIAL_DOSES);
 
   useEffect(() => {
-    const isAuth = localStorage.getItem('gharelu_admin_auth');
+    const isAuth = typeof window !== 'undefined' ? localStorage.getItem('gharelu_admin_auth') : null;
     if (isAuth !== 'true') router.push('/admin-login');
     else setIsLoaded(true);
   }, [router]);
@@ -112,6 +112,13 @@ export default function AdminDashboard() {
     setEditingId(null);
   };
 
+  const generateSlug = (category: string, disease: string, title: string) => {
+    const combined = `${category}-${disease}-${title}`.toLowerCase();
+    return combined
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!db) return;
@@ -122,10 +129,7 @@ export default function AdminDashboard() {
       .map(k => k.trim())
       .filter(k => k !== '');
 
-    const slug = `${formData.mainCategoryEn}-${formData.remedyTitleEn}`
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
+    const slug = generateSlug(formData.mainCategoryEn, formData.diseaseNameEn, formData.remedyTitleEn);
 
     const submissionData = {
       mainCategory: { hi: formData.mainCategoryHi, en: formData.mainCategoryEn },
@@ -146,8 +150,11 @@ export default function AdminDashboard() {
     };
 
     try {
-      if (editingId) await setDoc(doc(db, 'recipes', editingId), submissionData, { merge: true });
-      else await addDoc(collection(db, 'recipes'), submissionData);
+      if (editingId) {
+        await setDoc(doc(db, 'recipes', editingId), submissionData, { merge: true });
+      } else {
+        await addDoc(collection(db, 'recipes'), submissionData);
+      }
       toast({ title: "सफलता!", description: "नुस्खा सुरक्षित किया गया!" });
       resetForm();
       setView('manage');
@@ -156,7 +163,9 @@ export default function AdminDashboard() {
         path: editingId ? `recipes/${editingId}` : 'recipes',
         operation: editingId ? 'update' : 'create',
       }));
-    } finally { setIsSubmitting(false); }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleEdit = (recipe: any) => {
@@ -220,8 +229,12 @@ export default function AdminDashboard() {
   const handleDelete = async (e: React.MouseEvent, id: string, title: string) => {
     e.stopPropagation();
     if (confirm(`क्या आप वाकई "${title}" हटाना चाहते हैं?`)) {
-      try { await deleteDoc(doc(db!, 'recipes', id)); toast({ title: "हटा दिया गया" }); }
-      catch (e) { errorEmitter.emit('permission-error', new FirestorePermissionError({ path: `recipes/${id}`, operation: 'delete' })); }
+      try {
+        await deleteDoc(doc(db!, 'recipes', id));
+        toast({ title: "हटा दिया गया" });
+      } catch (e) {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({ path: `recipes/${id}`, operation: 'delete' }));
+      }
     }
   };
 
@@ -233,9 +246,9 @@ export default function AdminDashboard() {
         for (const r of recipesToDelete) {
           await deleteDoc(doc(db, 'recipes', r.id));
         }
-        toast({ title: "श्रेणी हटा दी गई", description: `${categoryName} का सारा डेटा हटा दिया गया है।` });
+        toast({ title: "श्रेणी हटा दी गई" });
       } catch (e) {
-        toast({ variant: "destructive", title: "त्रुटि", description: "श्रेणी हटाने में समस्या आई।" });
+        toast({ variant: "destructive", title: "त्रुटि" });
       }
     }
   };
@@ -248,9 +261,9 @@ export default function AdminDashboard() {
         for (const r of recipesToDelete) {
           await deleteDoc(doc(db, 'recipes', r.id));
         }
-        toast({ title: "बीमारी हटा दी गई", description: `${diseaseName} के सभी नुस्खे हटा दिए गए हैं।` });
+        toast({ title: "बीमारी हटा दी गई" });
       } catch (e) {
-        toast({ variant: "destructive", title: "त्रुटि", description: "बीमारी हटाने में समस्या आई।" });
+        toast({ variant: "destructive", title: "त्रुटि" });
       }
     }
   };

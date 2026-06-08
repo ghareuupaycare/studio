@@ -1,11 +1,9 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { doc, getDoc, getFirestore } from 'firebase/firestore';
+import { doc, getDoc, getDocs, collection, query, where, limit } from 'firebase/firestore';
 import { initializeFirebase } from '@/firebase';
 import { Remedy } from '@/lib/remedy-types';
 import { RemedyDetail } from '@/components/gharelu/remedy-detail';
-import { TopBar } from '@/components/gharelu/top-bar';
-import { BottomNav } from '@/components/gharelu/bottom-nav';
 import { REMEDIES as STATIC_REMEDIES } from '@/lib/remedy-data';
 
 interface RemedyPageProps {
@@ -13,43 +11,58 @@ interface RemedyPageProps {
 }
 
 async function getRemedyData(id: string): Promise<Remedy | null> {
-  // Check static data first
-  const staticRemedy = STATIC_REMEDIES.find(r => r.id === id);
+  // Check static data first by ID or Slug
+  const staticRemedy = STATIC_REMEDIES.find(r => r.id === id || r.slug === id);
   if (staticRemedy) return staticRemedy;
 
   // Check Firestore
   try {
     const { firestore } = initializeFirebase();
+    
+    // 1. Try fetching by Document ID first
     const docRef = doc(firestore, 'recipes', id);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      const data = docSnap.data();
-      return {
-        id: docSnap.id,
-        serialNumber: "Live",
-        name: data.remedyTitle,
-        diseaseName: data.diseaseName, // Correct mapping for illness display
-        illnessId: data.diseaseName?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
-        categoryId: data.mainCategory?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
-        mainCategory: data.mainCategory,
-        introduction: data.introduction,
-        doses: data.doses || [],
-        ingredients: data.ingredients,
-        preparation: data.preparation,
-        usage: data.usage,
-        dietEat: data.dietEat,
-        dietAvoid: data.dietAvoid,
-        routine: data.routine,
-        safetyAdvice: data.safetyAdvice,
-        disclaimer: { hi: "", en: "" },
-        keywords: data.keywords || []
-      } as Remedy;
+      return mapDocToRemedy(docSnap.id, docSnap.data());
+    }
+
+    // 2. Try fetching by Slug
+    const q = query(collection(firestore, 'recipes'), where('slug', '==', id), limit(1));
+    const querySnap = await getDocs(q);
+    
+    if (!querySnap.empty) {
+      const firstDoc = querySnap.docs[0];
+      return mapDocToRemedy(firstDoc.id, firstDoc.data());
     }
   } catch (error) {
     console.error("Error fetching remedy SEO data:", error);
   }
   return null;
+}
+
+function mapDocToRemedy(id: string, data: any): Remedy {
+  return {
+    id: id,
+    serialNumber: "Live",
+    name: data.remedyTitle,
+    diseaseName: data.diseaseName,
+    illnessId: data.diseaseName?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
+    slug: data.slug,
+    categoryId: data.mainCategory?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
+    mainCategory: data.mainCategory,
+    introduction: data.introduction,
+    doses: data.doses || [],
+    ingredients: data.ingredients,
+    preparation: data.preparation,
+    usage: data.usage,
+    dietEat: data.dietEat,
+    dietAvoid: data.dietAvoid,
+    routine: data.routine,
+    safetyAdvice: data.safetyAdvice,
+    disclaimer: { hi: "", en: "" },
+    keywords: data.keywords || []
+  } as Remedy;
 }
 
 export async function generateMetadata({ params }: RemedyPageProps): Promise<Metadata> {

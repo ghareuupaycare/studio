@@ -84,7 +84,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const renderSection = (icon: React.ReactNode, title: string, content: any, variant: SectionVariant, customHeader?: string, appendDisclaimer?: boolean) => {
     if (!content) return null;
 
-    // Normalize content into an array of strings for list rendering
     let points: string[] = [];
     if (Array.isArray(content)) {
       points = content.filter(item => typeof item === 'string' && item.trim() !== '');
@@ -140,6 +139,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     );
   };
 
+  const getFullRecipeLink = () => {
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://studio-xi-mocha.vercel.app';
+    const slug = remedy.slug || remedy.id;
+    return `${baseUrl}/remedy/${slug}`;
+  };
+
   const getFullRecipeText = () => {
     const title = toEnglishDigits(remedy.name[lang]);
     let text = `🌿 *${title}* 🌿\n\n`;
@@ -170,19 +175,19 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
     text += `⚠️ ${labels.safety}\n${toEnglishDigits(remedy.safetyAdvice[lang])}\n\n`;
     text += `📜 ${disclaimerText}\n\n`;
-    text += `🔗 ${window.location.origin}?remedyId=${remedy.id}`;
+    text += `🔗 पूरा नुस्खा यहाँ देखें: ${getFullRecipeLink()}`;
     
     return text;
   };
 
   const handleShare = async () => {
     const title = toEnglishDigits(remedy.name[lang]);
-    const deepLink = `${window.location.origin}?remedyId=${remedy.id}`;
+    const deepLink = getFullRecipeLink();
     const shareText = `🌿 *${title}* 🌿\n\nपूरी जानकारी और बनाने की विधि यहाँ देखें: \n${deepLink}`;
 
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
-        await navigator.share({ title, text: shareText });
+        await navigator.share({ title, text: shareText, url: deepLink });
       } catch (error) {
         if ((error as any).name !== 'AbortError') console.error(error);
       }
@@ -221,16 +226,10 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       </div>
 
       <div className="space-y-0">
-        {/* 1. Introduction - Green */}
         {renderSection(<Info className="w-5 h-5" />, labels.introduction, remedy.introduction[lang], 'green')}
-        
-        {/* 2. Ingredients - Yellow */}
         {renderSection(<Beaker className="w-5 h-5" />, labels.ingredients, remedy.ingredients[lang], 'yellow')}
-        
-        {/* 3. Preparation - Yellow */}
         {renderSection(<ChefHat className="w-5 h-5" />, labels.preparation, remedy.preparation[lang], 'yellow')}
         
-        {/* 4. Smart Dosage - Yellow Interactive */}
         {remedy.doses && remedy.doses.length > 0 && (
           <div className={cn(
             "p-6 rounded-[2rem] border shadow-md space-y-6 mb-6 transition-all duration-300",
@@ -246,7 +245,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               </div>
             </div>
 
-            {/* Age Selection Buttons */}
             <div className="grid grid-cols-2 gap-2">
               {remedy.doses.map((dose, i) => (
                 <button
@@ -265,7 +263,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               ))}
             </div>
 
-            {/* Dynamic Content Display with Bullet Points */}
             <div className={cn(
               "p-5 rounded-2xl border-l-4 transition-all duration-500 animate-in fade-in slide-in-from-top-2",
               isNight ? "bg-white/5 border-accent" : "bg-white/60 border-accent"
@@ -292,16 +289,10 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           </div>
         )}
 
-        {/* 5. Usage - Yellow */}
         {renderSection(<Activity className="w-5 h-5" />, labels.usage, remedy.usage[lang], 'yellow')}
-        
-        {/* 6. What to Eat - Green */}
         {renderSection(<Apple className="w-5 h-5" />, labels.dietEat, remedy.dietEat[lang], 'green')}
-        
-        {/* 7. What NOT to Eat - Red */}
         {renderSection(<AlertTriangle className="w-5 h-5" />, labels.dietAvoid, remedy.dietAvoid[lang], 'red')}
         
-        {/* 8. Routine - Yellow */}
         {remedy.routine && (
           ('morning' in remedy.routine || 'afternoon' in remedy.routine || 'evening' in remedy.routine) ? (
             <div className={cn(
@@ -344,7 +335,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           )
         )}
 
-        {/* 9. Safety Information - Red with Disclaimer */}
         {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red', undefined, true)}
       </div>
 

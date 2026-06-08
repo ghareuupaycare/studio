@@ -25,6 +25,9 @@ export type Remedy = {
   name: LocalizedString; // This is the Remedy Title
   diseaseName?: LocalizedString; // The actual Sub-category/Disease name
   illnessId: string;
+  slug?: string; // SEO friendly URL slug
+  categoryId: string;
+  mainCategory?: LocalizedString;
   introduction: FlexibleLocalizedString;
   severity?: 'mild' | 'moderate' | 'severe';
   severityLabel?: LocalizedString;
@@ -44,8 +47,7 @@ export type Remedy = {
   disclaimer: FlexibleLocalizedString;
   image?: string;
   keywords: string[];
-  mainCategory?: LocalizedString;
-  categoryId?: string;
+  timestamp?: number;
 };
 
 export const AGE_BRACKETS = {
