@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -7,6 +8,7 @@ import {
   ChevronDown, ChevronRight, ClipboardList, Pencil, Trash2, ExternalLink, Plus 
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 interface AdminRemedyListProps {
   groupedRecipes: Record<string, Record<string, any[]>>;
@@ -15,6 +17,7 @@ interface AdminRemedyListProps {
   onDeleteCategory: (categoryName: string) => void;
   onDeleteSubCategory: (categoryName: string, diseaseName: string) => void;
   onQuickAdd: (category?: any, disease?: any) => void;
+  isNight?: boolean;
 }
 
 export const AdminRemedyList = ({ 
@@ -23,7 +26,8 @@ export const AdminRemedyList = ({
   onDelete, 
   onDeleteCategory,
   onDeleteSubCategory,
-  onQuickAdd 
+  onQuickAdd,
+  isNight = false
 }: AdminRemedyListProps) => {
   const router = useRouter();
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
@@ -39,9 +43,12 @@ export const AdminRemedyList = ({
   };
 
   return (
-    <Card className="border-primary/10 overflow-hidden shadow-lg">
-      <CardHeader className="bg-primary/5 border-b">
-        <CardTitle className="text-lg flex items-center gap-2"><ClipboardList className="w-5 h-5 text-primary" /> सभी लाइव नुस्खे</CardTitle>
+    <Card className={cn("overflow-hidden rounded-[2.5rem]", isNight ? "bg-zinc-900 border-white/10" : "bg-white border-primary/10 shadow-lg")}>
+      <CardHeader className={cn("border-b", isNight ? "bg-zinc-800 border-white/10" : "bg-primary/5")}>
+        <CardTitle className="text-lg flex items-center gap-2">
+          <ClipboardList className={cn("w-5 h-5", isNight ? "text-accent" : "text-primary")} /> 
+          सभी लाइव नुस्खे
+        </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
         {Object.keys(groupedRecipes).length > 0 ? (
@@ -51,15 +58,15 @@ export const AdminRemedyList = ({
               const diseaseCount = Object.keys(diseases).length;
               
               return (
-                <div key={category} className="border rounded-xl overflow-hidden shadow-sm">
-                  <div className="flex items-center bg-primary/5 hover:bg-primary/10 transition-colors">
+                <div key={category} className={cn("border rounded-xl overflow-hidden shadow-sm", isNight ? "border-white/5" : "")}>
+                  <div className={cn("flex items-center transition-colors", isNight ? "bg-zinc-800 hover:bg-zinc-700/50" : "bg-primary/5 hover:bg-primary/10")}>
                     <button 
                       onClick={() => toggleCategory(category)}
-                      className="flex-1 flex items-center gap-3 p-4 font-bold text-primary text-left"
+                      className={cn("flex-1 flex items-center gap-3 p-4 font-bold text-left", isNight ? "text-zinc-100" : "text-primary")}
                     >
                       {expandedCategory === category ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                       {category}
-                      <span className="bg-primary/20 text-primary px-3 py-0.5 rounded-full text-xs ml-2">
+                      <span className={cn("px-3 py-0.5 rounded-full text-xs ml-2", isNight ? "bg-accent/20 text-accent" : "bg-primary/20 text-primary")}>
                         {diseaseCount} {diseaseCount === 1 ? 'बीमारी' : 'बीमारियां'}
                       </span>
                     </button>
@@ -92,16 +99,16 @@ export const AdminRemedyList = ({
                   </div>
                   
                   {expandedCategory === category && (
-                    <div className="bg-white divide-y">
+                    <div className={cn("divide-y", isNight ? "bg-zinc-900 divide-white/5" : "bg-white")}>
                       {Object.entries(diseases).map(([disease, recipes]) => {
                         const firstDisRecipe = recipes[0];
                         
                         return (
                           <div key={disease} className="pl-4">
-                            <div className="flex items-center hover:bg-muted/30 transition-colors">
+                            <div className={cn("flex items-center transition-colors", isNight ? "hover:bg-zinc-800" : "hover:bg-muted/30")}>
                               <button 
                                 onClick={() => toggleDisease(disease)}
-                                className="flex-1 flex items-center gap-3 p-4 font-medium text-slate-700 text-left"
+                                className={cn("flex-1 flex items-center gap-3 p-4 font-medium text-left", isNight ? "text-zinc-300" : "text-slate-700")}
                               >
                                 {expandedDisease === disease ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                                 {disease}
@@ -136,15 +143,15 @@ export const AdminRemedyList = ({
                             </div>
                             
                             {expandedDisease === disease && (
-                              <div className="bg-slate-50/50 divide-y border-t">
+                              <div className={cn("divide-y border-t", isNight ? "bg-black/20 divide-white/5 border-white/5" : "bg-slate-50/50")}>
                                 {recipes.map((recipe) => (
                                   <div key={recipe.id} className="p-4 flex items-center justify-between group">
                                     <div className="flex-1">
-                                      <h4 className="font-bold text-primary flex items-center gap-2">
+                                      <h4 className={cn("font-bold flex items-center gap-2", isNight ? "text-zinc-200" : "text-primary")}>
                                         {recipe.remedyTitle?.hi || 'Untitled'}
                                         <button 
                                           onClick={() => router.push(`/?remedyId=${recipe.id}`)}
-                                          className="p-1 rounded hover:bg-primary/10 text-primary/40 hover:text-primary transition-colors"
+                                          className={cn("p-1 rounded transition-colors", isNight ? "text-zinc-600 hover:bg-white/5 hover:text-accent" : "text-primary/40 hover:bg-primary/10 hover:text-primary")}
                                         >
                                           <ExternalLink className="w-3 h-3" />
                                         </button>
@@ -155,7 +162,7 @@ export const AdminRemedyList = ({
                                         variant="ghost" 
                                         size="icon" 
                                         onClick={() => onEdit(recipe)}
-                                        className="text-blue-600 hover:bg-blue-50"
+                                        className={cn(isNight ? "text-blue-400 hover:bg-blue-900/20" : "text-blue-600 hover:bg-blue-50")}
                                       >
                                         <Pencil className="w-4 h-4" />
                                       </Button>

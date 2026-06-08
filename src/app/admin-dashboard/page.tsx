@@ -1,10 +1,11 @@
+
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList } from 'lucide-react';
+import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase';
 import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
@@ -12,6 +13,7 @@ import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { AdminForm } from '@/components/admin/admin-form';
 import { AdminRemedyList } from '@/components/admin/admin-remedy-list';
+import { cn } from '@/lib/utils';
 
 type DoseEntry = {
   ageRangeHi: string;
@@ -21,6 +23,7 @@ type DoseEntry = {
 };
 
 type ViewState = 'overview' | 'manage' | 'add-recipe';
+type Theme = 'cream' | 'night';
 
 const INITIAL_FORM_DATA = {
   mainCategoryHi: '',
@@ -61,6 +64,7 @@ export default function AdminDashboard() {
   const db = useFirestore();
   const [isLoaded, setIsLoaded] = useState(false);
   const [view, setView] = useState<ViewState>('overview');
+  const [theme, setTheme] = useState<Theme>('cream');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [liveRecipes, setLiveRecipes] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -70,8 +74,18 @@ export default function AdminDashboard() {
   useEffect(() => {
     const isAuth = typeof window !== 'undefined' ? localStorage.getItem('gharelu_admin_auth') : null;
     if (isAuth !== 'true') router.push('/admin-login');
-    else setIsLoaded(true);
+    else {
+      const savedTheme = localStorage.getItem('gharelu_admin_theme') as Theme;
+      if (savedTheme) setTheme(savedTheme);
+      setIsLoaded(true);
+    }
   }, [router]);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem('gharelu_admin_theme', theme);
+    }
+  }, [theme, isLoaded]);
 
   useEffect(() => {
     if (!db) return;
@@ -80,6 +94,8 @@ export default function AdminDashboard() {
     });
     return () => unsubscribe();
   }, [db]);
+
+  const isNight = theme === 'night';
 
   const groupedRecipes = useMemo(() => {
     const groups: Record<string, Record<string, any[]>> = {};
@@ -268,49 +284,80 @@ export default function AdminDashboard() {
     }
   };
 
+  const toggleTheme = () => setTheme(prev => prev === 'cream' ? 'night' : 'cream');
+
   if (!isLoaded) return null;
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] flex flex-col">
-      <header className="h-14 bg-primary text-white flex items-center justify-between px-6 sticky top-0 z-50 shadow-md">
+    <div className={cn(
+      "min-h-screen flex flex-col transition-colors duration-500",
+      isNight ? "bg-zinc-950 text-white" : "bg-[#FDFBF7] text-foreground"
+    )}>
+      <header className={cn(
+        "h-14 flex items-center justify-between px-6 sticky top-0 z-50 shadow-md transition-colors",
+        isNight ? "bg-zinc-900 border-b border-white/10" : "bg-primary text-white"
+      )}>
         <div className="flex items-center gap-3">
-          <LayoutDashboard className="w-5 h-5 text-accent" />
+          <LayoutDashboard className={cn("w-5 h-5", isNight ? "text-accent" : "text-accent")} />
           <h1 className="font-headline font-black text-lg">एडमिन कंट्रोल पैनल</h1>
         </div>
-        <Button variant="ghost" onClick={() => { localStorage.removeItem('gharelu_admin_auth'); router.push('/admin-login'); }} className="text-white hover:bg-white/10 gap-2 h-9 text-sm">
-          <LogOut className="w-4 h-4" /> लॉगआउट
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" onClick={toggleTheme} className="text-white hover:bg-white/10 h-10 w-10 p-0 rounded-full">
+            {isNight ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </Button>
+          <Button variant="ghost" onClick={() => { localStorage.removeItem('gharelu_admin_auth'); router.push('/admin-login'); }} className="text-white hover:bg-white/10 gap-2 h-9 text-sm">
+            <LogOut className="w-4 h-4" /> लॉगआउट
+          </Button>
+        </div>
       </header>
 
       <main className="flex-1 p-6 max-w-5xl mx-auto w-full">
         {view === 'overview' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="border-primary/20 cursor-pointer group" onClick={() => setView('manage')}>
+            <Card 
+              className={cn(
+                "cursor-pointer group transition-all rounded-[2.5rem]",
+                isNight ? "bg-zinc-900 border-white/10 hover:border-accent/50" : "bg-white border-primary/20 hover:border-primary/50"
+              )} 
+              onClick={() => setView('manage')}
+            >
               <div className="p-8 text-center space-y-4">
-                <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                <div className={cn(
+                  "mx-auto w-16 h-16 rounded-full flex items-center justify-center transition-colors",
+                  isNight ? "bg-accent/10 text-accent group-hover:bg-accent group-hover:text-black" : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white"
+                )}>
                   <ClipboardList className="w-8 h-8" />
                 </div>
                 <h3 className="text-xl font-bold">नुस्खे प्रबंधित करें</h3>
-                <p className="text-sm text-muted-foreground">लाइव नुस्खे देखें, एडिट करें या हटाएँ</p>
+                <p className={cn("text-sm", isNight ? "text-zinc-400" : "text-muted-foreground")}>लाइव नुस्खे देखें, एडिट करें या हटाएँ</p>
               </div>
             </Card>
-            <Card className="border-primary/20 cursor-pointer group" onClick={() => { resetForm(); setView('add-recipe'); }}>
+            <Card 
+              className={cn(
+                "cursor-pointer group transition-all rounded-[2.5rem]",
+                isNight ? "bg-zinc-900 border-white/10 hover:border-accent/50" : "bg-white border-primary/20 hover:border-primary/50"
+              )} 
+              onClick={() => { resetForm(); setView('add-recipe'); }}
+            >
               <div className="p-8 text-center space-y-4">
-                <div className="mx-auto w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-colors">
+                <div className={cn(
+                  "mx-auto w-16 h-16 rounded-full flex items-center justify-center transition-colors",
+                  isNight ? "bg-accent/10 text-accent group-hover:bg-accent group-hover:text-black" : "bg-accent/10 text-accent group-hover:bg-accent group-hover:text-white"
+                )}>
                   <PlusCircle className="w-8 h-8" />
                 </div>
                 <h3 className="text-xl font-bold">नया नुस्खा जोड़ें</h3>
-                <p className="text-sm text-muted-foreground">ऐप में नया पारंपरिक नुस्खा अपलोड करें</p>
+                <p className={cn("text-sm", isNight ? "text-zinc-400" : "text-muted-foreground")}>ऐप में नया पारंपरिक नुस्खा अपलोड करें</p>
               </div>
             </Card>
           </div>
         )}
 
         {view === 'manage' && (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex justify-between items-center">
-              <Button variant="ghost" onClick={() => setView('overview')} className="gap-2 text-primary font-bold"><ChevronLeft /> पीछे</Button>
-              <Button onClick={() => { resetForm(); setView('add-recipe'); }} className="bg-accent hover:bg-accent/90">नुस्खा जोड़ें</Button>
+              <Button variant="ghost" onClick={() => setView('overview')} className={cn("gap-2 font-bold", isNight ? "text-accent" : "text-primary")}><ChevronLeft /> पीछे</Button>
+              <Button onClick={() => { resetForm(); setView('add-recipe'); }} className="bg-accent hover:bg-accent/90 text-white">नुस्खा जोड़ें</Button>
             </div>
             <AdminRemedyList 
               groupedRecipes={groupedRecipes} 
@@ -319,18 +366,20 @@ export default function AdminDashboard() {
               onDeleteCategory={handleDeleteCategory}
               onDeleteSubCategory={handleDeleteSubCategory}
               onQuickAdd={handleQuickAdd}
+              isNight={isNight}
             />
           </div>
         )}
 
         {view === 'add-recipe' && (
-          <div className="space-y-6">
-            <Button variant="ghost" onClick={() => setView('manage')} className="gap-2 text-primary font-bold"><ChevronLeft /> रद्द करें</Button>
+          <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
+            <Button variant="ghost" onClick={() => setView('manage')} className={cn("gap-2 font-bold", isNight ? "text-accent" : "text-primary")}><ChevronLeft /> रद्द करें</Button>
             <AdminForm 
               formData={formData} doses={doses} isSubmitting={isSubmitting} editingId={editingId}
               onInputChange={handleInputChange} onDoseChange={handleDoseChange} 
               onAddDose={addDoseField} onRemoveDose={removeDoseField} 
               onSubmit={handleSubmit} onCancel={() => setView('manage')}
+              isNight={isNight}
             />
           </div>
         )}
