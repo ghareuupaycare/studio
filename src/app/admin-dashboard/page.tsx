@@ -113,7 +113,7 @@ export default function AdminDashboard() {
   };
 
   const generateSlug = (category: string, disease: string, title: string) => {
-    const combined = `${category}-${disease}-${title}`.toLowerCase();
+    const combined = `${disease}-${title}`.toLowerCase();
     return combined
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');

@@ -7,19 +7,19 @@ import { RemedyDetail } from '@/components/gharelu/remedy-detail';
 import { REMEDIES as STATIC_REMEDIES } from '@/lib/remedy-data';
 
 interface RemedyPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 async function getRemedyData(id: string): Promise<Remedy | null> {
-  // Check static data first by ID or Slug
+  // 1. Check static data first by ID or Slug
   const staticRemedy = STATIC_REMEDIES.find(r => r.id === id || r.slug === id);
   if (staticRemedy) return staticRemedy;
 
-  // Check Firestore
+  // 2. Check Firestore
   try {
     const { firestore } = initializeFirebase();
     
-    // 1. Try fetching by Document ID first
+    // Try fetching by Document ID first (fallback)
     const docRef = doc(firestore, 'recipes', id);
     const docSnap = await getDoc(docRef);
 
@@ -27,7 +27,7 @@ async function getRemedyData(id: string): Promise<Remedy | null> {
       return mapDocToRemedy(docSnap.id, docSnap.data());
     }
 
-    // 2. Try fetching by Slug
+    // Try fetching by the SEO Slug field
     const q = query(collection(firestore, 'recipes'), where('slug', '==', id), limit(1));
     const querySnap = await getDocs(q);
     
@@ -36,7 +36,7 @@ async function getRemedyData(id: string): Promise<Remedy | null> {
       return mapDocToRemedy(firstDoc.id, firstDoc.data());
     }
   } catch (error) {
-    console.error("Error fetching remedy SEO data:", error);
+    console.error("Error fetching remedy data:", error);
   }
   return null;
 }
@@ -66,37 +66,46 @@ function mapDocToRemedy(id: string, data: any): Remedy {
 }
 
 export async function generateMetadata({ params }: RemedyPageProps): Promise<Metadata> {
-  const remedy = await getRemedyData(params.id);
+  const { id } = await params;
+  const remedy = await getRemedyData(id);
   if (!remedy) return { title: 'Remedy Not Found | Gharelu Upay Care' };
+
+  const introText = Array.isArray(remedy.introduction.hi) ? remedy.introduction.hi[0] : remedy.introduction.hi;
 
   return {
     title: `${remedy.name.hi} | ${remedy.name.en} - घरेलू उपाय केयर`,
-    description: `वैद्य जी द्वारा संचालित: ${remedy.name.hi} के लिए पारंपरिक आयुर्वेदिक घरेलू उपाय। ${Array.isArray(remedy.introduction.hi) ? remedy.introduction.hi[0] : remedy.introduction.hi}`,
+    description: `वैद्य जी द्वारा संचालित: ${remedy.name.hi} के लिए पारंपरिक आयुर्वेदिक घरेलू उपाय। ${introText}`,
     keywords: remedy.keywords.join(', '),
     openGraph: {
       title: remedy.name.hi,
       description: remedy.name.en,
       type: 'article',
+      url: `https://studio-xi-mocha.vercel.app/remedy/${remedy.slug || remedy.id}`,
     }
   };
 }
 
 export default async function RemedyPage({ params }: RemedyPageProps) {
-  const remedy = await getRemedyData(params.id);
+  const { id } = await params;
+  const remedy = await getRemedyData(id);
 
   if (!remedy) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <h1 className="text-xl font-bold">नुस्खा नहीं मिला | Remedy Not Found</h1>
+      <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7]">
+        <div className="text-center space-y-4">
+          <h1 className="text-2xl font-black text-primary">नुस्खा नहीं मिला | Remedy Not Found</h1>
+          <p className="text-muted-foreground">कृपया सही लिंक की जांच करें।</p>
+          <a href="/" className="inline-block bg-primary text-white px-6 py-2 rounded-full font-bold">होम पेज पर जाएं</a>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] pb-24">
-      <div className="h-14 bg-primary flex items-center px-6">
-        <a href="/" className="text-white font-bold text-lg">घरेलू उपाय केयर</a>
-      </div>
+      <header className="h-14 bg-primary flex items-center px-6 sticky top-0 z-50">
+        <a href="/" className="text-white font-black text-lg">घरेलू उपाय केयर</a>
+      </header>
 
       <main className="max-w-2xl mx-auto px-6 pt-10">
         <RemedyDetail 

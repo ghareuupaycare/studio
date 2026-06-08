@@ -91,6 +91,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       points = content.split('\n').filter(line => line.trim() !== '');
     }
 
+    if (points.length === 0) return null;
+
     return (
       <div className={cn(
         "p-6 rounded-[2rem] border shadow-md space-y-4 mb-6 transition-all duration-300",
@@ -175,24 +177,28 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
     text += `⚠️ ${labels.safety}\n${toEnglishDigits(remedy.safetyAdvice[lang])}\n\n`;
     text += `📜 ${disclaimerText}\n\n`;
-    text += `🔗 पूरा नुस्खा यहाँ देखें: ${getFullRecipeLink()}`;
+    text += `🔗 पूरा नुस्खा यहाँ देखें:\n${getFullRecipeLink()}`;
     
-    return text;
+    return text.trim();
   };
 
   const handleShare = async () => {
     const title = toEnglishDigits(remedy.name[lang]);
     const deepLink = getFullRecipeLink();
-    const shareText = `🌿 *${title}* 🌿\n\nपूरी जानकारी और बनाने की विधि यहाँ देखें: \n${deepLink}`;
+    const shareText = `🌿 *${title}* 🌿\n\nपूरी जानकारी और बनाने की विधि यहाँ देखें:`;
 
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
-        await navigator.share({ title, text: shareText, url: deepLink });
+        await navigator.share({ 
+          title: title, 
+          text: shareText, 
+          url: deepLink 
+        });
       } catch (error) {
-        if ((error as any).name !== 'AbortError') console.error(error);
+        if ((error as any).name !== 'AbortError') console.error("Sharing failed", error);
       }
     } else {
-      await navigator.clipboard.writeText(shareText);
+      await navigator.clipboard.writeText(`${shareText}\n${deepLink}`);
       toast({ description: isHindi ? "लिंक कॉपी हो गया है!" : "Link copied!" });
     }
   };
