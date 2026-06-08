@@ -12,10 +12,19 @@ interface AdminRemedyListProps {
   groupedRecipes: Record<string, Record<string, any[]>>;
   onEdit: (recipe: any) => void;
   onDelete: (e: React.MouseEvent, id: string, title: string) => void;
+  onDeleteCategory: (categoryName: string) => void;
+  onDeleteSubCategory: (categoryName: string, diseaseName: string) => void;
   onQuickAdd: (category?: any, disease?: any) => void;
 }
 
-export const AdminRemedyList = ({ groupedRecipes, onEdit, onDelete, onQuickAdd }: AdminRemedyListProps) => {
+export const AdminRemedyList = ({ 
+  groupedRecipes, 
+  onEdit, 
+  onDelete, 
+  onDeleteCategory,
+  onDeleteSubCategory,
+  onQuickAdd 
+}: AdminRemedyListProps) => {
   const router = useRouter();
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [expandedDisease, setExpandedDisease] = useState<string | null>(null);
@@ -38,8 +47,8 @@ export const AdminRemedyList = ({ groupedRecipes, onEdit, onDelete, onQuickAdd }
         {Object.keys(groupedRecipes).length > 0 ? (
           <div className="space-y-3">
             {Object.entries(groupedRecipes).map(([category, diseases]) => {
-              // Get the first recipe to access bilingual category data
               const firstCatRecipe = Object.values(diseases)[0][0];
+              const diseaseCount = Object.keys(diseases).length;
               
               return (
                 <div key={category} className="border rounded-xl overflow-hidden shadow-sm">
@@ -51,21 +60,35 @@ export const AdminRemedyList = ({ groupedRecipes, onEdit, onDelete, onQuickAdd }
                       {expandedCategory === category ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                       {category}
                       <span className="bg-primary/20 text-primary px-3 py-0.5 rounded-full text-xs ml-2">
-                        {Object.values(diseases).flat().length}
+                        {diseaseCount} {diseaseCount === 1 ? 'बीमारी' : 'बीमारियां'}
                       </span>
                     </button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onQuickAdd(firstCatRecipe.mainCategory);
-                      }}
-                      className="mr-2 text-accent hover:bg-accent/10 h-8 w-8 rounded-full"
-                      title="इस श्रेणी में नुस्खा जोड़ें"
-                    >
-                      <Plus className="w-5 h-5" />
-                    </Button>
+                    <div className="flex items-center gap-1 mr-2">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onQuickAdd(firstCatRecipe.mainCategory);
+                        }}
+                        className="text-accent hover:bg-accent/10 h-8 w-8 rounded-full"
+                        title="इस श्रेणी में नुस्खा जोड़ें"
+                      >
+                        <Plus className="w-5 h-5" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDeleteCategory(category);
+                        }}
+                        className="text-destructive hover:bg-destructive/10 h-8 w-8 rounded-full"
+                        title="पूरी श्रेणी हटाएं"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                   
                   {expandedCategory === category && (
@@ -82,20 +105,34 @@ export const AdminRemedyList = ({ groupedRecipes, onEdit, onDelete, onQuickAdd }
                               >
                                 {expandedDisease === disease ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                                 {disease}
-                                <span className="text-xs text-muted-foreground ml-2">{recipes.length}</span>
+                                <span className="text-xs text-muted-foreground ml-2">{recipes.length} नुस्खे</span>
                               </button>
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onQuickAdd(firstDisRecipe.mainCategory, firstDisRecipe.diseaseName);
-                                }}
-                                className="mr-2 text-accent/70 hover:bg-accent/10 h-7 w-7 rounded-full"
-                                title="इस बीमारी के लिए नुस्खा जोड़ें"
-                              >
-                                <Plus className="w-4 h-4" />
-                              </Button>
+                              <div className="flex items-center gap-1 mr-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onQuickAdd(firstDisRecipe.mainCategory, firstDisRecipe.diseaseName);
+                                  }}
+                                  className="text-accent/70 hover:bg-accent/10 h-7 w-7 rounded-full"
+                                  title="इस बीमारी के लिए नुस्खा जोड़ें"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDeleteSubCategory(category, disease);
+                                  }}
+                                  className="text-destructive/70 hover:bg-destructive/10 h-7 w-7 rounded-full"
+                                  title="पूरी बीमारी हटाएं"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </Button>
+                              </div>
                             </div>
                             
                             {expandedDisease === disease && (

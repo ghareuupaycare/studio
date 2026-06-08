@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase';
-import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, writeBatch } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 import { AdminForm } from '@/components/admin/admin-form';
@@ -225,6 +225,36 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteCategory = async (categoryName: string) => {
+    if (!db) return;
+    if (confirm(`सावधानी! क्या आप पूरी श्रेणी "${categoryName}" और इसके अंदर के सभी बीमारियों और नुस्खों को हटाना चाहते हैं?`)) {
+      const recipesToDelete = liveRecipes.filter(r => r.mainCategory?.hi === categoryName);
+      try {
+        for (const r of recipesToDelete) {
+          await deleteDoc(doc(db, 'recipes', r.id));
+        }
+        toast({ title: "श्रेणी हटा दी गई", description: `${categoryName} का सारा डेटा हटा दिया गया है।` });
+      } catch (e) {
+        toast({ variant: "destructive", title: "त्रुटि", description: "श्रेणी हटाने में समस्या आई।" });
+      }
+    }
+  };
+
+  const handleDeleteSubCategory = async (categoryName: string, diseaseName: string) => {
+    if (!db) return;
+    if (confirm(`क्या आप वाकई बीमारी "${diseaseName}" के सभी नुस्खे हटाना चाहते हैं?`)) {
+      const recipesToDelete = liveRecipes.filter(r => r.mainCategory?.hi === categoryName && r.diseaseName?.hi === diseaseName);
+      try {
+        for (const r of recipesToDelete) {
+          await deleteDoc(doc(db, 'recipes', r.id));
+        }
+        toast({ title: "बीमारी हटा दी गई", description: `${diseaseName} के सभी नुस्खे हटा दिए गए हैं।` });
+      } catch (e) {
+        toast({ variant: "destructive", title: "त्रुटि", description: "बीमारी हटाने में समस्या आई।" });
+      }
+    }
+  };
+
   if (!isLoaded) return null;
 
   return (
@@ -273,6 +303,8 @@ export default function AdminDashboard() {
               groupedRecipes={groupedRecipes} 
               onEdit={handleEdit} 
               onDelete={handleDelete} 
+              onDeleteCategory={handleDeleteCategory}
+              onDeleteSubCategory={handleDeleteSubCategory}
               onQuickAdd={handleQuickAdd}
             />
           </div>
