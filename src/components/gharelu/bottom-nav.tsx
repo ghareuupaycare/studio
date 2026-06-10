@@ -1,10 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Home, Share2, Search } from 'lucide-react';
+import { Home, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Language, Theme } from '@/app/page';
-import { useToast } from '@/hooks/use-toast';
 
 interface BottomNavProps {
   lang: Language;
@@ -17,7 +16,6 @@ interface BottomNavProps {
 export const BottomNav = ({ lang, theme, currentView, onViewChange, enableScrollHide = false }: BottomNavProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const { toast } = useToast();
   
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
@@ -44,108 +42,52 @@ export const BottomNav = ({ lang, theme, currentView, onViewChange, enableScroll
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY, enableScrollHide]);
 
-  const handleShare = async () => {
-    const shareText = `🌿 *घरेलू उपाय केयर (Gharelu Upay Care)* 🌿
-
-क्या आप बिना दवा घर बैठे संपूर्ण स्वास्थ्य पाना चाहते हैं? पाइए शास्त्रों पर आधारित पारंपरिक घरेलू उपाय और वैद्य जी द्वारा संचालित आयुर्वेदिक स्वास्थ्य समाधान!
-
-आज ही नीचे दिए गए लिंक पर क्लिक करें और स्वस्थ जीवन की शुरुआत करें: 👇
-
-${window.location.origin}`;
-
-    if (typeof navigator !== 'undefined' && navigator.share) {
-      try {
-        await navigator.share({
-          title: 'घरेलू उपाय केयर',
-          text: shareText,
-          url: window.location.origin,
-        });
-      } catch (error) {
-        if ((error as any).name !== 'AbortError') {
-          console.error("Sharing failed", error);
-        }
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(shareText);
-        toast({
-          description: isHindi ? "लिंक कॉपी हो गया है!" : "Link copied to clipboard!",
-        });
-      } catch (err) {
-        console.error('Failed to copy: ', err);
-      }
-    }
-  };
-
   return (
     <nav className={cn(
-      "fixed bottom-0 left-0 right-0 z-50 h-14 sm:h-16 w-full flex items-center justify-between px-6 sm:px-12 border-t transition-all duration-300 shadow-[0_-10px_30px_rgba(0,0,0,0.15)]",
+      "fixed bottom-0 left-0 right-0 z-50 h-14 sm:h-16 w-full flex items-center justify-around px-6 sm:px-12 border-t transition-all duration-300 shadow-[0_-10px_30px_rgba(0,0,0,0.15)]",
       isNight ? "bg-black/90 backdrop-blur-md border-white/20" : "bg-[#14532D]/95 backdrop-blur-md border-white/10",
       isVisible ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
     )}>
       {/* Home Button */}
-      <div className="flex-1 flex justify-start">
-        <button
-          onClick={() => onViewChange('home')}
-          className={cn(
-            "flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:scale-90",
-            currentView === 'home' ? "text-accent" : "text-white/60 hover:text-white"
-          )}
-        >
-          <div className={cn(
-            "p-1 sm:p-1.5 rounded-xl transition-all duration-200",
-            currentView === 'home' 
-              ? "bg-accent/20 text-accent" 
-              : "bg-white/5 hover:bg-white/10"
-          )}>
-            <Home className="w-4 h-4 sm:w-5 h-5" />
-          </div>
-          <span className="text-[9px] font-black uppercase tracking-[0.1em] transition-colors">
-            {isHindi ? 'होम' : 'Home'}
-          </span>
-        </button>
-      </div>
+      <button
+        onClick={() => onViewChange('home')}
+        className={cn(
+          "flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:scale-90",
+          currentView === 'home' ? "text-accent" : "text-white/60 hover:text-white"
+        )}
+      >
+        <div className={cn(
+          "p-1 sm:p-1.5 rounded-xl transition-all duration-200",
+          currentView === 'home' 
+            ? "bg-accent/20 text-accent" 
+            : "bg-white/5 hover:bg-white/10"
+        )}>
+          <Home className="w-5 h-5 sm:w-6 h-6" />
+        </div>
+        <span className="text-[10px] font-black uppercase tracking-[0.1em] transition-colors">
+          {isHindi ? 'होम' : 'Home'}
+        </span>
+      </button>
 
-      {/* Search Button (Center - Slim & Balanced) */}
-      <div className="flex-1 flex justify-center h-full items-center relative">
-        <button
-          onClick={() => {
-            window.dispatchEvent(new CustomEvent('open-gharelu-search'));
-          }}
-          className={cn(
-            "absolute -top-2 flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:scale-95"
-          )}
-        >
-          <div className={cn(
-            "h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center transition-all duration-200 bg-accent text-white shadow-lg border-4 border-[#FDFBF7]",
-            isNight ? "border-black" : "border-[#14532D]/95"
-          )}>
-            <Search className="w-5 h-5 sm:w-6 h-6" />
-          </div>
-          <span className="text-[9px] font-black uppercase tracking-[0.1em] text-amber-400 mt-0.5">
-            {isHindi ? 'घरेलू सर्च' : 'Search'}
-          </span>
-        </button>
-      </div>
-
-      {/* Share Button */}
-      <div className="flex-1 flex justify-end">
-        <button
-          onClick={handleShare}
-          className={cn(
-            "flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:scale-90 text-white/60 hover:text-white"
-          )}
-        >
-          <div className={cn(
-            "p-1 sm:p-1.5 rounded-xl transition-all duration-200 bg-white/5 hover:bg-white/10"
-          )}>
-            <Share2 className="w-4 h-4 sm:w-5 h-5" />
-          </div>
-          <span className="text-[9px] font-black uppercase tracking-[0.1em] transition-colors">
-            {isHindi ? 'शेयर' : 'Share'}
-          </span>
-        </button>
-      </div>
+      {/* Search Button */}
+      <button
+        onClick={() => {
+          window.dispatchEvent(new CustomEvent('open-gharelu-search'));
+        }}
+        className={cn(
+          "flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:scale-95"
+        )}
+      >
+        <div className={cn(
+          "h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center transition-all duration-200 bg-accent text-white shadow-lg border-4 border-[#FDFBF7]",
+          isNight ? "border-black" : "border-[#14532D]/95"
+        )}>
+          <Search className="w-6 h-6 sm:w-7 h-7" />
+        </div>
+        <span className="text-[10px] font-black uppercase tracking-[0.1em] text-amber-400 mt-0.5">
+          {isHindi ? 'सर्च' : 'Search'}
+        </span>
+      </button>
     </nav>
   );
 };

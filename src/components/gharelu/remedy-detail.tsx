@@ -5,8 +5,6 @@ import { Remedy } from '@/lib/remedy-types';
 import { Language, Theme } from '@/app/page';
 import { 
   Heart,
-  Share2,
-  Copy,
   Info,
   Beaker,
   ChefHat,
@@ -16,12 +14,10 @@ import {
   AlertTriangle,
   Clock,
   ShieldCheck,
-  User,
-  Check
+  User
 } from 'lucide-react';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
 
 interface RemedyDetailProps {
   remedy: Remedy;
@@ -36,9 +32,7 @@ type SectionVariant = 'green' | 'yellow' | 'red';
 export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite }: RemedyDetailProps) => {
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
-  const { toast } = useToast();
   const [selectedDoseIndex, setSelectedDoseIndex] = useState(0);
-  const [copied, setCopied] = useState(false);
 
   const labels = {
     introduction: isHindi ? '1. बीमारी का परिचय' : '1. Introduction',
@@ -141,82 +135,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     );
   };
 
-  const getFullRecipeLink = () => {
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://studio-xi-mocha.vercel.app';
-    const slug = remedy.slug || remedy.id;
-    return `${baseUrl}/remedy/${slug}`;
-  };
-
-  const getFullRecipeText = () => {
-    const title = toEnglishDigits(remedy.name[lang]);
-    let text = `🌿 *${title}* 🌿\n\n`;
-    
-    text += `📌 ${labels.introduction}\n${toEnglishDigits(remedy.introduction[lang])}\n\n`;
-    text += `📦 ${labels.ingredients}\n${Array.isArray(remedy.ingredients[lang]) ? remedy.ingredients[lang].join(', ') : remedy.ingredients[lang]}\n\n`;
-    text += `🥣 ${labels.preparation}\n${toEnglishDigits(remedy.preparation[lang])}\n\n`;
-    
-    if (remedy.doses && remedy.doses[selectedDoseIndex]) {
-      text += `⚖️ ${labels.dosage} (${toEnglishDigits(remedy.doses[selectedDoseIndex].ageRange[lang])})\n${toEnglishDigits(remedy.doses[selectedDoseIndex].dose[lang])}\n\n`;
-    }
-    
-    text += `🔄 ${labels.usage}\n${toEnglishDigits(remedy.usage[lang])}\n\n`;
-    text += `✅ ${labels.dietEat}\n${toEnglishDigits(remedy.dietEat[lang])}\n\n`;
-    text += `🚫 ${labels.dietAvoid}\n${toEnglishDigits(remedy.dietAvoid[lang])}\n\n`;
-
-    if (remedy.routine) {
-      if ('morning' in remedy.routine || 'afternoon' in remedy.routine || 'evening' in remedy.routine) {
-        text += `🕒 ${labels.routine}\n`;
-        if (remedy.routine.morning) text += `${routineSegmentLabels.morning} ${toEnglishDigits(remedy.routine.morning[lang])}\n`;
-        if (remedy.routine.afternoon) text += `${routineSegmentLabels.afternoon} ${toEnglishDigits(remedy.routine.afternoon[lang])}\n`;
-        if (remedy.routine.evening) text += `${routineSegmentLabels.evening} ${toEnglishDigits(remedy.routine.evening[lang])}\n`;
-      } else {
-        text += `🕒 ${labels.routine}\n${toEnglishDigits((remedy.routine as any)[lang])}\n`;
-      }
-      text += `\n`;
-    }
-
-    text += `⚠️ ${labels.safety}\n${toEnglishDigits(remedy.safetyAdvice[lang])}\n\n`;
-    text += `📜 ${disclaimerText}\n\n`;
-    text += `🔗 पूरा नुस्खा यहाँ देखें: ${getFullRecipeLink()}`;
-    
-    return text.trim();
-  };
-
-  const handleShare = async () => {
-    const title = toEnglishDigits(remedy.name[lang]);
-    const deepLink = getFullRecipeLink();
-    const shareText = `🌿 *${title}* 🌿\n\nपूरी जानकारी और बनाने की विधि यहाँ देखें:`;
-
-    if (typeof navigator !== 'undefined' && navigator.share) {
-      try {
-        await navigator.share({ 
-          title: title, 
-          text: shareText, 
-          url: deepLink 
-        });
-      } catch (error) {
-        if ((error as any).name !== 'AbortError') console.error("Sharing failed", error);
-      }
-    } else {
-      await navigator.clipboard.writeText(`${shareText}\n${deepLink}`);
-      toast({ description: isHindi ? "लिंक कॉपी हो गया है!" : "Link copied!" });
-    }
-  };
-
-  const handleCopy = async () => {
-    const fullText = getFullRecipeText();
-    try {
-      await navigator.clipboard.writeText(fullText);
-      setCopied(true);
-      toast({ description: isHindi ? "पूरा नुस्खा कॉपी हो गया है!" : "Full recipe copied!" });
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy text: ', err);
-    }
-  };
-
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 pb-32 max-w-2xl mx-auto">
+    <div className="space-y-6 animate-in fade-in duration-500 pb-20 max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-4">
         <h2 className={cn("text-[26px] font-black tracking-wide leading-tight flex-1", isNight ? "text-white" : "text-[#14532D]")}>
           {toEnglishDigits(remedy.name[lang])}
@@ -342,34 +262,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         )}
 
         {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red', undefined, true)}
-      </div>
-
-      <div className="pt-8 flex flex-col items-center gap-4">
-        <div className="grid grid-cols-2 gap-4 w-full">
-          <Button 
-            onClick={handleCopy} 
-            className={cn(
-              "h-14 rounded-full font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all",
-              isNight 
-                ? "bg-zinc-800 text-zinc-100 hover:bg-zinc-700" 
-                : "bg-[#14532D] text-white hover:bg-[#0d381e]"
-            )}
-          >
-            {copied ? <Check className="w-5 h-5 mr-2" /> : <Copy className="w-5 h-5 mr-2" />}
-            {isHindi ? 'कॉपी करें' : 'Copy'}
-          </Button>
-          <Button 
-            onClick={handleShare} 
-            className={cn(
-              "h-14 rounded-full font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all",
-              isNight 
-                ? "bg-amber-700 text-zinc-100 hover:bg-amber-600" 
-                : "bg-accent text-white hover:bg-accent/90"
-            )}
-          >
-            <Share2 className="w-5 h-5 mr-2" /> {isHindi ? 'शेयर करें' : 'Share'}
-          </Button>
-        </div>
       </div>
     </div>
   );
