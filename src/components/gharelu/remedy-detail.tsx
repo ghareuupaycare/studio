@@ -14,7 +14,8 @@ import {
   AlertTriangle,
   Clock,
   ShieldCheck,
-  User
+  User,
+  Share2
 } from 'lucide-react';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -73,6 +74,14 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       default:
         return "bg-[#FFF9E6] border-[#FCE8B2] text-[#5F4B1A]";
     }
+  };
+
+  const handleWhatsAppShare = () => {
+    const remedyTitle = remedy.name[lang];
+    const shareUrl = `https://studio-xi-mocha.vercel.app/remedy/${remedy.id}`;
+    const message = `🌿 *${remedyTitle}* 🌿\nपूरी जानकारी और बनाने की विधि यहाँ देखें:\n${shareUrl}`;
+    
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const renderSection = (icon: React.ReactNode, title: string, content: any, variant: SectionVariant, customHeader?: string, appendDisclaimer?: boolean) => {
@@ -262,6 +271,17 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         )}
 
         {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red', undefined, true)}
+      </div>
+
+      {/* WhatsApp Share Action */}
+      <div className="pt-4 animate-in slide-in-from-bottom-4 duration-700">
+        <Button 
+          onClick={handleWhatsAppShare}
+          className="w-full h-14 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-2xl shadow-xl flex items-center justify-center gap-3 font-black text-lg transition-all active:scale-95"
+        >
+          <Share2 className="w-6 h-6" />
+          {isHindi ? 'WhatsApp पर शेयर करें' : 'Share on WhatsApp'}
+        </Button>
       </div>
     </div>
   );
