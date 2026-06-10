@@ -81,7 +81,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const handleWhatsAppShare = () => {
     const remedyTitle = remedy.name[lang];
-    const shareUrl = `https://studio-xi-mocha.vercel.app/remedy/${remedy.id}`;
+    // Using query parameter format as per user instruction
+    const shareUrl = `https://studio-xi-mocha.vercel.app/?remedyId=${remedy.id}`;
     const message = `🌿 *${remedyTitle}* 🌿\nपूरी जानकारी और बनाने की विधि यहाँ देखें:\n${shareUrl}`;
     
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
@@ -90,7 +91,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const handleCopy = () => {
     const remedyTitle = toEnglishDigits(remedy.name[lang]);
     const intro = toEnglishDigits(Array.isArray(remedy.introduction[lang]) ? remedy.introduction[lang].join('\n') : remedy.introduction[lang]);
-    const shareUrl = `https://studio-xi-mocha.vercel.app/remedy/${remedy.id}`;
+    // Using query parameter format as per user instruction
+    const shareUrl = `https://studio-xi-mocha.vercel.app/?remedyId=${remedy.id}`;
 
     const textToCopy = `${remedyTitle}\n\n${intro}\n\nपूरी जानकारी वेबसाइट पर देखें: ${shareUrl}`;
 
@@ -291,7 +293,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red', undefined, true)}
       </div>
 
-      {/* Action Buttons Row - Positioned at the bottom, aligned to the right */}
       <div className="flex justify-end gap-3 pt-4 mb-10">
         <Button 
           onClick={handleCopy}

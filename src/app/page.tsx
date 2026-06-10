@@ -1,7 +1,7 @@
-
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { TopBar } from '@/components/gharelu/top-bar';
 import { BottomNav } from '@/components/gharelu/bottom-nav';
 import { HomeView } from '@/components/gharelu/home-view';
@@ -16,8 +16,11 @@ import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 export type Language = 'hi' | 'en';
 export type Theme = 'cream' | 'night';
 
-export default function GhareluUpayApp() {
+function GhareluUpayAppContent() {
   const db = useFirestore();
+  const searchParams = useSearchParams();
+  const urlRemedyId = searchParams.get('remedyId');
+  
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [selectedRemedyId, setSelectedRemedyId] = useState<string | null>(null);
   const [isDetailView, setIsDetailView] = useState(false);
@@ -102,6 +105,18 @@ export default function GhareluUpayApp() {
     
     setIsLoaded(true);
   }, []);
+
+  // Handle remedyId from URL query parameter
+  useEffect(() => {
+    if (urlRemedyId && allRemedies.length > 0) {
+      const remedy = allRemedies.find(r => r.id === urlRemedyId);
+      if (remedy) {
+        setSelectedCategoryId(remedy.categoryId);
+        setSelectedRemedyId(remedy.id);
+        setIsDetailView(true);
+      }
+    }
+  }, [urlRemedyId, allRemedies]);
 
   useEffect(() => {
     if (isLoaded) {
@@ -256,5 +271,13 @@ export default function GhareluUpayApp() {
         enableScrollHide={isDetailView}
       />
     </div>
+  );
+}
+
+export default function GhareluUpayApp() {
+  return (
+    <Suspense fallback={null}>
+      <GhareluUpayAppContent />
+    </Suspense>
   );
 }
