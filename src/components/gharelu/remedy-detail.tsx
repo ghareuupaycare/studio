@@ -15,10 +15,12 @@ import {
   Clock,
   ShieldCheck,
   User,
-  Share2
+  Share2,
+  Copy
 } from 'lucide-react';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 interface RemedyDetailProps {
   remedy: Remedy;
@@ -34,6 +36,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
   const [selectedDoseIndex, setSelectedDoseIndex] = useState(0);
+  const { toast } = useToast();
 
   const labels = {
     introduction: isHindi ? '1. बीमारी का परिचय' : '1. Introduction',
@@ -82,6 +85,21 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     const message = `🌿 *${remedyTitle}* 🌿\nपूरी जानकारी और बनाने की विधि यहाँ देखें:\n${shareUrl}`;
     
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
+  const handleCopy = () => {
+    const remedyTitle = toEnglishDigits(remedy.name[lang]);
+    const intro = toEnglishDigits(Array.isArray(remedy.introduction[lang]) ? remedy.introduction[lang].join('\n') : remedy.introduction[lang]);
+    const shareUrl = `https://studio-xi-mocha.vercel.app/remedy/${remedy.id}`;
+
+    const textToCopy = `${remedyTitle}\n\n${intro}\n\nपूरी जानकारी वेबसाइट पर देखें: ${shareUrl}`;
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      toast({
+        title: isHindi ? "लिंक कॉपी हो गया" : "Link Copied",
+        description: isHindi ? "अब आप इसे कहीं भी शेयर कर सकते हैं।" : "You can now share it anywhere.",
+      });
+    });
   };
 
   const renderSection = (icon: React.ReactNode, title: string, content: any, variant: SectionVariant, customHeader?: string, appendDisclaimer?: boolean) => {
@@ -157,6 +175,24 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           className={cn("rounded-full h-12 w-12", isFavorite ? "text-accent" : "text-muted-foreground")}
         >
           <Heart className={cn("w-7 h-7", isFavorite && "fill-current")} />
+        </Button>
+      </div>
+
+      {/* Action Buttons Row - Side by side, right aligned */}
+      <div className="flex justify-end gap-3 mb-6">
+        <Button 
+          onClick={handleCopy}
+          className="h-10 px-4 bg-[#14532D] hover:bg-[#1a6b3a] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-2 font-bold text-sm shadow-md transition-all active:scale-95"
+        >
+          <Copy className="w-4 h-4" />
+          {isHindi ? 'कॉपी करें' : 'Copy'}
+        </Button>
+        <Button 
+          onClick={handleWhatsAppShare}
+          className="h-10 px-4 bg-[#14532D] hover:bg-[#1a6b3a] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-2 font-bold text-sm shadow-md transition-all active:scale-95"
+        >
+          <Share2 className="w-4 h-4" />
+          {isHindi ? 'शेयर करें' : 'Share'}
         </Button>
       </div>
 
@@ -271,17 +307,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         )}
 
         {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red', undefined, true)}
-      </div>
-
-      {/* WhatsApp Share Action */}
-      <div className="pt-4 animate-in slide-in-from-bottom-4 duration-700">
-        <Button 
-          onClick={handleWhatsAppShare}
-          className="w-full h-14 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-2xl shadow-xl flex items-center justify-center gap-3 font-black text-lg transition-all active:scale-95"
-        >
-          <Share2 className="w-6 h-6" />
-          {isHindi ? 'WhatsApp पर शेयर करें' : 'Share on WhatsApp'}
-        </Button>
       </div>
     </div>
   );
