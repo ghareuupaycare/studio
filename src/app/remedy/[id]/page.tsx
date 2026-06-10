@@ -11,24 +11,27 @@ interface RemedyPageProps {
 }
 
 async function getRemedyData(id: string): Promise<Remedy | null> {
+  // Sanitize the ID: Trim spaces and decode URI characters to ensure a pure string
+  const cleanId = decodeURIComponent(id.trim());
+
   // 1. Check static data first by ID or Slug
-  const staticRemedy = STATIC_REMEDIES.find(r => r.id === id || r.slug === id);
+  const staticRemedy = STATIC_REMEDIES.find(r => r.id === cleanId || r.slug === cleanId);
   if (staticRemedy) return staticRemedy;
 
   // 2. Check Firestore
   try {
     const { firestore } = initializeFirebase();
     
-    // Try fetching by Document ID first (fallback)
-    const docRef = doc(firestore, 'recipes', id);
+    // Primary Fetch: Fetch directly by the exact Firestore Document ID
+    const docRef = doc(firestore, 'recipes', cleanId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
       return mapDocToRemedy(docSnap.id, docSnap.data());
     }
 
-    // Try fetching by the SEO Slug field
-    const q = query(collection(firestore, 'recipes'), where('slug', '==', id), limit(1));
+    // Secondary Fallback: Try fetching by the SEO Slug field (if any legacy links exist)
+    const q = query(collection(firestore, 'recipes'), where('slug', '==', cleanId), limit(1));
     const querySnap = await getDocs(q);
     
     if (!querySnap.empty) {
@@ -36,7 +39,7 @@ async function getRemedyData(id: string): Promise<Remedy | null> {
       return mapDocToRemedy(firstDoc.id, firstDoc.data());
     }
   } catch (error) {
-    console.error("Error fetching remedy data:", error);
+    console.error("Error fetching remedy data from Firestore:", error);
   }
   return null;
 }
@@ -48,7 +51,7 @@ function mapDocToRemedy(id: string, data: any): Remedy {
     name: data.remedyTitle,
     diseaseName: data.diseaseName,
     illnessId: data.diseaseName?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
-    slug: data.slug,
+    slug: data.slug || id,
     categoryId: data.mainCategory?.en?.toLowerCase().replace(/\s+/g, '_') || 'live',
     mainCategory: data.mainCategory,
     introduction: data.introduction,
@@ -70,7 +73,9 @@ export async function generateMetadata({ params }: RemedyPageProps): Promise<Met
   const remedy = await getRemedyData(id);
   if (!remedy) return { title: 'Remedy Not Found | Gharelu Upay Care' };
 
-  const introText = Array.isArray(remedy.introduction.hi) ? remedy.introduction.hi[0] : remedy.introduction.hi;
+  const introText = Array.isArray(remedy.introduction.hi) 
+    ? remedy.introduction.hi[0] 
+    : remedy.introduction.hi;
 
   return {
     title: `${remedy.name.hi} | ${remedy.name.en} - घरेलू उपाय केयर`,
@@ -80,7 +85,7 @@ export async function generateMetadata({ params }: RemedyPageProps): Promise<Met
       title: remedy.name.hi,
       description: remedy.name.en,
       type: 'article',
-      url: `https://studio-xi-mocha.vercel.app/remedy/${remedy.slug || remedy.id}`,
+      url: `https://studio-xi-mocha.vercel.app/remedy/${remedy.id}`,
     }
   };
 }
@@ -91,20 +96,23 @@ export default async function RemedyPage({ params }: RemedyPageProps) {
 
   if (!remedy) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7]">
-        <div className="text-center space-y-4">
-          <h1 className="text-2xl font-black text-primary">नुस्खा नहीं मिला | Remedy Not Found</h1>
-          <p className="text-muted-foreground">कृपया सही लिंक की जांच करें।</p>
-          <a href="/" className="inline-block bg-primary text-white px-6 py-2 rounded-full font-bold">होम पेज पर जाएं</a>
+      <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7] p-6 text-center">
+        <div className="space-y-6 max-w-sm animate-in fade-in zoom-in duration-500">
+          <div className="text-6xl">🌿</div>
+          <h1 className="text-2xl font-black text-primary font-headline">नुस्खा नहीं मिला | Remedy Not Found</h1>
+          <p className="text-muted-foreground font-medium">क्षमा करें, यह नुस्खा उपलब्ध नहीं है या लिंक गलत है।</p>
+          <a href="/" className="inline-block bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg transition-transform active:scale-95">
+            होम पेज पर जाएं
+          </a>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] pb-24">
-      <header className="h-14 bg-primary flex items-center px-6 sticky top-0 z-50">
-        <a href="/" className="text-white font-black text-lg">घरेलू उपाय केयर</a>
+    <div className="min-h-screen bg-[#FDFBF7] pb-24 selection:bg-primary selection:text-white">
+      <header className="h-14 bg-primary flex items-center px-6 sticky top-0 z-50 shadow-md">
+        <a href="/" className="text-white font-black text-lg font-headline tracking-wide">घरेलू उपाय केयर</a>
       </header>
 
       <main className="max-w-2xl mx-auto px-6 pt-10">
