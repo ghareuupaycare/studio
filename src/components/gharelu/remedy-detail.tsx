@@ -178,24 +178,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </Button>
       </div>
 
-      {/* Action Buttons Row - Side by side, right aligned */}
-      <div className="flex justify-end gap-3 mb-6">
-        <Button 
-          onClick={handleCopy}
-          className="h-10 px-4 bg-[#14532D] hover:bg-[#1a6b3a] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-2 font-bold text-sm shadow-md transition-all active:scale-95"
-        >
-          <Copy className="w-4 h-4" />
-          {isHindi ? 'कॉपी करें' : 'Copy'}
-        </Button>
-        <Button 
-          onClick={handleWhatsAppShare}
-          className="h-10 px-4 bg-[#14532D] hover:bg-[#1a6b3a] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-2 font-bold text-sm shadow-md transition-all active:scale-95"
-        >
-          <Share2 className="w-4 h-4" />
-          {isHindi ? 'शेयर करें' : 'Share'}
-        </Button>
-      </div>
-
       <div className="space-y-0">
         {renderSection(<Info className="w-5 h-5" />, labels.introduction, remedy.introduction[lang], 'green')}
         {renderSection(<Beaker className="w-5 h-5" />, labels.ingredients, remedy.ingredients[lang], 'yellow')}
@@ -307,6 +289,24 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         )}
 
         {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red', undefined, true)}
+      </div>
+
+      {/* Action Buttons Row - Positioned at the bottom, aligned to the right */}
+      <div className="flex justify-end gap-3 pt-4 mb-10">
+        <Button 
+          onClick={handleCopy}
+          className="h-10 px-4 bg-[#14532D] hover:bg-[#1a6b3a] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-2 font-bold text-sm shadow-md transition-all active:scale-95"
+        >
+          <Copy className="w-4 h-4" />
+          {isHindi ? 'कॉपी करें' : 'Copy'}
+        </Button>
+        <Button 
+          onClick={handleWhatsAppShare}
+          className="h-10 px-4 bg-[#14532D] hover:bg-[#1a6b3a] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-2 font-bold text-sm shadow-md transition-all active:scale-95"
+        >
+          <Share2 className="w-4 h-4" />
+          {isHindi ? 'शेयर करें' : 'Share'}
+        </Button>
       </div>
     </div>
   );
