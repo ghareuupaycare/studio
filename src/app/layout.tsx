@@ -1,3 +1,4 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
@@ -6,6 +7,18 @@ import { FirebaseClientProvider } from '@/firebase/client-provider';
 export const metadata: Metadata = {
   title: 'घरेलू उपाय केयर | Gharelu Upay Care',
   description: 'Ayurvedic traditional home remedies for a healthy life.',
+  manifest: '/manifest.json',
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icon-192x192.png' },
+    ],
+  },
+  themeColor: '#14532D',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0',
 };
 
 export default function RootLayout({
