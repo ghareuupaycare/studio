@@ -1,7 +1,9 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { PWARegistrar } from '@/components/pwa-registrar';
 
 export const metadata: Metadata = {
   title: 'घरेलू उपाय केयर | Gharelu Upay Care',
@@ -18,6 +20,11 @@ export const metadata: Metadata = {
   },
   themeColor: '#14532D',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'घरेलू उपाय',
+  },
 };
 
 export default function RootLayout({
@@ -38,6 +45,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
         <FirebaseClientProvider>
+          <PWARegistrar />
           {children}
           <Toaster />
         </FirebaseClientProvider>
