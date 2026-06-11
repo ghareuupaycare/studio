@@ -150,7 +150,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
       <>
         {parts.map((part, i) => 
           regex.test(part) ? (
-            <mark key={i} className="bg-accent/30 text-accent-foreground rounded-sm px-0.5 font-bold">
+            <mark key={i} className="bg-[#FBBF24] text-black rounded-sm px-1 font-black shadow-sm">
               {part}
             </mark>
           ) : (
@@ -255,14 +255,14 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
                       {toEnglishDigits(remedy.serialNumber === "Live" ? "★" : remedy.serialNumber)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-lg leading-tight truncate mb-1">
+                      <h4 className="font-bold text-lg leading-tight mb-1 whitespace-normal break-words">
                         {highlightMatchText(remedy.name[lang], query)}
                       </h4>
-                      <p className="text-[12px] opacity-60 truncate font-medium">
+                      <p className="text-[12px] opacity-60 font-medium whitespace-normal break-words line-clamp-2">
                         {highlightMatchText(remedy.introduction[lang], query)}
                       </p>
                     </div>
-                    <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                    <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0" />
                   </button>
                 ))}
               </div>
