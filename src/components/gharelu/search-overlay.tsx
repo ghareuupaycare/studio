@@ -21,6 +21,13 @@ interface SearchOverlayProps {
   allRemedies: Remedy[];
 }
 
+// Stop words to be ignored for better relevance
+const STOP_WORDS = new Set([
+  'मुझे', 'दिन', 'से', 'और', 'है', 'हैं', 'था', 'थी', 'के', 'का', 'की', 'में', 'पर', 'को', 'ने', 'हो', 'गया',
+  'i', 'have', 'for', 'since', 'the', 'a', 'an', 'is', 'am', 'are', 'was', 'were', 'to', 'in', 'on', 'at',
+  'with', 'me', 'my', 'been', 'has', 'had', 'feeling'
+]);
+
 export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, allRemedies }: SearchOverlayProps) => {
   const [query, setQuery] = useState('');
   const [isListening, setIsListening] = useState(false);
@@ -58,45 +65,48 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
     }
   };
 
-  // Smart Keyword Matching Logic
+  // Smart Keyword Matching with Relevance Ranking
   const results = useMemo(() => {
     if (!query.trim()) return [];
     
     const normalizedQuery = query.toLowerCase().trim();
-    const queryTokens = normalizedQuery.split(/\s+/).filter(t => t.length > 2); // Split into tokens
+    const queryTokens = normalizedQuery.split(/\s+/)
+      .filter(t => t.length > 1 && !STOP_WORDS.has(t)); // Filter out stop words and single characters
 
-    return allRemedies.filter(remedy => {
-      // 1. Exact Match in Name or Keywords (Highest Priority)
-      const nameMatch = (remedy.name.hi + ' ' + remedy.name.en).toLowerCase().includes(normalizedQuery);
-      
-      const keywordsStr = (Array.isArray(remedy.keywords) ? remedy.keywords.join(' ') : (remedy.keywords || '')).toLowerCase();
-      const keywordMatch = keywordsStr.includes(normalizedQuery);
+    if (queryTokens.length === 0 && normalizedQuery.length > 0) {
+      // If all words were stop words, just use the original query as one token
+      queryTokens.push(normalizedQuery);
+    }
 
-      if (nameMatch || keywordMatch) return true;
+    return allRemedies
+      .map(remedy => {
+        let score = 0;
+        const nameStr = (remedy.name.hi + ' ' + remedy.name.en).toLowerCase();
+        const keywordsStr = (Array.isArray(remedy.keywords) ? remedy.keywords.join(' ') : (remedy.keywords || '')).toLowerCase();
+        const introStr = (Array.isArray(remedy.introduction[lang]) 
+          ? (remedy.introduction[lang] as string[]).join(' ') 
+          : (remedy.introduction[lang] as string)).toLowerCase();
 
-      // 2. Token/Symptom Match (Smart Sentence Matching)
-      // Check if any significant word from user's sentence matches our database
-      const introStr = (Array.isArray(remedy.introduction[lang]) 
-        ? (remedy.introduction[lang] as string[]).join(' ') 
-        : (remedy.introduction[lang] as string)).toLowerCase();
+        // 1. Exact Full Phrase Match (Highest Score)
+        if (nameStr.includes(normalizedQuery)) score += 100;
+        if (keywordsStr.includes(normalizedQuery)) score += 80;
 
-      const tokenMatch = queryTokens.some(token => 
-        introStr.includes(token) || 
-        keywordsStr.includes(token) || 
-        remedy.name[lang].toLowerCase().includes(token)
-      );
+        // 2. Token Matching Score
+        queryTokens.forEach(token => {
+          if (nameStr.includes(token)) score += 40;
+          if (keywordsStr.includes(token)) score += 30;
+          if (introStr.includes(token)) score += 10;
+        });
 
-      return tokenMatch;
-    }).sort((a, b) => {
-      // Sort logic: exact matches first
-      const aNameMatch = (a.name[lang]).toLowerCase().includes(normalizedQuery);
-      const bNameMatch = (b.name[lang]).toLowerCase().includes(normalizedQuery);
-      if (aNameMatch && !bNameMatch) return -1;
-      if (!aNameMatch && bNameMatch) return 1;
-      return 0;
-    });
+        return { remedy, score };
+      })
+      .filter(item => item.score > 0) // Only keep items with a score
+      .sort((a, b) => b.score - a.score) // Sort by highest relevance score
+      .map(item => item.remedy)
+      .slice(0, 6); // Limit to top 6 highly relevant results
   }, [query, allRemedies, lang]);
 
+  // Log missed queries for analytics
   useEffect(() => {
     if (logTimeoutRef.current) clearTimeout(logTimeoutRef.current);
     if (query.trim() && results.length === 0) {
@@ -118,14 +128,36 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
     setQuery('');
   };
 
+  // Utility to highlight matching words in text
   const highlightMatchText = (text: string | string[], currentQuery: string) => {
     const displayStr = toEnglishDigits(Array.isArray(text) ? text[0] : text);
     if (!currentQuery.trim()) return displayStr;
-    const parts = displayStr.split(new RegExp(`(${currentQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
-    return parts.map((part, i) => 
-      part.toLowerCase() === currentQuery.toLowerCase().trim() ? (
-        <span key={i} className="font-bold text-accent">{part}</span>
-      ) : <span key={i}>{part}</span>
+
+    // Get significant tokens for highlighting
+    const tokens = currentQuery.toLowerCase().trim().split(/\s+/)
+      .filter(t => t.length > 1 && !STOP_WORDS.has(t));
+    
+    if (tokens.length === 0) tokens.push(currentQuery.toLowerCase().trim());
+
+    // Create a regex to match any of the tokens (case-insensitive)
+    const pattern = tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+    if (!pattern) return displayStr;
+    
+    const regex = new RegExp(`(${pattern})`, 'gi');
+    const parts = displayStr.split(regex);
+
+    return (
+      <>
+        {parts.map((part, i) => 
+          regex.test(part) ? (
+            <mark key={i} className="bg-accent/30 text-accent-foreground rounded-sm px-0.5 font-bold">
+              {part}
+            </mark>
+          ) : (
+            <span key={i}>{part}</span>
+          )
+        )}
+      </>
     );
   };
 
@@ -204,7 +236,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
               <div className="space-y-3 pb-10">
                 <div className="flex items-center gap-2 px-2 py-1 mb-2">
                   <span className="text-[11px] font-black uppercase tracking-[0.2em] opacity-60">
-                    {isHindi ? `मिलते-जुलते ${results.length} परिणाम` : `${results.length} Matching Results`}
+                    {isHindi ? `सबसे सटीक ${results.length} परिणाम` : `Top ${results.length} Best Results`}
                   </span>
                 </div>
                 {results.map((remedy) => (
@@ -217,7 +249,7 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
                     )}
                   >
                     <div className={cn(
-                      "w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg",
+                      "w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg shrink-0",
                       isNight ? "bg-white/5 text-accent" : "bg-accent/10 text-accent"
                     )}>
                       {toEnglishDigits(remedy.serialNumber === "Live" ? "★" : remedy.serialNumber)}
