@@ -1,14 +1,10 @@
-
 {
   "name": "घरेलू उपाय केयर",
   "short_name": "घरेलू उपाय",
-  "description": "आयुर्वेदिक पारंपरिक घरेलू नुस्खे और स्वास्थ्य समाधान।",
   "start_url": "/",
-  "scope": "/",
   "display": "standalone",
-  "orientation": "any",
   "background_color": "#ffffff",
-  "theme_color": "#14532D",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "/icon-192x192.png",

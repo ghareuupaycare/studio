@@ -1,6 +1,5 @@
-
-// Minimal Service Worker to satisfy Chrome PWA installability requirements
-self.addEventListener('install', (event) => {
+// Minimal Service Worker for PWA Installability
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
@@ -8,9 +7,6 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(clients.claim());
 });
 
-self.addEventListener('fetch', (event) => {
-  // Basic fetch listener required for PWA install criteria
-  event.respondWith(fetch(event.request).catch(() => {
-    return caches.match(event.request);
-  }));
+self.addEventListener('fetch', () => {
+  // Required by Chrome for installability
 });
