@@ -125,7 +125,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 pb-20 max-w-2xl mx-auto">
+    <div className="space-y-6 animate-in fade-in duration-500 pb-20 max-w-2xl mx-auto overflow-hidden">
       {/* Print Styles */}
       <style jsx global>{`
         @media print {
@@ -134,7 +134,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           #printable-area { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
           .no-print { display: none !important; }
           .print-header { display: flex !important; flex-direction: column; align-items: center; text-align: center; margin-bottom: 30px; border-bottom: 2px solid #14532D; padding-bottom: 15px; }
-          .print-footer { display: flex !important; justify-content: space-between; align-items: flex-end; margin-top: 40px; border-top: 1px solid #ddd; pt: 20px; }
+          .print-footer { display: flex !important; justify-content: space-between; align-items: flex-end; margin-top: 40px; border-top: 1px solid #ddd; padding-top: 20px; }
           .section-box { border-radius: 15px !important; border: 1px solid #ccc !important; margin-bottom: 15px !important; page-break-inside: avoid; }
         }
       `}</style>
@@ -192,7 +192,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 ))}
               </div>
 
-              {/* Dose Display (Screen active / Print All) */}
+              {/* Dose Display (Screen active) */}
               <div className="no-print">
                 <div className={cn("p-5 rounded-2xl border-l-4", isNight ? "bg-white/5 border-accent" : "bg-white/60 border-accent")}>
                   <div className="text-[16px] font-bold leading-relaxed">
@@ -271,27 +271,28 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 pt-4 mb-10 no-print">
+      {/* Optimized Side-by-Side Sharing Buttons */}
+      <div className="flex justify-end items-center gap-1.5 pt-4 mb-10 no-print flex-nowrap overflow-x-auto pb-2">
         <Button 
           onClick={handleDownloadPDF}
-          className="h-10 px-4 bg-[#14532D] hover:bg-[#1a6b3a] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-2 font-bold text-sm shadow-md transition-all active:scale-95"
+          className="h-9 px-3 bg-[#14532D] hover:bg-[#1a6b3a] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-[11px] sm:text-xs shadow-md transition-all active:scale-95 shrink-0"
         >
-          <FileDown className="w-4 h-4" />
-          {isHindi ? 'PDF डाउनलोड' : 'Download PDF'}
+          <FileDown className="w-3.5 h-3.5" />
+          <span className="whitespace-nowrap">PDF डाउनलोड / प्रिंट</span>
         </Button>
         <Button 
           onClick={handleCopy}
-          className="h-10 px-4 bg-[#14532D] hover:bg-[#1a6b3a] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-2 font-bold text-sm shadow-md transition-all active:scale-95"
+          className="h-9 px-3 bg-[#14532D] hover:bg-[#1a6b3a] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-[11px] sm:text-xs shadow-md transition-all active:scale-95 shrink-0"
         >
-          <Copy className="w-4 h-4" />
-          {isHindi ? 'कॉपी करें' : 'Copy'}
+          <Copy className="w-3.5 h-3.5" />
+          <span className="whitespace-nowrap">कॉपी करें</span>
         </Button>
         <Button 
           onClick={handleWhatsAppShare}
-          className="h-10 px-4 bg-[#14532D] hover:bg-[#1a6b3a] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-2 font-bold text-sm shadow-md transition-all active:scale-95"
+          className="h-9 px-3 bg-[#14532D] hover:bg-[#1a6b3a] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-[11px] sm:text-xs shadow-md transition-all active:scale-95 shrink-0"
         >
-          <Share2 className="w-4 h-4" />
-          {isHindi ? 'शेयर करें' : 'Share'}
+          <Share2 className="w-3.5 h-3.5" />
+          <span className="whitespace-nowrap">शेयर करें</span>
         </Button>
       </div>
     </div>
