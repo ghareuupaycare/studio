@@ -68,9 +68,10 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   };
 
   const handleCopy = () => {
-    const remedyTitle = toEnglishDigits(remedy.name[lang]);
-    const intro = toEnglishDigits(Array.isArray(remedy.introduction[lang]) ? remedy.introduction[lang].join('\n') : remedy.introduction[lang]);
-    const textToCopy = `${remedyTitle}\n\n${intro}\n\nपूरी जानकारी वेबसाइट पर देखें: ${shareUrl}`;
+    const titleText = toEnglishDigits(Array.isArray(remedy.name[lang]) ? remedy.name[lang][0] : remedy.name[lang]);
+    const introText = toEnglishDigits(Array.isArray(remedy.introduction[lang]) ? remedy.introduction[lang].join('\n') : remedy.introduction[lang]);
+    
+    const textToCopy = `${titleText}\n\n${introText}\n\nपूरी जानकारी वेबसाइट पर देखें: ${shareUrl}`;
 
     navigator.clipboard.writeText(textToCopy).then(() => {
       toast({
@@ -95,13 +96,20 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const renderSection = (icon: React.ReactNode, title: string, content: any, variant: SectionVariant, customHeader?: string, appendDisclaimer?: boolean) => {
     if (!content) return null;
-    let points: string[] = Array.isArray(content) ? content.filter(item => typeof item === 'string' && item.trim() !== '') : (typeof content === 'string' ? content.split('\n').filter(line => line.trim() !== '') : []);
+    let points: string[] = Array.isArray(content) 
+      ? content.filter(item => typeof item === 'string' && item.trim() !== '') 
+      : (typeof content === 'string' ? content.split('\n').filter(line => line.trim() !== '') : []);
+    
     if (points.length === 0) return null;
 
     return (
-      <div className={cn("p-6 rounded-[2rem] border shadow-md space-y-4 mb-6 transition-all duration-300 break-inside-avoid", getVariantStyles(variant))}>
+      <div className={cn("p-6 rounded-[2rem] border shadow-md space-y-4 mb-6 transition-all duration-300 break-inside-avoid section-box", getVariantStyles(variant))}>
         <div className="flex items-center gap-3">
-          <div className={cn("p-2 rounded-xl no-print", variant === 'green' ? "bg-emerald-500/10 text-emerald-700" : variant === 'red' ? "bg-red-500/10 text-red-700" : "bg-amber-500/10 text-amber-700")}>
+          <div className={cn("p-2 rounded-xl no-print", 
+            variant === 'green' ? "bg-emerald-500/10 text-emerald-700" : 
+            variant === 'red' ? "bg-red-500/10 text-red-700" : 
+            "bg-amber-500/10 text-amber-700"
+          )}>
             {icon}
           </div>
           <div className="flex flex-col">
@@ -113,12 +121,20 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           <ul className="space-y-3 list-none p-0 m-0">
             {points.map((item, i) => (
               <li key={i} className="flex items-start gap-3">
-                <span className={cn("w-1.5 h-1.5 rounded-full mt-2 shrink-0", variant === 'green' ? "bg-emerald-600" : variant === 'red' ? "bg-red-600" : "bg-amber-600")} />
+                <span className={cn("w-1.5 h-1.5 rounded-full mt-2 shrink-0", 
+                  variant === 'green' ? "bg-emerald-600" : 
+                  variant === 'red' ? "bg-red-600" : 
+                  "bg-amber-600"
+                )} />
                 <span>{toEnglishDigits(item)}</span>
               </li>
             ))}
           </ul>
-          {appendDisclaimer && <div className="pt-4 border-t border-red-200/50 mt-4 italic text-[14px] leading-relaxed">{disclaimerText}</div>}
+          {appendDisclaimer && (
+            <div className="pt-4 border-t border-red-200/50 mt-4 italic text-[14px] leading-relaxed">
+              {disclaimerText}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -141,6 +157,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
       {/* Main Content (Screen) */}
       <div id="printable-area" className="w-full">
+        {/* Top Branding for PDF */}
         <div className="hidden print-header">
           <h1 className="text-2xl font-black text-[#14532D] font-headline">🌿 घरेलू उपाय केयर | Gharelu Upay Care 🌿</h1>
           <p className="text-sm font-bold text-amber-600">https://studio-xi-mocha.vercel.app/</p>
@@ -170,6 +187,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           {renderSection(<Beaker className="w-5 h-5" />, labels.ingredients, remedy.ingredients[lang], 'yellow')}
           {renderSection(<ChefHat className="w-5 h-5" />, labels.preparation, remedy.preparation[lang], 'yellow')}
           
+          {/* Section 4: Dosage */}
           {remedy.doses && remedy.doses.length > 0 && (
             <div className={cn("p-6 rounded-[2rem] border shadow-md space-y-6 mb-6 transition-all duration-300 break-inside-avoid section-box", getVariantStyles('yellow'))}>
               <div className="flex items-center gap-3">
@@ -185,7 +203,16 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               {/* Dose Selector (Screen Only) */}
               <div className="grid grid-cols-2 gap-2 no-print">
                 {remedy.doses.map((dose, i) => (
-                  <button key={i} onClick={() => setSelectedDoseIndex(i)} className={cn("px-4 py-3 rounded-2xl text-[13px] font-bold transition-all border flex items-center justify-center gap-2", selectedDoseIndex === i ? "bg-accent border-accent text-white shadow-lg scale-95" : (isNight ? "bg-white/5 border-white/10 text-white" : "bg-white border-amber-200 text-[#5F4B1A] hover:bg-amber-50"))}>
+                  <button 
+                    key={i} 
+                    onClick={() => setSelectedDoseIndex(i)} 
+                    className={cn(
+                      "px-4 py-3 rounded-2xl text-[13px] font-bold transition-all border flex items-center justify-center gap-2", 
+                      selectedDoseIndex === i 
+                        ? "bg-accent border-accent text-white shadow-lg scale-95" 
+                        : (isNight ? "bg-white/5 border-white/10 text-white" : "bg-white border-amber-200 text-[#5F4B1A] hover:bg-amber-50")
+                    )}
+                  >
                     <User className="w-3.5 h-3.5" />
                     {toEnglishDigits(dose.ageRange[lang])}
                   </button>
@@ -197,9 +224,17 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 <div className={cn("p-5 rounded-2xl border-l-4", isNight ? "bg-white/5 border-accent" : "bg-white/60 border-accent")}>
                   <div className="text-[16px] font-bold leading-relaxed">
                     <ul className="space-y-2 list-none p-0 m-0">
-                      {(Array.isArray(remedy.doses[selectedDoseIndex].dose[lang]) ? (remedy.doses[selectedDoseIndex].dose[lang] as string[]) : (remedy.doses[selectedDoseIndex].dose[lang] as string).split('\n')).filter(p => p.trim() !== '').map((point, idx) => (
-                        <li key={idx} className="flex items-start gap-3"><span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" /><span>{toEnglishDigits(point)}</span></li>
-                      ))}
+                      {(Array.isArray(remedy.doses[selectedDoseIndex].dose[lang]) 
+                        ? (remedy.doses[selectedDoseIndex].dose[lang] as string[]) 
+                        : (remedy.doses[selectedDoseIndex].dose[lang] as string).split('\n'))
+                        .filter(p => p.trim() !== '')
+                        .map((point, idx) => (
+                          <li key={idx} className="flex items-start gap-3">
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
+                            <span>{toEnglishDigits(point)}</span>
+                          </li>
+                        ))
+                      }
                     </ul>
                   </div>
                 </div>
@@ -223,39 +258,56 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           {renderSection(<Apple className="w-5 h-5" />, labels.dietEat, remedy.dietEat[lang], 'green')}
           {renderSection(<AlertTriangle className="w-5 h-5" />, labels.dietAvoid, remedy.dietAvoid[lang], 'red')}
           
+          {/* Section 8: Routine (Handles both dynamic string and nested object) */}
           {remedy.routine && (
-            <div className={cn("p-6 rounded-[2rem] border shadow-sm space-y-4 mb-6 break-inside-avoid section-box", getVariantStyles('yellow'))}>
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-amber-500/10 text-amber-700 no-print">
-                  <Clock className="w-5 h-5" />
+            typeof (remedy.routine as any).morning === 'undefined' ? (
+              renderSection(<Clock className="w-5 h-5" />, labels.routine, (remedy.routine as any)[lang], 'yellow')
+            ) : (
+              <div className={cn("p-6 rounded-[2rem] border shadow-sm space-y-4 mb-6 break-inside-avoid section-box", getVariantStyles('yellow'))}>
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-700 no-print">
+                    <Clock className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
                 </div>
-                <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
-              </div>
-              <div className="space-y-4">
-                {['morning', 'afternoon', 'evening'].map((time) => {
-                  const content = (remedy.routine as any)[time];
-                  if (!content) return null;
-                  const timeLabel = { morning: isHindi ? 'सुबह:' : 'Morning:', afternoon: isHindi ? 'दोपहर:' : 'Afternoon:', evening: isHindi ? 'शाम:' : 'Evening:' }[time as 'morning'|'afternoon'|'evening'];
-                  return (
-                    <div key={time} className="flex items-start gap-3">
-                      <span className="text-[13px] font-bold text-accent w-20 pt-1 shrink-0">{timeLabel}</span>
-                      <div className="flex-1">
-                        <ul className="space-y-2 list-none p-0 m-0">
-                          {(Array.isArray(content[lang]) ? content[lang] : content[lang].split('\n')).filter((p: string) => p.trim() !== '').map((point: string, idx: number) => (
-                            <li key={idx} className="flex items-start gap-2 text-[14px] font-medium"><span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-2 shrink-0" /><span>{toEnglishDigits(point)}</span></li>
-                          ))}
-                        </ul>
+                <div className="space-y-4">
+                  {['morning', 'afternoon', 'evening'].map((time) => {
+                    const content = (remedy.routine as any)[time];
+                    if (!content) return null;
+                    const timeLabel = { 
+                      morning: isHindi ? 'सुबह:' : 'Morning:', 
+                      afternoon: isHindi ? 'दोपहर:' : 'Afternoon:', 
+                      evening: isHindi ? 'शाम:' : 'Evening:' 
+                    }[time as 'morning'|'afternoon'|'evening'];
+                    
+                    return (
+                      <div key={time} className="flex items-start gap-3">
+                        <span className="text-[13px] font-bold text-accent w-20 pt-1 shrink-0">{timeLabel}</span>
+                        <div className="flex-1">
+                          <ul className="space-y-2 list-none p-0 m-0">
+                            {(Array.isArray(content[lang]) ? content[lang] : content[lang].split('\n'))
+                              .filter((p: string) => p.trim() !== '')
+                              .map((point: string, idx: number) => (
+                                <li key={idx} className="flex items-start gap-2 text-[14px] font-medium">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-2 shrink-0" />
+                                  <span>{toEnglishDigits(point)}</span>
+                                </li>
+                              ))
+                            }
+                          </ul>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )
           )}
 
           {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red', undefined, true)}
         </div>
 
+        {/* PDF Footer with QR Code */}
         <div className="hidden print-footer">
           <div className="text-[10px] text-gray-500 max-w-[70%]">
             यह जानकारी केवल शैक्षिक उद्देश्य के लिए है। स्वास्थ्य संबंधी किसी भी निर्णय से पहले विशेषज्ञ की सलाह लें।
@@ -271,7 +323,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      {/* Optimized Side-by-Side Sharing Buttons */}
+      {/* Sharing and Actions Row - Optimized Layout */}
       <div className="flex justify-end items-center gap-1.5 pt-4 mb-10 no-print flex-nowrap overflow-x-auto pb-2">
         <Button 
           onClick={handleDownloadPDF}
