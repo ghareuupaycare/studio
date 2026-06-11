@@ -1,12 +1,13 @@
-
 {
-  "name": "घरेलू उपाय केयर | Gharelu Upay Care",
+  "name": "घरेलू उपाय केयर",
   "short_name": "घरेलू उपाय",
-  "description": "Ayurvedic traditional home remedies for a healthy life.",
+  "description": "पारंपरिक आयुर्वेदिक घरेलू नुस्खे और उपचार",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FDFBF7",
   "theme_color": "#14532D",
+  "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
       "src": "/icon-192x192.png",
