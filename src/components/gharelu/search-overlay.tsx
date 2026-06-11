@@ -28,6 +28,11 @@ const STOP_WORDS = new Set([
   'with', 'me', 'my', 'been', 'has', 'had', 'feeling'
 ]);
 
+// Generic words that should not trigger a match alone in compound queries
+const GENERIC_WORDS = new Set([
+  'दर्द', 'pain', 'ilaj', 'upay', 'upchar', 'treatment', 'remedy', 'care', 'medicine', 'dawa', 'home', 'gharelu'
+]);
+
 export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, allRemedies }: SearchOverlayProps) => {
   const [query, setQuery] = useState('');
   const [isListening, setIsListening] = useState(false);
@@ -65,16 +70,15 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
     }
   };
 
-  // Smart Keyword Matching with Relevance Ranking
+  // Smart Keyword Matching with Relevance Ranking & Strict Filtering
   const results = useMemo(() => {
     if (!query.trim()) return [];
     
     const normalizedQuery = query.toLowerCase().trim();
     const queryTokens = normalizedQuery.split(/\s+/)
-      .filter(t => t.length > 1 && !STOP_WORDS.has(t)); // Filter out stop words and single characters
+      .filter(t => t.length > 1 && !STOP_WORDS.has(t));
 
     if (queryTokens.length === 0 && normalizedQuery.length > 0) {
-      // If all words were stop words, just use the original query as one token
       queryTokens.push(normalizedQuery);
     }
 
@@ -87,12 +91,25 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
           ? (remedy.introduction[lang] as string[]).join(' ') 
           : (remedy.introduction[lang] as string)).toLowerCase();
 
-        // 1. Exact Full Phrase Match (Highest Score)
-        if (nameStr.includes(normalizedQuery)) score += 100;
-        if (keywordsStr.includes(normalizedQuery)) score += 80;
+        // Check which tokens match
+        const matchedTokens = queryTokens.filter(token => 
+          nameStr.includes(token) || keywordsStr.includes(token) || introStr.includes(token)
+        );
 
-        // 2. Token Matching Score
-        queryTokens.forEach(token => {
+        const hasSpecificMatch = matchedTokens.some(token => !GENERIC_WORDS.has(token));
+        const isFullPhraseMatch = nameStr.includes(normalizedQuery) || keywordsStr.includes(normalizedQuery);
+
+        // STRICT FILTERING LOGIC:
+        // If it's not an exact phrase match AND we have multiple tokens,
+        // we MUST match at least one specific (non-generic) symptom or body part.
+        if (!isFullPhraseMatch && queryTokens.length > 1 && !hasSpecificMatch) {
+          return { remedy, score: 0 };
+        }
+
+        // Scoring
+        if (isFullPhraseMatch) score += 100;
+
+        matchedTokens.forEach(token => {
           if (nameStr.includes(token)) score += 40;
           if (keywordsStr.includes(token)) score += 30;
           if (introStr.includes(token)) score += 10;
@@ -100,10 +117,10 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
 
         return { remedy, score };
       })
-      .filter(item => item.score > 0) // Only keep items with a score
-      .sort((a, b) => b.score - a.score) // Sort by highest relevance score
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
       .map(item => item.remedy)
-      .slice(0, 6); // Limit to top 6 highly relevant results
+      .slice(0, 6);
   }, [query, allRemedies, lang]);
 
   // Log missed queries for analytics
@@ -133,13 +150,11 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
     const displayStr = toEnglishDigits(Array.isArray(text) ? text[0] : text);
     if (!currentQuery.trim()) return displayStr;
 
-    // Get significant tokens for highlighting
     const tokens = currentQuery.toLowerCase().trim().split(/\s+/)
       .filter(t => t.length > 1 && !STOP_WORDS.has(t));
     
     if (tokens.length === 0) tokens.push(currentQuery.toLowerCase().trim());
 
-    // Create a regex to match any of the tokens (case-insensitive)
     const pattern = tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
     if (!pattern) return displayStr;
     
@@ -268,15 +283,11 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
               </div>
             ) : query.trim() ? (
               <div className="flex flex-col items-center justify-center py-16 text-center space-y-4 opacity-40">
-                <Loader2 className="w-10 h-10 animate-spin text-accent" />
                 <div className="space-y-1">
-                  <p className="font-black text-lg">
-                    {isHindi ? 'क्षमा करें, कोई सटीक नुस्खा नहीं मिला' : 'No exact remedy found'}
-                  </p>
-                  <p className="text-sm px-10">
+                  <p className="font-black text-lg px-8">
                     {isHindi 
-                      ? 'कृपया अपनी समस्या के मुख्य शब्द बोलें (जैसे: बुखार, सर्दी, खांसी)' 
-                      : 'Try speaking core symptoms (e.g., Fever, Cold, Cough)'}
+                      ? "क्षमा करें, इस बीमारी/लक्षण का नुस्खा अभी उपलब्ध नहीं है। हम इसे जल्द ही जोड़ेंगे।" 
+                      : "Sorry, the remedy for this illness/symptom is not available yet. We will add it soon."}
                   </p>
                 </div>
               </div>
