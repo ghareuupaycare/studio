@@ -61,15 +61,18 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const shareUrl = `https://studio-xi-mocha.vercel.app/?remedyId=${remedy.id}`;
 
-  // Helper to format text for Copy/Share
+  // Helper to format text for Copy (Full Content) or Share (Brief)
   const getFormattedContent = (full: boolean = true) => {
     const name = remedy.name[lang];
-    const intro = Array.isArray(remedy.introduction[lang]) 
-      ? (remedy.introduction[lang] as string[]).join('\n') 
-      : remedy.introduction[lang];
     
+    // Formatting helper for array or string content
+    const formatValue = (val: any) => {
+      if (Array.isArray(val)) return val.map(v => `• ${v}`).join('\n');
+      return String(val).split('\n').map(v => `• ${v}`).join('\n');
+    };
+
     if (!full) {
-      // Summary for WhatsApp
+      // Summary for WhatsApp Share
       const briefIntro = Array.isArray(remedy.introduction[lang]) 
         ? (remedy.introduction[lang] as string[])[0] 
         : (remedy.introduction[lang] as string).split('\n')[0];
@@ -81,35 +84,33 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       return `🌿 *${name}* 🌿\n\n${briefIntro}\n\n${callToAction}\n${shareUrl}`;
     }
 
-    // Full content for Copy
-    const ingredients = remedy.ingredients[lang].map(i => `• ${i}`).join('\n');
-    const prep = Array.isArray(remedy.preparation[lang]) 
-      ? (remedy.preparation[lang] as string[]).map(i => `• ${i}`).join('\n') 
-      : remedy.preparation[lang];
-    const usage = Array.isArray(remedy.usage[lang]) 
-      ? (remedy.usage[lang] as string[]).map(i => `• ${i}`).join('\n') 
-      : remedy.usage[lang];
-    const dietEat = Array.isArray(remedy.dietEat[lang]) 
-      ? (remedy.dietEat[lang] as string[]).map(i => `• ${i}`).join('\n') 
-      : remedy.dietEat[lang];
-    const dietAvoid = Array.isArray(remedy.dietAvoid[lang]) 
-      ? (remedy.dietAvoid[lang] as string[]).map(i => `• ${i}`).join('\n') 
-      : remedy.dietAvoid[lang];
-    const safety = Array.isArray(remedy.safetyAdvice[lang]) 
-      ? (remedy.safetyAdvice[lang] as string[]).map(i => `• ${i}`).join('\n') 
-      : remedy.safetyAdvice[lang];
-
+    // Full detailed content for Copy Button
     let text = `🌿 *${name}* 🌿\n\n`;
-    text += `[${labels.introduction}]\n${intro}\n\n`;
-    text += `[${labels.ingredients}]\n${ingredients}\n\n`;
-    text += `[${labels.preparation}]\n${prep}\n\n`;
-    text += `[${labels.usage}]\n${usage}\n\n`;
-    text += `[${labels.dietEat}]\n${dietEat}\n\n`;
-    text += `[${labels.dietAvoid}]\n${dietAvoid}\n\n`;
-    text += `[${labels.safety}]\n${safety}\n\n`;
+    
+    text += `[${labels.introduction}]\n${formatValue(remedy.introduction[lang])}\n\n`;
+    text += `[${labels.ingredients}]\n${formatValue(remedy.ingredients[lang])}\n\n`;
+    text += `[${labels.preparation}]\n${formatValue(remedy.preparation[lang])}\n\n`;
+    
+    // Include the selected dose in the copy
+    if (remedy.doses && remedy.doses.length > 0) {
+      const activeDose = remedy.doses[selectedDoseIndex];
+      text += `[${labels.dosage}]\n${activeDose.ageRange[lang]}: ${formatValue(activeDose.dose[lang])}\n\n`;
+    }
+
+    text += `[${labels.usage}]\n${formatValue(remedy.usage[lang])}\n\n`;
+    text += `[${labels.dietEat}]\n${formatValue(remedy.dietEat[lang])}\n\n`;
+    text += `[${labels.dietAvoid}]\n${formatValue(remedy.dietAvoid[lang])}\n\n`;
+    
+    if (remedy.routine) {
+      const routine = (remedy.routine as any)[lang];
+      text += `[${labels.routine}]\n${formatValue(routine)}\n\n`;
+    }
+
+    text += `[${labels.safety}]\n${formatValue(remedy.safetyAdvice[lang])}\n\n`;
+    text += `${disclaimerText}\n\n`;
     text += `🔗 ${shareUrl}`;
 
-    return text;
+    return toEnglishDigits(text);
   };
 
   const handleWhatsAppShare = () => {
