@@ -59,7 +59,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     ? "विशेष परामर्श: प्रिय पाठक, यह घरेलू उपाय शैक्षिक उद्देश्य से साझा किए गए हैं। किसी भी गंभीर स्थिति में हों, तो कृपया किसी योग्य डॉक्टर या वैद्य से व्यक्तिगत सलाह ज़रूर लें।"
     : "Special Advice: Dear Reader, these home remedies are shared for educational purposes. Consult a qualified doctor or Vaidya for serious conditions.";
 
-  const shareUrl = `https://gharelu-upay.web.app/remedy/${remedy.id}`;
+  // Updated share URL to use the working Vercel domain
+  const shareUrl = `https://studio-xi-mocha.vercel.app/remedy/${remedy.id}`;
 
   const handleWhatsAppShare = () => {
     const remedyTitle = remedy.name[lang];
@@ -154,7 +155,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           </div>
         </div>
 
-        <div className="space-y-0">
+        <div className="space-y-0" id="recipe-text-content">
           {renderSection(<Info className="w-5 h-5" />, labels.introduction, remedy.introduction[lang], 'green')}
           {renderSection(<Beaker className="w-5 h-5" />, labels.ingredients, remedy.ingredients[lang], 'yellow')}
           {renderSection(<ChefHat className="w-5 h-5" />, labels.preparation, remedy.preparation[lang], 'yellow')}
