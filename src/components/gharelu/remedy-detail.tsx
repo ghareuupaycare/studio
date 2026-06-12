@@ -59,8 +59,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     ? "विशेष परामर्श: प्रिय पाठक, यह घरेलू उपाय शैक्षिक उद्देश्य से साझा किए गए हैं। किसी भी गंभीर स्थिति में हों, तो कृपया किसी योग्य डॉक्टर या वैद्य से व्यक्तिगत सलाह ज़रूर लें।"
     : "Special Advice: Dear Reader, these home remedies are shared for educational purposes. Consult a qualified doctor or Vaidya for serious conditions.";
 
-  // Updated share URL to use the working Vercel domain
-  const shareUrl = `https://studio-xi-mocha.vercel.app/remedy/${remedy.id}`;
+  // FIXED: Using the working query parameter format for reliable sharing
+  const shareUrl = `https://studio-xi-mocha.vercel.app/?remedyId=${remedy.id}`;
 
   const handleWhatsAppShare = () => {
     const remedyTitle = remedy.name[lang];
