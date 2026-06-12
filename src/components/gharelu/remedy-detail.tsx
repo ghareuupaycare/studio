@@ -248,7 +248,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               variant="ghost" 
               size="icon" 
               onClick={handleToggleSpeech}
-              className={cn("rounded-full h-10 w-10 transition-colors", isSpeaking ? "text-accent bg-accent/10" : "text-muted-foreground hover:text-accent")}
+              className={cn(
+                "rounded-full h-10 w-10 transition-all", 
+                isNight 
+                  ? (isSpeaking ? "bg-white/20 text-white" : "text-white/60 hover:text-white hover:bg-white/10") 
+                  : (isSpeaking ? "bg-slate-200 text-slate-900" : "text-slate-600 hover:text-slate-900 hover:bg-slate-100")
+              )}
               title={isSpeaking ? (isHindi ? "सुनना बंद करें" : "Stop Listening") : (isHindi ? "नुस्खा सुनें" : "Listen to Recipe")}
             >
               {isSpeaking ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
