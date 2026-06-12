@@ -2,9 +2,11 @@
   "name": "घरेलू उपाय केयर",
   "short_name": "घरेलू उपाय",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "theme_color": "#14532D",
+  "description": "Ayurvedic traditional home remedies for a healthy life.",
   "icons": [
     {
       "src": "/icon-192x192.png",
