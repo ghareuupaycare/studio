@@ -108,7 +108,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
     text += `[${labels.safety}]\n${formatValue(remedy.safetyAdvice[lang])}\n\n`;
     text += `${disclaimerText}\n\n`;
-    text += `🔗 ${shareUrl}`;
+    text += `${shareUrl}`; // Removed icon and ensured it starts after the double \n from previous line for clickability
 
     return toEnglishDigits(text);
   };
