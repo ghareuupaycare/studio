@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Remedy } from '@/lib/remedy-types';
 import { Language, Theme } from '@/app/page';
 import { 
@@ -17,7 +17,9 @@ import {
   User,
   Share2,
   Copy,
-  FileDown
+  FileDown,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -37,7 +39,16 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
   const [selectedDoseIndex, setSelectedDoseIndex] = useState(0);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const { toast } = useToast();
+  const synthRef = useRef<SpeechSynthesis | null>(null);
+
+  useEffect(() => {
+    synthRef.current = window.speechSynthesis;
+    return () => {
+      if (synthRef.current) synthRef.current.cancel();
+    };
+  }, []);
 
   const labels = {
     introduction: isHindi ? '1. बीमारी का परिचय' : '1. Introduction',
@@ -60,6 +71,71 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     : "Special Advice: Dear Reader, these home remedies are shared solely for educational purposes. In case of any serious condition, please consult a qualified doctor or Vaidya for personal advice. Stay safe, stay healthy, your health is our supreme priority.";
 
   const shareUrl = `https://studio-xi-mocha.vercel.app/?remedyId=${remedy.id}`;
+
+  const handleToggleSpeech = () => {
+    if (!synthRef.current) return;
+
+    if (isSpeaking) {
+      synthRef.current.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
+    const constructText = () => {
+      let text = `${remedy.name[lang]}. `;
+      
+      const addSection = (title: string, content: any) => {
+        if (!content) return;
+        text += `${title}. `;
+        if (Array.isArray(content)) {
+          text += content.join('. ') + '. ';
+        } else if (typeof content === 'string') {
+          text += content + '. ';
+        }
+      };
+
+      addSection(labels.introduction, remedy.introduction[lang]);
+      addSection(labels.ingredients, remedy.ingredients[lang]);
+      addSection(labels.preparation, remedy.preparation[lang]);
+      
+      if (remedy.doses && remedy.doses.length > 0) {
+        text += `${labels.dosage}. `;
+        const dose = remedy.doses[selectedDoseIndex];
+        text += `${dose.ageRange[lang]}: ${Array.isArray(dose.dose[lang]) ? dose.dose[lang].join('. ') : dose.dose[lang]}. `;
+      }
+
+      addSection(labels.usage, remedy.usage[lang]);
+      addSection(labels.dietEat, remedy.dietEat[lang]);
+      addSection(labels.dietAvoid, remedy.dietAvoid[lang]);
+      
+      if (remedy.routine) {
+        text += `${labels.routine}. `;
+        if (typeof (remedy.routine as any).morning !== 'undefined') {
+          const r = remedy.routine as any;
+          if (r.morning) text += `${isHindi ? 'सुबह' : 'Morning'}: ${r.morning[lang]}. `;
+          if (r.afternoon) text += `${isHindi ? 'दोपहर' : 'Afternoon'}: ${r.afternoon[lang]}. `;
+          if (r.evening) text += `${isHindi ? 'शाम' : 'Evening'}: ${r.evening[lang]}. `;
+        } else {
+          text += (remedy.routine as any)[lang] + '. ';
+        }
+      }
+
+      addSection(labels.safety, remedy.safetyAdvice[lang]);
+      text += disclaimerText;
+      
+      return toEnglishDigits(text).replace(/[*_#]/g, '');
+    };
+
+    const utterance = new SpeechSynthesisUtterance(constructText());
+    utterance.lang = isHindi ? 'hi-IN' : 'en-US';
+    utterance.rate = 0.9;
+    
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    synthRef.current.speak(utterance);
+  };
 
   const handleWhatsAppShare = () => {
     const remedyTitle = remedy.name[lang];
@@ -163,18 +239,29 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           <p className="text-sm font-bold text-amber-600">https://studio-xi-mocha.vercel.app/</p>
         </div>
 
-        <div className="flex items-center justify-between mb-4 no-print">
+        <div className="flex items-start justify-between mb-4 no-print gap-2">
           <h2 className={cn("text-[26px] font-black tracking-wide leading-tight flex-1", isNight ? "text-white" : "text-[#14532D]")}>
             {toEnglishDigits(remedy.name[lang])}
           </h2>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={onToggleFavorite} 
-            className={cn("rounded-full h-12 w-12", isFavorite ? "text-accent" : "text-muted-foreground")}
-          >
-            <Heart className={cn("w-7 h-7", isFavorite && "fill-current")} />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleToggleSpeech}
+              className={cn("rounded-full h-10 w-10 transition-colors", isSpeaking ? "text-accent bg-accent/10" : "text-muted-foreground hover:text-accent")}
+              title={isSpeaking ? (isHindi ? "सुनना बंद करें" : "Stop Listening") : (isHindi ? "नुस्खा सुनें" : "Listen to Recipe")}
+            >
+              {isSpeaking ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={onToggleFavorite} 
+              className={cn("rounded-full h-10 w-10", isFavorite ? "text-accent" : "text-muted-foreground")}
+            >
+              <Heart className={cn("w-6 h-6", isFavorite && "fill-current")} />
+            </Button>
+          </div>
         </div>
 
         {/* Print Title Only */}
