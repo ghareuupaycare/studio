@@ -49,7 +49,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     }
     return () => {
       if (synthRef.current) {
-        console.log("Cancelling speech on unmount");
         synthRef.current.cancel();
       }
     };
@@ -80,86 +79,68 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const handleToggleSpeech = () => {
     console.log("Speaker clicked");
     
-    if (!synthRef.current) {
-      console.error("SpeechSynthesis not supported in this browser");
-      toast({
-        variant: "destructive",
-        title: isHindi ? "त्रुटि" : "Error",
-        description: isHindi ? "आपका ब्राउज़र ऑडियो का समर्थन नहीं करता है।" : "Your browser does not support audio.",
-      });
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      alert(isHindi ? "आपका ब्राउज़र ऑडियो का समर्थन नहीं करता है।" : "Speech engine not initialized/supported.");
       return;
     }
 
+    const synth = window.speechSynthesis;
+
+    // 1. Always cancel to clear stuck queues
+    synth.cancel();
+
     if (isSpeaking) {
-      console.log("Stopping speech");
-      synthRef.current.cancel();
       setIsSpeaking(false);
       return;
     }
 
-    // Construct readable text specifically from the data
-    const constructText = () => {
-      let text = `${remedy.name[lang]}. `;
-      
-      const addSection = (title: string, content: any) => {
-        if (!content) return;
-        text += `${title}. `;
-        if (Array.isArray(content)) {
-          text += content.join('. ') + '. ';
-        } else if (typeof content === 'string') {
-          text += content + '. ';
-        }
-      };
+    // 2. Fetch text content from the DOM element specifically (as requested)
+    const recipeElement = document.querySelector('.recipe-text');
+    let textToSpeak = "";
 
-      addSection(labels.introduction, remedy.introduction[lang]);
-      addSection(labels.ingredients, remedy.ingredients[lang]);
-      addSection(labels.preparation, remedy.preparation[lang]);
-      
-      if (remedy.doses && remedy.doses.length > 0) {
-        text += `${labels.dosage}. `;
-        const dose = remedy.doses[selectedDoseIndex];
-        text += `${dose.ageRange[lang]}: ${Array.isArray(dose.dose[lang]) ? dose.dose[lang].join('. ') : dose.dose[lang]}. `;
-      }
+    if (recipeElement) {
+      textToSpeak = (recipeElement as HTMLElement).innerText;
+    } else {
+      // Fallback: Construct if element not found (though we ensure it below)
+      textToSpeak = `${remedy.name[lang]}. ${labels.introduction}. ${remedy.introduction[lang]}`;
+    }
 
-      addSection(labels.usage, remedy.usage[lang]);
-      addSection(labels.dietEat, remedy.dietEat[lang]);
-      addSection(labels.dietAvoid, remedy.dietAvoid[lang]);
-      
-      if (remedy.routine) {
-        text += `${labels.routine}. `;
-        const routineContent = (remedy.routine as any)[lang] || '';
-        text += routineContent + '. ';
-      }
+    // Clean text for smooth reading
+    const cleanText = toEnglishDigits(textToSpeak).replace(/[*_#]/g, '');
 
-      addSection(labels.safety, remedy.safetyAdvice[lang]);
-      text += disclaimerText;
-      
-      return toEnglishDigits(text).replace(/[*_#]/g, '');
-    };
-
-    const finalSpeechText = constructText();
-    console.log("Speech text constructed:", finalSpeechText.substring(0, 100) + "...");
-
-    const utterance = new SpeechSynthesisUtterance(finalSpeechText);
-    utterance.lang = isHindi ? 'hi-IN' : 'en-US';
-    utterance.rate = 0.95;
+    // 3. Robust initialization
+    const msg = new SpeechSynthesisUtterance(cleanText);
+    msg.lang = isHindi ? 'hi-IN' : 'en-US';
+    msg.rate = 1;
+    msg.pitch = 1;
     
-    utterance.onstart = () => {
-      console.log("Speech started");
+    msg.onstart = () => {
+      console.log("Speech started successfully");
       setIsSpeaking(true);
     };
     
-    utterance.onend = () => {
-      console.log("Speech ended normally");
+    msg.onend = () => {
+      console.log("Speech ended");
       setIsSpeaking(false);
     };
     
-    utterance.onerror = (event) => {
-      console.error("SpeechSynthesisUtterance error", event);
+    msg.onerror = (event) => {
+      console.error("Speech error", event);
       setIsSpeaking(false);
+      if (event.error === 'network') {
+        alert(isHindi ? "नेटवर्क त्रुटि: आवाज़ लोड नहीं हो सकी।" : "Network error: Voice data could not be loaded.");
+      }
     };
 
-    synthRef.current.speak(utterance);
+    // 4. Trigger Speak (Handles user gesture requirement)
+    synth.speak(msg);
+
+    // Immediate check for initialization
+    setTimeout(() => {
+      if (!synth.speaking && !isSpeaking) {
+        console.warn("Speech engine failed to start");
+      }
+    }, 200);
   };
 
   const handleWhatsAppShare = () => {
@@ -249,10 +230,10 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               size="icon" 
               onClick={handleToggleSpeech}
               className={cn(
-                "rounded-full h-10 w-10 transition-all", 
+                "rounded-full h-10 w-10 transition-all border-none bg-zinc-100 hover:bg-zinc-200", 
                 isNight 
-                  ? (isSpeaking ? "bg-white/20 text-white" : "text-white/60 hover:text-white hover:bg-white/10") 
-                  : (isSpeaking ? "bg-black/10 text-black" : "text-black/60 hover:text-black hover:bg-black/5")
+                  ? "bg-white/10 text-white hover:bg-white/20" 
+                  : "text-zinc-800"
               )}
               title={isSpeaking ? (isHindi ? "सुनना बंद करें" : "Stop Listening") : (isHindi ? "नुस्खा सुनें" : "Listen to Recipe")}
             >
@@ -269,7 +250,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           </div>
         </div>
 
-        <div className="space-y-0">
+        {/* This class 'recipe-text' is used by TTS for extraction */}
+        <div className="recipe-text space-y-0">
           {renderSection(<Info className="w-5 h-5" />, labels.introduction, remedy.introduction[lang], 'green')}
           {renderSection(<Beaker className="w-5 h-5" />, labels.ingredients, remedy.ingredients[lang], 'yellow')}
           {renderSection(<ChefHat className="w-5 h-5" />, labels.preparation, remedy.preparation[lang], 'yellow')}
@@ -336,7 +318,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      <div className="flex justify-end items-center gap-1.5 pt-4 mb-10 overflow-x-auto pb-2 no-scrollbar">
+      <div className="flex justify-end items-center gap-1.5 pt-4 mb-10 overflow-x-auto pb-2 no-scrollbar print:hidden">
         <Button 
           onClick={handleDownloadPDF}
           className="h-9 px-3 bg-[#14532D] hover:bg-[#1a6b3a] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-[11px] sm:text-xs shadow-md shrink-0"
