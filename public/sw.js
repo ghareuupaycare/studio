@@ -1,15 +1,4 @@
-// Minimal Service Worker for PWA installability
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
-});
-
+// Minimal Service Worker to satisfy PWA installability requirements
 self.addEventListener('fetch', (event) => {
-  // A fetch handler is required for the PWA install prompt to be shown
-  event.respondWith(fetch(event.request).catch(() => {
-    // Fallback logic if needed
-  }));
+  // This can be expanded for offline caching if needed
 });

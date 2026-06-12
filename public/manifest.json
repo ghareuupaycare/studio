@@ -5,8 +5,8 @@
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#14532D",
-  "description": "Ayurvedic traditional home remedies for a healthy life.",
+  "theme_color": "#ffffff",
+  "orientation": "any",
   "icons": [
     {
       "src": "/icon-192x192.png",
