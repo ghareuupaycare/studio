@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Remedy } from '@/lib/remedy-types';
 import { Language, Theme } from '@/app/page';
 import { 
@@ -17,9 +17,7 @@ import {
   User,
   Share2,
   Copy,
-  FileDown,
-  Volume2,
-  VolumeX
+  FileDown
 } from 'lucide-react';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -39,7 +37,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
   const [selectedDoseIndex, setSelectedDoseIndex] = useState(0);
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const { toast } = useToast();
 
   const labels = {
@@ -63,53 +60,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     : "Special Advice: Dear Reader, these home remedies are shared for educational purposes. Consult a qualified doctor or Vaidya for serious conditions.";
 
   const shareUrl = `https://gharelu-upay.web.app/remedy/${remedy.id}`;
-
-  const handleToggleSpeech = () => {
-    if (typeof window === 'undefined' || !window.speechSynthesis) {
-      alert("Browser does not support Speech Synthesis");
-      return;
-    }
-
-    const synth = window.speechSynthesis;
-
-    if (isSpeaking) {
-      synth.cancel();
-      setIsSpeaking(false);
-      return;
-    }
-
-    // Direct approach as requested
-    try {
-      alert("Starting..."); // Debugging alert
-      
-      const recipeElement = document.getElementById('recipe-text-content');
-      if (!recipeElement) {
-        alert("Recipe content not found!");
-        return;
-      }
-
-      const text = recipeElement.innerText;
-      const utterance = new SpeechSynthesisUtterance(text);
-      
-      // Set language: hi-IN for Hindi, en-US for English
-      utterance.lang = isHindi ? 'hi-IN' : 'en-US';
-      utterance.rate = 0.9; // Slightly slower for better clarity
-      utterance.pitch = 1;
-
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = (e) => {
-        console.error("Speech error:", e);
-        setIsSpeaking(false);
-      };
-
-      synth.cancel(); // Clear any existing queue
-      synth.speak(utterance);
-    } catch (error) {
-      console.error("TTS Execution failed:", error);
-      alert("Failed to start speech engine.");
-    }
-  };
 
   const handleWhatsAppShare = () => {
     const remedyTitle = remedy.name[lang];
@@ -196,20 +146,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             <Button 
               variant="ghost" 
               size="icon" 
-              onClick={handleToggleSpeech}
-              className={cn(
-                "rounded-full h-10 w-10 transition-all border-none shadow-sm", 
-                isNight 
-                  ? "bg-white/10 text-white hover:bg-white/20" 
-                  : "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
-              )}
-              title={isSpeaking ? (isHindi ? "सुनना बंद करें" : "Stop Listening") : (isHindi ? "नुस्खा सुनें" : "Listen to Recipe")}
-            >
-              {isSpeaking ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
               onClick={onToggleFavorite} 
               className={cn("rounded-full h-10 w-10", isFavorite ? "text-accent" : "text-muted-foreground")}
             >
@@ -218,8 +154,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           </div>
         </div>
 
-        {/* Specific ID for direct text extraction */}
-        <div id="recipe-text-content" className="space-y-0">
+        <div className="space-y-0">
           {renderSection(<Info className="w-5 h-5" />, labels.introduction, remedy.introduction[lang], 'green')}
           {renderSection(<Beaker className="w-5 h-5" />, labels.ingredients, remedy.ingredients[lang], 'yellow')}
           {renderSection(<ChefHat className="w-5 h-5" />, labels.preparation, remedy.preparation[lang], 'yellow')}
