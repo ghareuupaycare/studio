@@ -41,18 +41,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const [selectedDoseIndex, setSelectedDoseIndex] = useState(0);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const { toast } = useToast();
-  const synthRef = useRef<SpeechSynthesis | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      synthRef.current = window.speechSynthesis;
-    }
-    return () => {
-      if (synthRef.current) {
-        synthRef.current.cancel();
-      }
-    };
-  }, []);
 
   const labels = {
     introduction: isHindi ? '1. बीमारी का परिचय' : '1. Introduction',
@@ -77,70 +65,50 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const shareUrl = `https://gharelu-upay.web.app/remedy/${remedy.id}`;
 
   const handleToggleSpeech = () => {
-    console.log("Speaker clicked");
-    
     if (typeof window === 'undefined' || !window.speechSynthesis) {
-      alert(isHindi ? "आपका ब्राउज़र ऑडियो का समर्थन नहीं करता है।" : "Speech engine not initialized/supported.");
+      alert("Browser does not support Speech Synthesis");
       return;
     }
 
     const synth = window.speechSynthesis;
 
-    // 1. Always cancel to clear stuck queues
-    synth.cancel();
-
     if (isSpeaking) {
+      synth.cancel();
       setIsSpeaking(false);
       return;
     }
 
-    // 2. Fetch text content from the DOM element specifically (as requested)
-    const recipeElement = document.querySelector('.recipe-text');
-    let textToSpeak = "";
+    // Direct approach as requested
+    try {
+      alert("Starting..."); // Debugging alert
+      
+      const recipeElement = document.getElementById('recipe-text-content');
+      if (!recipeElement) {
+        alert("Recipe content not found!");
+        return;
+      }
 
-    if (recipeElement) {
-      textToSpeak = (recipeElement as HTMLElement).innerText;
-    } else {
-      // Fallback: Construct if element not found (though we ensure it below)
-      textToSpeak = `${remedy.name[lang]}. ${labels.introduction}. ${remedy.introduction[lang]}`;
+      const text = recipeElement.innerText;
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      // Set language: hi-IN for Hindi, en-US for English
+      utterance.lang = isHindi ? 'hi-IN' : 'en-US';
+      utterance.rate = 0.9; // Slightly slower for better clarity
+      utterance.pitch = 1;
+
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = (e) => {
+        console.error("Speech error:", e);
+        setIsSpeaking(false);
+      };
+
+      synth.cancel(); // Clear any existing queue
+      synth.speak(utterance);
+    } catch (error) {
+      console.error("TTS Execution failed:", error);
+      alert("Failed to start speech engine.");
     }
-
-    // Clean text for smooth reading
-    const cleanText = toEnglishDigits(textToSpeak).replace(/[*_#]/g, '');
-
-    // 3. Robust initialization
-    const msg = new SpeechSynthesisUtterance(cleanText);
-    msg.lang = isHindi ? 'hi-IN' : 'en-US';
-    msg.rate = 1;
-    msg.pitch = 1;
-    
-    msg.onstart = () => {
-      console.log("Speech started successfully");
-      setIsSpeaking(true);
-    };
-    
-    msg.onend = () => {
-      console.log("Speech ended");
-      setIsSpeaking(false);
-    };
-    
-    msg.onerror = (event) => {
-      console.error("Speech error", event);
-      setIsSpeaking(false);
-      if (event.error === 'network') {
-        alert(isHindi ? "नेटवर्क त्रुटि: आवाज़ लोड नहीं हो सकी।" : "Network error: Voice data could not be loaded.");
-      }
-    };
-
-    // 4. Trigger Speak (Handles user gesture requirement)
-    synth.speak(msg);
-
-    // Immediate check for initialization
-    setTimeout(() => {
-      if (!synth.speaking && !isSpeaking) {
-        console.warn("Speech engine failed to start");
-      }
-    }, 200);
   };
 
   const handleWhatsAppShare = () => {
@@ -230,10 +198,10 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               size="icon" 
               onClick={handleToggleSpeech}
               className={cn(
-                "rounded-full h-10 w-10 transition-all border-none bg-zinc-100 hover:bg-zinc-200", 
+                "rounded-full h-10 w-10 transition-all border-none shadow-sm", 
                 isNight 
                   ? "bg-white/10 text-white hover:bg-white/20" 
-                  : "text-zinc-800"
+                  : "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
               )}
               title={isSpeaking ? (isHindi ? "सुनना बंद करें" : "Stop Listening") : (isHindi ? "नुस्खा सुनें" : "Listen to Recipe")}
             >
@@ -250,8 +218,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           </div>
         </div>
 
-        {/* This class 'recipe-text' is used by TTS for extraction */}
-        <div className="recipe-text space-y-0">
+        {/* Specific ID for direct text extraction */}
+        <div id="recipe-text-content" className="space-y-0">
           {renderSection(<Info className="w-5 h-5" />, labels.introduction, remedy.introduction[lang], 'green')}
           {renderSection(<Beaker className="w-5 h-5" />, labels.ingredients, remedy.ingredients[lang], 'yellow')}
           {renderSection(<ChefHat className="w-5 h-5" />, labels.preparation, remedy.preparation[lang], 'yellow')}
