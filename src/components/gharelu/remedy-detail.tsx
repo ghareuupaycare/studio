@@ -59,20 +59,70 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     ? "विशेष परामर्श: प्रिय पाठक, यह घरेलू उपाय शैक्षिक उद्देश्य से साझा किए गए हैं। किसी भी गंभीर स्थिति में हों, तो कृपया किसी योग्य डॉक्टर या वैद्य से व्यक्तिगत सलाह ज़रूर लें।"
     : "Special Advice: Dear Reader, these home remedies are shared for educational purposes. Consult a qualified doctor or Vaidya for serious conditions.";
 
-  // FIXED: Using the working query parameter format for reliable sharing
   const shareUrl = `https://studio-xi-mocha.vercel.app/?remedyId=${remedy.id}`;
 
+  // Helper to format text for Copy/Share
+  const getFormattedContent = (full: boolean = true) => {
+    const name = remedy.name[lang];
+    const intro = Array.isArray(remedy.introduction[lang]) 
+      ? (remedy.introduction[lang] as string[]).join('\n') 
+      : remedy.introduction[lang];
+    
+    if (!full) {
+      // Summary for WhatsApp
+      const briefIntro = Array.isArray(remedy.introduction[lang]) 
+        ? (remedy.introduction[lang] as string[])[0] 
+        : (remedy.introduction[lang] as string).split('\n')[0];
+      
+      const callToAction = isHindi 
+        ? "पूरा नुस्खा और स्मार्ट कैलकुलेटर के साथ अपनी उम्र के हिसाब से खुराक जानने के लिए यहां जाएं:"
+        : "Visit here to see the full recipe and know your dosage according to age with our smart calculator:";
+
+      return `🌿 *${name}* 🌿\n\n${briefIntro}\n\n${callToAction}\n${shareUrl}`;
+    }
+
+    // Full content for Copy
+    const ingredients = remedy.ingredients[lang].map(i => `• ${i}`).join('\n');
+    const prep = Array.isArray(remedy.preparation[lang]) 
+      ? (remedy.preparation[lang] as string[]).map(i => `• ${i}`).join('\n') 
+      : remedy.preparation[lang];
+    const usage = Array.isArray(remedy.usage[lang]) 
+      ? (remedy.usage[lang] as string[]).map(i => `• ${i}`).join('\n') 
+      : remedy.usage[lang];
+    const dietEat = Array.isArray(remedy.dietEat[lang]) 
+      ? (remedy.dietEat[lang] as string[]).map(i => `• ${i}`).join('\n') 
+      : remedy.dietEat[lang];
+    const dietAvoid = Array.isArray(remedy.dietAvoid[lang]) 
+      ? (remedy.dietAvoid[lang] as string[]).map(i => `• ${i}`).join('\n') 
+      : remedy.dietAvoid[lang];
+    const safety = Array.isArray(remedy.safetyAdvice[lang]) 
+      ? (remedy.safetyAdvice[lang] as string[]).map(i => `• ${i}`).join('\n') 
+      : remedy.safetyAdvice[lang];
+
+    let text = `🌿 *${name}* 🌿\n\n`;
+    text += `[${labels.introduction}]\n${intro}\n\n`;
+    text += `[${labels.ingredients}]\n${ingredients}\n\n`;
+    text += `[${labels.preparation}]\n${prep}\n\n`;
+    text += `[${labels.usage}]\n${usage}\n\n`;
+    text += `[${labels.dietEat}]\n${dietEat}\n\n`;
+    text += `[${labels.dietAvoid}]\n${dietAvoid}\n\n`;
+    text += `[${labels.safety}]\n${safety}\n\n`;
+    text += `🔗 ${shareUrl}`;
+
+    return text;
+  };
+
   const handleWhatsAppShare = () => {
-    const remedyTitle = remedy.name[lang];
-    const message = `🌿 *${remedyTitle}* 🌿\nपूरी जानकारी यहाँ देखें:\n${shareUrl}`;
+    const message = getFormattedContent(false);
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const handleCopy = () => {
-    const textToCopy = `${remedy.name[lang]}\n\n${shareUrl}`;
+    const textToCopy = getFormattedContent(true);
     navigator.clipboard.writeText(textToCopy).then(() => {
       toast({
-        title: isHindi ? "लिंक कॉपी हो गया" : "Link Copied",
+        title: isHindi ? "पूरा नुस्खा कॉपी हो गया" : "Full Recipe Copied",
+        description: isHindi ? "अब आप इसे कहीं भी पेस्ट कर सकते हैं।" : "You can now paste it anywhere.",
       });
     });
   };
