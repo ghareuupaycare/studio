@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -7,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Save, Loader2, Stethoscope, BookOpen, Plus, Trash2, X, Globe, User } from 'lucide-react';
+import { Save, Loader2, Stethoscope, BookOpen, Plus, Trash2, X, Globe, User, Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface DoseEntry {
@@ -26,6 +25,8 @@ interface AdminFormProps {
   onDoseChange: (index: number, field: keyof DoseEntry, value: string) => void;
   onAddDose: () => void;
   onRemoveDose: (index: number) => void;
+  onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  existingImageUrl: string | null;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
   isNight?: boolean;
@@ -40,6 +41,8 @@ export const AdminForm = ({
   onDoseChange,
   onAddDose,
   onRemoveDose,
+  onImageChange,
+  existingImageUrl,
   onSubmit,
   onCancel,
   isNight = false
@@ -125,6 +128,32 @@ export const AdminForm = ({
               onChange={onInputChange} 
               className={inputClass}
             />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Image Upload Section */}
+      <Card className={cn("overflow-hidden rounded-[2rem]", cardBgClass)}>
+        <CardHeader className={isNight ? "bg-zinc-800 text-white" : "bg-primary text-white"}>
+          <CardTitle className="text-lg flex items-center gap-2"><ImageIcon className="w-5 h-5" /> रेसिपी इमेज (Image)</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6 space-y-4">
+          <div className="space-y-2">
+            <Label className={labelClass}>नुस्खे की तस्वीर अपलोड करें</Label>
+            <Input 
+              type="file" 
+              accept="image/*" 
+              onChange={onImageChange} 
+              className={cn(inputClass, "cursor-pointer")}
+            />
+            {existingImageUrl && !isSubmitting && (
+              <div className="mt-4">
+                <p className="text-xs mb-2 opacity-60">वर्तमान इमेज:</p>
+                <div className="relative aspect-video w-full max-w-sm rounded-xl overflow-hidden border border-border">
+                  <img src={existingImageUrl} alt="Existing recipe" className="object-cover w-full h-full" />
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

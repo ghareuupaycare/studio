@@ -22,6 +22,7 @@ import {
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 
 interface RemedyDetailProps {
   remedy: Remedy;
@@ -61,18 +62,15 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const shareUrl = `https://studio-xi-mocha.vercel.app/?remedyId=${remedy.id}`;
 
-  // Helper to format text for Copy (Full Content) or Share (Brief)
   const getFormattedContent = (full: boolean = true) => {
     const name = remedy.name[lang];
     
-    // Formatting helper for array or string content
     const formatValue = (val: any) => {
       if (Array.isArray(val)) return val.map(v => `• ${v}`).join('\n');
       return String(val).split('\n').map(v => `• ${v}`).join('\n');
     };
 
     if (!full) {
-      // Summary for WhatsApp Share
       const briefIntro = Array.isArray(remedy.introduction[lang]) 
         ? (remedy.introduction[lang] as string[])[0] 
         : (remedy.introduction[lang] as string).split('\n')[0];
@@ -84,14 +82,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       return `🌿 *${name}* 🌿\n\n${briefIntro}\n\n${callToAction}\n${shareUrl}`;
     }
 
-    // Full detailed content for Copy Button
     let text = `🌿 *${name}* 🌿\n\n`;
     
     text += `[${labels.introduction}]\n${formatValue(remedy.introduction[lang])}\n\n`;
     text += `[${labels.ingredients}]\n${formatValue(remedy.ingredients[lang])}\n\n`;
     text += `[${labels.preparation}]\n${formatValue(remedy.preparation[lang])}\n\n`;
     
-    // Include the selected dose in the copy
     if (remedy.doses && remedy.doses.length > 0) {
       const activeDose = remedy.doses[selectedDoseIndex];
       text += `[${labels.dosage}]\n${activeDose.ageRange[lang]}: ${formatValue(activeDose.dose[lang])}\n\n`;
@@ -108,7 +104,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
     text += `[${labels.safety}]\n${formatValue(remedy.safetyAdvice[lang])}\n\n`;
     text += `${disclaimerText}\n\n`;
-    text += `${shareUrl}`; // Removed icon and ensured it starts after the double \n from previous line for clickability
+    text += `${shareUrl}`;
 
     return toEnglishDigits(text);
   };
@@ -205,6 +201,19 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             </Button>
           </div>
         </div>
+
+        {remedy.image && (
+          <div className="mb-8 relative aspect-[16/9] w-full rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-accent/20">
+            <Image 
+              src={remedy.image} 
+              alt={remedy.name[lang] as string}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 800px"
+              priority
+            />
+          </div>
+        )}
 
         <div className="space-y-0" id="recipe-text-content">
           {renderSection(<Info className="w-5 h-5" />, labels.introduction, remedy.introduction[lang], 'green')}

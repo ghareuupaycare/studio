@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
@@ -7,8 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useFirestore } from '@/firebase';
+import { useFirestore, useStorage } from '@/firebase';
 import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { AdminForm } from '@/components/admin/admin-form';
@@ -62,6 +62,7 @@ export default function AdminDashboard() {
   const router = useRouter();
   const { toast } = useToast();
   const db = useFirestore();
+  const storage = useStorage();
   const [isLoaded, setIsLoaded] = useState(false);
   const [view, setView] = useState<ViewState>('overview');
   const [theme, setTheme] = useState<Theme>('cream');
@@ -70,6 +71,8 @@ export default function AdminDashboard() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [doses, setDoses] = useState<DoseEntry[]>(INITIAL_DOSES);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const isAuth = typeof window !== 'undefined' ? localStorage.getItem('gharelu_admin_auth') : null;
@@ -119,6 +122,12 @@ export default function AdminDashboard() {
     setDoses(newDoses);
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedImage(e.target.files[0]);
+    }
+  };
+
   const addDoseField = () => setDoses([...doses, { ageRangeHi: '', ageRangeEn: '', doseHi: '', doseEn: '' }]);
   const removeDoseField = (index: number) => setDoses(doses.filter((_, i) => i !== index));
 
@@ -126,6 +135,8 @@ export default function AdminDashboard() {
     setFormData(INITIAL_FORM_DATA);
     setDoses(INITIAL_DOSES);
     setEditingId(null);
+    setSelectedImage(null);
+    setExistingImageUrl(null);
   };
 
   const generateSlug = (category: string, disease: string, title: string) => {
@@ -137,35 +148,44 @@ export default function AdminDashboard() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!db) return;
+    if (!db || !storage) return;
     setIsSubmitting(true);
 
-    const keywordArray = formData.seoKeywords
-      .split(',')
-      .map(k => k.trim())
-      .filter(k => k !== '');
-
-    const slug = generateSlug(formData.mainCategoryEn, formData.diseaseNameEn, formData.remedyTitleEn);
-
-    const submissionData = {
-      mainCategory: { hi: formData.mainCategoryHi, en: formData.mainCategoryEn },
-      diseaseName: { hi: formData.diseaseNameHi, en: formData.diseaseNameEn },
-      remedyTitle: { hi: formData.remedyTitleHi, en: formData.remedyTitleEn },
-      introduction: { hi: formData.introductionHi, en: formData.introductionEn },
-      ingredients: { hi: formData.ingredientsHi, en: formData.ingredientsEn },
-      preparation: { hi: formData.preparationHi, en: formData.preparationEn },
-      usage: { hi: formData.usageHi, en: formData.usageEn },
-      dietEat: { hi: formData.dietEatHi, en: formData.dietEatEn },
-      dietAvoid: { hi: formData.dietAvoidHi, en: formData.dietAvoidEn },
-      routine: { hi: formData.routineHi, en: formData.routineEn },
-      safetyAdvice: { hi: formData.safetyAdviceHi, en: formData.safetyAdviceEn },
-      doses: doses.map(d => ({ ageRange: { hi: d.ageRangeHi, en: d.ageRangeEn }, dose: { hi: d.doseHi, en: d.doseEn } })),
-      keywords: keywordArray,
-      slug: slug,
-      timestamp: serverTimestamp(),
-    };
+    let imageUrl = existingImageUrl;
 
     try {
+      if (selectedImage) {
+        const storageRef = ref(storage, `recipes/${Date.now()}_${selectedImage.name}`);
+        const uploadResult = await uploadBytes(storageRef, selectedImage);
+        imageUrl = await getDownloadURL(uploadResult.ref);
+      }
+
+      const keywordArray = formData.seoKeywords
+        .split(',')
+        .map(k => k.trim())
+        .filter(k => k !== '');
+
+      const slug = generateSlug(formData.mainCategoryEn, formData.diseaseNameEn, formData.remedyTitleEn);
+
+      const submissionData = {
+        mainCategory: { hi: formData.mainCategoryHi, en: formData.mainCategoryEn },
+        diseaseName: { hi: formData.diseaseNameHi, en: formData.diseaseNameEn },
+        remedyTitle: { hi: formData.remedyTitleHi, en: formData.remedyTitleEn },
+        introduction: { hi: formData.introductionHi, en: formData.introductionEn },
+        ingredients: { hi: formData.ingredientsHi, en: formData.ingredientsEn },
+        preparation: { hi: formData.preparationHi, en: formData.preparationEn },
+        usage: { hi: formData.usageHi, en: formData.usageEn },
+        dietEat: { hi: formData.dietEatHi, en: formData.dietEatEn },
+        dietAvoid: { hi: formData.dietAvoidHi, en: formData.dietAvoidEn },
+        routine: { hi: formData.routineHi, en: formData.routineEn },
+        safetyAdvice: { hi: formData.safetyAdviceHi, en: formData.safetyAdviceEn },
+        doses: doses.map(d => ({ ageRange: { hi: d.ageRangeHi, en: d.ageRangeEn }, dose: { hi: d.doseHi, en: d.doseEn } })),
+        keywords: keywordArray,
+        slug: slug,
+        image: imageUrl,
+        timestamp: serverTimestamp(),
+      };
+
       if (editingId) {
         await setDoc(doc(db, 'recipes', editingId), submissionData, { merge: true });
       } else {
@@ -175,6 +195,7 @@ export default function AdminDashboard() {
       resetForm();
       setView('manage');
     } catch (error: any) {
+      console.error("Submission error:", error);
       errorEmitter.emit('permission-error', new FirestorePermissionError({
         path: editingId ? `recipes/${editingId}` : 'recipes',
         operation: editingId ? 'update' : 'create',
@@ -220,6 +241,8 @@ export default function AdminDashboard() {
     
     setDoses(loadedDoses);
     setEditingId(recipe.id);
+    setExistingImageUrl(recipe.image || null);
+    setSelectedImage(null);
     setView('add-recipe');
   };
 
@@ -378,6 +401,7 @@ export default function AdminDashboard() {
               formData={formData} doses={doses} isSubmitting={isSubmitting} editingId={editingId}
               onInputChange={handleInputChange} onDoseChange={handleDoseChange} 
               onAddDose={addDoseField} onRemoveDose={removeDoseField} 
+              onImageChange={handleImageChange} existingImageUrl={existingImageUrl}
               onSubmit={handleSubmit} onCancel={() => setView('manage')}
               isNight={isNight}
             />
