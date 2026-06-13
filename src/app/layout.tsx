@@ -36,7 +36,7 @@ export default function RootLayout({
     <html lang="hi">
       <head>
         {/* Google Search Console Verification */}
-        <meta name="google-site-verification" content="jbhpXhJnlt1g83JR8e1TUhpL-8Y5xtJpuTrNGGhSeH4" />
+        <meta name="google-site-verification" content="MVboRUnfOsCahICx3pIfAyiQckT1iDnl38k-OgYpVFo" />
         
         {/* PWA Recognition Meta Tags */}
         <link rel="manifest" href="/manifest.json" />
