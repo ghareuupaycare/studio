@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
@@ -8,7 +9,7 @@ import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, 
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore, useStorage } from '@/firebase';
 import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { AdminForm } from '@/components/admin/admin-form';
@@ -67,12 +68,13 @@ export default function AdminDashboard() {
   const [view, setView] = useState<ViewState>('overview');
   const [theme, setTheme] = useState<Theme>('cream');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [liveRecipes, setLiveRecipes] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [doses, setDoses] = useState<DoseEntry[]>(INITIAL_DOSES);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const isAuth = typeof window !== 'undefined' ? localStorage.getItem('gharelu_admin_auth') : null;
@@ -122,9 +124,37 @@ export default function AdminDashboard() {
     setDoses(newDoses);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedImage(e.target.files[0]);
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0] && storage) {
+      const file = e.target.files[0];
+      setIsUploadingImage(true);
+      setUploadProgress(0);
+      
+      const storageRef = ref(storage, `recipes/${Date.now()}_${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on('state_changed', 
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+        }, 
+        (error) => {
+          console.error("Upload failed", error);
+          toast({ 
+            variant: "destructive", 
+            title: "अपलोड विफल", 
+            description: "इमेज अपलोड नहीं हो सकी। कृपया इंटरनेट कनेक्शन और स्टोरेज रूल्स चेक करें।" 
+          });
+          setIsUploadingImage(false);
+          setUploadProgress(0);
+        }, 
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          setUploadedImageUrl(downloadURL);
+          setIsUploadingImage(false);
+          toast({ title: "सफलता", description: "इमेज अपलोड हो गई!" });
+        }
+      );
     }
   };
 
@@ -135,8 +165,8 @@ export default function AdminDashboard() {
     setFormData(INITIAL_FORM_DATA);
     setDoses(INITIAL_DOSES);
     setEditingId(null);
-    setSelectedImage(null);
-    setExistingImageUrl(null);
+    setUploadedImageUrl(null);
+    setUploadProgress(0);
   };
 
   const generateSlug = (category: string, disease: string, title: string) => {
@@ -148,18 +178,16 @@ export default function AdminDashboard() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!db || !storage) return;
+    if (!db) return;
+    
+    if (isUploadingImage) {
+      toast({ variant: "destructive", title: "कृपया प्रतीक्षा करें", description: "इमेज अभी अपलोड हो रही है।" });
+      return;
+    }
+
     setIsSubmitting(true);
 
-    let imageUrl = existingImageUrl;
-
     try {
-      if (selectedImage) {
-        const storageRef = ref(storage, `recipes/${Date.now()}_${selectedImage.name}`);
-        const uploadResult = await uploadBytes(storageRef, selectedImage);
-        imageUrl = await getDownloadURL(uploadResult.ref);
-      }
-
       const keywordArray = formData.seoKeywords
         .split(',')
         .map(k => k.trim())
@@ -182,7 +210,7 @@ export default function AdminDashboard() {
         doses: doses.map(d => ({ ageRange: { hi: d.ageRangeHi, en: d.ageRangeEn }, dose: { hi: d.doseHi, en: d.doseEn } })),
         keywords: keywordArray,
         slug: slug,
-        image: imageUrl,
+        image: uploadedImageUrl,
         timestamp: serverTimestamp(),
       };
 
@@ -241,8 +269,7 @@ export default function AdminDashboard() {
     
     setDoses(loadedDoses);
     setEditingId(recipe.id);
-    setExistingImageUrl(recipe.image || null);
-    setSelectedImage(null);
+    setUploadedImageUrl(recipe.image || null);
     setView('add-recipe');
   };
 
@@ -399,9 +426,10 @@ export default function AdminDashboard() {
             <Button variant="ghost" onClick={() => setView('manage')} className={cn("gap-2 font-bold", isNight ? "text-accent" : "text-primary")}><ChevronLeft /> रद्द करें</Button>
             <AdminForm 
               formData={formData} doses={doses} isSubmitting={isSubmitting} editingId={editingId}
+              isUploadingImage={isUploadingImage} uploadProgress={uploadProgress}
               onInputChange={handleInputChange} onDoseChange={handleDoseChange} 
               onAddDose={addDoseField} onRemoveDose={removeDoseField} 
-              onImageChange={handleImageChange} existingImageUrl={existingImageUrl}
+              onImageChange={handleImageChange} existingImageUrl={uploadedImageUrl}
               onSubmit={handleSubmit} onCancel={() => setView('manage')}
               isNight={isNight}
             />
