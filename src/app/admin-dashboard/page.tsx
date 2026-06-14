@@ -141,14 +141,15 @@ export default function AdminDashboard() {
           }, 
           (error) => {
             console.error("Upload failed", error);
+            // Ensure state is reset so user can still save text data
+            setIsUploadingImage(false);
+            setUploadProgress(0);
+            setUploadedImageUrl(null);
             toast({ 
               variant: "destructive", 
               title: "अपलोड विफल", 
               description: "इमेज अपलोड नहीं हो सकी (स्टोरेज परमिशन चेक करें)। आप बिना इमेज के भी नुस्खा सेव कर सकते हैं।" 
             });
-            setIsUploadingImage(false);
-            setUploadProgress(0);
-            setUploadedImageUrl(null);
           }, 
           async () => {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
@@ -195,7 +196,7 @@ export default function AdminDashboard() {
     if (!db) return;
     
     if (isUploadingImage) {
-      toast({ variant: "destructive", title: "कृपया प्रतीक्षा करें", description: "इमेज अभी अपलोड हो रही है। आप चाहें तो इमेज हटाकर सीधे सेव कर सकते हैं।" });
+      toast({ variant: "destructive", title: "कृपया प्रतीक्षा करें", description: "इमेज अभी अपलोड हो रही है। यदि यह अटक गई है, तो इमेज हटाकर सीधे सेव करें।" });
       return;
     }
 
