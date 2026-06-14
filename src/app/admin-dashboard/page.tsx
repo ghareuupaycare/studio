@@ -130,32 +130,45 @@ export default function AdminDashboard() {
       setIsUploadingImage(true);
       setUploadProgress(0);
       
-      const storageRef = ref(storage, `recipes/${Date.now()}_${file.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      try {
+        const storageRef = ref(storage, `recipes/${Date.now()}_${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
 
-      uploadTask.on('state_changed', 
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress);
-        }, 
-        (error) => {
-          console.error("Upload failed", error);
-          toast({ 
-            variant: "destructive", 
-            title: "अपलोड विफल", 
-            description: "इमेज अपलोड नहीं हो सकी। कृपया इंटरनेट कनेक्शन और स्टोरेज रूल्स चेक करें।" 
-          });
-          setIsUploadingImage(false);
-          setUploadProgress(0);
-        }, 
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          setUploadedImageUrl(downloadURL);
-          setIsUploadingImage(false);
-          toast({ title: "सफलता", description: "इमेज अपलोड हो गई!" });
-        }
-      );
+        uploadTask.on('state_changed', 
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadProgress(progress);
+          }, 
+          (error) => {
+            console.error("Upload failed", error);
+            toast({ 
+              variant: "destructive", 
+              title: "अपलोड विफल", 
+              description: "इमेज अपलोड नहीं हो सकी (स्टोरेज परमिशन चेक करें)। आप बिना इमेज के भी नुस्खा सेव कर सकते हैं।" 
+            });
+            setIsUploadingImage(false);
+            setUploadProgress(0);
+            setUploadedImageUrl(null);
+          }, 
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            setUploadedImageUrl(downloadURL);
+            setIsUploadingImage(false);
+            toast({ title: "सफलता", description: "इमेज अपलोड हो गई!" });
+          }
+        );
+      } catch (err) {
+        setIsUploadingImage(false);
+        toast({ variant: "destructive", title: "Error", description: "स्टोरेज कनेक्शन में समस्या।" });
+      }
     }
+  };
+
+  const handleClearImage = () => {
+    setUploadedImageUrl(null);
+    setIsUploadingImage(false);
+    setUploadProgress(0);
+    toast({ description: "इमेज हटा दी गई है।" });
   };
 
   const addDoseField = () => setDoses([...doses, { ageRangeHi: '', ageRangeEn: '', doseHi: '', doseEn: '' }]);
@@ -167,6 +180,7 @@ export default function AdminDashboard() {
     setEditingId(null);
     setUploadedImageUrl(null);
     setUploadProgress(0);
+    setIsUploadingImage(false);
   };
 
   const generateSlug = (category: string, disease: string, title: string) => {
@@ -181,7 +195,7 @@ export default function AdminDashboard() {
     if (!db) return;
     
     if (isUploadingImage) {
-      toast({ variant: "destructive", title: "कृपया प्रतीक्षा करें", description: "इमेज अभी अपलोड हो रही है।" });
+      toast({ variant: "destructive", title: "कृपया प्रतीक्षा करें", description: "इमेज अभी अपलोड हो रही है। आप चाहें तो इमेज हटाकर सीधे सेव कर सकते हैं।" });
       return;
     }
 
@@ -224,6 +238,7 @@ export default function AdminDashboard() {
       setView('manage');
     } catch (error: any) {
       console.error("Submission error:", error);
+      toast({ variant: "destructive", title: "सेव करने में विफल", description: "कृपया अपने इंटरनेट और Firestore नियमों की जांच करें।" });
       errorEmitter.emit('permission-error', new FirestorePermissionError({
         path: editingId ? `recipes/${editingId}` : 'recipes',
         operation: editingId ? 'update' : 'create',
@@ -430,6 +445,7 @@ export default function AdminDashboard() {
               onInputChange={handleInputChange} onDoseChange={handleDoseChange} 
               onAddDose={addDoseField} onRemoveDose={removeDoseField} 
               onImageChange={handleImageChange} existingImageUrl={uploadedImageUrl}
+              onClearImage={handleClearImage}
               onSubmit={handleSubmit} onCancel={() => setView('manage')}
               isNight={isNight}
             />

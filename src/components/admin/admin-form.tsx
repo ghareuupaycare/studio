@@ -30,6 +30,7 @@ interface AdminFormProps {
   onAddDose: () => void;
   onRemoveDose: (index: number) => void;
   onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onClearImage: () => void;
   existingImageUrl: string | null;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
@@ -48,6 +49,7 @@ export const AdminForm = ({
   onAddDose,
   onRemoveDose,
   onImageChange,
+  onClearImage,
   existingImageUrl,
   onSubmit,
   onCancel,
@@ -141,11 +143,27 @@ export const AdminForm = ({
       {/* Image Upload Section */}
       <Card className={cn("overflow-hidden rounded-[2rem]", cardBgClass)}>
         <CardHeader className={isNight ? "bg-zinc-800 text-white" : "bg-primary text-white"}>
-          <CardTitle className="text-lg flex items-center gap-2"><ImageIcon className="w-5 h-5" /> रेसिपी इमेज (Image)</CardTitle>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <ImageIcon className="w-5 h-5" /> रेसिपी इमेज (वैकल्पिक / Optional)
+          </CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-4">
           <div className="space-y-4">
-            <Label className={labelClass}>नुस्खे की तस्वीर चुनें (Auto Upload)</Label>
+            <div className="flex items-center justify-between">
+              <Label className={labelClass}>नुस्खे की तस्वीर चुनें (Auto Upload)</Label>
+              {(existingImageUrl || isUploadingImage) && (
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={onClearImage}
+                  className="text-destructive h-7 px-2 text-xs"
+                >
+                  <X className="w-3 h-3 mr-1" /> इमेज हटाएँ
+                </Button>
+              )}
+            </div>
+            
             <Input 
               type="file" 
               accept="image/*" 
@@ -153,6 +171,10 @@ export const AdminForm = ({
               disabled={isUploadingImage}
               className={cn(inputClass, "cursor-pointer")}
             />
+            
+            <p className="text-[10px] text-muted-foreground italic">
+              * यदि स्टोरेज परमिशन एरर आ रहा है, तो इमेज के बिना भी आप नुस्खा सेव कर सकते हैं।
+            </p>
             
             {isUploadingImage && (
               <div className="space-y-2 animate-in fade-in duration-300">
