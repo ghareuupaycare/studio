@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { PWARegistrar } from '@/components/pwa-registrar';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: 'घरेलू उपाय केयर | Gharelu Upay Care',
@@ -57,6 +58,7 @@ export default function RootLayout({
           {children}
           <Toaster />
         </FirebaseClientProvider>
+        <Analytics />
       </body>
     </html>
   );
