@@ -44,7 +44,7 @@ export const BottomNav = ({ lang, theme, currentView, onViewChange, enableScroll
 
   const handleShareWebsite = () => {
     const title = isHindi ? 'घरेलू उपाय केयर (Gharelu Upay Care)' : 'Gharelu Upay Care';
-    const message = `🌿 *${title}* 🌿\nआयुर्वेदिक घरेलू उपचार और प्रामाणिक नुस्खों के लिए हमारी वेबसाइट पर जाएँ:\nhttps://studio-xi-mocha.vercel.app/`;
+    const message = `🌿 *${title}* 🌿\nआयुर्वेदिक घरेलू उपचार और प्रामाणिक नुस्खों के लिए हमारी वेबसाइट पर जाएँ:\nhttps://ghareluupaycare.vercel.app/`;
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
   };
 

@@ -4,7 +4,7 @@ import { initializeFirebase } from '@/firebase';
 import { REMEDIES as STATIC_REMEDIES } from '@/lib/remedy-data';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://studio-xi-mocha.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ghareluupaycare.vercel.app';
 
   // Base pages
   const routes = [

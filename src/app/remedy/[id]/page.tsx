@@ -85,7 +85,7 @@ export async function generateMetadata({ params }: RemedyPageProps): Promise<Met
       title: remedy.name.hi,
       description: remedy.name.en,
       type: 'article',
-      url: `https://studio-xi-mocha.vercel.app/remedy/${remedy.id}`,
+      url: `https://ghareluupaycare.vercel.app/remedy/${remedy.id}`,
     }
   };
 }
