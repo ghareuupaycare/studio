@@ -13,7 +13,7 @@ import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { AdminForm } from '@/components/admin/admin-form';
 import { AdminRemedyList } from '@/components/admin/admin-remedy-list';
-import { cn } from '@/utils';
+import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 
 type ViewState = 'overview' | 'manage' | 'add-recipe' | 'questions';
