@@ -84,8 +84,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     safety: isHindi ? '9. सुरक्षा सूचना' : '9. Safety Information',
     qaTitle: isHindi ? 'वैद्य जी से पूछें (गुमनाम)' : 'Ask Vaidya Ji (Anonymous)',
     qaPlaceholder: isHindi ? 'अपना अनुभव साझा करें' : 'Share your experience',
-    qaButton: isHindi ? 'सवाल भेजें' : 'Send Question',
-    qaSuccess: isHindi ? 'आपका सवाल भेज दिया गया है। वैद्य जी जल्द ही इसी पेज पर जवाब देंगे।' : 'Your question has been sent. Vaidya Ji will reply on this page soon.',
+    qaButton: isHindi ? 'अनुभव भेजें' : 'Send Experience',
+    qaSuccess: isHindi ? 'आपका अनुभव भेज दिया गया है। वैद्य जी जल्द ही इसी पेज पर जवाब देंगे।' : 'Your experience has been sent. Vaidya Ji will reply on this page soon.',
   };
 
   const dosageWarning = isHindi 
@@ -117,7 +117,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       toast({ title: labels.qaSuccess });
     } catch (e) {
       console.error(e);
-      toast({ variant: 'destructive', title: 'Error', description: 'Failed to send question.' });
+      toast({ variant: 'destructive', title: 'Error', description: 'Failed to send experience.' });
     } finally {
       setIsSubmittingQuestion(false);
     }
@@ -301,7 +301,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           <Button 
             onClick={handleQuestionSubmit}
             disabled={isSubmittingQuestion || !question.trim()}
-            className="w-full h-12 bg-accent hover:bg-accent/90 text-white rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95"
+            className="w-full h-12 bg-[#1e4620] hover:bg-[#1e4620]/90 text-white rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95"
           >
             {isSubmittingQuestion ? <Loader2 className="animate-spin" /> : <><Send className="mr-2 w-4 h-4" /> {labels.qaButton}</>}
           </Button>
