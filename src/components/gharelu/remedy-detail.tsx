@@ -83,7 +83,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     routine: isHindi ? '8. दिनचर्या' : '8. Daily Routine',
     safety: isHindi ? '9. सुरक्षा सूचना' : '9. Safety Information',
     qaTitle: isHindi ? 'वैद्य जी से पूछें (गुमनाम)' : 'Ask Vaidya Ji (Anonymous)',
-    qaPlaceholder: isHindi ? 'इस नुस्खे से जुड़ा अपना सवाल यहाँ लिखें...' : 'Write your question related to this remedy here...',
+    qaPlaceholder: isHindi ? 'अपना अनुभव साझा करें' : 'Share your experience',
     qaButton: isHindi ? 'सवाल भेजें' : 'Send Question',
     qaSuccess: isHindi ? 'आपका सवाल भेज दिया गया है। वैद्य जी जल्द ही इसी पेज पर जवाब देंगे।' : 'Your question has been sent. Vaidya Ji will reply on this page soon.',
   };
@@ -270,11 +270,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
       {/* Private Q&A Section */}
       <div className={cn("mt-10 p-6 rounded-[2.5rem] border shadow-2xl space-y-6", isNight ? "bg-zinc-900 border-accent/20" : "bg-white border-primary/10")}>
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-2xl bg-accent/10 text-accent"><MessageCircle className="w-6 h-6" /></div>
-          <h3 className={cn("text-xl font-black font-headline", isNight ? "text-accent" : "text-primary")}>{labels.qaTitle}</h3>
-        </div>
-
         {/* Existing Q&A List for this user */}
         {myQA.length > 0 && (
           <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
