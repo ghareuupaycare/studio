@@ -11,7 +11,7 @@ import { NotificationsOverlay } from '@/components/gharelu/notifications-overlay
 import { cn } from '@/lib/utils';
 import { REMEDIES as STATIC_REMEDIES, Remedy } from '@/lib/remedy-data';
 import { useFirestore } from '@/firebase';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, where } from 'firebase/firestore';
 
 export type Language = 'hi' | 'en';
 export type Theme = 'cream' | 'night';
@@ -33,12 +33,24 @@ function GhareluUpayAppContent() {
   const [lastCheckedTime, setLastCheckedTime] = useState<number>(0);
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const [userId, setUserId] = useState<string>('');
+  const [privateAnswers, setPrivateAnswers] = useState<any[]>([]);
+
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   const allRemedies = useMemo(() => {
     return [...STATIC_REMEDIES, ...liveRecipes];
   }, [liveRecipes]);
+
+  useEffect(() => {
+    let uid = localStorage.getItem('gharelu_user_id');
+    if (!uid) {
+      uid = 'user_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('gharelu_user_id', uid);
+    }
+    setUserId(uid);
+  }, []);
 
   useEffect(() => {
     if (!db) return;
@@ -70,7 +82,8 @@ function GhareluUpayAppContent() {
           safetyAdvice: data.safetyAdvice,
           disclaimer: { hi: "", en: "" },
           keywords: data.keywords || [],
-          timestamp: data.timestamp?.toMillis() || Date.now()
+          timestamp: data.timestamp?.toMillis() || Date.now(),
+          image: data.image
         } as Remedy;
       });
       setLiveRecipes(docs);
@@ -78,6 +91,23 @@ function GhareluUpayAppContent() {
 
     return () => unsubscribe();
   }, [db]);
+
+  // Private Q&A Notifications
+  useEffect(() => {
+    if (!db || !userId) return;
+    const q = query(
+      collection(db, 'questions'),
+      where('userId', '==', userId),
+      where('hasAnswer', '==', true),
+      where('isRead', '==', false)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setPrivateAnswers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+
+    return () => unsubscribe();
+  }, [db, userId]);
 
   useEffect(() => {
     const savedFavs = localStorage.getItem('gharelu-favorites');
@@ -106,7 +136,6 @@ function GhareluUpayAppContent() {
     setIsLoaded(true);
   }, []);
 
-  // Handle remedyId from URL query parameter
   useEffect(() => {
     if (urlRemedyId && allRemedies.length > 0) {
       const remedy = allRemedies.find(r => r.id === urlRemedyId);
@@ -135,7 +164,8 @@ function GhareluUpayAppContent() {
     return Math.max(...liveRecipes.map(r => (r as any).timestamp || 0));
   }, [liveRecipes]);
 
-  const hasNewNotifications = isLoaded && latestRemedyTime > lastCheckedTime;
+  const hasNewNotifications = (isLoaded && latestRemedyTime > lastCheckedTime) || privateAnswers.length > 0;
+  
   const unreadRemedies = allRemedies.filter(r => !readRemedyIds.includes(r.id)).reverse();
 
   const toggleLanguage = () => setLang((prev) => (prev === 'hi' ? 'en' : 'hi'));
@@ -180,9 +210,13 @@ function GhareluUpayAppContent() {
   };
 
   const handleBackToCategories = () => {
-    setSelectedCategoryId(null);
-    setSelectedRemedyId(null);
-    setIsDetailView(false);
+    if (selectedRemedyId) {
+      setSelectedRemedyId(null);
+      setIsDetailView(false);
+    } else {
+      setSelectedCategoryId(null);
+      setIsDetailView(false);
+    }
   };
 
   const handleGoHome = () => {
@@ -261,6 +295,8 @@ function GhareluUpayAppContent() {
         unreadRemedies={unreadRemedies}
         onMarkAsRead={handleMarkAsRead}
         onSelectRemedy={handleSelectRemedy}
+        privateAnswers={privateAnswers}
+        db={db}
       />
 
       <BottomNav 

@@ -1,14 +1,14 @@
-
 'use client';
 
 import React from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogClose } from '@/components/ui/dialog';
-import { Bell, ChevronRight, Sparkles, MessageCircleOff, X } from 'lucide-react';
+import { Bell, ChevronRight, Sparkles, MessageCircleOff, X, MessageCircle } from 'lucide-react';
 import { Remedy } from '@/lib/remedy-data';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
+import { doc, updateDoc } from 'firebase/firestore';
 
 interface NotificationsOverlayProps {
   isOpen: boolean;
@@ -18,6 +18,8 @@ interface NotificationsOverlayProps {
   unreadRemedies: Remedy[];
   onMarkAsRead: (id: string) => void;
   onSelectRemedy: (remedyId: string, categoryId: string) => void;
+  privateAnswers: any[];
+  db: any;
 }
 
 export const NotificationsOverlay = ({ 
@@ -27,7 +29,9 @@ export const NotificationsOverlay = ({
   theme, 
   unreadRemedies,
   onMarkAsRead,
-  onSelectRemedy 
+  onSelectRemedy,
+  privateAnswers = [],
+  db
 }: NotificationsOverlayProps) => {
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
@@ -39,95 +43,79 @@ export const NotificationsOverlay = ({
     onClose();
   };
 
+  const handlePrivateClick = async (item: any) => {
+    if (db) {
+      await updateDoc(doc(db, 'questions', item.id), { isRead: true });
+    }
+    onSelectRemedy(item.remedyId, 'live');
+    onClose();
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
         className={cn(
-          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[70vh] max-w-none p-0 border-none flex flex-col transition-all duration-300 ease-in-out rounded-none shadow-2xl z-[100] outline-none [&>button]:hidden",
+          "fixed top-0 left-0 translate-x-0 translate-y-0 w-full h-[80vh] max-w-none p-0 border-none flex flex-col rounded-none shadow-2xl z-[100] outline-none [&>button]:hidden",
           isNight ? "bg-[#0a110d] text-white" : "bg-[#FDFBF7] text-foreground"
         )}
       >
-        <div className={cn(
-          "shrink-0 p-6 pt-10 relative",
-          isNight ? "bg-black/60 border-b border-white/10" : "bg-[#14532D] border-b border-white/10"
-        )}>
-          {/* Premium Golden Close Button */}
+        <div className={cn("shrink-0 p-6 pt-10 relative", isNight ? "bg-black/60 border-b border-white/10" : "bg-[#14532D] border-b border-white/10")}>
           <div className="absolute top-4 right-6">
             <DialogClose asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="rounded-full hover:bg-white/10 text-accent transition-all active:scale-90 h-10 w-10"
-              >
-                <X className="w-8 h-8 stroke-[3]" />
-              </Button>
+              <Button variant="ghost" size="icon" className="rounded-full text-accent h-10 w-10"><X className="w-8 h-8 stroke-[3]" /></Button>
             </DialogClose>
           </div>
-
           <div className="flex items-center gap-3">
             <Bell className="w-6 h-6 text-accent" />
-            <DialogTitle className="text-white text-xl font-headline font-black">
-              {isHindi ? 'क्या नया है?' : "What's New?"}
-            </DialogTitle>
+            <DialogTitle className="text-white text-xl font-headline font-black">{isHindi ? 'क्या नया है?' : "What's New?"}</DialogTitle>
           </div>
-          <p className="text-white/60 text-xs mt-2 font-medium">
-            {isHindi ? 'नवीनतम पारंपरिक स्वास्थ्य अपडेट' : 'Latest traditional health updates'}
-          </p>
         </div>
 
         <ScrollArea className="flex-1 w-full bg-transparent">
-          <div className="p-4 w-full max-w-2xl mx-auto">
-            {unreadRemedies.length > 0 ? (
-              <div className="space-y-4 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex items-center gap-2 px-2 py-1 mb-2">
-                  <Sparkles className="w-4 h-4 text-accent" />
-                  <span className="text-[11px] font-black uppercase tracking-[0.2em] opacity-60">
-                    {isHindi ? 'अपठित नुस्खे और अपडेट' : 'Unread Remedies & Updates'}
+          <div className="p-4 w-full max-w-2xl mx-auto space-y-8">
+            {/* Private Answers Section */}
+            {privateAnswers.length > 0 && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="flex items-center gap-2 px-2 py-1">
+                  <MessageCircle className="w-4 h-4 text-accent" />
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-accent">
+                    {isHindi ? 'वैद्य जी के जवाब' : 'Vaidya Ji Replies'}
                   </span>
                 </div>
+                {privateAnswers.map((item) => (
+                  <button key={item.id} onClick={() => handlePrivateClick(item)} className={cn("w-full p-5 rounded-2xl border-2 border-accent/40 bg-accent/5 flex items-center gap-4 text-left shadow-lg")}>
+                    <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-white shrink-0"><Sparkles className="w-5 h-5" /></div>
+                    <div className="flex-1">
+                      <p className="text-xs font-black text-accent uppercase mb-1">{item.remedyName?.hi}</p>
+                      <p className="font-bold text-sm line-clamp-2">{item.answer}</p>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-accent" />
+                  </button>
+                ))}
+              </div>
+            )}
 
+            {/* Remedies Section */}
+            {unreadRemedies.length > 0 ? (
+              <div className="space-y-4 pb-12">
+                <div className="flex items-center gap-2 px-2 py-1">
+                  <Sparkles className="w-4 h-4 text-emerald-500" />
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] opacity-60">{isHindi ? 'नए नुस्खे' : 'New Remedies'}</span>
+                </div>
                 <div className="grid grid-cols-1 gap-3">
                   {unreadRemedies.map((remedy) => (
-                    <button
-                      key={remedy.id}
-                      onClick={() => handleResultClick(remedy)}
-                      className={cn(
-                        "w-full p-5 rounded-2xl border transition-all text-left flex items-center gap-5 group cursor-pointer active:scale-[0.98] shadow-sm",
-                        isNight 
-                          ? "bg-white/5 border-white/5 hover:border-accent/50 text-white" 
-                          : "bg-white border-primary/5 hover:border-accent/50 text-primary"
-                      )}
-                    >
-                      <div className={cn(
-                        "w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg shrink-0 transition-colors duration-500",
-                        isNight ? "bg-white/5 text-accent" : "bg-accent/10 text-accent"
-                      )}>
-                        {toEnglishDigits(remedy.serialNumber === "Live" ? "★" : remedy.serialNumber)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-lg leading-tight truncate mb-1">
-                          {toEnglishDigits(remedy.name?.[lang] || '')}
-                        </h4>
-                        <p className="text-[12px] opacity-70 truncate font-medium">
-                          {toEnglishDigits(Array.isArray(remedy.introduction[lang]) ? remedy.introduction[lang][0] : remedy.introduction[lang])}
-                        </p>
-                      </div>
-                      <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:text-accent group-hover:translate-x-1 transition-all" />
+                    <button key={remedy.id} onClick={() => handleResultClick(remedy)} className={cn("w-full p-5 rounded-2xl border transition-all text-left flex items-center gap-5 group shadow-sm", isNight ? "bg-white/5 border-white/5" : "bg-white border-primary/5")}>
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg shrink-0 bg-accent/10 text-accent">{toEnglishDigits(remedy.serialNumber === "Live" ? "★" : remedy.serialNumber)}</div>
+                      <div className="flex-1 min-w-0"><h4 className="font-bold text-lg leading-tight truncate">{toEnglishDigits(remedy.name?.[lang] || '')}</h4></div>
+                      <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:text-accent group-hover:translate-x-1" />
                     </button>
                   ))}
                 </div>
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-16 text-center space-y-4 opacity-40">
+            ) : privateAnswers.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-24 opacity-40 text-center space-y-4">
                 <MessageCircleOff className="w-20 h-20" />
-                <div className="space-y-1">
-                  <p className="font-black text-xl">
-                    {isHindi ? 'अभी कोई नया अपडेट नहीं है' : 'No new updates right now'}
-                  </p>
-                  <p className="text-sm">
-                    {isHindi ? 'वैद्य जी जल्द ही नए नुस्खे और अपडेट यहाँ जोड़ेंगे।' : 'Vaidya Ji will add new remedies and updates here soon.'}
-                  </p>
-                </div>
+                <p className="font-black text-xl">{isHindi ? 'कोई नया अपडेट नहीं है' : 'No new updates'}</p>
               </div>
             )}
           </div>

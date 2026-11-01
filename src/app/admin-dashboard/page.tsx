@@ -1,58 +1,33 @@
-
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun } from 'lucide-react';
+import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun, MessageSquare, Send, X, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore, useStorage } from '@/firebase';
-import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, where, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { AdminForm } from '@/components/admin/admin-form';
 import { AdminRemedyList } from '@/components/admin/admin-remedy-list';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils';
+import { Textarea } from '@/components/ui/textarea';
 
-type DoseEntry = {
-  ageRangeHi: string;
-  ageRangeEn: string;
-  doseHi: string;
-  doseEn: string;
-};
-
-type ViewState = 'overview' | 'manage' | 'add-recipe';
+type ViewState = 'overview' | 'manage' | 'add-recipe' | 'questions';
 type Theme = 'cream' | 'night';
 
 const INITIAL_FORM_DATA = {
-  mainCategoryHi: '',
-  mainCategoryEn: '',
-  diseaseNameHi: '',
-  diseaseNameEn: '',
-  remedyTitleHi: '',
-  remedyTitleEn: '',
-  introductionHi: '',
-  introductionEn: '',
-  ingredientsHi: '',
-  ingredientsEn: '',
-  preparationHi: '',
-  preparationEn: '',
-  usageHi: '',
-  usageEn: '',
-  dietEatHi: '',
-  dietEatEn: '',
-  dietAvoidHi: '',
-  dietAvoidEn: '',
-  routineHi: '',
-  routineEn: '',
-  safetyAdviceHi: '',
-  safetyAdviceEn: '',
-  seoKeywords: '',
+  mainCategoryHi: '', mainCategoryEn: '', diseaseNameHi: '', diseaseNameEn: '',
+  remedyTitleHi: '', remedyTitleEn: '', introductionHi: '', introductionEn: '',
+  ingredientsHi: '', ingredientsEn: '', preparationHi: '', preparationEn: '',
+  usageHi: '', usageEn: '', dietEatHi: '', dietEatEn: '', dietAvoidHi: '', dietAvoidEn: '',
+  routineHi: '', routineEn: '', safetyAdviceHi: '', safetyAdviceEn: '', seoKeywords: '',
 };
 
-const INITIAL_DOSES: DoseEntry[] = [
+const INITIAL_DOSES = [
   { ageRangeHi: '5 वर्ष से 12 वर्ष', ageRangeEn: '5 Years to 12 Years', doseHi: '', doseEn: '' },
   { ageRangeHi: '13 वर्ष से 40 वर्ष', ageRangeEn: '13 Years to 40 Years', doseHi: '', doseEn: '' },
   { ageRangeHi: '41 वर्ष से 60 वर्ष', ageRangeEn: '41 Years to 60 Years', doseHi: '', doseEn: '' },
@@ -68,36 +43,29 @@ export default function AdminDashboard() {
   const [view, setView] = useState<ViewState>('overview');
   const [theme, setTheme] = useState<Theme>('cream');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [liveRecipes, setLiveRecipes] = useState<any[]>([]);
+  const [questions, setQuestions] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-  const [doses, setDoses] = useState<DoseEntry[]>(INITIAL_DOSES);
+  const [doses, setDoses] = useState<any[]>(INITIAL_DOSES);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const isAuth = typeof window !== 'undefined' ? localStorage.getItem('gharelu_admin_auth') : null;
     if (isAuth !== 'true') router.push('/admin-login');
-    else {
-      const savedTheme = localStorage.getItem('gharelu_admin_theme') as Theme;
-      if (savedTheme) setTheme(savedTheme);
-      setIsLoaded(true);
-    }
+    else setIsLoaded(true);
   }, [router]);
 
   useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem('gharelu_admin_theme', theme);
-    }
-  }, [theme, isLoaded]);
-
-  useEffect(() => {
     if (!db) return;
-    const unsubscribe = onSnapshot(query(collection(db, 'recipes'), orderBy('timestamp', 'desc')), (snapshot) => {
+    const unsubRecipes = onSnapshot(query(collection(db, 'recipes'), orderBy('timestamp', 'desc')), (snapshot) => {
       setLiveRecipes(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
-    return () => unsubscribe();
+    const unsubQuestions = onSnapshot(query(collection(db, 'questions'), orderBy('timestamp', 'desc')), (snapshot) => {
+      setQuestions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+    return () => { unsubRecipes(); unsubQuestions(); };
   }, [db]);
 
   const isNight = theme === 'night';
@@ -114,102 +82,42 @@ export default function AdminDashboard() {
     return groups;
   }, [liveRecipes]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleDoseChange = (index: number, field: keyof DoseEntry, value: string) => {
-    const newDoses = [...doses];
-    newDoses[index][field] = value;
-    setDoses(newDoses);
-  };
-
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0] && storage) {
-      const file = e.target.files[0];
-      setIsUploadingImage(true);
-      setUploadProgress(0);
-      
-      try {
-        const storageRef = ref(storage, `recipes/${Date.now()}_${file.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, file);
-
-        uploadTask.on('state_changed', 
-          (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setUploadProgress(progress);
-          }, 
-          (error) => {
-            console.error("Upload failed", error);
-            // Ensure state is reset so user can still save text data
-            setIsUploadingImage(false);
-            setUploadProgress(0);
-            setUploadedImageUrl(null);
-            toast({ 
-              variant: "destructive", 
-              title: "अपलोड विफल", 
-              description: "इमेज अपलोड नहीं हो सकी (स्टोरेज परमिशन चेक करें)। आप बिना इमेज के भी नुस्खा सेव कर सकते हैं।" 
-            });
-          }, 
-          async () => {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            setUploadedImageUrl(downloadURL);
-            setIsUploadingImage(false);
-            toast({ title: "सफलता", description: "इमेज अपलोड हो गई!" });
-          }
-        );
-      } catch (err) {
-        setIsUploadingImage(false);
-        toast({ variant: "destructive", title: "Error", description: "स्टोरेज कनेक्शन में समस्या।" });
-      }
+  const handleReplySubmit = async (qId: string) => {
+    if (!db || !replyText[qId]?.trim()) return;
+    try {
+      await updateDoc(doc(db, 'questions', qId), {
+        answer: replyText[qId].trim(),
+        hasAnswer: true,
+        isRead: false,
+        answeredAt: serverTimestamp()
+      });
+      setReplyText(prev => ({ ...prev, [qId]: '' }));
+      toast({ title: "जवाब भेज दिया गया!" });
+    } catch (e) {
+      toast({ variant: "destructive", title: "त्रुटि" });
     }
   };
 
-  const handleClearImage = () => {
-    setUploadedImageUrl(null);
-    setIsUploadingImage(false);
-    setUploadProgress(0);
-    toast({ description: "इमेज हटा दी गई है।" });
+  const handleQuestionDelete = async (qId: string) => {
+    if (!db || !confirm("क्या आप वाकई यह सवाल हटाना चाहते हैं?")) return;
+    try {
+      await deleteDoc(doc(db, 'questions', qId));
+      toast({ title: "हटा दिया गया" });
+    } catch (e) { toast({ variant: "destructive", title: "त्रुटि" }); }
   };
-
-  const addDoseField = () => setDoses([...doses, { ageRangeHi: '', ageRangeEn: '', doseHi: '', doseEn: '' }]);
-  const removeDoseField = (index: number) => setDoses(doses.filter((_, i) => i !== index));
 
   const resetForm = () => {
     setFormData(INITIAL_FORM_DATA);
     setDoses(INITIAL_DOSES);
     setEditingId(null);
     setUploadedImageUrl(null);
-    setUploadProgress(0);
-    setIsUploadingImage(false);
-  };
-
-  const generateSlug = (category: string, disease: string, title: string) => {
-    const combined = `${disease}-${title}`.toLowerCase();
-    return combined
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!db) return;
-    
-    if (isUploadingImage) {
-      toast({ variant: "destructive", title: "कृपया प्रतीक्षा करें", description: "इमेज अभी अपलोड हो रही है। यदि यह अटक गई है, तो इमेज हटाकर सीधे सेव करें।" });
-      return;
-    }
-
     setIsSubmitting(true);
-
     try {
-      const keywordArray = formData.seoKeywords
-        .split(',')
-        .map(k => k.trim())
-        .filter(k => k !== '');
-
-      const slug = generateSlug(formData.mainCategoryEn, formData.diseaseNameEn, formData.remedyTitleEn);
-
       const submissionData = {
         mainCategory: { hi: formData.mainCategoryHi, en: formData.mainCategoryEn },
         diseaseName: { hi: formData.diseaseNameHi, en: formData.diseaseNameEn },
@@ -223,232 +131,98 @@ export default function AdminDashboard() {
         routine: { hi: formData.routineHi, en: formData.routineEn },
         safetyAdvice: { hi: formData.safetyAdviceHi, en: formData.safetyAdviceEn },
         doses: doses.map(d => ({ ageRange: { hi: d.ageRangeHi, en: d.ageRangeEn }, dose: { hi: d.doseHi, en: d.doseEn } })),
-        keywords: keywordArray,
-        slug: slug,
+        keywords: formData.seoKeywords.split(',').map(k => k.trim()),
         image: uploadedImageUrl,
         timestamp: serverTimestamp(),
       };
-
-      if (editingId) {
-        await setDoc(doc(db, 'recipes', editingId), submissionData, { merge: true });
-      } else {
-        await addDoc(collection(db, 'recipes'), submissionData);
-      }
-      toast({ title: "सफलता!", description: "नुस्खा सुरक्षित किया गया!" });
+      if (editingId) await setDoc(doc(db, 'recipes', editingId), submissionData, { merge: true });
+      else await addDoc(collection(db, 'recipes'), submissionData);
+      toast({ title: "सफलता!" });
       resetForm();
       setView('manage');
-    } catch (error: any) {
-      console.error("Submission error:", error);
-      toast({ variant: "destructive", title: "सेव करने में विफल", description: "कृपया अपने इंटरनेट और Firestore नियमों की जांच करें।" });
-      errorEmitter.emit('permission-error', new FirestorePermissionError({
-        path: editingId ? `recipes/${editingId}` : 'recipes',
-        operation: editingId ? 'update' : 'create',
-      }));
-    } finally {
-      setIsSubmitting(false);
-    }
+    } catch (error) { toast({ variant: "destructive", title: "विफल" }); }
+    finally { setIsSubmitting(false); }
   };
-
-  const handleEdit = (recipe: any) => {
-    setFormData({
-      mainCategoryHi: recipe.mainCategory?.hi || '',
-      mainCategoryEn: recipe.mainCategory?.en || '',
-      diseaseNameHi: recipe.diseaseName?.hi || '',
-      diseaseNameEn: recipe.diseaseName?.en || '',
-      remedyTitleHi: recipe.remedyTitle?.hi || '',
-      remedyTitleEn: recipe.remedyTitle?.en || '',
-      introductionHi: recipe.introduction?.hi || '',
-      introductionEn: recipe.introduction?.en || '',
-      ingredientsHi: recipe.ingredients?.hi || '',
-      ingredientsEn: recipe.ingredients?.en || '',
-      preparationHi: recipe.preparation?.hi || '',
-      preparationEn: recipe.preparation?.en || '',
-      usageHi: recipe.usage?.hi || '',
-      usageEn: recipe.usage?.en || '',
-      dietEatHi: recipe.dietEat?.hi || '',
-      dietEatEn: recipe.dietEat?.en || '',
-      dietAvoidHi: recipe.dietAvoid?.hi || '',
-      dietAvoidEn: recipe.dietAvoid?.en || '',
-      routineHi: recipe.routine?.hi || '',
-      routineEn: recipe.routine?.en || '',
-      safetyAdviceHi: recipe.safetyAdvice?.hi || '',
-      safetyAdviceEn: recipe.safetyAdvice?.en || '',
-      seoKeywords: Array.isArray(recipe.keywords) ? recipe.keywords.join(', ') : '',
-    });
-    
-    const loadedDoses = recipe.doses?.map((d: any) => ({ 
-      ageRangeHi: d.ageRange?.hi || '', 
-      ageRangeEn: d.ageRange?.en || '', 
-      doseHi: d.dose?.hi || '', 
-      doseEn: d.dose?.en || '' 
-    })) || INITIAL_DOSES;
-    
-    setDoses(loadedDoses);
-    setEditingId(recipe.id);
-    setUploadedImageUrl(recipe.image || null);
-    setView('add-recipe');
-  };
-
-  const handleQuickAdd = (category?: any, disease?: any) => {
-    resetForm();
-    if (category) {
-      setFormData(prev => ({
-        ...prev,
-        mainCategoryHi: category.hi || '',
-        mainCategoryEn: category.en || '',
-      }));
-    }
-    if (disease) {
-      setFormData(prev => ({
-        ...prev,
-        diseaseNameHi: disease.hi || '',
-        diseaseNameEn: disease.en || '',
-      }));
-    }
-    setView('add-recipe');
-  };
-
-  const handleDelete = async (e: React.MouseEvent, id: string, title: string) => {
-    e.stopPropagation();
-    if (confirm(`क्या आप वाकई "${title}" हटाना चाहते हैं?`)) {
-      try {
-        await deleteDoc(doc(db!, 'recipes', id));
-        toast({ title: "हटा दिया गया" });
-      } catch (e) {
-        errorEmitter.emit('permission-error', new FirestorePermissionError({ path: `recipes/${id}`, operation: 'delete' }));
-      }
-    }
-  };
-
-  const handleDeleteCategory = async (categoryName: string) => {
-    if (!db) return;
-    if (confirm(`सावधानी! क्या आप पूरी श्रेणी "${categoryName}" और इसके अंदर के सभी बीमारियों और नुस्खों को हटाना चाहते हैं?`)) {
-      const recipesToDelete = liveRecipes.filter(r => r.mainCategory?.hi === categoryName);
-      try {
-        for (const r of recipesToDelete) {
-          await deleteDoc(doc(db, 'recipes', r.id));
-        }
-        toast({ title: "श्रेणी हटा दी गई" });
-      } catch (e) {
-        toast({ variant: "destructive", title: "त्रुटि" });
-      }
-    }
-  };
-
-  const handleDeleteSubCategory = async (categoryName: string, diseaseName: string) => {
-    if (!db) return;
-    if (confirm(`क्या आप वाकई बीमारी "${diseaseName}" के सभी नुस्खे हटाना चाहते हैं?`)) {
-      const recipesToDelete = liveRecipes.filter(r => r.mainCategory?.hi === categoryName && r.diseaseName?.hi === diseaseName);
-      try {
-        for (const r of recipesToDelete) {
-          await deleteDoc(doc(db, 'recipes', r.id));
-        }
-        toast({ title: "बीमारी हटा दी गई" });
-      } catch (e) {
-        toast({ variant: "destructive", title: "त्रुटि" });
-      }
-    }
-  };
-
-  const toggleTheme = () => setTheme(prev => prev === 'cream' ? 'night' : 'cream');
 
   if (!isLoaded) return null;
 
   return (
-    <div className={cn(
-      "min-h-screen flex flex-col transition-colors duration-500",
-      isNight ? "bg-zinc-950 text-white" : "bg-[#FDFBF7] text-foreground"
-    )}>
-      <header className={cn(
-        "h-14 flex items-center justify-between px-6 sticky top-0 z-50 shadow-md transition-colors",
-        isNight ? "bg-zinc-900 border-b border-white/10" : "bg-primary text-white"
-      )}>
-        <div className="flex items-center gap-3">
-          <LayoutDashboard className={cn("w-5 h-5", isNight ? "text-accent" : "text-accent")} />
-          <h1 className="font-headline font-black text-lg">एडमिन कंट्रोल पैनल</h1>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={toggleTheme} className="text-white hover:bg-white/10 h-10 w-10 p-0 rounded-full">
-            {isNight ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </Button>
-          <Button variant="ghost" onClick={() => { localStorage.removeItem('gharelu_admin_auth'); router.push('/admin-login'); }} className="text-white hover:bg-white/10 gap-2 h-9 text-sm">
-            <LogOut className="w-4 h-4" /> लॉगआउट
-          </Button>
-        </div>
+    <div className={cn("min-h-screen flex flex-col transition-colors", isNight ? "bg-zinc-950 text-white" : "bg-[#FDFBF7]")}>
+      <header className={cn("h-14 flex items-center justify-between px-6 sticky top-0 z-50 shadow-md", isNight ? "bg-zinc-900" : "bg-primary text-white")}>
+        <div className="flex items-center gap-3"><LayoutDashboard /><h1 className="font-headline font-black text-lg">एडमिन कंट्रोल</h1></div>
+        <Button variant="ghost" onClick={() => { localStorage.removeItem('gharelu_admin_auth'); router.push('/admin-login'); }}><LogOut className="mr-2" /> लॉगआउट</Button>
       </header>
 
       <main className="flex-1 p-6 max-w-5xl mx-auto w-full">
         {view === 'overview' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card 
-              className={cn(
-                "cursor-pointer group transition-all rounded-[2.5rem]",
-                isNight ? "bg-zinc-900 border-white/10 hover:border-accent/50" : "bg-white border-primary/20 hover:border-primary/50"
-              )} 
-              onClick={() => setView('manage')}
-            >
-              <div className="p-8 text-center space-y-4">
-                <div className={cn(
-                  "mx-auto w-16 h-16 rounded-full flex items-center justify-center transition-colors",
-                  isNight ? "bg-accent/10 text-accent group-hover:bg-accent group-hover:text-black" : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white"
-                )}>
-                  <ClipboardList className="w-8 h-8" />
-                </div>
-                <h3 className="text-xl font-bold">नुस्खे प्रबंधित करें</h3>
-                <p className={cn("text-sm", isNight ? "text-zinc-400" : "text-muted-foreground")}>लाइव नुस्खे देखें, एडिट करें या हटाएँ</p>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem]", isNight ? "bg-zinc-900" : "bg-white")} onClick={() => setView('manage')}>
+              <ClipboardList className="mx-auto w-10 h-10" /><h3>नुस्खे प्रबंधित करें</h3>
             </Card>
-            <Card 
-              className={cn(
-                "cursor-pointer group transition-all rounded-[2.5rem]",
-                isNight ? "bg-zinc-900 border-white/10 hover:border-accent/50" : "bg-white border-primary/20 hover:border-primary/50"
-              )} 
-              onClick={() => { resetForm(); setView('add-recipe'); }}
-            >
-              <div className="p-8 text-center space-y-4">
-                <div className={cn(
-                  "mx-auto w-16 h-16 rounded-full flex items-center justify-center transition-colors",
-                  isNight ? "bg-accent/10 text-accent group-hover:bg-accent group-hover:text-black" : "bg-accent/10 text-accent group-hover:bg-accent group-hover:text-white"
-                )}>
-                  <PlusCircle className="w-8 h-8" />
-                </div>
-                <h3 className="text-xl font-bold">नया नुस्खा जोड़ें</h3>
-                <p className={cn("text-sm", isNight ? "text-zinc-400" : "text-muted-foreground")}>ऐप में नया पारंपरिक नुस्खा अपलोड करें</p>
-              </div>
+            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem]", isNight ? "bg-zinc-900" : "bg-white")} onClick={() => setView('add-recipe')}>
+              <PlusCircle className="mx-auto w-10 h-10" /><h3>नया नुस्खा जोड़ें</h3>
+            </Card>
+            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem]", isNight ? "bg-zinc-900 border-accent/20" : "bg-white")} onClick={() => setView('questions')}>
+              <MessageSquare className="mx-auto w-10 h-10 text-accent" /><h3>सवालों के जवाब दें</h3>
+              {questions.filter(q => !q.hasAnswer).length > 0 && <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs">New</span>}
             </Card>
           </div>
         )}
 
-        {view === 'manage' && (
-          <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="flex justify-between items-center">
-              <Button variant="ghost" onClick={() => setView('overview')} className={cn("gap-2 font-bold", isNight ? "text-accent" : "text-primary")}><ChevronLeft /> पीछे</Button>
-              <Button onClick={() => { resetForm(); setView('add-recipe'); }} className="bg-accent hover:bg-accent/90 text-white">नुस्खा जोड़ें</Button>
+        {view === 'questions' && (
+          <div className="space-y-6">
+            <Button variant="ghost" onClick={() => setView('overview')}><ChevronLeft /> पीछे</Button>
+            <h2 className="text-2xl font-black">यूज़र के सवाल</h2>
+            <div className="grid gap-4">
+              {questions.length > 0 ? questions.map(q => (
+                <Card key={q.id} className={cn("p-6 rounded-[2rem] border-2", isNight ? "bg-zinc-900" : "bg-white", q.hasAnswer ? "border-emerald-500/20" : "border-accent/40")}>
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Recipe: {q.remedyName?.hi}</p>
+                      <h4 className="text-lg font-bold">{q.question}</h4>
+                    </div>
+                    <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleQuestionDelete(q.id)}><Trash2 className="w-4 h-4" /></Button>
+                  </div>
+                  {q.answer ? (
+                    <div className="bg-emerald-500/10 p-4 rounded-xl border-l-4 border-emerald-500">
+                      <p className="text-xs font-bold uppercase mb-1">वैद्य जी का जवाब:</p>
+                      <p>{q.answer}</p>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Textarea placeholder="अपना जवाब यहाँ लिखें..." value={replyText[q.id] || ''} onChange={(e) => setReplyText(prev => ({ ...prev, [q.id]: e.target.value }))} className={cn("rounded-xl", isNight && "bg-zinc-800")} />
+                      <Button className="bg-accent h-auto px-6 rounded-xl" onClick={() => handleReplySubmit(q.id)}><Send /></Button>
+                    </div>
+                  )}
+                </Card>
+              )) : <p className="text-center italic opacity-50 py-20">अभी कोई सवाल नहीं हैं।</p>}
             </div>
+          </div>
+        )}
+
+        {view === 'manage' && (
+          <div className="space-y-6">
+            <Button variant="ghost" onClick={() => setView('overview')}><ChevronLeft /> पीछे</Button>
             <AdminRemedyList 
               groupedRecipes={groupedRecipes} 
-              onEdit={handleEdit} 
-              onDelete={handleDelete} 
-              onDeleteCategory={handleDeleteCategory}
-              onDeleteSubCategory={handleDeleteSubCategory}
-              onQuickAdd={handleQuickAdd}
-              isNight={isNight}
+              onEdit={(r) => { setFormData({ ...r, seoKeywords: r.keywords?.join(',') }); setEditingId(r.id); setView('add-recipe'); }} 
+              onDelete={async (_, id) => { if(confirm("हटाएं?")) await deleteDoc(doc(db!, 'recipes', id)); }} 
+              onDeleteCategory={()=>{}} onDeleteSubCategory={()=>{}} onQuickAdd={()=>{}} isNight={isNight}
             />
           </div>
         )}
 
         {view === 'add-recipe' && (
-          <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
-            <Button variant="ghost" onClick={() => setView('manage')} className={cn("gap-2 font-bold", isNight ? "text-accent" : "text-primary")}><ChevronLeft /> रद्द करें</Button>
+          <div className="space-y-6">
+            <Button variant="ghost" onClick={() => setView('overview')}><ChevronLeft /> रद्द करें</Button>
             <AdminForm 
-              formData={formData} doses={doses} isSubmitting={isSubmitting} editingId={editingId}
-              isUploadingImage={isUploadingImage} uploadProgress={uploadProgress}
-              onInputChange={handleInputChange} onDoseChange={handleDoseChange} 
-              onAddDose={addDoseField} onRemoveDose={removeDoseField} 
-              onImageChange={handleImageChange} existingImageUrl={uploadedImageUrl}
-              onClearImage={handleClearImage}
-              onSubmit={handleSubmit} onCancel={() => setView('manage')}
-              isNight={isNight}
+              formData={formData} doses={doses} isSubmitting={isSubmitting} editingId={editingId} isUploadingImage={false} uploadProgress={0}
+              onInputChange={(e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))} 
+              onDoseChange={(i, f, v) => { const n = [...doses]; (n[i] as any)[f] = v; setDoses(n); }}
+              onAddDose={() => setDoses([...doses, { ageRangeHi: '', ageRangeEn: '', doseHi: '', doseEn: '' }])}
+              onRemoveDose={(i) => setDoses(doses.filter((_, idx) => idx !== i))}
+              onImageChange={()=>{}} onClearImage={()=>{}} existingImageUrl={uploadedImageUrl}
+              onSubmit={handleSubmit} onCancel={() => setView('manage')} isNight={isNight}
             />
           </div>
         )}
