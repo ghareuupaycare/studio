@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun, MessageSquare, Send, X, Trash2, CheckCircle2 } from 'lucide-react';
+import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun, MessageSquare, Send, X, Trash2, CheckCircle2, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase';
 import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc } from 'firebase/firestore';
@@ -77,6 +77,38 @@ export default function AdminDashboard() {
     });
     return groups;
   }, [liveRecipes]);
+
+  // Group questions by UserID + RemedyID for a threaded view
+  const groupedQuestions = useMemo(() => {
+    const groups: Record<string, {
+      userId: string;
+      remedyId: string;
+      remedyName: any;
+      messages: any[];
+    }> = {};
+
+    questions.forEach(q => {
+      const key = `${q.userId}_${q.remedyId}`;
+      if (!groups[key]) {
+        groups[key] = {
+          userId: q.userId,
+          remedyId: q.remedyId,
+          remedyName: q.remedyName,
+          messages: []
+        };
+      }
+      groups[key].messages.push(q);
+    });
+
+    return Object.values(groups).map(group => ({
+      ...group,
+      messages: group.messages.sort((a, b) => (a.timestamp?.toMillis() || 0) - (b.timestamp?.toMillis() || 0))
+    })).sort((a, b) => {
+      const lastA = a.messages[a.messages.length - 1]?.timestamp?.toMillis() || 0;
+      const lastB = b.messages[b.messages.length - 1]?.timestamp?.toMillis() || 0;
+      return lastB - lastA;
+    });
+  }, [questions]);
 
   const handleReplySubmit = async (qId: string) => {
     if (!db || !replyText[qId]?.trim()) return;
@@ -173,45 +205,59 @@ export default function AdminDashboard() {
         {view === 'questions' && (
           <div className="space-y-6">
             <Button variant="ghost" onClick={() => setView('overview')}><ChevronLeft /> पीछे</Button>
-            <h2 className="text-2xl font-black">यूज़र के सवाल</h2>
-            <div className="grid gap-4">
-              {questions.length > 0 ? questions.map(q => (
-                <Card key={q.id} className={cn("p-6 rounded-[2rem] border-2 shadow-sm transition-all", isNight ? "bg-zinc-900 border-white/5" : "bg-white border-accent/20")}>
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">नुस्खा: {q.remedyName?.hi}</p>
-                      <div className="bg-muted/30 p-4 rounded-2xl border-l-4 border-primary mb-4">
-                        <h4 className="text-lg font-bold">{q.question}</h4>
-                      </div>
-                    </div>
-                    <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleQuestionDelete(q.id)}><Trash2 className="w-4 h-4" /></Button>
+            <h2 className="text-2xl font-black">यूज़र के सवाल (चैट थ्रेड्स)</h2>
+            <div className="grid gap-6">
+              {groupedQuestions.length > 0 ? groupedQuestions.map((group, idx) => (
+                <Card key={idx} className={cn("p-6 rounded-[2.5rem] border-2 shadow-sm", isNight ? "bg-zinc-900 border-white/5" : "bg-white border-accent/20")}>
+                  <div className="mb-6 border-b pb-4 border-accent/10">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-1">नुस्खा: {group.remedyName?.hi}</p>
+                    <h3 className="text-xl font-bold flex items-center gap-2">
+                      <MessageSquare className="w-5 h-5 text-accent" />
+                      यूज़र थ्रेड #{group.userId.slice(-4)}
+                    </h3>
                   </div>
                   
-                  <div className="space-y-4">
-                    {q.answer && (
-                      <div className="bg-emerald-500/10 p-4 rounded-xl border-l-4 border-emerald-500 flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-xs font-bold uppercase mb-1">पिछला जवाब:</p>
-                          <p className="font-medium">{q.answer}</p>
+                  <div className="space-y-6 max-h-[500px] overflow-y-auto mb-6 pr-2 custom-scrollbar flex flex-col">
+                    {group.messages.map((item) => (
+                      <div key={item.id} className="space-y-2 group/msg relative">
+                        <div className="flex justify-between items-center px-1">
+                           <span className="text-[9px] font-bold opacity-40">{item.timestamp?.toDate().toLocaleString()}</span>
+                           <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive opacity-0 group-hover/msg:opacity-100 transition-opacity" onClick={() => handleQuestionDelete(item.id)}><Trash2 className="w-3 h-3" /></Button>
+                        </div>
+                        
+                        {/* User Message Bubble */}
+                        <div className={cn("p-4 rounded-2xl rounded-tr-none max-w-[90%] self-end ml-auto border-2", isNight ? "bg-zinc-800 border-white/5" : "bg-muted/30 border-primary/5")}>
+                          <p className="font-bold text-sm">{item.question}</p>
+                        </div>
+                        
+                        {/* Persistent Admin Reply Box per message */}
+                        <div className="space-y-3">
+                          {item.answer && (
+                            <div className={cn("p-4 rounded-2xl rounded-tl-none max-w-[90%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-sm")}>
+                              <p className="text-[9px] font-black text-accent uppercase tracking-widest mb-1 flex items-center gap-1">
+                                <Sparkles className="w-3 h-3" /> आपका पिछला जवाब:
+                              </p>
+                              <p className="text-[14px] font-medium leading-relaxed">{item.answer}</p>
+                            </div>
+                          )}
+                          
+                          <div className="flex gap-2 pl-4">
+                            <Textarea 
+                              placeholder={item.answer ? "जवाब अपडेट करें..." : "नया जवाब लिखें..."} 
+                              value={replyText[item.id] || ''} 
+                              onChange={(e) => setReplyText(prev => ({ ...prev, [item.id]: e.target.value }))} 
+                              className={cn("rounded-2xl border-2 focus:border-accent min-h-[60px] text-sm", isNight ? "bg-zinc-800 border-white/5" : "bg-white border-primary/5")} 
+                            />
+                            <Button className="bg-accent hover:bg-accent/90 h-auto px-4 rounded-2xl text-white shadow-lg" onClick={() => handleReplySubmit(item.id)}>
+                              <Send className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    )}
-                    
-                    <div className="flex gap-2">
-                      <Textarea 
-                        placeholder="नया जवाब या अपडेट लिखें..." 
-                        value={replyText[q.id] || ''} 
-                        onChange={(e) => setReplyText(prev => ({ ...prev, [q.id]: e.target.value }))} 
-                        className={cn("rounded-2xl border-2 focus:border-accent", isNight ? "bg-zinc-800 border-white/5" : "bg-white border-primary/5")} 
-                      />
-                      <Button className="bg-accent hover:bg-accent/90 h-auto px-6 rounded-2xl text-white shadow-lg" onClick={() => handleReplySubmit(q.id)}>
-                        <Send className="w-5 h-5" />
-                      </Button>
-                    </div>
+                    ))}
                   </div>
                 </Card>
-              )) : <div className="p-20 text-center opacity-30 flex flex-col items-center gap-4"><MessageSquare className="w-20 h-20" /><p className="font-bold">अभी कोई सवाल नहीं हैं</p></div>}
+              )) : <div className="p-20 text-center opacity-30 flex flex-col items-center gap-4"><MessageSquare className="w-20 h-20" /><p className="font-bold">अभी कोई चैट थ्रेड नहीं है</p></div>}
             </div>
           </div>
         )}
@@ -235,6 +281,7 @@ export default function AdminDashboard() {
               formData={formData} doses={doses} isSubmitting={isSubmitting} editingId={editingId} isUploadingImage={false} uploadProgress={0}
               onInputChange={(e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))} 
               onDoseChange={(i, f, v) => { const n = [...doses]; (n[i] as any)[f] = v; setDoses(n); }}
+              onAddDose={() => setDoses([...doses, { ageRangeHi: '', ageRangeEn: '', doseHi: '', doseEn: '' }])}
               onAddDose={() => setDoses([...doses, { ageRangeHi: '', ageRangeEn: '', doseHi: '', doseEn: '' }])}
               onRemoveDose={(i) => setDoses(doses.filter((_, idx) => idx !== i))}
               onImageChange={()=>{}} onClearImage={()=>{}} existingImageUrl={uploadedImageUrl}
