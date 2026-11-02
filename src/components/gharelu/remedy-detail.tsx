@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Remedy } from '@/lib/remedy-types';
 import { Language, Theme } from '@/app/page';
 import { 
@@ -46,17 +46,25 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const [selectedDoseIndex, setSelectedDoseIndex] = useState(0);
   const { toast } = useToast();
   const db = useFirestore();
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Q&A States
   const [question, setQuestion] = useState('');
   const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
-  const [myQA, setMyQA] = useState<any[]>([]);
+  const [chatThread, setChatThread] = useState<any[]>([]);
+
+  // Scroll to bottom when chat updates
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    if (!db) return;
-    const uid = localStorage.getItem('gharelu_user_id');
+    if (!db || !remedy.id) return;
+    
+    let uid = typeof window !== 'undefined' ? localStorage.getItem('gharelu_user_id') : null;
     if (!uid) return;
 
+    // Listen to all messages for this user and this specific remedy
     const q = query(
       collection(db, 'questions'),
       where('remedyId', '==', remedy.id),
@@ -65,7 +73,19 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      setMyQA(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setChatThread(messages);
+      
+      // Save to localStorage for immediate offline persistence as backup
+      localStorage.setItem(`gharelu_chats_${remedy.id}`, JSON.stringify(messages));
+      
+      // Slight delay to ensure DOM is rendered before scrolling
+      setTimeout(scrollToBottom, 100);
+    }, (error) => {
+      console.error("Chat sync error:", error);
+      // Load from backup if Firestore fails (offline mode)
+      const backup = localStorage.getItem(`gharelu_chats_${remedy.id}`);
+      if (backup) setChatThread(JSON.parse(backup));
     });
 
     return () => unsubscribe();
@@ -81,9 +101,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     dietAvoid: isHindi ? '7. क्या न खाएं' : '7. What to Avoid',
     routine: isHindi ? '8. दिनचर्या' : '8. Daily Routine',
     safety: isHindi ? '9. सुरक्षा सूचना' : '9. Safety Information',
-    qaPlaceholder: isHindi ? 'अपना अनुभव साझा करें' : 'Share your experience',
+    qaPlaceholder: isHindi ? 'अपना अनुभव साझा करें...' : 'Share your experience...',
     qaButton: isHindi ? 'अनुभव भेजें' : 'Send Experience',
-    qaSuccess: isHindi ? 'आपका अनुभव भेज दिया गया है। वैद्य जी जल्द ही इसी पेज पर जवाब देंगे।' : 'Your experience has been sent. Vaidya Ji will reply on this page soon.',
+    qaSuccess: isHindi ? 'आपका संदेश भेज दिया गया है।' : 'Your message has been sent.',
   };
 
   const dosageWarning = isHindi 
@@ -112,10 +132,10 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         timestamp: serverTimestamp()
       });
       setQuestion('');
-      toast({ title: labels.qaSuccess });
+      // Scroll will happen via useEffect onSnapshot
     } catch (e) {
       console.error(e);
-      toast({ variant: 'destructive', title: 'Error', description: 'Failed to send experience.' });
+      toast({ variant: 'destructive', title: 'Error', description: 'Failed to send.' });
     } finally {
       setIsSubmittingQuestion(false);
     }
@@ -266,53 +286,83 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         <Button onClick={handleWhatsAppShare} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Share2 className="w-3.5 h-3.5" /> SHARE</Button>
       </div>
 
-      {/* Private Q&A Chat Section */}
-      <div className={cn("mt-10 p-6 rounded-[2.5rem] border-2 shadow-2xl space-y-6", isNight ? "bg-zinc-950 border-[#FBBF24]/30" : "bg-white border-[#FBBF24]/40")}>
-        {/* Chat History */}
-        {myQA.length > 0 && (
-          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col">
-            {myQA.map((item) => (
-              <div key={item.id} className="space-y-2 animate-in slide-in-from-bottom-2 duration-300">
-                {/* User Message */}
-                <div className={cn("p-4 rounded-2xl rounded-tr-none max-w-[85%] self-end ml-auto border-2", isNight ? "bg-zinc-800 border-accent/20" : "bg-muted/30 border-primary/5")}>
-                  <p className="text-[14px] font-bold">{item.question}</p>
-                  <p className="text-[9px] opacity-40 mt-1 text-right">{item.timestamp?.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+      {/* WhatsApp-Style Chat Section */}
+      <div className={cn(
+        "mt-10 p-6 rounded-[2.5rem] border-2 shadow-2xl space-y-6 transition-colors duration-500",
+        isNight ? "bg-zinc-950 border-[#FBBF24]/30" : "bg-white border-[#FBBF24]/40"
+      )}>
+        {/* Chat History Container */}
+        <div className="space-y-4 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar flex flex-col pt-2">
+          {chatThread.length > 0 ? chatThread.map((item, idx) => (
+            <div key={item.id || idx} className="space-y-3 animate-in slide-in-from-bottom-2 duration-300">
+              {/* User Question Bubble */}
+              <div className={cn(
+                "p-4 rounded-2xl rounded-tr-none max-w-[85%] self-end ml-auto border-2 relative group",
+                isNight ? "bg-zinc-800 border-accent/20 text-white" : "bg-muted/30 border-primary/5 text-primary"
+              )}>
+                <p className="text-[14px] font-bold leading-relaxed">{item.question}</p>
+                <div className="flex justify-end mt-1 items-center gap-1 opacity-40 text-[9px]">
+                  <span>{item.timestamp?.toDate ? item.timestamp.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now'}</span>
                 </div>
-                {/* Admin Reply */}
-                {item.answer && (
-                  <div className={cn("p-4 rounded-2xl rounded-tl-none max-w-[85%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-sm")}>
-                    <p className="text-[10px] font-black text-accent uppercase tracking-widest mb-1 flex items-center gap-1">
-                      <Sparkles className="w-3 h-3" /> वैद्य जी:
-                    </p>
-                    <p className="text-[15px] font-medium leading-relaxed">{item.answer}</p>
-                  </div>
-                )}
               </div>
-            ))}
-          </div>
-        )}
 
-        {/* Input Area */}
-        <div className="space-y-3 pt-2">
-          <Textarea 
-            placeholder={labels.qaPlaceholder}
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            className={cn(
-              "min-h-[100px] rounded-2xl border-2 transition-all focus:border-[#FBBF24]",
-              isNight 
-                ? "bg-zinc-900 border-[#FBBF24] text-white placeholder:text-zinc-500" 
-                : "bg-white border-[#FBBF24] text-primary"
-            )}
-          />
+              {/* Admin Reply Bubble */}
+              {item.answer && (
+                <div className={cn(
+                  "p-4 rounded-2xl rounded-tl-none max-w-[85%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-sm animate-in fade-in duration-500"
+                )}>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <div className="bg-accent p-1 rounded-full"><Sparkles className="w-3 h-3 text-white" /></div>
+                    <span className="text-[10px] font-black text-accent uppercase tracking-[0.2em]">वैद्य जी</span>
+                  </div>
+                  <p className="text-[15px] font-medium leading-relaxed text-foreground">
+                    {item.answer}
+                  </p>
+                  <div className="flex justify-start mt-1 opacity-30 text-[9px] font-bold">
+                    {item.answeredAt?.toDate ? item.answeredAt.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}
+                  </div>
+                </div>
+              )}
+            </div>
+          )) : (
+            <div className="py-10 text-center opacity-30 flex flex-col items-center gap-4">
+              <User className="w-12 h-12" />
+              <p className="font-bold text-sm">{isHindi ? 'अपना अनुभव या सवाल साझा करें' : 'Share your experience or ask a question'}</p>
+            </div>
+          )}
+          <div ref={chatEndRef} />
+        </div>
+
+        {/* Persistent Input Box at bottom of chat */}
+        <div className="space-y-3 pt-4 border-t border-accent/10">
+          <div className="relative">
+            <Textarea 
+              placeholder={labels.qaPlaceholder}
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              className={cn(
+                "min-h-[100px] rounded-2xl border-2 transition-all duration-300 focus:ring-0",
+                isNight 
+                  ? "bg-zinc-900 border-[#FBBF24] text-white placeholder:text-zinc-600 focus:border-[#FBBF24]" 
+                  : "bg-white border-[#FBBF24] text-primary focus:border-[#FBBF24]"
+              )}
+            />
+          </div>
           <Button 
             onClick={handleQuestionSubmit}
             disabled={isSubmittingQuestion || !question.trim()}
             className={cn(
-              "w-full h-14 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 border-2 border-[#FBBF24] bg-[#14532D] hover:bg-[#14532D]/90"
+              "w-full h-14 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 border-2 border-[#FBBF24] bg-[#14532D] hover:bg-[#14532D]/90 disabled:opacity-50"
             )}
           >
-            {isSubmittingQuestion ? <Loader2 className="animate-spin" /> : <><Send className="mr-2 w-5 h-5" /> {labels.qaButton}</>}
+            {isSubmittingQuestion ? (
+              <Loader2 className="animate-spin w-6 h-6" />
+            ) : (
+              <>
+                <Send className="mr-2 w-5 h-5" /> 
+                {labels.qaButton}
+              </>
+            )}
           </Button>
         </div>
       </div>

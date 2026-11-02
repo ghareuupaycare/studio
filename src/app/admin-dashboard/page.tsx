@@ -45,6 +45,8 @@ export default function AdminDashboard() {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [doses, setDoses] = useState<any[]>(INITIAL_DOSES);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  
+  // Storage for reply inputs per message ID to keep them persistent
   const [replyText, setReplyText] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -175,7 +177,7 @@ export default function AdminDashboard() {
   if (!isLoaded) return null;
 
   return (
-    <div className={cn("min-h-screen flex flex-col transition-colors", isNight ? "bg-zinc-950 text-white" : "bg-[#FDFBF7]")}>
+    <div className={cn("min-h-screen flex flex-col transition-colors duration-500", isNight ? "bg-zinc-950 text-white" : "bg-[#FDFBF7]")}>
       <header className={cn("h-14 flex items-center justify-between px-6 sticky top-0 z-50 shadow-md", isNight ? "bg-zinc-900" : "bg-primary text-white")}>
         <div className="flex items-center gap-3"><LayoutDashboard /><h1 className="font-headline font-black text-lg">एडमिन कंट्रोल</h1></div>
         <div className="flex items-center gap-4">
@@ -189,66 +191,106 @@ export default function AdminDashboard() {
       <main className="flex-1 p-6 max-w-5xl mx-auto w-full">
         {view === 'overview' && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105", isNight ? "bg-zinc-900 border-white/10" : "bg-white border-primary/10 shadow-lg")} onClick={() => setView('manage')}>
-              <ClipboardList className="mx-auto w-10 h-10 text-primary" /><h3>नुस्खे प्रबंधित करें</h3>
+            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105 shadow-xl", isNight ? "bg-zinc-900 border-white/10" : "bg-white border-primary/10")} onClick={() => setView('manage')}>
+              <ClipboardList className="mx-auto w-10 h-10 text-primary" />
+              <h3 className="font-bold">नुस्खे प्रबंधित करें</h3>
             </Card>
-            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105", isNight ? "bg-zinc-900 border-white/10" : "bg-white border-primary/10 shadow-lg")} onClick={() => setView('add-recipe')}>
-              <PlusCircle className="mx-auto w-10 h-10 text-emerald-600" /><h3>नया नुस्खा जोड़ें</h3>
+            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105 shadow-xl", isNight ? "bg-zinc-900 border-white/10" : "bg-white border-primary/10")} onClick={() => setView('add-recipe')}>
+              <PlusCircle className="mx-auto w-10 h-10 text-emerald-600" />
+              <h3 className="font-bold">नया नुस्खा जोड़ें</h3>
             </Card>
-            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105", isNight ? "bg-zinc-900 border-accent/20" : "bg-white border-accent/40 shadow-lg")} onClick={() => setView('questions')}>
-              <MessageSquare className="mx-auto w-10 h-10 text-accent" /><h3>सवालों के जवाब दें</h3>
-              {questions.filter(q => !q.hasAnswer).length > 0 && <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs">New</span>}
+            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105 shadow-xl", isNight ? "bg-zinc-900 border-accent/20" : "bg-white border-accent/40")} onClick={() => setView('questions')}>
+              <MessageSquare className="mx-auto w-10 h-10 text-accent" />
+              <h3 className="font-bold">सवालों के जवाब दें</h3>
+              {questions.filter(q => !q.hasAnswer).length > 0 && (
+                <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-[10px] animate-pulse">
+                  {questions.filter(q => !q.hasAnswer).length} New
+                </span>
+              )}
             </Card>
           </div>
         )}
 
         {view === 'questions' && (
-          <div className="space-y-6">
-            <Button variant="ghost" onClick={() => setView('overview')}><ChevronLeft /> पीछे</Button>
-            <h2 className="text-2xl font-black">यूज़र के सवाल (चैट थ्रेड्स)</h2>
+          <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
+            <Button variant="ghost" onClick={() => setView('overview')} className="mb-4"><ChevronLeft className="mr-2" /> पीछे</Button>
+            <h2 className="text-2xl font-black font-headline">यूज़र के सवाल (चैट थ्रेड्स)</h2>
+            
             <div className="grid gap-6">
               {groupedQuestions.length > 0 ? groupedQuestions.map((group, idx) => (
-                <Card key={idx} className={cn("p-6 rounded-[2.5rem] border-2 shadow-sm", isNight ? "bg-zinc-900 border-white/5" : "bg-white border-accent/20")}>
+                <Card key={idx} className={cn("p-6 rounded-[2.5rem] border-2 shadow-sm overflow-hidden", isNight ? "bg-zinc-900 border-white/5" : "bg-white border-accent/20")}>
+                  {/* Thread Header */}
                   <div className="mb-6 border-b pb-4 border-accent/10">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-1">नुस्खा: {group.remedyName?.hi}</p>
-                    <h3 className="text-xl font-bold flex items-center gap-2">
-                      <MessageSquare className="w-5 h-5 text-accent" />
-                      यूज़र थ्रेड #{group.userId.slice(-4)}
-                    </h3>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-1">नुस्खा: {group.remedyName?.hi}</p>
+                        <h3 className="text-xl font-bold flex items-center gap-2">
+                          <MessageSquare className="w-5 h-5 text-accent" />
+                          यूज़र थ्रेड #{group.userId.slice(-4)}
+                        </h3>
+                      </div>
+                      <div className="text-[9px] opacity-40 uppercase font-bold text-right">
+                        Last Active: {group.messages[group.messages.length - 1]?.timestamp?.toDate().toLocaleDateString()}
+                      </div>
+                    </div>
                   </div>
                   
+                  {/* Chat Message List */}
                   <div className="space-y-6 max-h-[500px] overflow-y-auto mb-6 pr-2 custom-scrollbar flex flex-col">
                     {group.messages.map((item) => (
                       <div key={item.id} className="space-y-2 group/msg relative">
                         <div className="flex justify-between items-center px-1">
                            <span className="text-[9px] font-bold opacity-40">{item.timestamp?.toDate().toLocaleString()}</span>
-                           <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive opacity-0 group-hover/msg:opacity-100 transition-opacity" onClick={() => handleQuestionDelete(item.id)}><Trash2 className="w-3 h-3" /></Button>
+                           <Button 
+                             variant="ghost" 
+                             size="icon" 
+                             className="h-6 w-6 text-destructive opacity-0 group-hover/msg:opacity-100 transition-opacity" 
+                             onClick={() => handleQuestionDelete(item.id)}
+                           >
+                             <Trash2 className="w-3 h-3" />
+                           </Button>
                         </div>
                         
                         {/* User Message Bubble */}
-                        <div className={cn("p-4 rounded-2xl rounded-tr-none max-w-[90%] self-end ml-auto border-2", isNight ? "bg-zinc-800 border-white/5" : "bg-muted/30 border-primary/5")}>
-                          <p className="font-bold text-sm">{item.question}</p>
+                        <div className={cn(
+                          "p-4 rounded-2xl rounded-tr-none max-w-[90%] self-end ml-auto border-2",
+                          isNight ? "bg-zinc-800 border-white/5" : "bg-muted/30 border-primary/5"
+                        )}>
+                          <p className="font-bold text-[14px] leading-relaxed">{item.question}</p>
                         </div>
                         
-                        {/* Persistent Admin Reply Box per message */}
+                        {/* Admin Reply & Persistent Input Area */}
                         <div className="space-y-3">
                           {item.answer && (
-                            <div className={cn("p-4 rounded-2xl rounded-tl-none max-w-[90%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-sm")}>
+                            <div className={cn(
+                              "p-4 rounded-2xl rounded-tl-none max-w-[90%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-sm animate-in fade-in"
+                            )}>
                               <p className="text-[9px] font-black text-accent uppercase tracking-widest mb-1 flex items-center gap-1">
                                 <Sparkles className="w-3 h-3" /> आपका पिछला जवाब:
                               </p>
                               <p className="text-[14px] font-medium leading-relaxed">{item.answer}</p>
+                              {item.answeredAt && (
+                                <p className="text-[8px] opacity-30 mt-1">{item.answeredAt.toDate().toLocaleString()}</p>
+                              )}
                             </div>
                           )}
                           
-                          <div className="flex gap-2 pl-4">
+                          {/* Reply Input Box - Always Visible for every message to allow follow-up */}
+                          <div className="flex gap-2 pl-4 animate-in slide-in-from-left-2 duration-300">
                             <Textarea 
-                              placeholder={item.answer ? "जवाब अपडेट करें..." : "नया जवाब लिखें..."} 
+                              placeholder={item.answer ? "जवाब अपडेट करें या नया संदेश लिखें..." : "अपना जवाब यहाँ टाइप करें..."} 
                               value={replyText[item.id] || ''} 
                               onChange={(e) => setReplyText(prev => ({ ...prev, [item.id]: e.target.value }))} 
-                              className={cn("rounded-2xl border-2 focus:border-accent min-h-[60px] text-sm", isNight ? "bg-zinc-800 border-white/5" : "bg-white border-primary/5")} 
+                              className={cn(
+                                "rounded-2xl border-2 focus:border-accent min-h-[60px] text-sm resize-none",
+                                isNight ? "bg-zinc-800 border-white/5 text-white" : "bg-white border-primary/5"
+                              )} 
                             />
-                            <Button className="bg-accent hover:bg-accent/90 h-auto px-4 rounded-2xl text-white shadow-lg" onClick={() => handleReplySubmit(item.id)}>
+                            <Button 
+                              className="bg-accent hover:bg-accent/90 h-auto px-4 rounded-2xl text-white shadow-lg active:scale-95 transition-all" 
+                              onClick={() => handleReplySubmit(item.id)}
+                              disabled={!replyText[item.id]?.trim()}
+                            >
                               <Send className="w-4 h-4" />
                             </Button>
                           </div>
@@ -257,14 +299,19 @@ export default function AdminDashboard() {
                     ))}
                   </div>
                 </Card>
-              )) : <div className="p-20 text-center opacity-30 flex flex-col items-center gap-4"><MessageSquare className="w-20 h-20" /><p className="font-bold">अभी कोई चैट थ्रेड नहीं है</p></div>}
+              )) : (
+                <div className="p-20 text-center opacity-30 flex flex-col items-center gap-4">
+                  <MessageSquare className="w-20 h-20" />
+                  <p className="font-bold text-xl">अभी कोई चैट थ्रेड नहीं है</p>
+                </div>
+              )}
             </div>
           </div>
         )}
 
         {view === 'manage' && (
-          <div className="space-y-6">
-            <Button variant="ghost" onClick={() => setView('overview')}><ChevronLeft /> पीछे</Button>
+          <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
+            <Button variant="ghost" onClick={() => setView('overview')} className="mb-4"><ChevronLeft className="mr-2" /> पीछे</Button>
             <AdminRemedyList 
               groupedRecipes={groupedRecipes} 
               onEdit={(r) => { setFormData({ ...r, seoKeywords: r.keywords?.join(',') }); setEditingId(r.id); setView('add-recipe'); }} 
@@ -275,13 +322,12 @@ export default function AdminDashboard() {
         )}
 
         {view === 'add-recipe' && (
-          <div className="space-y-6">
-            <Button variant="ghost" onClick={() => setView('overview')}><ChevronLeft /> रद्द करें</Button>
+          <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
+            <Button variant="ghost" onClick={() => setView('overview')} className="mb-4"><ChevronLeft className="mr-2" /> रद्द करें</Button>
             <AdminForm 
               formData={formData} doses={doses} isSubmitting={isSubmitting} editingId={editingId} isUploadingImage={false} uploadProgress={0}
               onInputChange={(e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))} 
               onDoseChange={(i, f, v) => { const n = [...doses]; (n[i] as any)[f] = v; setDoses(n); }}
-              onAddDose={() => setDoses([...doses, { ageRangeHi: '', ageRangeEn: '', doseHi: '', doseEn: '' }])}
               onAddDose={() => setDoses([...doses, { ageRangeHi: '', ageRangeEn: '', doseHi: '', doseEn: '' }])}
               onRemoveDose={(i) => setDoses(doses.filter((_, idx) => idx !== i))}
               onImageChange={()=>{}} onClearImage={()=>{}} existingImageUrl={uploadedImageUrl}
