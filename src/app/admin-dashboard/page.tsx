@@ -4,13 +4,10 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun, MessageSquare, Send, X, Trash2 } from 'lucide-react';
+import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun, MessageSquare, Send, X, Trash2, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useFirestore, useStorage } from '@/firebase';
-import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, where, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
+import { useFirestore } from '@/firebase';
+import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { AdminForm } from '@/components/admin/admin-form';
 import { AdminRemedyList } from '@/components/admin/admin-remedy-list';
 import { cn } from '@/lib/utils';
@@ -38,7 +35,6 @@ export default function AdminDashboard() {
   const router = useRouter();
   const { toast } = useToast();
   const db = useFirestore();
-  const storage = useStorage();
   const [isLoaded, setIsLoaded] = useState(false);
   const [view, setView] = useState<ViewState>('overview');
   const [theme, setTheme] = useState<Theme>('cream');
@@ -150,19 +146,24 @@ export default function AdminDashboard() {
     <div className={cn("min-h-screen flex flex-col transition-colors", isNight ? "bg-zinc-950 text-white" : "bg-[#FDFBF7]")}>
       <header className={cn("h-14 flex items-center justify-between px-6 sticky top-0 z-50 shadow-md", isNight ? "bg-zinc-900" : "bg-primary text-white")}>
         <div className="flex items-center gap-3"><LayoutDashboard /><h1 className="font-headline font-black text-lg">एडमिन कंट्रोल</h1></div>
-        <Button variant="ghost" onClick={() => { localStorage.removeItem('gharelu_admin_auth'); router.push('/admin-login'); }}><LogOut className="mr-2" /> लॉगआउट</Button>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => setTheme(prev => prev === 'cream' ? 'night' : 'cream')} className="text-white">
+            {isNight ? <Sun /> : <Moon />}
+          </Button>
+          <Button variant="ghost" onClick={() => { localStorage.removeItem('gharelu_admin_auth'); router.push('/admin-login'); }}><LogOut className="mr-2" /> लॉगआउट</Button>
+        </div>
       </header>
 
       <main className="flex-1 p-6 max-w-5xl mx-auto w-full">
         {view === 'overview' && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem]", isNight ? "bg-zinc-900" : "bg-white")} onClick={() => setView('manage')}>
-              <ClipboardList className="mx-auto w-10 h-10" /><h3>नुस्खे प्रबंधित करें</h3>
+            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105", isNight ? "bg-zinc-900 border-white/10" : "bg-white border-primary/10 shadow-lg")} onClick={() => setView('manage')}>
+              <ClipboardList className="mx-auto w-10 h-10 text-primary" /><h3>नुस्खे प्रबंधित करें</h3>
             </Card>
-            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem]", isNight ? "bg-zinc-900" : "bg-white")} onClick={() => setView('add-recipe')}>
-              <PlusCircle className="mx-auto w-10 h-10" /><h3>नया नुस्खा जोड़ें</h3>
+            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105", isNight ? "bg-zinc-900 border-white/10" : "bg-white border-primary/10 shadow-lg")} onClick={() => setView('add-recipe')}>
+              <PlusCircle className="mx-auto w-10 h-10 text-emerald-600" /><h3>नया नुस्खा जोड़ें</h3>
             </Card>
-            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem]", isNight ? "bg-zinc-900 border-accent/20" : "bg-white")} onClick={() => setView('questions')}>
+            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105", isNight ? "bg-zinc-900 border-accent/20" : "bg-white border-accent/40 shadow-lg")} onClick={() => setView('questions')}>
               <MessageSquare className="mx-auto w-10 h-10 text-accent" /><h3>सवालों के जवाब दें</h3>
               {questions.filter(q => !q.hasAnswer).length > 0 && <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs">New</span>}
             </Card>
@@ -175,27 +176,42 @@ export default function AdminDashboard() {
             <h2 className="text-2xl font-black">यूज़र के सवाल</h2>
             <div className="grid gap-4">
               {questions.length > 0 ? questions.map(q => (
-                <Card key={q.id} className={cn("p-6 rounded-[2rem] border-2", isNight ? "bg-zinc-900" : "bg-white", q.hasAnswer ? "border-emerald-500/20" : "border-accent/40")}>
+                <Card key={q.id} className={cn("p-6 rounded-[2rem] border-2 shadow-sm transition-all", isNight ? "bg-zinc-900 border-white/5" : "bg-white border-accent/20")}>
                   <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Recipe: {q.remedyName?.hi}</p>
-                      <h4 className="text-lg font-bold">{q.question}</h4>
+                    <div className="flex-1">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">नुस्खा: {q.remedyName?.hi}</p>
+                      <div className="bg-muted/30 p-4 rounded-2xl border-l-4 border-primary mb-4">
+                        <h4 className="text-lg font-bold">{q.question}</h4>
+                      </div>
                     </div>
                     <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleQuestionDelete(q.id)}><Trash2 className="w-4 h-4" /></Button>
                   </div>
-                  {q.answer ? (
-                    <div className="bg-emerald-500/10 p-4 rounded-xl border-l-4 border-emerald-500">
-                      <p className="text-xs font-bold uppercase mb-1">वैद्य जी का जवाब:</p>
-                      <p>{q.answer}</p>
-                    </div>
-                  ) : (
+                  
+                  <div className="space-y-4">
+                    {q.answer && (
+                      <div className="bg-emerald-500/10 p-4 rounded-xl border-l-4 border-emerald-500 flex items-start gap-3">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-bold uppercase mb-1">पिछला जवाब:</p>
+                          <p className="font-medium">{q.answer}</p>
+                        </div>
+                      </div>
+                    )}
+                    
                     <div className="flex gap-2">
-                      <Textarea placeholder="अपना जवाब यहाँ लिखें..." value={replyText[q.id] || ''} onChange={(e) => setReplyText(prev => ({ ...prev, [q.id]: e.target.value }))} className={cn("rounded-xl", isNight && "bg-zinc-800")} />
-                      <Button className="bg-accent h-auto px-6 rounded-xl" onClick={() => handleReplySubmit(q.id)}><Send /></Button>
+                      <Textarea 
+                        placeholder="नया जवाब या अपडेट लिखें..." 
+                        value={replyText[q.id] || ''} 
+                        onChange={(e) => setReplyText(prev => ({ ...prev, [q.id]: e.target.value }))} 
+                        className={cn("rounded-2xl border-2 focus:border-accent", isNight ? "bg-zinc-800 border-white/5" : "bg-white border-primary/5")} 
+                      />
+                      <Button className="bg-accent hover:bg-accent/90 h-auto px-6 rounded-2xl text-white shadow-lg" onClick={() => handleReplySubmit(q.id)}>
+                        <Send className="w-5 h-5" />
+                      </Button>
                     </div>
-                  )}
+                  </div>
                 </Card>
-              )) : <p className="text-center italic opacity-50 py-20">अभी कोई सवाल नहीं हैं।</p>}
+              )) : <div className="p-20 text-center opacity-30 flex flex-col items-center gap-4"><MessageSquare className="w-20 h-20" /><p className="font-bold">अभी कोई सवाल नहीं हैं</p></div>}
             </div>
           </div>
         )}

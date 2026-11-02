@@ -28,7 +28,7 @@ export const HeaderActions = ({
   hasNotifications
 }: HeaderActionsProps) => {
   const isNight = theme === 'night';
-  const headerBtnClass = "text-white/90 hover:bg-white/5 hover:text-[#FBBF24] active:text-[#B45309] active:scale-90 transition-all duration-200 border-none shadow-none focus-visible:ring-0 flex items-center justify-center h-10 w-10 p-0 rounded-full";
+  const headerBtnClass = "text-white/90 hover:bg-white/10 hover:text-accent active:scale-90 transition-all duration-200 border-none shadow-none focus-visible:ring-0 flex items-center justify-center h-10 w-10 p-0 rounded-full";
 
   return (
     <div className="flex items-center gap-1 sm:gap-2 shrink-0">

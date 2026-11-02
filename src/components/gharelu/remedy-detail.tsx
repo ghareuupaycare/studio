@@ -20,7 +20,6 @@ import {
   FileDown,
   Send,
   Loader2,
-  MessageCircle,
   Sparkles
 } from 'lucide-react';
 import { cn, toEnglishDigits } from '@/lib/utils';
@@ -82,7 +81,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     dietAvoid: isHindi ? '7. क्या न खाएं' : '7. What to Avoid',
     routine: isHindi ? '8. दिनचर्या' : '8. Daily Routine',
     safety: isHindi ? '9. सुरक्षा सूचना' : '9. Safety Information',
-    qaTitle: isHindi ? 'वैद्य जी से पूछें (गुमनाम)' : 'Ask Vaidya Ji (Anonymous)',
     qaPlaceholder: isHindi ? 'अपना अनुभव साझा करें' : 'Share your experience',
     qaButton: isHindi ? 'अनुभव भेजें' : 'Send Experience',
     qaSuccess: isHindi ? 'आपका अनुभव भेज दिया गया है। वैद्य जी जल्द ही इसी पेज पर जवाब देंगे।' : 'Your experience has been sent. Vaidya Ji will reply on this page soon.',
@@ -268,20 +266,23 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         <Button onClick={handleWhatsAppShare} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Share2 className="w-3.5 h-3.5" /> SHARE</Button>
       </div>
 
-      {/* Private Q&A Section */}
-      <div className={cn("mt-10 p-6 rounded-[2.5rem] border shadow-2xl space-y-6", isNight ? "bg-zinc-900 border-accent/20" : "bg-white border-primary/10")}>
-        {/* Existing Q&A List for this user */}
+      {/* Private Q&A Chat Section */}
+      <div className={cn("mt-10 p-6 rounded-[2.5rem] border-2 shadow-2xl space-y-6", isNight ? "bg-zinc-950 border-[#FBBF24]/30" : "bg-white border-[#FBBF24]/40")}>
+        {/* Chat History */}
         {myQA.length > 0 && (
-          <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col">
             {myQA.map((item) => (
-              <div key={item.id} className="space-y-2 animate-in slide-in-from-left-2 duration-300">
-                <div className={cn("p-4 rounded-2xl ml-4", isNight ? "bg-white/5" : "bg-muted/30")}>
+              <div key={item.id} className="space-y-2 animate-in slide-in-from-bottom-2 duration-300">
+                {/* User Message */}
+                <div className={cn("p-4 rounded-2xl rounded-tr-none max-w-[85%] self-end ml-auto border-2", isNight ? "bg-zinc-800 border-accent/20" : "bg-muted/30 border-primary/5")}>
                   <p className="text-[14px] font-bold">{item.question}</p>
+                  <p className="text-[9px] opacity-40 mt-1 text-right">{item.timestamp?.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
                 </div>
+                {/* Admin Reply */}
                 {item.answer && (
-                  <div className={cn("p-4 rounded-2xl mr-4 border-l-4 border-accent", isNight ? "bg-accent/10" : "bg-accent/5")}>
-                    <p className="text-[12px] font-black text-accent uppercase tracking-widest mb-1 flex items-center gap-1">
-                      <Sparkles className="w-3 h-3" /> वैद्य जी का जवाब:
+                  <div className={cn("p-4 rounded-2xl rounded-tl-none max-w-[85%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-sm")}>
+                    <p className="text-[10px] font-black text-accent uppercase tracking-widest mb-1 flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" /> वैद्य जी:
                     </p>
                     <p className="text-[15px] font-medium leading-relaxed">{item.answer}</p>
                   </div>
@@ -291,19 +292,28 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           </div>
         )}
 
+        {/* Input Area */}
         <div className="space-y-3 pt-2">
           <Textarea 
             placeholder={labels.qaPlaceholder}
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            className={cn("min-h-[100px] rounded-2xl border-2", isNight ? "bg-zinc-800 border-white/10" : "bg-muted/10 border-primary/5")}
+            className={cn(
+              "min-h-[100px] rounded-2xl border-2 transition-all focus:border-[#FBBF24]",
+              isNight 
+                ? "bg-zinc-900 border-[#FBBF24]/20 text-white placeholder:text-zinc-500" 
+                : "bg-muted/10 border-[#FBBF24]/30 text-primary"
+            )}
           />
           <Button 
             onClick={handleQuestionSubmit}
             disabled={isSubmittingQuestion || !question.trim()}
-            className="w-full h-12 bg-[#1e4620] hover:bg-[#1e4620]/90 text-white rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95"
+            className={cn(
+              "w-full h-14 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 border-2 border-[#FBBF24]",
+              "bg-[#1e4620] hover:bg-[#1e4620]/90"
+            )}
           >
-            {isSubmittingQuestion ? <Loader2 className="animate-spin" /> : <><Send className="mr-2 w-4 h-4" /> {labels.qaButton}</>}
+            {isSubmittingQuestion ? <Loader2 className="animate-spin" /> : <><Send className="mr-2 w-5 h-5" /> {labels.qaButton}</>}
           </Button>
         </div>
       </div>
