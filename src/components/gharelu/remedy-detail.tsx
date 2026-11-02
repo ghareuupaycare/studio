@@ -301,16 +301,15 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             className={cn(
               "min-h-[100px] rounded-2xl border-2 transition-all focus:border-[#FBBF24]",
               isNight 
-                ? "bg-zinc-900 border-[#FBBF24]/20 text-white placeholder:text-zinc-500" 
-                : "bg-muted/10 border-[#FBBF24]/30 text-primary"
+                ? "bg-zinc-900 border-[#FBBF24] text-white placeholder:text-zinc-500" 
+                : "bg-white border-[#FBBF24] text-primary"
             )}
           />
           <Button 
             onClick={handleQuestionSubmit}
             disabled={isSubmittingQuestion || !question.trim()}
             className={cn(
-              "w-full h-14 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 border-2 border-[#FBBF24]",
-              "bg-[#1e4620] hover:bg-[#1e4620]/90"
+              "w-full h-14 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 border-2 border-[#FBBF24] bg-[#14532D] hover:bg-[#14532D]/90"
             )}
           >
             {isSubmittingQuestion ? <Loader2 className="animate-spin" /> : <><Send className="mr-2 w-5 h-5" /> {labels.qaButton}</>}
