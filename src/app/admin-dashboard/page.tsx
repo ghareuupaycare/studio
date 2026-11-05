@@ -46,7 +46,7 @@ export default function AdminDashboard() {
   const [doses, setDoses] = useState<any[]>(INITIAL_DOSES);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   
-  // Storage for reply inputs per message ID to keep them persistent
+  // Storage for reply inputs per thread card to keep them persistent
   const [replyText, setReplyText] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function AdminDashboard() {
     return groups;
   }, [liveRecipes]);
 
-  // Group questions by UserID + RemedyID for a threaded view
+  // Group questions by UserID + RemedyID for a unified threaded view
   const groupedQuestions = useMemo(() => {
     const groups: Record<string, {
       userId: string;
@@ -112,16 +112,22 @@ export default function AdminDashboard() {
     });
   }, [questions]);
 
-  const handleReplySubmit = async (qId: string) => {
-    if (!db || !replyText[qId]?.trim()) return;
+  // Function to reply to the latest question in a thread
+  const handleReplyThread = async (threadKey: string, thread: any) => {
+    if (!db || !replyText[threadKey]?.trim()) return;
+    
+    // Find the latest question document that needs a reply or simply the latest one
+    const latestDoc = thread.messages[thread.messages.length - 1];
+    if (!latestDoc) return;
+
     try {
-      await updateDoc(doc(db, 'questions', qId), {
-        answer: replyText[qId].trim(),
+      await updateDoc(doc(db, 'questions', latestDoc.id), {
+        answer: replyText[threadKey].trim(),
         hasAnswer: true,
         isRead: false,
         answeredAt: serverTimestamp()
       });
-      setReplyText(prev => ({ ...prev, [qId]: '' }));
+      setReplyText(prev => ({ ...prev, [threadKey]: '' }));
       toast({ title: "जवाब भेज दिया गया!" });
     } catch (e) {
       toast({ variant: "destructive", title: "त्रुटि" });
@@ -217,58 +223,59 @@ export default function AdminDashboard() {
             <h2 className="text-2xl font-black font-headline">यूज़र के सवाल (चैट थ्रेड्स)</h2>
             
             <div className="grid gap-6">
-              {groupedQuestions.length > 0 ? groupedQuestions.map((group, idx) => (
-                <Card key={idx} className={cn("p-6 rounded-[2.5rem] border-2 shadow-sm overflow-hidden", isNight ? "bg-zinc-900 border-white/5" : "bg-white border-accent/20")}>
-                  {/* Thread Header - Clickable Recipe Link */}
-                  <div className="mb-6 border-b pb-4 border-accent/10">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <button 
-                          onClick={() => router.push(`/?remedyId=${group.remedyId}`)}
-                          className="text-left group/link"
-                        >
-                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-1 flex items-center gap-1 group-hover/link:underline">
-                            नुस्खा देखें <ExternalLink className="w-2.5 h-2.5" />
-                          </p>
-                          <h3 className="text-xl font-bold flex items-center gap-2 group-hover/link:text-accent transition-colors">
-                            <MessageSquare className="w-5 h-5 text-accent" />
-                            {group.remedyName?.hi} (Thread)
-                          </h3>
-                        </button>
-                      </div>
-                      <div className="text-[9px] opacity-40 uppercase font-bold text-right ml-4">
-                        User ID: #{group.userId.slice(-4)}<br/>
-                        Active: {group.messages[group.messages.length - 1]?.timestamp?.toDate().toLocaleDateString()}
+              {groupedQuestions.length > 0 ? groupedQuestions.map((group, idx) => {
+                const threadKey = `${group.userId}_${group.remedyId}`;
+                return (
+                  <Card key={idx} className={cn("p-6 rounded-[2.5rem] border-2 shadow-sm overflow-hidden", isNight ? "bg-zinc-900 border-white/5" : "bg-white border-accent/20")}>
+                    {/* Thread Header - Clickable Recipe Link */}
+                    <div className="mb-6 border-b pb-4 border-accent/10">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <button 
+                            onClick={() => router.push(`/?remedyId=${group.remedyId}`)}
+                            className="text-left group/link"
+                          >
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-1 flex items-center gap-1 group-hover/link:underline">
+                              नुस्खा देखें <ExternalLink className="w-2.5 h-2.5" />
+                            </p>
+                            <h3 className="text-xl font-bold flex items-center gap-2 group-hover/link:text-accent transition-colors">
+                              <MessageSquare className="w-5 h-5 text-accent" />
+                              {group.remedyName?.hi} (Thread)
+                            </h3>
+                          </button>
+                        </div>
+                        <div className="text-[9px] opacity-40 uppercase font-bold text-right ml-4">
+                          User ID: #{group.userId.slice(-4)}<br/>
+                          Active: {group.messages[group.messages.length - 1]?.timestamp?.toDate().toLocaleDateString()}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  {/* Chat Message List */}
-                  <div className="space-y-6 max-h-[500px] overflow-y-auto mb-6 pr-2 custom-scrollbar flex flex-col">
-                    {group.messages.map((item) => (
-                      <div key={item.id} className="space-y-2 group/msg relative">
-                        <div className="flex justify-between items-center px-1">
-                           <span className="text-[9px] font-bold opacity-40">{item.timestamp?.toDate ? item.timestamp.toDate().toLocaleString() : '...'}</span>
-                           <Button 
-                             variant="ghost" 
-                             size="icon" 
-                             className="h-6 w-6 text-destructive opacity-0 group-hover/msg:opacity-100 transition-opacity" 
-                             onClick={() => handleQuestionDelete(item.id)}
-                           >
-                             <Trash2 className="w-3 h-3" />
-                           </Button>
-                        </div>
-                        
-                        {/* User Message Bubble */}
-                        <div className={cn(
-                          "p-4 rounded-2xl rounded-tr-none max-w-[90%] self-end ml-auto border-2 shadow-sm",
-                          isNight ? "bg-zinc-800 border-white/5" : "bg-muted/30 border-primary/5"
-                        )}>
-                          <p className="font-bold text-[14px] leading-relaxed">{item.question}</p>
-                        </div>
-                        
-                        {/* Admin Reply Area */}
-                        <div className="space-y-3">
+                    
+                    {/* Unified Chat History within this thread card */}
+                    <div className="space-y-6 max-h-[500px] overflow-y-auto mb-6 pr-2 custom-scrollbar flex flex-col">
+                      {group.messages.map((item) => (
+                        <div key={item.id} className="space-y-2 group/msg relative">
+                          <div className="flex justify-between items-center px-1">
+                             <span className="text-[9px] font-bold opacity-40">{item.timestamp?.toDate ? item.timestamp.toDate().toLocaleString() : '...'}</span>
+                             <Button 
+                               variant="ghost" 
+                               size="icon" 
+                               className="h-6 w-6 text-destructive opacity-0 group-hover/msg:opacity-100 transition-opacity" 
+                               onClick={() => handleQuestionDelete(item.id)}
+                             >
+                               <Trash2 className="w-3 h-3" />
+                             </Button>
+                          </div>
+                          
+                          {/* User Message Bubble */}
+                          <div className={cn(
+                            "p-4 rounded-2xl rounded-tr-none max-w-[90%] self-end ml-auto border-2 shadow-sm",
+                            isNight ? "bg-zinc-800 border-white/5" : "bg-muted/30 border-primary/5"
+                          )}>
+                            <p className="font-bold text-[14px] leading-relaxed">{item.question}</p>
+                          </div>
+                          
+                          {/* Admin Reply Area (per message if answered) */}
                           {item.answer && (
                             <div className={cn(
                               "p-4 rounded-2xl rounded-tl-none max-w-[90%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-sm animate-in fade-in"
@@ -279,32 +286,32 @@ export default function AdminDashboard() {
                               <p className="text-[14px] font-medium leading-relaxed">{item.answer}</p>
                             </div>
                           )}
-                          
-                          {/* Persistent Reply Input Box */}
-                          <div className="flex gap-2 pl-4">
-                            <Textarea 
-                              placeholder={item.answer ? "जवाब बदलें या नया संदेश लिखें..." : "यहाँ टाइप करें..."} 
-                              value={replyText[item.id] || ''} 
-                              onChange={(e) => setReplyText(prev => ({ ...prev, [item.id]: e.target.value }))} 
-                              className={cn(
-                                "rounded-2xl border-2 focus:border-accent min-h-[60px] text-sm resize-none",
-                                isNight ? "bg-zinc-800 border-white/5 text-white" : "bg-white border-primary/5"
-                              )} 
-                            />
-                            <Button 
-                              className="bg-accent hover:bg-accent/90 h-auto px-4 rounded-2xl text-white shadow-lg active:scale-95 transition-all" 
-                              onClick={() => handleReplySubmit(item.id)}
-                              disabled={!replyText[item.id]?.trim()}
-                            >
-                              <Send className="w-4 h-4" />
-                            </Button>
-                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </Card>
-              )) : (
+                      ))}
+                    </div>
+
+                    {/* Persistent Unified Thread Reply Box at Bottom of Card */}
+                    <div className="pt-4 border-t border-accent/10 flex gap-2">
+                      <Textarea 
+                        placeholder="नया संदेश या जवाब लिखें..." 
+                        value={replyText[threadKey] || ''} 
+                        onChange={(e) => setReplyText(prev => ({ ...prev, [threadKey]: e.target.value }))} 
+                        className={cn(
+                          "rounded-2xl border-2 focus:border-accent min-h-[60px] text-sm resize-none",
+                          isNight ? "bg-zinc-800 border-white/5 text-white" : "bg-white border-primary/5"
+                        )} 
+                      />
+                      <Button 
+                        className="bg-accent hover:bg-accent/90 h-auto px-4 rounded-2xl text-white shadow-lg active:scale-95 transition-all" 
+                        onClick={() => handleReplyThread(threadKey, group)}
+                        disabled={!replyText[threadKey]?.trim()}
+                      >
+                        <Send className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                );
+              }) : (
                 <div className="p-20 text-center opacity-30 flex flex-col items-center gap-4">
                   <MessageSquare className="w-20 h-20" />
                   <p className="font-bold text-xl">अभी कोई चैट थ्रेड नहीं है</p>
