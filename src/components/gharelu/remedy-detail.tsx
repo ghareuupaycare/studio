@@ -168,6 +168,14 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     );
   };
 
+  const formatTime = (ts: number) => {
+    return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const formatDate = (ts: number) => {
+    return new Date(ts).toLocaleDateString([], { day: 'numeric', month: 'short' });
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-24 max-w-2xl mx-auto overflow-hidden">
       <div className="w-full">
@@ -242,26 +250,38 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         "mt-8 p-6 rounded-[2.5rem] border-2 shadow-2xl transition-colors duration-500",
         isNight ? "bg-zinc-950 border-[#FBBF24]/30" : "bg-white border-[#FBBF24]/40"
       )}>
-        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col pt-2 mb-6">
+        <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col pt-2 mb-6">
           {chatThread.length > 0 ? (
             chatThread.map((item) => (
-              <div key={item.id} className="space-y-4 animate-in slide-in-from-bottom-2 duration-300 w-full flex flex-col">
-                <div className={cn(
-                  "p-4 rounded-2xl rounded-tr-none max-w-[85%] self-end ml-auto border-2 shadow-sm",
-                  isNight ? "bg-zinc-800 border-accent/20 text-white" : "bg-muted/30 border-primary/5 text-primary"
-                )}>
-                  <p className="text-[14px] font-bold leading-relaxed">{item.question}</p>
+              <div key={item.id} className="space-y-1 animate-in slide-in-from-bottom-2 duration-300 w-full flex flex-col">
+                <div className="w-full flex flex-col items-end">
+                  <div className={cn(
+                    "px-4 py-2.5 rounded-2xl rounded-tr-none max-w-[85%] border shadow-sm",
+                    isNight ? "bg-zinc-800 border-accent/20 text-white" : "bg-muted/30 border-primary/5 text-primary"
+                  )}>
+                    <p className="text-[14px] font-bold leading-relaxed">{item.question}</p>
+                  </div>
+                  <span className="text-[9px] font-bold opacity-40 mt-1 mr-1">
+                    {formatDate(item._sortTs)}, {formatTime(item._sortTs)}
+                  </span>
                 </div>
 
                 {item.answer && (
-                  <div className={cn(
-                    "p-4 rounded-2xl rounded-tl-none max-w-[85%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-md animate-in fade-in duration-500 mt-2"
-                  )}>
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <div className="bg-accent p-1 rounded-full"><Sparkles className="w-3 h-3 text-white" /></div>
-                      <span className="text-[10px] font-black text-accent uppercase tracking-[0.2em]">वैद्य जी</span>
+                  <div className="w-full flex flex-col items-start mt-4">
+                    <div className={cn(
+                      "px-4 py-2.5 rounded-2xl rounded-tl-none max-w-[85%] border-2 border-accent/40 bg-accent/5 shadow-md animate-in fade-in duration-500"
+                    )}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="bg-accent p-0.5 rounded-full"><Sparkles className="w-2.5 h-2.5 text-white" /></div>
+                        <span className="text-[9px] font-black text-accent uppercase tracking-[0.2em]">वैद्य जी</span>
+                      </div>
+                      <p className="text-[14px] font-medium leading-relaxed">{item.answer}</p>
                     </div>
-                    <p className="text-[15px] font-medium leading-relaxed">{item.answer}</p>
+                    {item.answeredAt && (
+                      <span className="text-[9px] font-bold opacity-40 mt-1 ml-1">
+                        {formatDate(item.answeredAt.toMillis())}, {formatTime(item.answeredAt.toMillis())}
+                      </span>
+                    )}
                   </div>
                 )}
               </div>

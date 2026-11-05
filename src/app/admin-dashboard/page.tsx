@@ -107,42 +107,12 @@ export default function AdminDashboard() {
     try { await deleteDoc(doc(db, 'questions', qId)); } catch (e) { toast({ variant: "destructive", title: "त्रुटि" }); }
   };
 
-  const resetForm = () => {
-    setFormData(INITIAL_FORM_DATA);
-    setDoses(INITIAL_DOSES);
-    setEditingId(null);
-    setUploadedImageUrl(null);
+  const formatTime = (ts: number) => {
+    return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!db) return;
-    setIsSubmitting(true);
-    try {
-      const submissionData = {
-        mainCategory: { hi: formData.mainCategoryHi, en: formData.mainCategoryEn },
-        diseaseName: { hi: formData.diseaseNameHi, en: formData.diseaseNameEn },
-        remedyTitle: { hi: formData.remedyTitleHi, en: formData.remedyTitleEn },
-        introduction: { hi: formData.introductionHi, en: formData.introductionEn },
-        ingredients: { hi: formData.ingredientsHi, en: formData.ingredientsEn },
-        preparation: { hi: formData.preparationHi, en: formData.preparationEn },
-        usage: { hi: formData.usageHi, en: formData.usageEn },
-        dietEat: { hi: formData.dietEatHi, en: formData.dietEatEn },
-        dietAvoid: { hi: formData.dietAvoidHi, en: formData.dietAvoidEn },
-        routine: { hi: formData.routineHi, en: formData.routineEn },
-        safetyAdvice: { hi: formData.safetyAdviceHi, en: formData.safetyAdviceEn },
-        doses: doses.map(d => ({ ageRange: { hi: d.ageRangeHi, en: d.ageRangeEn }, dose: { hi: d.doseHi, en: d.doseEn } })),
-        keywords: formData.seoKeywords.split(',').map(k => k.trim()),
-        image: uploadedImageUrl,
-        timestamp: serverTimestamp(),
-      };
-      if (editingId) await setDoc(doc(db, 'recipes', editingId), submissionData, { merge: true });
-      else await addDoc(collection(db, 'recipes'), submissionData);
-      toast({ title: "सफलता!" });
-      resetForm();
-      setView('manage');
-    } catch (error) { toast({ variant: "destructive", title: "विफल" }); }
-    finally { setIsSubmitting(false); }
+  const formatDate = (ts: number) => {
+    return new Date(ts).toLocaleDateString([], { day: 'numeric', month: 'short' });
   };
 
   if (!isLoaded) return null;
@@ -194,18 +164,23 @@ export default function AdminDashboard() {
                         <ExternalLink className="w-4 h-4 opacity-40" />
                       </button>
                     </div>
-                    <div className="space-y-4 max-h-[400px] overflow-y-auto mb-6 pr-2 custom-scrollbar">
+                    <div className="space-y-6 max-h-[400px] overflow-y-auto mb-6 pr-2 custom-scrollbar">
                       {group.messages.map((item: any) => (
-                        <div key={item.id} className="space-y-2 group/msg">
-                          <div className="flex justify-between items-center px-1">
-                            <span className="text-[9px] font-bold opacity-30">{new Date(item._ts).toLocaleString()}</span>
+                        <div key={item.id} className="space-y-1 group/msg flex flex-col">
+                          <div className="flex justify-between items-center px-1 mb-1">
+                            <span className="text-[9px] font-bold opacity-30">{formatDate(item._ts)}, {formatTime(item._ts)}</span>
                             <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive opacity-0 group-hover/msg:opacity-100" onClick={() => handleQuestionDelete(item.id)}><Trash2 className="w-3 h-3" /></Button>
                           </div>
-                          <div className={cn("p-4 rounded-2xl rounded-tr-none max-w-[90%] ml-auto border-2 shadow-sm", isNight ? "bg-zinc-800 border-white/5" : "bg-muted/30 border-primary/5")}><p className="font-bold text-sm">{item.question}</p></div>
+                          <div className={cn("px-4 py-2.5 rounded-2xl rounded-tr-none max-w-[85%] self-end border shadow-sm", isNight ? "bg-zinc-800 border-white/5" : "bg-muted/30 border-primary/5")}><p className="font-bold text-sm leading-relaxed">{item.question}</p></div>
                           {item.answer && (
-                            <div className="p-4 rounded-2xl rounded-tl-none max-w-[90%] mr-auto border-2 border-accent/40 bg-accent/5 shadow-sm">
-                              <p className="text-[9px] font-black text-accent uppercase tracking-widest mb-1 flex items-center gap-1"><Sparkles className="w-3 h-3" /> जवाब:</p>
-                              <p className="text-sm font-medium">{item.answer}</p>
+                            <div className="mt-2 self-start max-w-[85%] flex flex-col items-start">
+                              <div className="px-4 py-2.5 rounded-2xl rounded-tl-none border-2 border-accent/40 bg-accent/5 shadow-md">
+                                <p className="text-[9px] font-black text-accent uppercase tracking-widest mb-1 flex items-center gap-1"><Sparkles className="w-2.5 h-2.5" /> जवाब:</p>
+                                <p className="text-sm font-medium leading-relaxed">{item.answer}</p>
+                              </div>
+                              {item.answeredAt && (
+                                <span className="text-[9px] font-bold opacity-30 mt-1 ml-1">{formatDate(item.answeredAt.toMillis())}, {formatTime(item.answeredAt.toMillis())}</span>
+                              )}
                             </div>
                           )}
                         </div>
