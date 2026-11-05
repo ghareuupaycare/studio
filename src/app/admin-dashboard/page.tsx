@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun, MessageSquare, Send, X, Trash2, CheckCircle2, Sparkles } from 'lucide-react';
+import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun, MessageSquare, Send, X, Trash2, CheckCircle2, Sparkles, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase';
 import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc } from 'firebase/firestore';
@@ -177,7 +177,7 @@ export default function AdminDashboard() {
   if (!isLoaded) return null;
 
   return (
-    <div className={cn("min-h-screen flex flex-col transition-colors duration-500", isNight ? "bg-zinc-950 text-white" : "bg-[#FDFBF7]")}>
+    <div className={cn("min-h-screen flex flex-col transition-colors duration-500", isNight ? "bg-zinc-950 text-white" : "bg-[#FDFBF7] text-foreground")}>
       <header className={cn("h-14 flex items-center justify-between px-6 sticky top-0 z-50 shadow-md", isNight ? "bg-zinc-900" : "bg-primary text-white")}>
         <div className="flex items-center gap-3"><LayoutDashboard /><h1 className="font-headline font-black text-lg">एडमिन कंट्रोल</h1></div>
         <div className="flex items-center gap-4">
@@ -219,18 +219,26 @@ export default function AdminDashboard() {
             <div className="grid gap-6">
               {groupedQuestions.length > 0 ? groupedQuestions.map((group, idx) => (
                 <Card key={idx} className={cn("p-6 rounded-[2.5rem] border-2 shadow-sm overflow-hidden", isNight ? "bg-zinc-900 border-white/5" : "bg-white border-accent/20")}>
-                  {/* Thread Header */}
+                  {/* Thread Header - Clickable Recipe Link */}
                   <div className="mb-6 border-b pb-4 border-accent/10">
                     <div className="flex justify-between items-start">
-                      <div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-1">नुस्खा: {group.remedyName?.hi}</p>
-                        <h3 className="text-xl font-bold flex items-center gap-2">
-                          <MessageSquare className="w-5 h-5 text-accent" />
-                          यूज़र थ्रेड #{group.userId.slice(-4)}
-                        </h3>
+                      <div className="flex-1">
+                        <button 
+                          onClick={() => router.push(`/?remedyId=${group.remedyId}`)}
+                          className="text-left group/link"
+                        >
+                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-1 flex items-center gap-1 group-hover/link:underline">
+                            नुस्खा देखें <ExternalLink className="w-2.5 h-2.5" />
+                          </p>
+                          <h3 className="text-xl font-bold flex items-center gap-2 group-hover/link:text-accent transition-colors">
+                            <MessageSquare className="w-5 h-5 text-accent" />
+                            {group.remedyName?.hi} (Thread)
+                          </h3>
+                        </button>
                       </div>
-                      <div className="text-[9px] opacity-40 uppercase font-bold text-right">
-                        Last Active: {group.messages[group.messages.length - 1]?.timestamp?.toDate().toLocaleDateString()}
+                      <div className="text-[9px] opacity-40 uppercase font-bold text-right ml-4">
+                        User ID: #{group.userId.slice(-4)}<br/>
+                        Active: {group.messages[group.messages.length - 1]?.timestamp?.toDate().toLocaleDateString()}
                       </div>
                     </div>
                   </div>
@@ -253,32 +261,29 @@ export default function AdminDashboard() {
                         
                         {/* User Message Bubble */}
                         <div className={cn(
-                          "p-4 rounded-2xl rounded-tr-none max-w-[90%] self-end ml-auto border-2",
+                          "p-4 rounded-2xl rounded-tr-none max-w-[90%] self-end ml-auto border-2 shadow-sm",
                           isNight ? "bg-zinc-800 border-white/5" : "bg-muted/30 border-primary/5"
                         )}>
                           <p className="font-bold text-[14px] leading-relaxed">{item.question}</p>
                         </div>
                         
-                        {/* Admin Reply & Persistent Input Area */}
+                        {/* Admin Reply Area */}
                         <div className="space-y-3">
                           {item.answer && (
                             <div className={cn(
                               "p-4 rounded-2xl rounded-tl-none max-w-[90%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-sm animate-in fade-in"
                             )}>
                               <p className="text-[9px] font-black text-accent uppercase tracking-widest mb-1 flex items-center gap-1">
-                                <Sparkles className="w-3 h-3" /> आपका पिछला जवाब:
+                                <Sparkles className="w-3 h-3" /> आपका जवाब:
                               </p>
                               <p className="text-[14px] font-medium leading-relaxed">{item.answer}</p>
-                              {item.answeredAt && (
-                                <p className="text-[8px] opacity-30 mt-1">{item.answeredAt.toDate().toLocaleString()}</p>
-                              )}
                             </div>
                           )}
                           
-                          {/* Reply Input Box - Always Visible for every message to allow follow-up */}
-                          <div className="flex gap-2 pl-4 animate-in slide-in-from-left-2 duration-300">
+                          {/* Persistent Reply Input for every user message */}
+                          <div className="flex gap-2 pl-4">
                             <Textarea 
-                              placeholder={item.answer ? "जवाब अपडेट करें या नया संदेश लिखें..." : "अपना जवाब यहाँ टाइप करें..."} 
+                              placeholder={item.answer ? "जवाब बदलें या नया संदेश लिखें..." : "यहाँ टाइप करें..."} 
                               value={replyText[item.id] || ''} 
                               onChange={(e) => setReplyText(prev => ({ ...prev, [item.id]: e.target.value }))} 
                               className={cn(

@@ -64,7 +64,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     let uid = typeof window !== 'undefined' ? localStorage.getItem('gharelu_user_id') : null;
     if (!uid) return;
 
-    // Listen to all messages for this user and this specific remedy
     const q = query(
       collection(db, 'questions'),
       where('remedyId', '==', remedy.id),
@@ -75,17 +74,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setChatThread(messages);
-      
-      // Save to localStorage for immediate offline persistence as backup
-      localStorage.setItem(`gharelu_chats_${remedy.id}`, JSON.stringify(messages));
-      
-      // Slight delay to ensure DOM is rendered before scrolling
       setTimeout(scrollToBottom, 100);
     }, (error) => {
       console.error("Chat sync error:", error);
-      // Load from backup if Firestore fails (offline mode)
-      const backup = localStorage.getItem(`gharelu_chats_${remedy.id}`);
-      if (backup) setChatThread(JSON.parse(backup));
     });
 
     return () => unsubscribe();
@@ -103,12 +94,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     safety: isHindi ? '9. सुरक्षा सूचना' : '9. Safety Information',
     qaPlaceholder: isHindi ? 'अपना अनुभव साझा करें...' : 'Share your experience...',
     qaButton: isHindi ? 'अनुभव भेजें' : 'Send Experience',
-    qaSuccess: isHindi ? 'आपका संदेश भेज दिया गया है।' : 'Your message has been sent.',
   };
-
-  const dosageWarning = isHindi 
-    ? "उपरोक्त कुल सामग्री में से अपनी उम्र के अनुसार केवल नीचे चुनी गई खुराक ही लें:"
-    : "From the above ingredients, take only the dosage selected below according to your age:";
 
   const disclaimerText = isHindi 
     ? "विशेष परामर्श: प्रिय पाठक, यह घरेलू उपाय शैक्षिक उद्देश्य से साझा किए गए हैं। किसी भी गंभीर स्थिति में हों, तो कृपया किसी योग्य डॉक्टर या वैद्य से व्यक्तिगत सलाह ज़रूर लें।"
@@ -132,53 +118,22 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         timestamp: serverTimestamp()
       });
       setQuestion('');
-      // Scroll will happen via useEffect onSnapshot
     } catch (e) {
-      console.error(e);
       toast({ variant: 'destructive', title: 'Error', description: 'Failed to send.' });
     } finally {
       setIsSubmittingQuestion(false);
     }
   };
 
-  const getFormattedContent = (full: boolean = true) => {
-    const name = remedy.name[lang];
-    const formatValue = (val: any) => {
-      if (Array.isArray(val)) return val.map(v => `• ${v}`).join('\n');
-      return String(val).split('\n').map(v => `• ${v}`).join('\n');
-    };
-    if (!full) {
-      const briefIntro = Array.isArray(remedy.introduction[lang]) ? (remedy.introduction[lang] as string[])[0] : (remedy.introduction[lang] as string).split('\n')[0];
-      return `🌿 *${name}* 🌿\n\n${briefIntro}\n\nपूरा नुस्खा और स्मार्ट कैलकुलेटर के साथ अपनी उम्र के हिसाब से खुराक जानने के लिए यहां जाएं:\n${shareUrl}`;
-    }
-    let text = `🌿 *${name}* 🌿\n\n`;
-    text += `[${labels.introduction}]\n${formatValue(remedy.introduction[lang])}\n\n`;
-    text += `[${labels.ingredients}]\n${formatValue(remedy.ingredients[lang])}\n\n`;
-    text += `[${labels.preparation}]\n${formatValue(remedy.preparation[lang])}\n\n`;
-    if (remedy.doses && remedy.doses.length > 0) {
-      const activeDose = remedy.doses[selectedDoseIndex];
-      text += `[${labels.dosage}]\n${activeDose.ageRange[lang]}: ${formatValue(activeDose.dose[lang])}\n\n`;
-    }
-    text += `[${labels.usage}]\n${formatValue(remedy.usage[lang])}\n\n`;
-    text += `[${labels.dietEat}]\n${formatValue(remedy.dietEat[lang])}\n\n`;
-    text += `[${labels.dietAvoid}]\n${formatValue(remedy.dietAvoid[lang])}\n\n`;
-    if (remedy.routine) {
-      text += `[${labels.routine}]\n${formatValue((remedy.routine as any)[lang])}\n\n`;
-    }
-    text += `[${labels.safety}]\n${formatValue(remedy.safetyAdvice[lang])}\n\n`;
-    text += `${disclaimerText}\n\n${shareUrl}`;
-    return toEnglishDigits(text);
-  };
-
   const handleWhatsAppShare = () => {
-    const message = getFormattedContent(false);
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    const briefIntro = Array.isArray(remedy.introduction[lang]) ? (remedy.introduction[lang] as string[])[0] : (remedy.introduction[lang] as string).split('\n')[0];
+    const message = `🌿 *${remedy.name[lang]}* 🌿\n\n${briefIntro}\n\nपूरा नुस्खा यहाँ देखें:\n${shareUrl}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(toEnglishDigits(message))}`, '_blank');
   };
 
   const handleCopy = () => {
-    const textToCopy = getFormattedContent(true);
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      toast({ title: isHindi ? "पूरा नुस्खा कॉपी हो गया" : "Full Recipe Copied" });
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      toast({ title: isHindi ? "लिंक कॉपी हो गया" : "Link Copied" });
     });
   };
 
@@ -196,7 +151,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     let points: string[] = Array.isArray(content) ? content.filter(item => typeof item === 'string' && item.trim() !== '') : (typeof content === 'string' ? content.split('\n').filter(line => line.trim() !== '') : []);
     if (points.length === 0) return null;
     return (
-      <div className={cn("p-6 rounded-[2rem] border shadow-md space-y-4 mb-6 transition-all duration-300 break-inside-avoid", getVariantStyles(variant))}>
+      <div className={cn("p-6 rounded-[2.5rem] border shadow-md space-y-4 mb-6 transition-all duration-300", getVariantStyles(variant))}>
         <div className="flex items-center gap-3">
           <div className={cn("p-2 rounded-xl", variant === 'green' ? "bg-emerald-500/10 text-emerald-700" : variant === 'red' ? "bg-red-500/10 text-red-700" : "bg-amber-500/10 text-amber-700")}>
             {icon}
@@ -222,7 +177,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 pb-20 max-w-2xl mx-auto overflow-hidden">
+    <div className="space-y-6 animate-in fade-in duration-500 pb-24 max-w-2xl mx-auto overflow-hidden">
       <div className="w-full">
         <div className="flex items-start justify-between mb-4 gap-2">
           <h2 className={cn("text-[26px] font-black tracking-wide leading-tight flex-1", isNight ? "text-white" : "text-[#14532D]")}>
@@ -245,12 +200,11 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           {renderSection(<ChefHat className="w-5 h-5" />, labels.preparation, remedy.preparation[lang], 'yellow')}
           
           {remedy.doses && remedy.doses.length > 0 && (
-            <div className={cn("p-6 rounded-[2rem] border shadow-md space-y-6 mb-6 transition-all duration-300", getVariantStyles('yellow'))}>
+            <div className={cn("p-6 rounded-[2.5rem] border shadow-md space-y-6 mb-6 transition-all duration-300", getVariantStyles('yellow'))}>
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl bg-amber-500/10 text-amber-700"><Stethoscope className="w-5 h-5" /></div>
                 <div className="flex flex-col">
                   <h3 className="text-[18px] font-bold leading-tight">{labels.dosage}</h3>
-                  <p className="text-[11px] font-bold mt-0.5 leading-tight opacity-80">{dosageWarning}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -282,34 +236,34 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
       <div className="flex justify-end items-center gap-1.5 pt-4 mb-4 overflow-x-auto pb-2 no-scrollbar print:hidden">
         <Button onClick={() => window.print()} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><FileDown className="w-3.5 h-3.5" /> PDF</Button>
-        <Button onClick={handleCopy} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Copy className="w-3.5 h-3.5" /> COPY</Button>
+        <Button onClick={handleCopy} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Copy className="w-3.5 h-3.5" /> LINK</Button>
         <Button onClick={handleWhatsAppShare} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Share2 className="w-3.5 h-3.5" /> SHARE</Button>
       </div>
 
-      {/* WhatsApp-Style Chat Section */}
+      {/* WhatsApp-Style Unified Chat Thread */}
       <div className={cn(
-        "mt-10 p-6 rounded-[2.5rem] border-2 shadow-2xl space-y-6 transition-colors duration-500",
+        "mt-8 p-6 rounded-[2.5rem] border-2 shadow-2xl transition-colors duration-500",
         isNight ? "bg-zinc-950 border-[#FBBF24]/30" : "bg-white border-[#FBBF24]/40"
       )}>
         {/* Chat History Container */}
-        <div className="space-y-4 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar flex flex-col pt-2">
+        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col pt-2 mb-6">
           {chatThread.length > 0 ? chatThread.map((item, idx) => (
-            <div key={item.id || idx} className="space-y-3 animate-in slide-in-from-bottom-2 duration-300">
+            <div key={item.id || idx} className="space-y-4 animate-in slide-in-from-bottom-2 duration-300">
               {/* User Question Bubble */}
               <div className={cn(
-                "p-4 rounded-2xl rounded-tr-none max-w-[85%] self-end ml-auto border-2 relative group",
+                "p-4 rounded-2xl rounded-tr-none max-w-[85%] self-end ml-auto border-2 shadow-sm",
                 isNight ? "bg-zinc-800 border-accent/20 text-white" : "bg-muted/30 border-primary/5 text-primary"
               )}>
                 <p className="text-[14px] font-bold leading-relaxed">{item.question}</p>
                 <div className="flex justify-end mt-1 items-center gap-1 opacity-40 text-[9px]">
-                  <span>{item.timestamp?.toDate ? item.timestamp.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now'}</span>
+                  <span>{item.timestamp?.toDate ? item.timestamp.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '...'}</span>
                 </div>
               </div>
 
               {/* Admin Reply Bubble */}
               {item.answer && (
                 <div className={cn(
-                  "p-4 rounded-2xl rounded-tl-none max-w-[85%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-sm animate-in fade-in duration-500"
+                  "p-4 rounded-2xl rounded-tl-none max-w-[85%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-md animate-in fade-in duration-500"
                 )}>
                   <div className="flex items-center gap-2 mb-1.5">
                     <div className="bg-accent p-1 rounded-full"><Sparkles className="w-3 h-3 text-white" /></div>
@@ -318,50 +272,40 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                   <p className="text-[15px] font-medium leading-relaxed text-foreground">
                     {item.answer}
                   </p>
-                  <div className="flex justify-start mt-1 opacity-30 text-[9px] font-bold">
-                    {item.answeredAt?.toDate ? item.answeredAt.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}
-                  </div>
                 </div>
               )}
             </div>
           )) : (
-            <div className="py-10 text-center opacity-30 flex flex-col items-center gap-4">
-              <User className="w-12 h-12" />
+            <div className="py-12 text-center opacity-30 flex flex-col items-center gap-4">
+              <MessageSquare className="w-12 h-12" />
               <p className="font-bold text-sm">{isHindi ? 'अपना अनुभव या सवाल साझा करें' : 'Share your experience or ask a question'}</p>
             </div>
           )}
           <div ref={chatEndRef} />
         </div>
 
-        {/* Persistent Input Box at bottom of chat */}
+        {/* Persistent Input Box docked at the bottom of the card */}
         <div className="space-y-3 pt-4 border-t border-accent/10">
-          <div className="relative">
-            <Textarea 
-              placeholder={labels.qaPlaceholder}
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              className={cn(
-                "min-h-[100px] rounded-2xl border-2 transition-all duration-300 focus:ring-0",
-                isNight 
-                  ? "bg-zinc-900 border-[#FBBF24] text-white placeholder:text-zinc-600 focus:border-[#FBBF24]" 
-                  : "bg-white border-[#FBBF24] text-primary focus:border-[#FBBF24]"
-              )}
-            />
-          </div>
+          <Textarea 
+            placeholder={labels.qaPlaceholder}
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            className={cn(
+              "min-h-[90px] rounded-2xl border-2 transition-all duration-300 focus:ring-0",
+              isNight 
+                ? "bg-zinc-900 border-[#FBBF24] text-white placeholder:text-zinc-600 focus:border-[#FBBF24]" 
+                : "bg-white border-[#FBBF24] text-primary focus:border-[#FBBF24]"
+            )}
+          />
           <Button 
             onClick={handleQuestionSubmit}
             disabled={isSubmittingQuestion || !question.trim()}
-            className={cn(
-              "w-full h-14 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 border-2 border-[#FBBF24] bg-[#14532D] hover:bg-[#14532D]/90 disabled:opacity-50"
-            )}
+            className="w-full h-12 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 disabled:opacity-50"
           >
             {isSubmittingQuestion ? (
-              <Loader2 className="animate-spin w-6 h-6" />
+              <Loader2 className="animate-spin w-5 h-5" />
             ) : (
-              <>
-                <Send className="mr-2 w-5 h-5" /> 
-                {labels.qaButton}
-              </>
+              <>{labels.qaButton}</>
             )}
           </Button>
         </div>
