@@ -87,7 +87,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       setChatThread(messages);
       localStorage.setItem(cacheKey, JSON.stringify(messages));
       
-      // Auto-scroll ONLY if it's NOT the initial page load
+      // Auto-scroll ONLY if it's NOT the initial page load (new message received while active)
       if (!isInitialLoad.current) {
         setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
       }
@@ -96,7 +96,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
     return () => {
       unsubscribe();
-      isInitialLoad.current = true; // Reset on unmount
+      isInitialLoad.current = true;
     };
   }, [db, remedy?.id]);
 
@@ -107,7 +107,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       await postUserExperience(db, remedy.id, remedy.name, userId, question);
       setQuestion('');
       toast({ title: isHindi ? "अनुभव भेज दिया गया" : "Experience shared" });
-      // Ensure it scrolls when user sends a new message
       setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
     } catch (e) {
       toast({ variant: 'destructive', title: 'Error', description: 'Failed to send.' });
@@ -267,7 +266,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         <Button onClick={handleWhatsAppShare} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Share2 className="w-3.5 h-3.5" /> SHARE</Button>
       </div>
 
-      {/* WhatsApp-Style Continuous Chat Thread */}
       <div className={cn(
         "mt-8 p-6 rounded-[2.5rem] border-2 shadow-2xl transition-colors duration-500",
         isNight ? "bg-zinc-950 border-[#FBBF24]/30" : "bg-white border-[#FBBF24]/40"
@@ -276,7 +274,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           {chatThread.length > 0 ? (
             chatThread.map((item) => (
               <div key={item.id} className="space-y-1 animate-in slide-in-from-bottom-2 duration-300 w-full flex flex-col">
-                {/* User Message Bubble */}
                 <div className="w-full flex flex-col items-end">
                   <div className={cn(
                     "px-4 py-2 rounded-2xl rounded-tr-none max-w-[85%] border shadow-sm",
@@ -289,7 +286,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                   </span>
                 </div>
 
-                {/* Admin Reply Bubble */}
                 {item.answer && (
                   <div className="w-full flex flex-col items-start mt-4">
                     <div className={cn(

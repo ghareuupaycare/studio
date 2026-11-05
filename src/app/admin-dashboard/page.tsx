@@ -175,7 +175,10 @@ export default function AdminDashboard() {
                           {item.answer && (
                             <div className="mt-2 self-start max-w-[85%] flex flex-col items-start">
                               <div className="px-4 py-2.5 rounded-2xl rounded-tl-none border-2 border-accent/40 bg-accent/5 shadow-md">
-                                <p className="text-[9px] font-black text-accent uppercase tracking-widest mb-1 flex items-center gap-1"><Sparkles className="w-2.5 h-2.5" /> जवाब:</p>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <div className="bg-accent p-0.5 rounded-full"><Sparkles className="w-2.5 h-2.5 text-white" /></div>
+                                  <span className="text-[9px] font-black text-accent uppercase tracking-[0.2em]">जवाब:</span>
+                                </div>
                                 <p className="text-sm font-medium leading-relaxed">{item.answer}</p>
                               </div>
                               {item.answeredAt && (
