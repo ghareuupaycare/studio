@@ -48,6 +48,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const { toast } = useToast();
   const db = useFirestore();
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const isInitialLoad = useRef(true);
 
   // Q&A States
   const [question, setQuestion] = useState('');
@@ -60,7 +61,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     if (!ts) return Date.now();
     if (typeof ts.toMillis === 'function') return ts.toMillis();
     if (ts.seconds) return ts.seconds * 1000;
-    return new Date(ts).getTime() || Date.now();
+    const parsed = new Date(ts).getTime();
+    return isNaN(parsed) ? Date.now() : parsed;
   };
 
   // Initialize User ID and Sync Chat
@@ -84,11 +86,18 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     const unsubscribe = listenToChatThread(db, remedy.id, uid, (messages) => {
       setChatThread(messages);
       localStorage.setItem(cacheKey, JSON.stringify(messages));
-      // Auto-scroll on new message
-      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
+      
+      // Auto-scroll ONLY if it's NOT the initial page load
+      if (!isInitialLoad.current) {
+        setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
+      }
+      isInitialLoad.current = false;
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      isInitialLoad.current = true; // Reset on unmount
+    };
   }, [db, remedy?.id]);
 
   const handleQuestionSubmit = async () => {
@@ -98,6 +107,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       await postUserExperience(db, remedy.id, remedy.name, userId, question);
       setQuestion('');
       toast({ title: isHindi ? "अनुभव भेज दिया गया" : "Experience shared" });
+      // Ensure it scrolls when user sends a new message
+      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
     } catch (e) {
       toast({ variant: 'destructive', title: 'Error', description: 'Failed to send.' });
     } finally {
@@ -261,32 +272,34 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         "mt-8 p-6 rounded-[2.5rem] border-2 shadow-2xl transition-colors duration-500",
         isNight ? "bg-zinc-950 border-[#FBBF24]/30" : "bg-white border-[#FBBF24]/40"
       )}>
-        <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col pt-2 mb-6">
+        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col pt-2 mb-6">
           {chatThread.length > 0 ? (
             chatThread.map((item) => (
               <div key={item.id} className="space-y-1 animate-in slide-in-from-bottom-2 duration-300 w-full flex flex-col">
+                {/* User Message Bubble */}
                 <div className="w-full flex flex-col items-end">
                   <div className={cn(
-                    "px-4 py-2.5 rounded-2xl rounded-tr-none max-w-[85%] border shadow-sm",
+                    "px-4 py-2 rounded-2xl rounded-tr-none max-w-[85%] border shadow-sm",
                     isNight ? "bg-zinc-800 border-accent/20 text-white" : "bg-muted/30 border-primary/5 text-primary"
                   )}>
-                    <p className="text-[14px] font-bold leading-relaxed">{item.question}</p>
+                    <p className="text-[14px] font-bold leading-tight">{item.question}</p>
                   </div>
                   <span className="text-[9px] font-bold opacity-40 mt-1 mr-1">
                     {formatDate(item._sortTs)}, {formatTime(item._sortTs)}
                   </span>
                 </div>
 
+                {/* Admin Reply Bubble */}
                 {item.answer && (
                   <div className="w-full flex flex-col items-start mt-4">
                     <div className={cn(
-                      "px-4 py-2.5 rounded-2xl rounded-tl-none max-w-[85%] border-2 border-accent/40 bg-accent/5 shadow-md animate-in fade-in duration-500"
+                      "px-4 py-2 rounded-2xl rounded-tl-none max-w-[85%] border-2 border-accent/40 bg-accent/5 shadow-md animate-in fade-in duration-500"
                     )}>
                       <div className="flex items-center gap-2 mb-1">
                         <div className="bg-accent p-0.5 rounded-full"><Sparkles className="w-2.5 h-2.5 text-white" /></div>
                         <span className="text-[9px] font-black text-accent uppercase tracking-[0.2em]">वैद्य जी</span>
                       </div>
-                      <p className="text-[14px] font-medium leading-relaxed">{item.answer}</p>
+                      <p className="text-[14px] font-medium leading-tight">{item.answer}</p>
                     </div>
                     {item.answeredAt && (
                       <span className="text-[9px] font-bold opacity-40 mt-1 ml-1">
