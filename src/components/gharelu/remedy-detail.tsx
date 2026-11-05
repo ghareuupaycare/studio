@@ -20,7 +20,8 @@ import {
   FileDown,
   Send,
   Loader2,
-  Sparkles
+  Sparkles,
+  MessageSquare
 } from 'lucide-react';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -55,32 +56,38 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   // Scroll to bottom when chat updates
   const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   useEffect(() => {
-    if (!db || !remedy.id) return;
+    if (!db || !remedy?.id) return;
     
     let uid = typeof window !== 'undefined' ? localStorage.getItem('gharelu_user_id') : null;
     if (!uid) return;
 
-    const q = query(
-      collection(db, 'questions'),
-      where('remedyId', '==', remedy.id),
-      where('userId', '==', uid),
-      orderBy('timestamp', 'asc')
-    );
+    try {
+      const q = query(
+        collection(db, 'questions'),
+        where('remedyId', '==', remedy.id),
+        where('userId', '==', uid),
+        orderBy('timestamp', 'asc')
+      );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setChatThread(messages);
-      setTimeout(scrollToBottom, 100);
-    }, (error) => {
-      console.error("Chat sync error:", error);
-    });
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setChatThread(messages);
+        setTimeout(scrollToBottom, 200);
+      }, (error) => {
+        console.error("Chat sync error:", error);
+      });
 
-    return () => unsubscribe();
-  }, [db, remedy.id]);
+      return () => unsubscribe();
+    } catch (e) {
+      console.error("Query building error:", e);
+    }
+  }, [db, remedy?.id]);
 
   const labels = {
     introduction: isHindi ? '1. बीमारी का परिचय' : '1. Introduction',
@@ -269,7 +276,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                     <div className="bg-accent p-1 rounded-full"><Sparkles className="w-3 h-3 text-white" /></div>
                     <span className="text-[10px] font-black text-accent uppercase tracking-[0.2em]">वैद्य जी</span>
                   </div>
-                  <p className="text-[15px] font-medium leading-relaxed text-foreground">
+                  <p className="text-[15px] font-medium leading-relaxed">
                     {item.answer}
                   </p>
                 </div>
@@ -278,7 +285,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           )) : (
             <div className="py-12 text-center opacity-30 flex flex-col items-center gap-4">
               <MessageSquare className="w-12 h-12" />
-              <p className="font-bold text-sm">{isHindi ? 'अपना अनुभव या सवाल साझा करें' : 'Share your experience or ask a question'}</p>
+              <p className="font-bold text-sm">{isHindi ? 'अपना अनुभव साझा करें' : 'Share your experience or ask a question'}</p>
             </div>
           )}
           <div ref={chatEndRef} />
