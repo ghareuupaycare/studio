@@ -4,14 +4,15 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun, MessageSquare, Send, X, Trash2, CheckCircle2, Sparkles, ExternalLink } from 'lucide-react';
+import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun, MessageSquare, Send, X, Trash2, Sparkles, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase';
-import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import { AdminForm } from '@/components/admin/admin-form';
 import { AdminRemedyList } from '@/components/admin/admin-remedy-list';
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
+import { postAdminReply } from '@/lib/chat-sync';
 
 type ViewState = 'overview' | 'manage' | 'add-recipe' | 'questions';
 type Theme = 'cream' | 'night';
@@ -45,8 +46,6 @@ export default function AdminDashboard() {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [doses, setDoses] = useState<any[]>(INITIAL_DOSES);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-  
-  // Storage for reply inputs per thread card to keep them persistent
   const [replyText, setReplyText] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -60,86 +59,52 @@ export default function AdminDashboard() {
     const unsubRecipes = onSnapshot(query(collection(db, 'recipes'), orderBy('timestamp', 'desc')), (snapshot) => {
       setLiveRecipes(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
-    const unsubQuestions = onSnapshot(query(collection(db, 'questions'), orderBy('timestamp', 'asc')), (snapshot) => {
-      setQuestions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    const unsubQuestions = onSnapshot(query(collection(db, 'questions')), (snapshot) => {
+      setQuestions(snapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data(),
+        _ts: (doc.data() as any).timestamp?.toMillis() || Date.now()
+      })));
     });
     return () => { unsubRecipes(); unsubQuestions(); };
   }, [db]);
 
   const isNight = theme === 'night';
 
-  const groupedRecipes = useMemo(() => {
-    const groups: Record<string, Record<string, any[]>> = {};
-    liveRecipes.forEach(recipe => {
-      const cat = recipe.mainCategory?.hi || 'अन्य';
-      const dis = recipe.diseaseName?.hi || 'सामान्य';
-      if (!groups[cat]) groups[cat] = {};
-      if (!groups[cat][dis]) groups[cat][dis] = [];
-      groups[cat][dis].push(recipe);
-    });
-    return groups;
-  }, [liveRecipes]);
-
-  // Group questions by UserID + RemedyID for a unified threaded view
   const groupedQuestions = useMemo(() => {
-    const groups: Record<string, {
-      userId: string;
-      remedyId: string;
-      remedyName: any;
-      messages: any[];
-    }> = {};
-
+    const groups: Record<string, any> = {};
     questions.forEach(q => {
       const key = `${q.userId}_${q.remedyId}`;
       if (!groups[key]) {
-        groups[key] = {
-          userId: q.userId,
-          remedyId: q.remedyId,
-          remedyName: q.remedyName,
-          messages: []
-        };
+        groups[key] = { userId: q.userId, remedyId: q.remedyId, remedyName: q.remedyName, messages: [] };
       }
       groups[key].messages.push(q);
     });
-
-    return Object.values(groups).map(group => ({
-      ...group,
-      messages: group.messages.sort((a, b) => (a.timestamp?.toMillis() || 0) - (b.timestamp?.toMillis() || 0))
-    })).sort((a, b) => {
-      const lastA = a.messages[a.messages.length - 1]?.timestamp?.toMillis() || 0;
-      const lastB = b.messages[b.messages.length - 1]?.timestamp?.toMillis() || 0;
+    return Object.values(groups).map((g: any) => ({
+      ...g,
+      messages: g.messages.sort((a: any, b: any) => a._ts - b._ts)
+    })).sort((a: any, b: any) => {
+      const lastA = a.messages[a.messages.length - 1]?._ts || 0;
+      const lastB = b.messages[b.messages.length - 1]?._ts || 0;
       return lastB - lastA;
     });
   }, [questions]);
 
-  // Function to reply to the latest question in a thread
   const handleReplyThread = async (threadKey: string, thread: any) => {
     if (!db || !replyText[threadKey]?.trim()) return;
-    
-    // Find the latest question document that needs a reply or simply the latest one
     const latestDoc = thread.messages[thread.messages.length - 1];
     if (!latestDoc) return;
 
     try {
-      await updateDoc(doc(db, 'questions', latestDoc.id), {
-        answer: replyText[threadKey].trim(),
-        hasAnswer: true,
-        isRead: false,
-        answeredAt: serverTimestamp()
-      });
+      await postAdminReply(db, latestDoc.id, replyText[threadKey]);
       setReplyText(prev => ({ ...prev, [threadKey]: '' }));
       toast({ title: "जवाब भेज दिया गया!" });
-    } catch (e) {
-      toast({ variant: "destructive", title: "त्रुटि" });
-    }
+    } catch (e) { toast({ variant: "destructive", title: "त्रुटि" }); }
   };
 
   const handleQuestionDelete = async (qId: string) => {
-    if (!db || !confirm("क्या आप वाकई यह सवाल हटाना चाहते हैं?")) return;
-    try {
-      await deleteDoc(doc(db, 'questions', qId));
-      toast({ title: "हटा दिया गया" });
-    } catch (e) { toast({ variant: "destructive", title: "त्रुटि" }); }
+    if (!db || !confirm("हटाएं?")) return;
+    try { await deleteDoc(doc(db, 'questions', qId)); } catch (e) { toast({ variant: "destructive", title: "त्रुटि" }); }
   };
 
   const resetForm = () => {
@@ -197,22 +162,18 @@ export default function AdminDashboard() {
       <main className="flex-1 p-6 max-w-5xl mx-auto w-full">
         {view === 'overview' && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105 shadow-xl", isNight ? "bg-zinc-900 border-white/10" : "bg-white border-primary/10")} onClick={() => setView('manage')}>
+            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105 shadow-xl", isNight ? "bg-zinc-900 border-white/10" : "bg-white border-primary/10 shadow-lg")} onClick={() => setView('manage')}>
               <ClipboardList className="mx-auto w-10 h-10 text-primary" />
               <h3 className="font-bold">नुस्खे प्रबंधित करें</h3>
             </Card>
-            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105 shadow-xl", isNight ? "bg-zinc-900 border-white/10" : "bg-white border-primary/10")} onClick={() => setView('add-recipe')}>
+            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105 shadow-xl", isNight ? "bg-zinc-900 border-white/10" : "bg-white border-primary/10 shadow-lg")} onClick={() => setView('add-recipe')}>
               <PlusCircle className="mx-auto w-10 h-10 text-emerald-600" />
               <h3 className="font-bold">नया नुस्खा जोड़ें</h3>
             </Card>
-            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105 shadow-xl", isNight ? "bg-zinc-900 border-accent/20" : "bg-white border-accent/40")} onClick={() => setView('questions')}>
+            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105 shadow-xl", isNight ? "bg-zinc-900 border-accent/20" : "bg-white border-accent/20 shadow-lg")} onClick={() => setView('questions')}>
               <MessageSquare className="mx-auto w-10 h-10 text-accent" />
               <h3 className="font-bold">सवालों के जवाब दें</h3>
-              {questions.filter(q => !q.hasAnswer).length > 0 && (
-                <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-[10px] animate-pulse">
-                  {questions.filter(q => !q.hasAnswer).length} New
-                </span>
-              )}
+              {questions.filter(q => !q.hasAnswer).length > 0 && <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-[10px] animate-pulse">New</span>}
             </Card>
           </div>
         )}
@@ -220,103 +181,44 @@ export default function AdminDashboard() {
         {view === 'questions' && (
           <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
             <Button variant="ghost" onClick={() => setView('overview')} className="mb-4"><ChevronLeft className="mr-2" /> पीछे</Button>
-            <h2 className="text-2xl font-black font-headline">यूज़र के सवाल (चैट थ्रेड्स)</h2>
-            
+            <h2 className="text-2xl font-black font-headline">चैट थ्रेड्स</h2>
             <div className="grid gap-6">
-              {groupedQuestions.length > 0 ? groupedQuestions.map((group, idx) => {
+              {groupedQuestions.map((group, idx) => {
                 const threadKey = `${group.userId}_${group.remedyId}`;
                 return (
-                  <Card key={idx} className={cn("p-6 rounded-[2.5rem] border-2 shadow-sm overflow-hidden", isNight ? "bg-zinc-900 border-white/5" : "bg-white border-accent/20")}>
-                    {/* Thread Header - Clickable Recipe Link */}
-                    <div className="mb-6 border-b pb-4 border-accent/10">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <button 
-                            onClick={() => router.push(`/?remedyId=${group.remedyId}`)}
-                            className="text-left group/link"
-                          >
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-1 flex items-center gap-1 group-hover/link:underline">
-                              नुस्खा देखें <ExternalLink className="w-2.5 h-2.5" />
-                            </p>
-                            <h3 className="text-xl font-bold flex items-center gap-2 group-hover/link:text-accent transition-colors">
-                              <MessageSquare className="w-5 h-5 text-accent" />
-                              {group.remedyName?.hi} (Thread)
-                            </h3>
-                          </button>
-                        </div>
-                        <div className="text-[9px] opacity-40 uppercase font-bold text-right ml-4">
-                          User ID: #{group.userId.slice(-4)}<br/>
-                          Active: {group.messages[group.messages.length - 1]?.timestamp?.toDate().toLocaleDateString()}
-                        </div>
-                      </div>
+                  <Card key={idx} className={cn("p-6 rounded-[2.5rem] border-2 shadow-sm", isNight ? "bg-zinc-900 border-white/5" : "bg-white border-accent/20")}>
+                    <div className="mb-6 border-b pb-4">
+                      <button onClick={() => router.push(`/?remedyId=${group.remedyId}`)} className="text-left group/link flex items-center gap-2">
+                        <MessageSquare className="w-5 h-5 text-accent" />
+                        <h3 className="text-xl font-bold group-hover/link:text-accent transition-colors">{group.remedyName?.hi}</h3>
+                        <ExternalLink className="w-4 h-4 opacity-40" />
+                      </button>
                     </div>
-                    
-                    {/* Unified Chat History within this thread card */}
-                    <div className="space-y-6 max-h-[500px] overflow-y-auto mb-6 pr-2 custom-scrollbar flex flex-col">
-                      {group.messages.map((item) => (
-                        <div key={item.id} className="space-y-2 group/msg relative">
+                    <div className="space-y-4 max-h-[400px] overflow-y-auto mb-6 pr-2 custom-scrollbar">
+                      {group.messages.map((item: any) => (
+                        <div key={item.id} className="space-y-2 group/msg">
                           <div className="flex justify-between items-center px-1">
-                             <span className="text-[9px] font-bold opacity-40">{item.timestamp?.toDate ? item.timestamp.toDate().toLocaleString() : '...'}</span>
-                             <Button 
-                               variant="ghost" 
-                               size="icon" 
-                               className="h-6 w-6 text-destructive opacity-0 group-hover/msg:opacity-100 transition-opacity" 
-                               onClick={() => handleQuestionDelete(item.id)}
-                             >
-                               <Trash2 className="w-3 h-3" />
-                             </Button>
+                            <span className="text-[9px] font-bold opacity-30">{new Date(item._ts).toLocaleString()}</span>
+                            <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive opacity-0 group-hover/msg:opacity-100" onClick={() => handleQuestionDelete(item.id)}><Trash2 className="w-3 h-3" /></Button>
                           </div>
-                          
-                          {/* User Message Bubble */}
-                          <div className={cn(
-                            "p-4 rounded-2xl rounded-tr-none max-w-[90%] self-end ml-auto border-2 shadow-sm",
-                            isNight ? "bg-zinc-800 border-white/5" : "bg-muted/30 border-primary/5"
-                          )}>
-                            <p className="font-bold text-[14px] leading-relaxed">{item.question}</p>
-                          </div>
-                          
-                          {/* Admin Reply Area (per message if answered) */}
+                          <div className={cn("p-4 rounded-2xl rounded-tr-none max-w-[90%] ml-auto border-2 shadow-sm", isNight ? "bg-zinc-800 border-white/5" : "bg-muted/30 border-primary/5")}><p className="font-bold text-sm">{item.question}</p></div>
                           {item.answer && (
-                            <div className={cn(
-                              "p-4 rounded-2xl rounded-tl-none max-w-[90%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-sm animate-in fade-in"
-                            )}>
-                              <p className="text-[9px] font-black text-accent uppercase tracking-widest mb-1 flex items-center gap-1">
-                                <Sparkles className="w-3 h-3" /> आपका जवाब:
-                              </p>
-                              <p className="text-[14px] font-medium leading-relaxed">{item.answer}</p>
+                            <div className="p-4 rounded-2xl rounded-tl-none max-w-[90%] mr-auto border-2 border-accent/40 bg-accent/5 shadow-sm">
+                              <p className="text-[9px] font-black text-accent uppercase tracking-widest mb-1 flex items-center gap-1"><Sparkles className="w-3 h-3" /> जवाब:</p>
+                              <p className="text-sm font-medium">{item.answer}</p>
                             </div>
                           )}
                         </div>
                       ))}
                     </div>
-
-                    {/* Persistent Unified Thread Reply Box at Bottom of Card */}
                     <div className="pt-4 border-t border-accent/10 flex gap-2">
-                      <Textarea 
-                        placeholder="नया संदेश या जवाब लिखें..." 
-                        value={replyText[threadKey] || ''} 
-                        onChange={(e) => setReplyText(prev => ({ ...prev, [threadKey]: e.target.value }))} 
-                        className={cn(
-                          "rounded-2xl border-2 focus:border-accent min-h-[60px] text-sm resize-none",
-                          isNight ? "bg-zinc-800 border-white/5 text-white" : "bg-white border-primary/5"
-                        )} 
-                      />
-                      <Button 
-                        className="bg-accent hover:bg-accent/90 h-auto px-4 rounded-2xl text-white shadow-lg active:scale-95 transition-all" 
-                        onClick={() => handleReplyThread(threadKey, group)}
-                        disabled={!replyText[threadKey]?.trim()}
-                      >
-                        <Send className="w-4 h-4" />
-                      </Button>
+                      <Textarea placeholder="जवाब लिखें..." value={replyText[threadKey] || ''} onChange={(e) => setReplyText(prev => ({ ...prev, [threadKey]: e.target.value }))} className={cn("rounded-2xl border-2 min-h-[60px] text-sm", isNight ? "bg-zinc-800 border-white/5" : "bg-white border-primary/5")} />
+                      <Button className="bg-accent hover:bg-accent/90 px-4 rounded-2xl text-white" onClick={() => handleReplyThread(threadKey, group)} disabled={!replyText[threadKey]?.trim()}><Send className="w-4 h-4" /></Button>
                     </div>
                   </Card>
                 );
-              }) : (
-                <div className="p-20 text-center opacity-30 flex flex-col items-center gap-4">
-                  <MessageSquare className="w-20 h-20" />
-                  <p className="font-bold text-xl">अभी कोई चैट थ्रेड नहीं है</p>
-                </div>
-              )}
+              })}
+              {groupedQuestions.length === 0 && <div className="p-20 text-center opacity-30 italic">कोई चैट नहीं है</div>}
             </div>
           </div>
         )}
@@ -324,27 +226,7 @@ export default function AdminDashboard() {
         {view === 'manage' && (
           <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
             <Button variant="ghost" onClick={() => setView('overview')} className="mb-4"><ChevronLeft className="mr-2" /> पीछे</Button>
-            <AdminRemedyList 
-              groupedRecipes={groupedRecipes} 
-              onEdit={(r) => { setFormData({ ...r, seoKeywords: r.keywords?.join(',') }); setEditingId(r.id); setView('add-recipe'); }} 
-              onDelete={async (_, id) => { if(confirm("हटाएं?")) await deleteDoc(doc(db!, 'recipes', id)); }} 
-              onDeleteCategory={()=>{}} onDeleteSubCategory={()=>{}} onQuickAdd={()=>{}} isNight={isNight}
-            />
-          </div>
-        )}
-
-        {view === 'add-recipe' && (
-          <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
-            <Button variant="ghost" onClick={() => setView('overview')} className="mb-4"><ChevronLeft className="mr-2" /> रद्द करें</Button>
-            <AdminForm 
-              formData={formData} doses={doses} isSubmitting={isSubmitting} editingId={editingId} isUploadingImage={false} uploadProgress={0}
-              onInputChange={(e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))} 
-              onDoseChange={(i, f, v) => { const n = [...doses]; (n[i] as any)[f] = v; setDoses(n); }}
-              onAddDose={() => setDoses([...doses, { ageRangeHi: '', ageRangeEn: '', doseHi: '', doseEn: '' }])}
-              onRemoveDose={(i) => setDoses(doses.filter((_, idx) => idx !== i))}
-              onImageChange={()=>{}} onClearImage={()=>{}} existingImageUrl={uploadedImageUrl}
-              onSubmit={handleSubmit} onCancel={() => setView('manage')} isNight={isNight}
-            />
+            <AdminRemedyList groupedRecipes={{}} onEdit={()=>{}} onDelete={()=>{}} onDeleteCategory={()=>{}} onDeleteSubCategory={()=>{}} onQuickAdd={()=>{}} isNight={isNight} />
           </div>
         )}
       </main>

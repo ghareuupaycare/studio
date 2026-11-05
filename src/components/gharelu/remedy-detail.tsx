@@ -29,7 +29,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { useFirestore } from '@/firebase';
-import { collection, addDoc, serverTimestamp, query, where, onSnapshot, orderBy } from 'firebase/firestore';
+import { getChatUserId, getChatCacheKey, listenToChatThread, postUserExperience } from '@/lib/chat-sync';
 
 interface RemedyDetailProps {
   remedy: Remedy;
@@ -53,75 +53,46 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const [question, setQuestion] = useState('');
   const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
   const [chatThread, setChatThread] = useState<any[]>([]);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string>('');
 
-  // Initialize User ID from LocalStorage
+  // Initialize User ID and Sync Chat
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      let uid = localStorage.getItem('gharelu_user_id');
-      if (!uid) {
-        uid = 'user_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('gharelu_user_id', uid);
-      }
-      setUserId(uid);
-    }
-  }, []);
+    const uid = getChatUserId();
+    setUserId(uid);
 
-  // Scroll to bottom when chat updates
-  const scrollToBottom = () => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (!db || !remedy?.id || !uid) return;
+
+    // Load from cache for instant display
+    const cacheKey = getChatCacheKey(remedy.id, uid);
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      try { setChatThread(JSON.parse(cached)); } catch(e) {}
+    }
+
+    // Subscribe to real-time updates
+    const unsubscribe = listenToChatThread(db, remedy.id, uid, (messages) => {
+      setChatThread(messages);
+      localStorage.setItem(cacheKey, JSON.stringify(messages));
+      // Auto-scroll on new message
+      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
+    });
+
+    return () => unsubscribe();
+  }, [db, remedy?.id]);
+
+  const handleQuestionSubmit = async () => {
+    if (!question.trim() || !db || !userId) return;
+    setIsSubmittingQuestion(true);
+    try {
+      await postUserExperience(db, remedy.id, remedy.name, userId, question);
+      setQuestion('');
+      toast({ title: isHindi ? "अनुभव भेज दिया गया" : "Experience shared" });
+    } catch (e) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Failed to send.' });
+    } finally {
+      setIsSubmittingQuestion(false);
     }
   };
-
-  // Sync Chat from Firestore
-  useEffect(() => {
-    if (!db || !remedy?.id || !userId) return;
-    
-    // Attempt to load from cache while Firestore connects
-    const localKey = `gharelu_chat_${remedy.id}_${userId}`;
-    const cached = localStorage.getItem(localKey);
-    if (cached) {
-      try {
-        setChatThread(JSON.parse(cached));
-      } catch (e) { console.error("Cache load error", e); }
-    }
-
-    try {
-      // Query for the specific thread owned by this user for this remedy
-      const q = query(
-        collection(db, 'questions'),
-        where('remedyId', '==', remedy.id),
-        where('userId', '==', userId),
-        orderBy('timestamp', 'asc')
-      );
-
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const messages = snapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            ...data,
-            // Fallback for sorting if server timestamp hasn't arrived
-            ts: data.timestamp?.toMillis() || Date.now()
-          };
-        });
-        
-        // Sort explicitly by timestamp just in case
-        const sortedMessages = [...messages].sort((a, b) => (a.ts || 0) - (b.ts || 0));
-        
-        setChatThread(sortedMessages);
-        localStorage.setItem(localKey, JSON.stringify(sortedMessages));
-        setTimeout(scrollToBottom, 300);
-      }, (error) => {
-        console.error("Firestore Q&A Sync Error:", error);
-      });
-
-      return () => unsubscribe();
-    } catch (e) {
-      console.error("Chat sync initialization error:", e);
-    }
-  }, [db, remedy?.id, userId]);
 
   const labels = {
     introduction: isHindi ? '1. बीमारी का परिचय' : '1. Introduction',
@@ -141,31 +112,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     ? "विशेष परामर्श: प्रिय पाठक, यह घरेलू उपाय शैक्षिक उद्देश्य से साझा किए गए हैं। किसी भी गंभीर स्थिति में हों, तो कृपया किसी योग्य डॉक्टर या वैद्य से व्यक्तिगत सलाह ज़रूर लें।"
     : "Special Advice: Dear Reader, these home remedies are shared for educational purposes. Consult a qualified doctor or Vaidya for serious conditions.";
 
-  const shareUrl = `https://ghareluupaycare.vercel.app/remedy/${remedy.id}`;
-
-  const handleQuestionSubmit = async () => {
-    if (!question.trim() || !db || !userId) return;
-    setIsSubmittingQuestion(true);
-    try {
-      await addDoc(collection(db, 'questions'), {
-        remedyId: remedy.id,
-        remedyName: remedy.name,
-        userId: userId,
-        question: question.trim(),
-        answer: null,
-        hasAnswer: false,
-        isRead: false,
-        timestamp: serverTimestamp()
-      });
-      setQuestion('');
-      toast({ title: isHindi ? "संदेश भेज दिया गया" : "Message sent" });
-      setTimeout(scrollToBottom, 200);
-    } catch (e) {
-      toast({ variant: 'destructive', title: 'Error', description: 'Failed to send.' });
-    } finally {
-      setIsSubmittingQuestion(false);
-    }
-  };
+  const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/remedy/${remedy.id}` : '';
 
   const handleWhatsAppShare = () => {
     const briefIntro = Array.isArray(remedy.introduction[lang]) 
@@ -190,9 +137,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     }
   };
 
-  const renderSection = (icon: React.ReactNode, title: string, content: any, variant: SectionVariant, customHeader?: string, appendDisclaimer?: boolean) => {
+  const renderSection = (icon: React.ReactNode, title: string, content: any, variant: SectionVariant, appendDisclaimer?: boolean) => {
     if (!content) return null;
-    let points: string[] = Array.isArray(content) 
+    const points: string[] = Array.isArray(content) 
       ? content.filter(item => typeof item === 'string' && item.trim() !== '') 
       : (typeof content === 'string' ? content.split('\n').filter(line => line.trim() !== '') : []);
     
@@ -204,10 +151,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           <div className={cn("p-2 rounded-xl", variant === 'green' ? "bg-emerald-500/10 text-emerald-700" : variant === 'red' ? "bg-red-500/10 text-red-700" : "bg-amber-500/10 text-amber-700")}>
             {icon}
           </div>
-          <div className="flex flex-col">
-            <h3 className="text-[18px] font-bold leading-tight">{title}</h3>
-            {customHeader && <p className="text-[11px] font-bold mt-0.5 leading-tight opacity-80">{customHeader}</p>}
-          </div>
+          <h3 className="text-[18px] font-bold leading-tight">{title}</h3>
         </div>
         <div className="text-[15px] leading-relaxed font-medium space-y-2">
           <ul className="space-y-3 list-none p-0 m-0">
@@ -251,9 +195,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             <div className={cn("p-6 rounded-[2.5rem] border shadow-md space-y-6 mb-6 transition-all duration-300", getVariantStyles('yellow'))}>
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl bg-amber-500/10 text-amber-700"><Stethoscope className="w-5 h-5" /></div>
-                <div className="flex flex-col">
-                  <h3 className="text-[18px] font-bold leading-tight">{labels.dosage}</h3>
-                </div>
+                <h3 className="text-[18px] font-bold leading-tight">{labels.dosage}</h3>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {remedy.doses.map((dose, i) => (
@@ -262,9 +204,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                     onClick={() => setSelectedDoseIndex(i)} 
                     className={cn(
                       "px-4 py-3 rounded-2xl text-[13px] font-bold transition-all border flex items-center justify-center gap-2", 
-                      selectedDoseIndex === i 
-                        ? "bg-accent border-accent text-white shadow-lg scale-95" 
-                        : (isNight ? "bg-white/5 border-white/10 text-white" : "bg-white border-amber-200 text-[#5F4B1A] hover:bg-amber-50")
+                      selectedDoseIndex === i ? "bg-accent border-accent text-white shadow-lg scale-95" : (isNight ? "bg-white/5 border-white/10 text-white" : "bg-white border-amber-200 text-[#5F4B1A] hover:bg-amber-50")
                     )}
                   >
                     <User className="w-3.5 h-3.5" /> {toEnglishDigits(dose.ageRange[lang])}
@@ -287,38 +227,32 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           {renderSection(<Apple className="w-5 h-5" />, labels.dietEat, remedy.dietEat[lang], 'green')}
           {renderSection(<AlertTriangle className="w-5 h-5" />, labels.dietAvoid, remedy.dietAvoid[lang], 'red')}
           {remedy.routine && renderSection(<Clock className="w-5 h-5" />, labels.routine, (remedy.routine as any)[lang], 'yellow')}
-          {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red', undefined, true)}
+          {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red', true)}
         </div>
       </div>
 
-      <div className="flex justify-end items-center gap-1.5 pt-4 mb-4 overflow-x-auto pb-2 no-scrollbar print:hidden">
+      <div className="flex justify-end items-center gap-1.5 pt-4 mb-4 overflow-x-auto pb-2 no-scrollbar">
         <Button onClick={() => window.print()} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><FileDown className="w-3.5 h-3.5" /> PDF</Button>
         <Button onClick={handleCopy} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Copy className="w-3.5 h-3.5" /> LINK</Button>
         <Button onClick={handleWhatsAppShare} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Share2 className="w-3.5 h-3.5" /> SHARE</Button>
       </div>
 
-      {/* WhatsApp-Style Unified Chat Thread */}
+      {/* WhatsApp-Style Continuous Chat Thread */}
       <div className={cn(
         "mt-8 p-6 rounded-[2.5rem] border-2 shadow-2xl transition-colors duration-500",
         isNight ? "bg-zinc-950 border-[#FBBF24]/30" : "bg-white border-[#FBBF24]/40"
       )}>
-        {/* Chat History Container */}
         <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col pt-2 mb-6">
           {chatThread.length > 0 ? (
-            chatThread.map((item, idx) => (
-              <div key={item.id || idx} className="space-y-4 animate-in slide-in-from-bottom-2 duration-300 w-full flex flex-col">
-                {/* User Question Bubble */}
+            chatThread.map((item) => (
+              <div key={item.id} className="space-y-4 animate-in slide-in-from-bottom-2 duration-300 w-full flex flex-col">
                 <div className={cn(
                   "p-4 rounded-2xl rounded-tr-none max-w-[85%] self-end ml-auto border-2 shadow-sm",
                   isNight ? "bg-zinc-800 border-accent/20 text-white" : "bg-muted/30 border-primary/5 text-primary"
                 )}>
                   <p className="text-[14px] font-bold leading-relaxed">{item.question}</p>
-                  <div className="flex justify-end mt-1 items-center gap-1 opacity-40 text-[9px]">
-                    <span>{item.timestamp?.toDate ? item.timestamp.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
-                  </div>
                 </div>
 
-                {/* Admin Reply Bubble */}
                 {item.answer && (
                   <div className={cn(
                     "p-4 rounded-2xl rounded-tl-none max-w-[85%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-md animate-in fade-in duration-500 mt-2"
@@ -327,14 +261,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                       <div className="bg-accent p-1 rounded-full"><Sparkles className="w-3 h-3 text-white" /></div>
                       <span className="text-[10px] font-black text-accent uppercase tracking-[0.2em]">वैद्य जी</span>
                     </div>
-                    <p className="text-[15px] font-medium leading-relaxed">
-                      {item.answer}
-                    </p>
-                    {item.answeredAt && (
-                      <div className="mt-1 opacity-30 text-[8px] text-right">
-                         {item.answeredAt?.toDate ? item.answeredAt.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}
-                      </div>
-                    )}
+                    <p className="text-[15px] font-medium leading-relaxed">{item.answer}</p>
                   </div>
                 )}
               </div>
@@ -342,13 +269,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           ) : (
             <div className="py-12 text-center opacity-30 flex flex-col items-center gap-4">
               <MessageSquare className="w-12 h-12" />
-              <p className="font-bold text-sm">{isHindi ? 'अपना अनुभव साझा करें' : 'Share your experience or ask a question'}</p>
+              <p className="font-bold text-sm">{labels.qaPlaceholder.replace('...', '')}</p>
             </div>
           )}
           <div ref={chatEndRef} />
         </div>
 
-        {/* Persistent Input Box - Dark Neem Green + Golden Border */}
         <div className="space-y-3 pt-4 border-t border-accent/10">
           <Textarea 
             placeholder={labels.qaPlaceholder}
@@ -356,9 +282,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             onChange={(e) => setQuestion(e.target.value)}
             className={cn(
               "min-h-[90px] rounded-2xl border-2 transition-all duration-300 focus:ring-0",
-              isNight 
-                ? "bg-zinc-900 border-[#FBBF24] text-white placeholder:text-zinc-600 focus:border-[#FBBF24]" 
-                : "bg-white border-[#FBBF24] text-primary focus:border-[#FBBF24]"
+              isNight ? "bg-zinc-900 border-[#FBBF24] text-white" : "bg-white border-[#FBBF24] text-primary"
             )}
           />
           <Button 
@@ -366,11 +290,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             disabled={isSubmittingQuestion || !question.trim() || !userId}
             className="w-full h-12 !bg-[#14532D] text-white border-2 !border-[#FBBF24] rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 disabled:opacity-50"
           >
-            {isSubmittingQuestion ? (
-              <Loader2 className="animate-spin w-5 h-5" />
-            ) : (
-              <>{labels.qaButton}</>
-            )}
+            {isSubmittingQuestion ? <Loader2 className="animate-spin w-5 h-5" /> : labels.qaButton}
           </Button>
         </div>
       </div>
