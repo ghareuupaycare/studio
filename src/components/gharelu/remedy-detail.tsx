@@ -55,6 +55,14 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const [chatThread, setChatThread] = useState<any[]>([]);
   const [userId, setUserId] = useState<string>('');
 
+  // Helper to handle both Firestore Timestamps and JSON-parsed objects from cache
+  const safeTsToMillis = (ts: any): number => {
+    if (!ts) return Date.now();
+    if (typeof ts.toMillis === 'function') return ts.toMillis();
+    if (ts.seconds) return ts.seconds * 1000;
+    return new Date(ts).getTime() || Date.now();
+  };
+
   // Initialize User ID and Sync Chat
   useEffect(() => {
     const uid = getChatUserId();
@@ -66,7 +74,10 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     const cacheKey = getChatCacheKey(remedy.id, uid);
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
-      try { setChatThread(JSON.parse(cached)); } catch(e) {}
+      try { 
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed)) setChatThread(parsed);
+      } catch(e) {}
     }
 
     // Subscribe to real-time updates
@@ -168,12 +179,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     );
   };
 
-  const formatTime = (ts: number) => {
-    return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const formatTime = (ts: any) => {
+    return new Date(safeTsToMillis(ts)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const formatDate = (ts: number) => {
-    return new Date(ts).toLocaleDateString([], { day: 'numeric', month: 'short' });
+  const formatDate = (ts: any) => {
+    return new Date(safeTsToMillis(ts)).toLocaleDateString([], { day: 'numeric', month: 'short' });
   };
 
   return (
@@ -279,7 +290,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                     </div>
                     {item.answeredAt && (
                       <span className="text-[9px] font-bold opacity-40 mt-1 ml-1">
-                        {formatDate(item.answeredAt.toMillis())}, {formatTime(item.answeredAt.toMillis())}
+                        {formatDate(item.answeredAt)}, {formatTime(item.answeredAt)}
                       </span>
                     )}
                   </div>
