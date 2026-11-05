@@ -54,6 +54,17 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
   const [chatThread, setChatThread] = useState<any[]>([]);
 
+  // Ensure User ID exists (for direct links)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      let uid = localStorage.getItem('gharelu_user_id');
+      if (!uid) {
+        uid = 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('gharelu_user_id', uid);
+      }
+    }
+  }, []);
+
   // Scroll to bottom when chat updates
   const scrollToBottom = () => {
     if (chatEndRef.current) {
@@ -61,11 +72,21 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     }
   };
 
+  // Sync Chat from Firestore & LocalStorage
   useEffect(() => {
     if (!db || !remedy?.id) return;
     
     let uid = typeof window !== 'undefined' ? localStorage.getItem('gharelu_user_id') : null;
     if (!uid) return;
+
+    // Load from LocalStorage first for instant view
+    const localKey = `gharelu_chat_${remedy.id}_${uid}`;
+    const cached = localStorage.getItem(localKey);
+    if (cached) {
+      try {
+        setChatThread(JSON.parse(cached));
+      } catch (e) { console.error("Cache load error", e); }
+    }
 
     try {
       const q = query(
@@ -76,16 +97,21 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       );
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
-        const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const messages = snapshot.docs.map(doc => ({ 
+          id: doc.id, 
+          ...doc.data(),
+          // Ensure timestamp serializability for cache
+          ts: (doc.data() as any).timestamp?.toMillis() || Date.now()
+        }));
+        
         setChatThread(messages);
+        localStorage.setItem(localKey, JSON.stringify(messages));
         setTimeout(scrollToBottom, 200);
-      }, (error) => {
-        console.error("Chat sync error:", error);
       });
 
       return () => unsubscribe();
     } catch (e) {
-      console.error("Query building error:", e);
+      console.error("Chat sync error:", e);
     }
   }, [db, remedy?.id]);
 
@@ -291,7 +317,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           <div ref={chatEndRef} />
         </div>
 
-        {/* Persistent Input Box docked at the bottom of the card */}
+        {/* Persistent Input Box - Dark Neem Green + Golden Border */}
         <div className="space-y-3 pt-4 border-t border-accent/10">
           <Textarea 
             placeholder={labels.qaPlaceholder}
@@ -307,7 +333,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           <Button 
             onClick={handleQuestionSubmit}
             disabled={isSubmittingQuestion || !question.trim()}
-            className="w-full h-12 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 disabled:opacity-50"
+            className="w-full h-12 !bg-[#14532D] text-white border-2 !border-[#FBBF24] rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 disabled:opacity-50"
           >
             {isSubmittingQuestion ? (
               <Loader2 className="animate-spin w-5 h-5" />

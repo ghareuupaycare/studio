@@ -36,7 +36,7 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const db = useFirestore();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [view, setView] = useState<ViewState>('overview');
+  const [view, setView] = useState('overview');
   const [theme, setTheme] = useState<Theme>('cream');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [liveRecipes, setLiveRecipes] = useState<any[]>([]);
@@ -60,7 +60,7 @@ export default function AdminDashboard() {
     const unsubRecipes = onSnapshot(query(collection(db, 'recipes'), orderBy('timestamp', 'desc')), (snapshot) => {
       setLiveRecipes(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
-    const unsubQuestions = onSnapshot(query(collection(db, 'questions'), orderBy('timestamp', 'desc')), (snapshot) => {
+    const unsubQuestions = onSnapshot(query(collection(db, 'questions'), orderBy('timestamp', 'asc')), (snapshot) => {
       setQuestions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
     return () => { unsubRecipes(); unsubQuestions(); };
@@ -248,7 +248,7 @@ export default function AdminDashboard() {
                     {group.messages.map((item) => (
                       <div key={item.id} className="space-y-2 group/msg relative">
                         <div className="flex justify-between items-center px-1">
-                           <span className="text-[9px] font-bold opacity-40">{item.timestamp?.toDate().toLocaleString()}</span>
+                           <span className="text-[9px] font-bold opacity-40">{item.timestamp?.toDate ? item.timestamp.toDate().toLocaleString() : '...'}</span>
                            <Button 
                              variant="ghost" 
                              size="icon" 
@@ -280,7 +280,7 @@ export default function AdminDashboard() {
                             </div>
                           )}
                           
-                          {/* Persistent Reply Input for every user message */}
+                          {/* Persistent Reply Input Box */}
                           <div className="flex gap-2 pl-4">
                             <Textarea 
                               placeholder={item.answer ? "जवाब बदलें या नया संदेश लिखें..." : "यहाँ टाइप करें..."} 
