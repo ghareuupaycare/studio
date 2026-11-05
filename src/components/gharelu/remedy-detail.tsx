@@ -53,8 +53,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const [question, setQuestion] = useState('');
   const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
   const [chatThread, setChatThread] = useState<any[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  // Ensure User ID exists (for direct links)
+  // Initialize User ID from LocalStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       let uid = localStorage.getItem('gharelu_user_id');
@@ -62,6 +63,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         uid = 'user_' + Math.random().toString(36).substr(2, 9);
         localStorage.setItem('gharelu_user_id', uid);
       }
+      setUserId(uid);
     }
   }, []);
 
@@ -72,15 +74,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     }
   };
 
-  // Sync Chat from Firestore & LocalStorage
+  // Sync Chat from Firestore
   useEffect(() => {
-    if (!db || !remedy?.id) return;
+    if (!db || !remedy?.id || !userId) return;
     
-    let uid = typeof window !== 'undefined' ? localStorage.getItem('gharelu_user_id') : null;
-    if (!uid) return;
-
-    // Load from LocalStorage first for instant view
-    const localKey = `gharelu_chat_${remedy.id}_${uid}`;
+    // Attempt to load from cache while Firestore connects
+    const localKey = `gharelu_chat_${remedy.id}_${userId}`;
     const cached = localStorage.getItem(localKey);
     if (cached) {
       try {
@@ -89,31 +88,40 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     }
 
     try {
+      // Query for the specific thread owned by this user for this remedy
       const q = query(
         collection(db, 'questions'),
         where('remedyId', '==', remedy.id),
-        where('userId', '==', uid),
+        where('userId', '==', userId),
         orderBy('timestamp', 'asc')
       );
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
-        const messages = snapshot.docs.map(doc => ({ 
-          id: doc.id, 
-          ...doc.data(),
-          // Ensure timestamp serializability for cache
-          ts: (doc.data() as any).timestamp?.toMillis() || Date.now()
-        }));
+        const messages = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            // Fallback for sorting if server timestamp hasn't arrived
+            ts: data.timestamp?.toMillis() || Date.now()
+          };
+        });
         
-        setChatThread(messages);
-        localStorage.setItem(localKey, JSON.stringify(messages));
-        setTimeout(scrollToBottom, 200);
+        // Sort explicitly by timestamp just in case
+        const sortedMessages = [...messages].sort((a, b) => (a.ts || 0) - (b.ts || 0));
+        
+        setChatThread(sortedMessages);
+        localStorage.setItem(localKey, JSON.stringify(sortedMessages));
+        setTimeout(scrollToBottom, 300);
+      }, (error) => {
+        console.error("Firestore Q&A Sync Error:", error);
       });
 
       return () => unsubscribe();
     } catch (e) {
-      console.error("Chat sync error:", e);
+      console.error("Chat sync initialization error:", e);
     }
-  }, [db, remedy?.id]);
+  }, [db, remedy?.id, userId]);
 
   const labels = {
     introduction: isHindi ? '1. बीमारी का परिचय' : '1. Introduction',
@@ -133,17 +141,16 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     ? "विशेष परामर्श: प्रिय पाठक, यह घरेलू उपाय शैक्षिक उद्देश्य से साझा किए गए हैं। किसी भी गंभीर स्थिति में हों, तो कृपया किसी योग्य डॉक्टर या वैद्य से व्यक्तिगत सलाह ज़रूर लें।"
     : "Special Advice: Dear Reader, these home remedies are shared for educational purposes. Consult a qualified doctor or Vaidya for serious conditions.";
 
-  const shareUrl = `https://ghareluupaycare.vercel.app/?remedyId=${remedy.id}`;
+  const shareUrl = `https://ghareluupaycare.vercel.app/remedy/${remedy.id}`;
 
   const handleQuestionSubmit = async () => {
-    if (!question.trim() || !db) return;
+    if (!question.trim() || !db || !userId) return;
     setIsSubmittingQuestion(true);
     try {
-      const uid = localStorage.getItem('gharelu_user_id');
       await addDoc(collection(db, 'questions'), {
         remedyId: remedy.id,
         remedyName: remedy.name,
-        userId: uid,
+        userId: userId,
         question: question.trim(),
         answer: null,
         hasAnswer: false,
@@ -151,6 +158,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         timestamp: serverTimestamp()
       });
       setQuestion('');
+      toast({ title: isHindi ? "संदेश भेज दिया गया" : "Message sent" });
+      setTimeout(scrollToBottom, 200);
     } catch (e) {
       toast({ variant: 'destructive', title: 'Error', description: 'Failed to send.' });
     } finally {
@@ -159,7 +168,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   };
 
   const handleWhatsAppShare = () => {
-    const briefIntro = Array.isArray(remedy.introduction[lang]) ? (remedy.introduction[lang] as string[])[0] : (remedy.introduction[lang] as string).split('\n')[0];
+    const briefIntro = Array.isArray(remedy.introduction[lang]) 
+      ? (remedy.introduction[lang] as string[])[0] 
+      : (remedy.introduction[lang] as string).split('\n')[0];
     const message = `🌿 *${remedy.name[lang]}* 🌿\n\n${briefIntro}\n\nपूरा नुस्खा यहाँ देखें:\n${shareUrl}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(toEnglishDigits(message))}`, '_blank');
   };
@@ -181,8 +192,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const renderSection = (icon: React.ReactNode, title: string, content: any, variant: SectionVariant, customHeader?: string, appendDisclaimer?: boolean) => {
     if (!content) return null;
-    let points: string[] = Array.isArray(content) ? content.filter(item => typeof item === 'string' && item.trim() !== '') : (typeof content === 'string' ? content.split('\n').filter(line => line.trim() !== '') : []);
+    let points: string[] = Array.isArray(content) 
+      ? content.filter(item => typeof item === 'string' && item.trim() !== '') 
+      : (typeof content === 'string' ? content.split('\n').filter(line => line.trim() !== '') : []);
+    
     if (points.length === 0) return null;
+
     return (
       <div className={cn("p-6 rounded-[2.5rem] border shadow-md space-y-4 mb-6 transition-all duration-300", getVariantStyles(variant))}>
         <div className="flex items-center gap-3">
@@ -242,7 +257,16 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {remedy.doses.map((dose, i) => (
-                  <button key={i} onClick={() => setSelectedDoseIndex(i)} className={cn("px-4 py-3 rounded-2xl text-[13px] font-bold transition-all border flex items-center justify-center gap-2", selectedDoseIndex === i ? "bg-accent border-accent text-white shadow-lg scale-95" : (isNight ? "bg-white/5 border-white/10 text-white" : "bg-white border-amber-200 text-[#5F4B1A] hover:bg-amber-50"))}>
+                  <button 
+                    key={i} 
+                    onClick={() => setSelectedDoseIndex(i)} 
+                    className={cn(
+                      "px-4 py-3 rounded-2xl text-[13px] font-bold transition-all border flex items-center justify-center gap-2", 
+                      selectedDoseIndex === i 
+                        ? "bg-accent border-accent text-white shadow-lg scale-95" 
+                        : (isNight ? "bg-white/5 border-white/10 text-white" : "bg-white border-amber-200 text-[#5F4B1A] hover:bg-amber-50")
+                    )}
+                  >
                     <User className="w-3.5 h-3.5" /> {toEnglishDigits(dose.ageRange[lang])}
                   </button>
                 ))}
@@ -280,35 +304,42 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       )}>
         {/* Chat History Container */}
         <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex flex-col pt-2 mb-6">
-          {chatThread.length > 0 ? chatThread.map((item, idx) => (
-            <div key={item.id || idx} className="space-y-4 animate-in slide-in-from-bottom-2 duration-300">
-              {/* User Question Bubble */}
-              <div className={cn(
-                "p-4 rounded-2xl rounded-tr-none max-w-[85%] self-end ml-auto border-2 shadow-sm",
-                isNight ? "bg-zinc-800 border-accent/20 text-white" : "bg-muted/30 border-primary/5 text-primary"
-              )}>
-                <p className="text-[14px] font-bold leading-relaxed">{item.question}</p>
-                <div className="flex justify-end mt-1 items-center gap-1 opacity-40 text-[9px]">
-                  <span>{item.timestamp?.toDate ? item.timestamp.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '...'}</span>
-                </div>
-              </div>
-
-              {/* Admin Reply Bubble */}
-              {item.answer && (
+          {chatThread.length > 0 ? (
+            chatThread.map((item, idx) => (
+              <div key={item.id || idx} className="space-y-4 animate-in slide-in-from-bottom-2 duration-300 w-full flex flex-col">
+                {/* User Question Bubble */}
                 <div className={cn(
-                  "p-4 rounded-2xl rounded-tl-none max-w-[85%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-md animate-in fade-in duration-500"
+                  "p-4 rounded-2xl rounded-tr-none max-w-[85%] self-end ml-auto border-2 shadow-sm",
+                  isNight ? "bg-zinc-800 border-accent/20 text-white" : "bg-muted/30 border-primary/5 text-primary"
                 )}>
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <div className="bg-accent p-1 rounded-full"><Sparkles className="w-3 h-3 text-white" /></div>
-                    <span className="text-[10px] font-black text-accent uppercase tracking-[0.2em]">वैद्य जी</span>
+                  <p className="text-[14px] font-bold leading-relaxed">{item.question}</p>
+                  <div className="flex justify-end mt-1 items-center gap-1 opacity-40 text-[9px]">
+                    <span>{item.timestamp?.toDate ? item.timestamp.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
                   </div>
-                  <p className="text-[15px] font-medium leading-relaxed">
-                    {item.answer}
-                  </p>
                 </div>
-              )}
-            </div>
-          )) : (
+
+                {/* Admin Reply Bubble */}
+                {item.answer && (
+                  <div className={cn(
+                    "p-4 rounded-2xl rounded-tl-none max-w-[85%] self-start mr-auto border-2 border-accent/40 bg-accent/5 shadow-md animate-in fade-in duration-500 mt-2"
+                  )}>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <div className="bg-accent p-1 rounded-full"><Sparkles className="w-3 h-3 text-white" /></div>
+                      <span className="text-[10px] font-black text-accent uppercase tracking-[0.2em]">वैद्य जी</span>
+                    </div>
+                    <p className="text-[15px] font-medium leading-relaxed">
+                      {item.answer}
+                    </p>
+                    {item.answeredAt && (
+                      <div className="mt-1 opacity-30 text-[8px] text-right">
+                         {item.answeredAt?.toDate ? item.answeredAt.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
             <div className="py-12 text-center opacity-30 flex flex-col items-center gap-4">
               <MessageSquare className="w-12 h-12" />
               <p className="font-bold text-sm">{isHindi ? 'अपना अनुभव साझा करें' : 'Share your experience or ask a question'}</p>
@@ -332,7 +363,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           />
           <Button 
             onClick={handleQuestionSubmit}
-            disabled={isSubmittingQuestion || !question.trim()}
+            disabled={isSubmittingQuestion || !question.trim() || !userId}
             className="w-full h-12 !bg-[#14532D] text-white border-2 !border-[#FBBF24] rounded-2xl font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 disabled:opacity-50"
           >
             {isSubmittingQuestion ? (
