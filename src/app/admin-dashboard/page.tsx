@@ -7,8 +7,7 @@ import { Card } from '@/components/ui/card';
 import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun, MessageSquare, Send, X, Trash2, Sparkles, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/firebase';
-import { collection, addDoc, setDoc, serverTimestamp, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
-import { AdminForm } from '@/components/admin/admin-form';
+import { collection, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import { AdminRemedyList } from '@/components/admin/admin-remedy-list';
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,35 +16,14 @@ import { postAdminReply } from '@/lib/chat-sync';
 type ViewState = 'overview' | 'manage' | 'add-recipe' | 'questions';
 type Theme = 'cream' | 'night';
 
-const INITIAL_FORM_DATA = {
-  mainCategoryHi: '', mainCategoryEn: '', diseaseNameHi: '', diseaseNameEn: '',
-  remedyTitleHi: '', remedyTitleEn: '', introductionHi: '', introductionEn: '',
-  ingredientsHi: '', ingredientsEn: '', preparationHi: '', preparationEn: '',
-  usageHi: '', usageEn: '', dietEatHi: '', dietEatEn: '', dietAvoidHi: '', dietAvoidEn: '',
-  routineHi: '', routineEn: '', safetyAdviceHi: '', safetyAdviceEn: '', seoKeywords: '',
-};
-
-const INITIAL_DOSES = [
-  { ageRangeHi: '5 वर्ष से 12 वर्ष', ageRangeEn: '5 Years to 12 Years', doseHi: '', doseEn: '' },
-  { ageRangeHi: '13 वर्ष से 40 वर्ष', ageRangeEn: '13 Years to 40 Years', doseHi: '', doseEn: '' },
-  { ageRangeHi: '41 वर्ष से 60 वर्ष', ageRangeEn: '41 Years to 60 Years', doseHi: '', doseEn: '' },
-  { ageRangeHi: '61 वर्ष से 80 वर्ष', ageRangeEn: '61 Years to 80 Years', doseHi: '', doseEn: '' },
-];
-
 export default function AdminDashboard() {
   const router = useRouter();
   const { toast } = useToast();
   const db = useFirestore();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [view, setView] = useState('overview');
+  const [view, setView] = useState<ViewState>('overview');
   const [theme, setTheme] = useState<Theme>('cream');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [liveRecipes, setLiveRecipes] = useState<any[]>([]);
   const [questions, setQuestions] = useState<any[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-  const [doses, setDoses] = useState<any[]>(INITIAL_DOSES);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [replyText, setReplyText] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -56,17 +34,17 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!db) return;
-    const unsubRecipes = onSnapshot(query(collection(db, 'recipes'), orderBy('timestamp', 'desc')), (snapshot) => {
-      setLiveRecipes(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
     const unsubQuestions = onSnapshot(query(collection(db, 'questions')), (snapshot) => {
-      setQuestions(snapshot.docs.map(doc => ({ 
-        id: doc.id, 
-        ...doc.data(),
-        _ts: (doc.data() as any).timestamp?.toMillis() || Date.now()
-      })));
+      setQuestions(snapshot.docs.map(doc => {
+        const data = doc.data();
+        return { 
+          id: doc.id, 
+          ...data,
+          _ts: data.timestamp?.toMillis() || Date.now()
+        };
+      }));
     });
-    return () => { unsubRecipes(); unsubQuestions(); };
+    return () => { unsubQuestions(); };
   }, [db]);
 
   const isNight = theme === 'night';
@@ -103,16 +81,23 @@ export default function AdminDashboard() {
   };
 
   const handleQuestionDelete = async (qId: string) => {
-    if (!db || !confirm("हटाएं?")) return;
-    try { await deleteDoc(doc(db, 'questions', qId)); } catch (e) { toast({ variant: "destructive", title: "त्रुटि" }); }
+    if (!db || !confirm("क्या आप इस संदेश को स्थायी रूप से हटाना चाहते हैं? यह यूज़र के मोबाइल से भी हट जाएगा।")) return;
+    try { 
+      await deleteDoc(doc(db, 'questions', qId)); 
+      toast({ title: "संदेश स्थायी रूप से हटा दिया गया" });
+    } catch (e) { 
+      toast({ variant: "destructive", title: "हटाने में त्रुटि आई" }); 
+    }
   };
 
-  const formatTime = (ts: number) => {
-    return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const formatTime = (ts: any) => {
+    const date = ts instanceof Date ? ts : (typeof ts === 'number' ? new Date(ts) : new Date());
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const formatDate = (ts: number) => {
-    return new Date(ts).toLocaleDateString([], { day: 'numeric', month: 'short' });
+  const formatDate = (ts: any) => {
+    const date = ts instanceof Date ? ts : (typeof ts === 'number' ? new Date(ts) : new Date());
+    return date.toLocaleDateString([], { day: 'numeric', month: 'short' });
   };
 
   if (!isLoaded) return null;
@@ -136,7 +121,7 @@ export default function AdminDashboard() {
               <ClipboardList className="mx-auto w-10 h-10 text-primary" />
               <h3 className="font-bold">नुस्खे प्रबंधित करें</h3>
             </Card>
-            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105 shadow-xl", isNight ? "bg-zinc-900 border-white/10" : "bg-white border-primary/10 shadow-lg")} onClick={() => setView('add-recipe')}>
+            <Card className={cn("p-8 text-center space-y-4 cursor-pointer rounded-[2.5rem] border-2 transition-all hover:scale-105 shadow-xl", isNight ? "bg-zinc-900 border-white/10" : "bg-white border-primary/10 shadow-lg")} onClick={() => router.push('/')}>
               <PlusCircle className="mx-auto w-10 h-10 text-emerald-600" />
               <h3 className="font-bold">नया नुस्खा जोड़ें</h3>
             </Card>
@@ -167,22 +152,43 @@ export default function AdminDashboard() {
                     <div className="space-y-6 max-h-[400px] overflow-y-auto mb-6 pr-2 custom-scrollbar">
                       {group.messages.map((item: any) => (
                         <div key={item.id} className="space-y-1 group/msg flex flex-col">
-                          <div className="flex justify-between items-center px-1 mb-1">
-                            <span className="text-[9px] font-bold opacity-30">{formatDate(item._ts)}, {formatTime(item._ts)}</span>
-                            <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive opacity-0 group-hover/msg:opacity-100" onClick={() => handleQuestionDelete(item.id)}><Trash2 className="w-3 h-3" /></Button>
+                          {/* Sync Delete Button */}
+                          <div className="flex justify-end items-center px-1 mb-1">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-6 w-6 text-destructive opacity-0 group-hover/msg:opacity-100 transition-opacity" 
+                              onClick={() => handleQuestionDelete(item.id)}
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
                           </div>
-                          <div className={cn("px-4 py-2.5 rounded-2xl rounded-tr-none max-w-[85%] self-end border shadow-sm", isNight ? "bg-zinc-800 border-white/5" : "bg-muted/30 border-primary/5")}><p className="font-bold text-sm leading-relaxed">{item.question}</p></div>
+
+                          {/* User Message Bubble with Timestamp Below */}
+                          <div className="flex flex-col items-end w-full">
+                            <div className={cn("px-4 py-2.5 rounded-2xl rounded-tr-none max-w-[85%] border shadow-sm", isNight ? "bg-zinc-800 border-white/5" : "bg-muted/30 border-primary/5")}>
+                              <p className="font-bold text-sm leading-relaxed">{item.question}</p>
+                            </div>
+                            <span className="text-[9px] font-bold opacity-30 mt-1 mr-1">
+                              {formatDate(item._ts)}, {formatTime(item._ts)}
+                            </span>
+                          </div>
+
+                          {/* Admin Answer Bubble with Timestamp Below */}
                           {item.answer && (
-                            <div className="mt-2 self-start max-w-[85%] flex flex-col items-start">
+                            <div className="mt-4 self-start max-w-[85%] flex flex-col items-start">
                               <div className="px-4 py-2.5 rounded-2xl rounded-tl-none border-2 border-accent/40 bg-accent/5 shadow-md">
                                 <div className="flex items-center gap-2 mb-1">
                                   <div className="bg-accent p-0.5 rounded-full"><Sparkles className="w-2.5 h-2.5 text-white" /></div>
-                                  <span className="text-[9px] font-black text-accent uppercase tracking-[0.2em]">जवाब:</span>
+                                  <span className="text-[9px] font-black text-accent uppercase tracking-[0.2em]">वैद्य जी:</span>
                                 </div>
                                 <p className="text-sm font-medium leading-relaxed">{item.answer}</p>
                               </div>
                               {item.answeredAt && (
-                                <span className="text-[9px] font-bold opacity-30 mt-1 ml-1">{formatDate(item.answeredAt.toMillis())}, {formatTime(item.answeredAt.toMillis())}</span>
+                                <span className="text-[9px] font-bold opacity-30 mt-1 ml-1">
+                                  {formatDate(item.answeredAt?.toMillis ? item.answeredAt.toMillis() : item.answeredAt)}, 
+                                  {formatTime(item.answeredAt?.toMillis ? item.answeredAt.toMillis() : item.answeredAt)}
+                                </span>
                               )}
                             </div>
                           )}
