@@ -97,7 +97,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     return () => {
       unsubscribe();
       isInitialLoad.current = true;
-      stopSpeech(); // Stop audio on unmount
+      stopSpeech(); 
     };
   }, [db, remedy?.id]);
 
@@ -135,7 +135,20 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       stopSpeech();
       setIsAudioPlaying(false);
     } else {
-      // Gather all text to read
+      // SMART DOSAGE: Read only the currently selected age group content
+      const currentDose = remedy.doses?.[selectedDoseIndex];
+      const selectedDoseText = currentDose
+        ? `${labels.dosage} (${currentDose.ageRange[lang]}): ${currentDose.dose[lang]}`
+        : '';
+
+      // ROUTINE: Flatten sub-sections if they exist
+      const routineText = remedy.routine ? [
+        remedy.routine.morning[lang],
+        remedy.routine.afternoon[lang],
+        remedy.routine.evening[lang]
+      ] : [];
+
+      // Gather all text to read sequentially
       const textToRead = [
         remedy.name[lang],
         labels.introduction,
@@ -144,8 +157,15 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         remedy.ingredients[lang],
         labels.preparation,
         remedy.preparation[lang],
+        selectedDoseText,
         labels.usage,
         remedy.usage[lang],
+        labels.dietEat,
+        remedy.dietEat[lang],
+        labels.dietAvoid,
+        remedy.dietAvoid[lang],
+        labels.routine,
+        routineText,
         labels.safety,
         remedy.safetyAdvice[lang]
       ].flat().filter(Boolean).join('. ');
@@ -317,7 +337,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           {renderSection(<Activity className="w-5 h-5" />, labels.usage, remedy.usage[lang], 'yellow')}
           {renderSection(<Apple className="w-5 h-5" />, labels.dietEat, remedy.dietEat[lang], 'green')}
           {renderSection(<AlertTriangle className="w-5 h-5" />, labels.dietAvoid, remedy.dietAvoid[lang], 'red')}
-          {remedy.routine && renderSection(<Clock className="w-5 h-5" />, labels.routine, (remedy.routine as any)[lang], 'yellow')}
+          {remedy.routine && renderSection(<Clock className="w-5 h-5" />, labels.routine, [remedy.routine.morning[lang], remedy.routine.afternoon[lang], remedy.routine.evening[lang]], 'yellow')}
           {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red', true)}
         </div>
       </div>

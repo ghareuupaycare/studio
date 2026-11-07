@@ -36,7 +36,9 @@ export const speakText = (
   
   // Set language properties
   utterance.lang = lang === 'hi' ? 'hi-IN' : 'en-US';
-  utterance.rate = 0.9; // Slightly slower for better clarity in traditional remedies
+  
+  // Adjusted for natural, comfortable listening speed as requested
+  utterance.rate = 0.9; 
   utterance.pitch = 1.0;
   utterance.volume = 1.0;
 
