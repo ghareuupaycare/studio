@@ -138,14 +138,19 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         const currentDose = remedy.doses?.[selectedDoseIndex];
         const selectedDoseText = currentDose?.dose?.[lang] || '';
 
-        // Optimization: Pre-clean and construct text to avoid synthesis lag
-        const routineContent = remedy.routine ? [
-          (isHindi ? 'सुबह: ' : 'Morning: ') + (Array.isArray(remedy.routine.morning?.[lang]) ? (remedy.routine.morning?.[lang] as string[]).join(' ') : (remedy.routine.morning?.[lang] || '')),
-          (isHindi ? 'दोपहर: ' : 'Afternoon: ') + (Array.isArray(remedy.routine.afternoon?.[lang]) ? (remedy.routine.afternoon?.[lang] as string[]).join(' ') : (remedy.routine.afternoon?.[lang] || '')),
-          (isHindi ? 'शाम: ' : 'Evening: ') + (Array.isArray(remedy.routine.evening?.[lang]) ? (remedy.routine.evening?.[lang] as string[]).join(' ') : (remedy.routine.evening?.[lang] || ''))
-        ] : [];
+        // Pre-clean routine for audio
+        let routineSpeech = '';
+        const routineObj = remedy.routine as any;
+        if (routineObj?.[lang]) {
+          routineSpeech = Array.isArray(routineObj[lang]) ? routineObj[lang].join('. ') : routineObj[lang];
+        } else if (routineObj) {
+          const m = Array.isArray(routineObj.morning?.[lang]) ? routineObj.morning[lang].join(' ') : (routineObj.morning?.[lang] || '');
+          const a = Array.isArray(routineObj.afternoon?.[lang]) ? routineObj.afternoon[lang].join(' ') : (routineObj.afternoon?.[lang] || '');
+          const e = Array.isArray(routineObj.evening?.[lang]) ? routineObj.evening[lang].join(' ') : (routineObj.evening?.[lang] || '');
+          routineSpeech = `${isHindi ? 'सुबह: ' : 'Morning: '}${m}. ${isHindi ? 'दोपहर: ' : 'Afternoon: '}${a}. ${isHindi ? 'शाम: ' : 'Evening: '}${e}`;
+        }
 
-        const textToRead = [
+        const textParts = [
           remedy.name?.[lang],
           labels.introduction,
           Array.isArray(remedy.introduction?.[lang]) ? (remedy.introduction?.[lang] as string[]).join('. ') : remedy.introduction?.[lang],
@@ -162,10 +167,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           labels.dietAvoid,
           Array.isArray(remedy.dietAvoid?.[lang]) ? (remedy.dietAvoid?.[lang] as string[]).join('. ') : remedy.dietAvoid?.[lang],
           labels.routine,
-          ...routineContent,
+          routineSpeech,
           labels.safety,
           Array.isArray(remedy.safetyAdvice?.[lang]) ? (remedy.safetyAdvice?.[lang] as string[]).join('. ') : remedy.safetyAdvice?.[lang]
-        ].filter(Boolean).join('. ');
+        ];
+
+        const textToRead = textParts.filter(Boolean).join('. ');
 
         speakText(
           toEnglishDigits(textToRead),
@@ -351,35 +358,54 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 <div className="p-2 rounded-xl bg-amber-500/10 text-amber-700"><Clock className="w-5 h-5" /></div>
                 <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
               </div>
-              <div className="text-[15px] leading-relaxed font-medium space-y-4">
-                <div className="flex flex-col gap-1 border-l-2 border-amber-500/30 pl-3">
-                  <span className="text-[10px] font-black uppercase tracking-[0.1em] text-amber-700/60">{isHindi ? 'सुबह' : 'Morning'}</span>
-                  <div className="text-[15px]">
-                    {Array.isArray(remedy.routine.morning?.[lang]) 
-                      ? (remedy.routine.morning?.[lang] as string[]).map((p, i) => <p key={i}>{toEnglishDigits(p)}</p>)
-                      : <p>{toEnglishDigits(remedy.routine.morning?.[lang] || '')}</p>
-                    }
-                  </div>
+              
+              {/* Flexible Routine Rendering to support both Structured and Flat formats */}
+              {(remedy.routine as any)[lang] ? (
+                /* Handle Flat/Global Routine (Common in dynamic recipes from Admin Panel) */
+                <div className="text-[15px] leading-relaxed font-medium">
+                  {Array.isArray((remedy.routine as any)[lang]) 
+                    ? ((remedy.routine as any)[lang] as string[]).map((p, i) => <p key={i} className="mb-2">{toEnglishDigits(p)}</p>)
+                    : <p className="whitespace-pre-line">{toEnglishDigits((remedy.routine as any)[lang] || '')}</p>
+                  }
                 </div>
-                <div className="flex flex-col gap-1 border-l-2 border-amber-500/30 pl-3">
-                  <span className="text-[10px] font-black uppercase tracking-[0.1em] text-amber-700/60">{isHindi ? 'दोपहर' : 'Afternoon'}</span>
-                  <div className="text-[15px]">
-                    {Array.isArray(remedy.routine.afternoon?.[lang]) 
-                      ? (remedy.routine.afternoon?.[lang] as string[]).map((p, i) => <p key={i}>{toEnglishDigits(p)}</p>)
-                      : <p>{toEnglishDigits(remedy.routine.afternoon?.[lang] || '')}</p>
-                    }
-                  </div>
+              ) : (
+                /* Handle Structured Routine (Morning/Afternoon/Evening) */
+                <div className="text-[15px] leading-relaxed font-medium space-y-4">
+                  {remedy.routine.morning?.[lang] && (
+                    <div className="flex flex-col gap-1 border-l-2 border-amber-500/30 pl-3">
+                      <span className="text-[10px] font-black uppercase tracking-[0.1em] text-amber-700/60">{isHindi ? 'सुबह' : 'Morning'}</span>
+                      <div className="text-[15px]">
+                        {Array.isArray(remedy.routine.morning[lang]) 
+                          ? (remedy.routine.morning[lang] as string[]).map((p, i) => <p key={i}>{toEnglishDigits(p)}</p>)
+                          : <p>{toEnglishDigits(remedy.routine.morning[lang] || '')}</p>
+                        }
+                      </div>
+                    </div>
+                  )}
+                  {remedy.routine.afternoon?.[lang] && (
+                    <div className="flex flex-col gap-1 border-l-2 border-amber-500/30 pl-3">
+                      <span className="text-[10px] font-black uppercase tracking-[0.1em] text-amber-700/60">{isHindi ? 'दोपहर' : 'Afternoon'}</span>
+                      <div className="text-[15px]">
+                        {Array.isArray(remedy.routine.afternoon[lang]) 
+                          ? (remedy.routine.afternoon[lang] as string[]).map((p, i) => <p key={i}>{toEnglishDigits(p)}</p>)
+                          : <p>{toEnglishDigits(remedy.routine.afternoon[lang] || '')}</p>
+                        }
+                      </div>
+                    </div>
+                  )}
+                  {remedy.routine.evening?.[lang] && (
+                    <div className="flex flex-col gap-1 border-l-2 border-amber-500/30 pl-3">
+                      <span className="text-[10px] font-black uppercase tracking-[0.1em] text-amber-700/60">{isHindi ? 'शाम' : 'Evening'}</span>
+                      <div className="text-[15px]">
+                        {Array.isArray(remedy.routine.evening[lang]) 
+                          ? (remedy.routine.evening[lang] as string[]).map((p, i) => <p key={i}>{toEnglishDigits(p)}</p>)
+                          : <p>{toEnglishDigits(remedy.routine.evening[lang] || '')}</p>
+                        }
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="flex flex-col gap-1 border-l-2 border-amber-500/30 pl-3">
-                  <span className="text-[10px] font-black uppercase tracking-[0.1em] text-amber-700/60">{isHindi ? 'शाम' : 'Evening'}</span>
-                  <div className="text-[15px]">
-                    {Array.isArray(remedy.routine.evening?.[lang]) 
-                      ? (remedy.routine.evening?.[lang] as string[]).map((p, i) => <p key={i}>{toEnglishDigits(p)}</p>)
-                      : <p>{toEnglishDigits(remedy.routine.evening?.[lang] || '')}</p>
-                    }
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           )}
 
