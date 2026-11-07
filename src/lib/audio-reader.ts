@@ -37,8 +37,8 @@ export const speakText = (
   // Set language properties
   utterance.lang = lang === 'hi' ? 'hi-IN' : 'en-US';
   
-  // Adjusted for natural, comfortable listening speed as requested
-  utterance.rate = 0.9; 
+  // Set to strictly 0.85 as per requirement for natural calm pace
+  utterance.rate = 0.85; 
   utterance.pitch = 1.0;
   utterance.volume = 1.0;
 

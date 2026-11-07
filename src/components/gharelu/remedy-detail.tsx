@@ -18,13 +18,12 @@ import {
   Share2,
   Copy,
   FileDown,
-  Send,
-  Loader2,
-  Sparkles,
-  MessageSquare,
   Volume2,
   VolumeX,
-  PlayCircle
+  PlayCircle,
+  MessageSquare,
+  Sparkles,
+  Loader2
 } from 'lucide-react';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -89,6 +88,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       setChatThread(messages);
       localStorage.setItem(cacheKey, JSON.stringify(messages));
       if (!isInitialLoad.current) {
+        // Only scroll if it's not the first load to keep user at top
         setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
       }
       isInitialLoad.current = false;
@@ -123,7 +123,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     dosage: isHindi ? '4. स्मार्ट खुराक' : '4. Smart Dosage',
     usage: isHindi ? '5. सेवन विधि' : '5. Consumption Method',
     dietEat: isHindi ? '6. क्या खाएं' : '6. What to Eat',
-    dietAvoid: isHindi ? '7. क्या न खाएं' : '7. What to Avoid',
+    dietAvoid: isHindi ? '7. क्या न खाएं' : '7. What Not to Eat',
     routine: isHindi ? '8. दिनचर्या' : '8. Daily Routine',
     safety: isHindi ? '9. सुरक्षा सूचना' : '9. Safety Information',
     qaPlaceholder: isHindi ? 'अपना अनुभव साझा करें...' : 'Share your experience...',
@@ -135,20 +135,23 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       stopSpeech();
       setIsAudioPlaying(false);
     } else {
-      // SMART DOSAGE: Read only the currently selected age group content
+      // DYNAMIC SMART DOSAGE: Read only the currently selected age group content
       const currentDose = remedy.doses?.[selectedDoseIndex];
       const selectedDoseText = currentDose
-        ? `${labels.dosage} (${currentDose.ageRange[lang]}): ${currentDose.dose[lang]}`
+        ? `${currentDose.ageRange[lang]}: ${currentDose.dose[lang]}`
         : '';
 
-      // ROUTINE: Flatten sub-sections if they exist
-      const routineText = remedy.routine ? [
+      // ROUTINE: Handle localized routine extraction
+      const routineContent = remedy.routine ? [
+        isHindi ? 'सुबह: ' : 'Morning: ',
         remedy.routine.morning[lang],
+        isHindi ? 'दोपहर: ' : 'Afternoon: ',
         remedy.routine.afternoon[lang],
+        isHindi ? 'शाम: ' : 'Evening: ',
         remedy.routine.evening[lang]
       ] : [];
 
-      // Gather all text to read sequentially
+      // Gather ALL 9 parameters sequentially without skipping
       const textToRead = [
         remedy.name[lang],
         labels.introduction,
@@ -157,6 +160,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         remedy.ingredients[lang],
         labels.preparation,
         remedy.preparation[lang],
+        labels.dosage,
         selectedDoseText,
         labels.usage,
         remedy.usage[lang],
@@ -165,7 +169,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         labels.dietAvoid,
         remedy.dietAvoid[lang],
         labels.routine,
-        routineText,
+        ...routineContent,
         labels.safety,
         remedy.safetyAdvice[lang]
       ].flat().filter(Boolean).join('. ');
@@ -178,10 +182,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       );
     }
   };
-
-  const disclaimerText = isHindi 
-    ? "विशेष परामर्श: प्रिय पाठक, यह घरेलू उपाय शैक्षिक उद्देश्य से साझा किए गए हैं। किसी भी गंभीर स्थिति में हों, तो कृपया किसी योग्य डॉक्टर या वैद्य से व्यक्तिगत सलाह ज़रूर लें।"
-    : "Special Advice: Dear Reader, these home remedies are shared for educational purposes. Consult a qualified doctor or Vaidya for serious conditions.";
 
   const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/remedy/${remedy.id}` : '';
 
@@ -233,7 +233,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               </li>
             ))}
           </ul>
-          {appendDisclaimer && <div className="pt-4 border-t border-red-200/50 mt-4 italic text-[14px] leading-relaxed">{disclaimerText}</div>}
         </div>
       </div>
     );
@@ -337,8 +336,31 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           {renderSection(<Activity className="w-5 h-5" />, labels.usage, remedy.usage[lang], 'yellow')}
           {renderSection(<Apple className="w-5 h-5" />, labels.dietEat, remedy.dietEat[lang], 'green')}
           {renderSection(<AlertTriangle className="w-5 h-5" />, labels.dietAvoid, remedy.dietAvoid[lang], 'red')}
-          {remedy.routine && renderSection(<Clock className="w-5 h-5" />, labels.routine, [remedy.routine.morning[lang], remedy.routine.afternoon[lang], remedy.routine.evening[lang]], 'yellow')}
-          {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red', true)}
+          
+          {remedy.routine && (
+            <div className={cn("p-6 rounded-[2.5rem] border shadow-md space-y-4 mb-6 transition-all duration-300", getVariantStyles('yellow'))}>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-amber-500/10 text-amber-700"><Clock className="w-5 h-5" /></div>
+                <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
+              </div>
+              <div className="text-[15px] leading-relaxed font-medium space-y-3">
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-black uppercase tracking-widest text-amber-700/60">{isHindi ? 'सुबह' : 'Morning'}</span>
+                  <p>{toEnglishDigits(remedy.routine.morning[lang])}</p>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-black uppercase tracking-widest text-amber-700/60">{isHindi ? 'दोपहर' : 'Afternoon'}</span>
+                  <p>{toEnglishDigits(remedy.routine.afternoon[lang])}</p>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-black uppercase tracking-widest text-amber-700/60">{isHindi ? 'शाम' : 'Evening'}</span>
+                  <p>{toEnglishDigits(remedy.routine.evening[lang])}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red')}
         </div>
       </div>
 
@@ -348,6 +370,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         <Button onClick={handleWhatsAppShare} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Share2 className="w-3.5 h-3.5" /> SHARE</Button>
       </div>
 
+      {/* WhatsApp Style Chat History */}
       <div className={cn(
         "mt-8 p-6 rounded-[2.5rem] border-2 shadow-2xl transition-colors duration-500",
         isNight ? "bg-zinc-950 border-[#FBBF24]/30" : "bg-white border-[#FBBF24]/40"
