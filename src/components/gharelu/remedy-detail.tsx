@@ -21,7 +21,10 @@ import {
   Send,
   Loader2,
   Sparkles,
-  MessageSquare
+  MessageSquare,
+  Volume2,
+  VolumeX,
+  PlayCircle
 } from 'lucide-react';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -30,6 +33,7 @@ import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { useFirestore } from '@/firebase';
 import { getChatUserId, getChatCacheKey, listenToChatThread, postUserExperience } from '@/lib/chat-sync';
+import { speakText, stopSpeech } from '@/lib/audio-reader';
 
 interface RemedyDetailProps {
   remedy: Remedy;
@@ -50,13 +54,15 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const chatEndRef = useRef<HTMLDivElement>(null);
   const isInitialLoad = useRef(true);
 
+  // Audio Reader State
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+
   // Q&A States
   const [question, setQuestion] = useState('');
   const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
   const [chatThread, setChatThread] = useState<any[]>([]);
   const [userId, setUserId] = useState<string>('');
 
-  // Helper to handle both Firestore Timestamps and JSON-parsed objects from cache
   const safeTsToMillis = (ts: any): number => {
     if (!ts) return Date.now();
     if (typeof ts.toMillis === 'function') return ts.toMillis();
@@ -65,14 +71,11 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     return isNaN(parsed) ? Date.now() : parsed;
   };
 
-  // Initialize User ID and Sync Chat
   useEffect(() => {
     const uid = getChatUserId();
     setUserId(uid);
-
     if (!db || !remedy?.id || !uid) return;
 
-    // Load from cache for instant display
     const cacheKey = getChatCacheKey(remedy.id, uid);
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
@@ -82,12 +85,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       } catch(e) {}
     }
 
-    // Subscribe to real-time updates
     const unsubscribe = listenToChatThread(db, remedy.id, uid, (messages) => {
       setChatThread(messages);
       localStorage.setItem(cacheKey, JSON.stringify(messages));
-      
-      // Auto-scroll ONLY if it's NOT the initial page load (new message received while active)
       if (!isInitialLoad.current) {
         setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
       }
@@ -97,6 +97,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     return () => {
       unsubscribe();
       isInitialLoad.current = true;
+      stopSpeech(); // Stop audio on unmount
     };
   }, [db, remedy?.id]);
 
@@ -127,6 +128,35 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     safety: isHindi ? '9. सुरक्षा सूचना' : '9. Safety Information',
     qaPlaceholder: isHindi ? 'अपना अनुभव साझा करें...' : 'Share your experience...',
     qaButton: isHindi ? 'अनुभव भेजें' : 'Send Experience',
+  };
+
+  const handleToggleAudio = () => {
+    if (isAudioPlaying) {
+      stopSpeech();
+      setIsAudioPlaying(false);
+    } else {
+      // Gather all text to read
+      const textToRead = [
+        remedy.name[lang],
+        labels.introduction,
+        remedy.introduction[lang],
+        labels.ingredients,
+        remedy.ingredients[lang],
+        labels.preparation,
+        remedy.preparation[lang],
+        labels.usage,
+        remedy.usage[lang],
+        labels.safety,
+        remedy.safetyAdvice[lang]
+      ].flat().filter(Boolean).join('. ');
+
+      speakText(
+        toEnglishDigits(textToRead),
+        lang,
+        () => setIsAudioPlaying(true),
+        () => setIsAudioPlaying(false)
+      );
+    }
   };
 
   const disclaimerText = isHindi 
@@ -201,9 +231,36 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     <div className="space-y-6 animate-in fade-in duration-500 pb-24 max-w-2xl mx-auto overflow-hidden">
       <div className="w-full">
         <div className="flex items-start justify-between mb-4 gap-2">
-          <h2 className={cn("text-[26px] font-black tracking-wide leading-tight flex-1", isNight ? "text-white" : "text-[#14532D]")}>
-            {toEnglishDigits(remedy.name[lang])}
-          </h2>
+          <div className="flex-1 flex flex-col gap-1">
+            <h2 className={cn("text-[26px] font-black tracking-wide leading-tight", isNight ? "text-white" : "text-[#14532D]")}>
+              {toEnglishDigits(remedy.name[lang])}
+            </h2>
+            <div className="flex items-center gap-3">
+              <Button 
+                onClick={handleToggleAudio}
+                variant="outline" 
+                size="sm"
+                className={cn(
+                  "rounded-full px-4 h-9 gap-2 font-black text-[11px] uppercase tracking-widest transition-all",
+                  isAudioPlaying 
+                    ? "bg-accent border-accent text-white shadow-lg animate-pulse" 
+                    : (isNight ? "bg-zinc-800 border-white/10 text-white" : "bg-[#14532D]/5 border-[#14532D]/20 text-[#14532D]")
+                )}
+              >
+                {isAudioPlaying ? (
+                  <>
+                    <VolumeX className="w-4 h-4" /> 
+                    {isHindi ? 'रुकें' : 'Stop'}
+                  </>
+                ) : (
+                  <>
+                    <Volume2 className="w-4 h-4" /> 
+                    {isHindi ? 'नुस्खा सुनें' : 'Listen'}
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
           <Button variant="ghost" size="icon" onClick={onToggleFavorite} className={cn("rounded-full h-10 w-10", isFavorite ? "text-accent" : "text-muted-foreground")}>
             <Heart className={cn("w-6 h-6", isFavorite && "fill-current")} />
           </Button>
@@ -212,6 +269,11 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         {remedy.image && (
           <div className="mb-8 relative aspect-[16/9] w-full rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-accent/20">
             <Image src={remedy.image} alt={remedy.name[lang] as string} fill className="object-cover" sizes="(max-width: 768px) 100vw, 800px" priority />
+            {isAudioPlaying && (
+              <div className="absolute top-4 right-4 bg-accent text-white p-2 rounded-full shadow-lg animate-bounce">
+                <PlayCircle className="w-6 h-6" />
+              </div>
+            )}
           </div>
         )}
 
