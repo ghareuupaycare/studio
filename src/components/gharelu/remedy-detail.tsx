@@ -138,36 +138,34 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         const currentDose = remedy.doses?.[selectedDoseIndex];
         const selectedDoseText = currentDose?.dose?.[lang] || '';
 
+        // Optimization: Pre-clean and construct text to avoid synthesis lag
         const routineContent = remedy.routine ? [
-          isHindi ? 'सुबह: ' : 'Morning: ',
-          remedy.routine.morning?.[lang],
-          isHindi ? 'दोपहर: ' : 'Afternoon: ',
-          remedy.routine.afternoon?.[lang],
-          isHindi ? 'शाम: ' : 'Evening: ',
-          remedy.routine.evening?.[lang]
+          (isHindi ? 'सुबह: ' : 'Morning: ') + (Array.isArray(remedy.routine.morning?.[lang]) ? (remedy.routine.morning?.[lang] as string[]).join(' ') : (remedy.routine.morning?.[lang] || '')),
+          (isHindi ? 'दोपहर: ' : 'Afternoon: ') + (Array.isArray(remedy.routine.afternoon?.[lang]) ? (remedy.routine.afternoon?.[lang] as string[]).join(' ') : (remedy.routine.afternoon?.[lang] || '')),
+          (isHindi ? 'शाम: ' : 'Evening: ') + (Array.isArray(remedy.routine.evening?.[lang]) ? (remedy.routine.evening?.[lang] as string[]).join(' ') : (remedy.routine.evening?.[lang] || ''))
         ] : [];
 
         const textToRead = [
           remedy.name?.[lang],
           labels.introduction,
-          remedy.introduction?.[lang],
+          Array.isArray(remedy.introduction?.[lang]) ? (remedy.introduction?.[lang] as string[]).join('. ') : remedy.introduction?.[lang],
           labels.ingredients,
-          remedy.ingredients?.[lang],
+          Array.isArray(remedy.ingredients?.[lang]) ? (remedy.ingredients?.[lang] as string[]).join('. ') : remedy.ingredients?.[lang],
           labels.preparation,
-          remedy.preparation?.[lang],
+          Array.isArray(remedy.preparation?.[lang]) ? (remedy.preparation?.[lang] as string[]).join('. ') : remedy.preparation?.[lang],
           labels.dosage,
-          selectedDoseText,
+          Array.isArray(selectedDoseText) ? (selectedDoseText as string[]).join('. ') : selectedDoseText,
           labels.usage,
-          remedy.usage?.[lang],
+          Array.isArray(remedy.usage?.[lang]) ? (remedy.usage?.[lang] as string[]).join('. ') : remedy.usage?.[lang],
           labels.dietEat,
-          remedy.dietEat?.[lang],
+          Array.isArray(remedy.dietEat?.[lang]) ? (remedy.dietEat?.[lang] as string[]).join('. ') : remedy.dietEat?.[lang],
           labels.dietAvoid,
-          remedy.dietAvoid?.[lang],
+          Array.isArray(remedy.dietAvoid?.[lang]) ? (remedy.dietAvoid?.[lang] as string[]).join('. ') : remedy.dietAvoid?.[lang],
           labels.routine,
           ...routineContent,
           labels.safety,
-          remedy.safetyAdvice?.[lang]
-        ].flat().filter(Boolean).join('. ');
+          Array.isArray(remedy.safetyAdvice?.[lang]) ? (remedy.safetyAdvice?.[lang] as string[]).join('. ') : remedy.safetyAdvice?.[lang]
+        ].filter(Boolean).join('. ');
 
         speakText(
           toEnglishDigits(textToRead),
@@ -353,18 +351,33 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 <div className="p-2 rounded-xl bg-amber-500/10 text-amber-700"><Clock className="w-5 h-5" /></div>
                 <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
               </div>
-              <div className="text-[15px] leading-relaxed font-medium space-y-3">
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs font-black uppercase tracking-widest text-amber-700/60">{isHindi ? 'सुबह' : 'Morning'}</span>
-                  <p>{toEnglishDigits(remedy.routine.morning?.[lang] || '')}</p>
+              <div className="text-[15px] leading-relaxed font-medium space-y-4">
+                <div className="flex flex-col gap-1 border-l-2 border-amber-500/30 pl-3">
+                  <span className="text-[10px] font-black uppercase tracking-[0.1em] text-amber-700/60">{isHindi ? 'सुबह' : 'Morning'}</span>
+                  <div className="text-[15px]">
+                    {Array.isArray(remedy.routine.morning?.[lang]) 
+                      ? (remedy.routine.morning?.[lang] as string[]).map((p, i) => <p key={i}>{toEnglishDigits(p)}</p>)
+                      : <p>{toEnglishDigits(remedy.routine.morning?.[lang] || '')}</p>
+                    }
+                  </div>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs font-black uppercase tracking-widest text-amber-700/60">{isHindi ? 'दोपहर' : 'Afternoon'}</span>
-                  <p>{toEnglishDigits(remedy.routine.afternoon?.[lang] || '')}</p>
+                <div className="flex flex-col gap-1 border-l-2 border-amber-500/30 pl-3">
+                  <span className="text-[10px] font-black uppercase tracking-[0.1em] text-amber-700/60">{isHindi ? 'दोपहर' : 'Afternoon'}</span>
+                  <div className="text-[15px]">
+                    {Array.isArray(remedy.routine.afternoon?.[lang]) 
+                      ? (remedy.routine.afternoon?.[lang] as string[]).map((p, i) => <p key={i}>{toEnglishDigits(p)}</p>)
+                      : <p>{toEnglishDigits(remedy.routine.afternoon?.[lang] || '')}</p>
+                    }
+                  </div>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs font-black uppercase tracking-widest text-amber-700/60">{isHindi ? 'शाम' : 'Evening'}</span>
-                  <p>{toEnglishDigits(remedy.routine.evening?.[lang] || '')}</p>
+                <div className="flex flex-col gap-1 border-l-2 border-amber-500/30 pl-3">
+                  <span className="text-[10px] font-black uppercase tracking-[0.1em] text-amber-700/60">{isHindi ? 'शाम' : 'Evening'}</span>
+                  <div className="text-[15px]">
+                    {Array.isArray(remedy.routine.evening?.[lang]) 
+                      ? (remedy.routine.evening?.[lang] as string[]).map((p, i) => <p key={i}>{toEnglishDigits(p)}</p>)
+                      : <p>{toEnglishDigits(remedy.routine.evening?.[lang] || '')}</p>
+                    }
+                  </div>
                 </div>
               </div>
             </div>

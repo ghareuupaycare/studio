@@ -21,6 +21,9 @@ export const resumeSpeech = () => {
   }
 };
 
+/**
+ * Robust Speech synthesis that minimizes initialization lag.
+ */
 export const speakText = (
   text: string,
   lang: 'hi' | 'en',
@@ -29,7 +32,7 @@ export const speakText = (
 ) => {
   if (typeof window === 'undefined') return;
 
-  // Stop any current speech
+  // Stop any current speech immediately
   stopSpeech();
 
   const utterance = new SpeechSynthesisUtterance(text);
@@ -49,5 +52,8 @@ export const speakText = (
     onEnd();
   };
 
-  window.speechSynthesis.speak(utterance);
+  // Small timeout helps browser engine stabilize and start faster on some systems
+  setTimeout(() => {
+    window.speechSynthesis.speak(utterance);
+  }, 10);
 };
