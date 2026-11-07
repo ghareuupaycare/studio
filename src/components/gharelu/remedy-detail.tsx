@@ -88,7 +88,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       setChatThread(messages);
       localStorage.setItem(cacheKey, JSON.stringify(messages));
       if (!isInitialLoad.current) {
-        // Only scroll if it's not the first load to keep user at top
         setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
       }
       isInitialLoad.current = false;
@@ -135,62 +134,65 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       stopSpeech();
       setIsAudioPlaying(false);
     } else {
-      // DYNAMIC SMART DOSAGE: Read only the currently selected age group content
-      const currentDose = remedy.doses?.[selectedDoseIndex];
-      const selectedDoseText = currentDose
-        ? `${currentDose.ageRange[lang]}: ${currentDose.dose[lang]}`
-        : '';
+      try {
+        const currentDose = remedy.doses?.[selectedDoseIndex];
+        const selectedDoseText = currentDose?.dose?.[lang] || '';
 
-      // ROUTINE: Handle localized routine extraction
-      const routineContent = remedy.routine ? [
-        isHindi ? 'सुबह: ' : 'Morning: ',
-        remedy.routine.morning[lang],
-        isHindi ? 'दोपहर: ' : 'Afternoon: ',
-        remedy.routine.afternoon[lang],
-        isHindi ? 'शाम: ' : 'Evening: ',
-        remedy.routine.evening[lang]
-      ] : [];
+        const routineContent = remedy.routine ? [
+          isHindi ? 'सुबह: ' : 'Morning: ',
+          remedy.routine.morning?.[lang],
+          isHindi ? 'दोपहर: ' : 'Afternoon: ',
+          remedy.routine.afternoon?.[lang],
+          isHindi ? 'शाम: ' : 'Evening: ',
+          remedy.routine.evening?.[lang]
+        ] : [];
 
-      // Gather ALL 9 parameters sequentially without skipping
-      const textToRead = [
-        remedy.name[lang],
-        labels.introduction,
-        remedy.introduction[lang],
-        labels.ingredients,
-        remedy.ingredients[lang],
-        labels.preparation,
-        remedy.preparation[lang],
-        labels.dosage,
-        selectedDoseText,
-        labels.usage,
-        remedy.usage[lang],
-        labels.dietEat,
-        remedy.dietEat[lang],
-        labels.dietAvoid,
-        remedy.dietAvoid[lang],
-        labels.routine,
-        ...routineContent,
-        labels.safety,
-        remedy.safetyAdvice[lang]
-      ].flat().filter(Boolean).join('. ');
+        const textToRead = [
+          remedy.name?.[lang],
+          labels.introduction,
+          remedy.introduction?.[lang],
+          labels.ingredients,
+          remedy.ingredients?.[lang],
+          labels.preparation,
+          remedy.preparation?.[lang],
+          labels.dosage,
+          selectedDoseText,
+          labels.usage,
+          remedy.usage?.[lang],
+          labels.dietEat,
+          remedy.dietEat?.[lang],
+          labels.dietAvoid,
+          remedy.dietAvoid?.[lang],
+          labels.routine,
+          ...routineContent,
+          labels.safety,
+          remedy.safetyAdvice?.[lang]
+        ].flat().filter(Boolean).join('. ');
 
-      speakText(
-        toEnglishDigits(textToRead),
-        lang,
-        () => setIsAudioPlaying(true),
-        () => setIsAudioPlaying(false)
-      );
+        speakText(
+          toEnglishDigits(textToRead),
+          lang,
+          () => setIsAudioPlaying(true),
+          () => setIsAudioPlaying(false)
+        );
+      } catch (error) {
+        console.error("Audio reader error:", error);
+        toast({ variant: 'destructive', title: 'Audio Error', description: 'Failed to play audio.' });
+      }
     }
   };
 
   const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/remedy/${remedy.id}` : '';
 
   const handleWhatsAppShare = () => {
-    const briefIntro = Array.isArray(remedy.introduction[lang]) 
-      ? (remedy.introduction[lang] as string[])[0] 
-      : (remedy.introduction[lang] as string).split('\n')[0];
-    const message = `🌿 *${remedy.name[lang]}* 🌿\n\n${briefIntro}\n\nपूरा नुस्खा यहाँ देखें:\n${shareUrl}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(toEnglishDigits(message))}`, '_blank');
+    try {
+      const intro = remedy.introduction?.[lang];
+      const briefIntro = Array.isArray(intro) ? intro[0] : (intro || '').split('\n')[0];
+      const message = `🌿 *${remedy.name?.[lang]}* 🌿\n\n${briefIntro}\n\nपूरा नुस्खा यहाँ देखें:\n${shareUrl}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(toEnglishDigits(message))}`, '_blank');
+    } catch (e) {
+      console.error("Share error:", e);
+    }
   };
 
   const handleCopy = () => {
@@ -208,7 +210,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     }
   };
 
-  const renderSection = (icon: React.ReactNode, title: string, content: any, variant: SectionVariant, appendDisclaimer?: boolean) => {
+  const renderSection = (icon: React.ReactNode, title: string, content: any, variant: SectionVariant) => {
     if (!content) return null;
     const points: string[] = Array.isArray(content) 
       ? content.filter(item => typeof item === 'string' && item.trim() !== '') 
@@ -239,12 +241,18 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   };
 
   const formatTime = (ts: any) => {
-    return new Date(safeTsToMillis(ts)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    try {
+      return new Date(safeTsToMillis(ts)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch (e) { return ""; }
   };
 
   const formatDate = (ts: any) => {
-    return new Date(safeTsToMillis(ts)).toLocaleDateString([], { day: 'numeric', month: 'short' });
+    try {
+      return new Date(safeTsToMillis(ts)).toLocaleDateString([], { day: 'numeric', month: 'short' });
+    } catch (e) { return ""; }
   };
+
+  if (!remedy) return null;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-24 max-w-2xl mx-auto overflow-hidden">
@@ -252,7 +260,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         <div className="flex items-start justify-between mb-4 gap-2">
           <div className="flex-1 flex flex-col gap-1">
             <h2 className={cn("text-[26px] font-black tracking-wide leading-tight", isNight ? "text-white" : "text-[#14532D]")}>
-              {toEnglishDigits(remedy.name[lang])}
+              {toEnglishDigits(remedy.name?.[lang] || '')}
             </h2>
             <div className="flex items-center gap-3">
               <Button 
@@ -287,7 +295,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
         {remedy.image && (
           <div className="mb-8 relative aspect-[16/9] w-full rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-accent/20">
-            <Image src={remedy.image} alt={remedy.name[lang] as string} fill className="object-cover" sizes="(max-width: 768px) 100vw, 800px" priority />
+            <Image src={remedy.image} alt={remedy.name?.[lang] as string || 'remedy'} fill className="object-cover" sizes="(max-width: 768px) 100vw, 800px" priority />
             {isAudioPlaying && (
               <div className="absolute top-4 right-4 bg-accent text-white p-2 rounded-full shadow-lg animate-bounce">
                 <PlayCircle className="w-6 h-6" />
@@ -297,9 +305,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         )}
 
         <div className="space-y-0">
-          {renderSection(<Info className="w-5 h-5" />, labels.introduction, remedy.introduction[lang], 'green')}
-          {renderSection(<Beaker className="w-5 h-5" />, labels.ingredients, remedy.ingredients[lang], 'yellow')}
-          {renderSection(<ChefHat className="w-5 h-5" />, labels.preparation, remedy.preparation[lang], 'yellow')}
+          {renderSection(<Info className="w-5 h-5" />, labels.introduction, remedy.introduction?.[lang], 'green')}
+          {renderSection(<Beaker className="w-5 h-5" />, labels.ingredients, remedy.ingredients?.[lang], 'yellow')}
+          {renderSection(<ChefHat className="w-5 h-5" />, labels.preparation, remedy.preparation?.[lang], 'yellow')}
           
           {remedy.doses && remedy.doses.length > 0 && (
             <div className={cn("p-6 rounded-[2.5rem] border shadow-md space-y-6 mb-6 transition-all duration-300", getVariantStyles('yellow'))}>
@@ -317,25 +325,27 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                       selectedDoseIndex === i ? "bg-accent border-accent text-white shadow-lg scale-95" : (isNight ? "bg-white/5 border-white/10 text-white" : "bg-white border-amber-200 text-[#5F4B1A] hover:bg-amber-50")
                     )}
                   >
-                    <User className="w-3.5 h-3.5" /> {toEnglishDigits(dose.ageRange[lang])}
+                    <User className="w-3.5 h-3.5" /> {toEnglishDigits(dose.ageRange?.[lang] || '')}
                   </button>
                 ))}
               </div>
-              <div className={cn("p-5 rounded-2xl border-l-4", isNight ? "bg-white/5 border-accent" : "bg-white/60 border-accent")}>
-                <div className="text-[16px] font-bold leading-relaxed">
-                  <ul className="space-y-2 list-none p-0 m-0">
-                    {(Array.isArray(remedy.doses[selectedDoseIndex].dose[lang]) ? (remedy.doses[selectedDoseIndex].dose[lang] as string[]) : (remedy.doses[selectedDoseIndex].dose[lang] as string).split('\n')).filter(p => p.trim() !== '').map((point, idx) => (
-                      <li key={idx} className="flex items-start gap-3"><span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" /><span>{toEnglishDigits(point)}</span></li>
-                    ))}
-                  </ul>
+              {remedy.doses[selectedDoseIndex] && (
+                <div className={cn("p-5 rounded-2xl border-l-4", isNight ? "bg-white/5 border-accent" : "bg-white/60 border-accent")}>
+                  <div className="text-[16px] font-bold leading-relaxed">
+                    <ul className="space-y-2 list-none p-0 m-0">
+                      {(Array.isArray(remedy.doses[selectedDoseIndex].dose?.[lang]) ? (remedy.doses[selectedDoseIndex].dose?.[lang] as string[]) : (remedy.doses[selectedDoseIndex].dose?.[lang] as string || '').split('\n')).filter(p => p.trim() !== '').map((point, idx) => (
+                        <li key={idx} className="flex items-start gap-3"><span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" /><span>{toEnglishDigits(point)}</span></li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
 
-          {renderSection(<Activity className="w-5 h-5" />, labels.usage, remedy.usage[lang], 'yellow')}
-          {renderSection(<Apple className="w-5 h-5" />, labels.dietEat, remedy.dietEat[lang], 'green')}
-          {renderSection(<AlertTriangle className="w-5 h-5" />, labels.dietAvoid, remedy.dietAvoid[lang], 'red')}
+          {renderSection(<Activity className="w-5 h-5" />, labels.usage, remedy.usage?.[lang], 'yellow')}
+          {renderSection(<Apple className="w-5 h-5" />, labels.dietEat, remedy.dietEat?.[lang], 'green')}
+          {renderSection(<AlertTriangle className="w-5 h-5" />, labels.dietAvoid, remedy.dietAvoid?.[lang], 'red')}
           
           {remedy.routine && (
             <div className={cn("p-6 rounded-[2.5rem] border shadow-md space-y-4 mb-6 transition-all duration-300", getVariantStyles('yellow'))}>
@@ -346,21 +356,21 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               <div className="text-[15px] leading-relaxed font-medium space-y-3">
                 <div className="flex flex-col gap-1">
                   <span className="text-xs font-black uppercase tracking-widest text-amber-700/60">{isHindi ? 'सुबह' : 'Morning'}</span>
-                  <p>{toEnglishDigits(remedy.routine.morning[lang])}</p>
+                  <p>{toEnglishDigits(remedy.routine.morning?.[lang] || '')}</p>
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="text-xs font-black uppercase tracking-widest text-amber-700/60">{isHindi ? 'दोपहर' : 'Afternoon'}</span>
-                  <p>{toEnglishDigits(remedy.routine.afternoon[lang])}</p>
+                  <p>{toEnglishDigits(remedy.routine.afternoon?.[lang] || '')}</p>
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="text-xs font-black uppercase tracking-widest text-amber-700/60">{isHindi ? 'शाम' : 'Evening'}</span>
-                  <p>{toEnglishDigits(remedy.routine.evening[lang])}</p>
+                  <p>{toEnglishDigits(remedy.routine.evening?.[lang] || '')}</p>
                 </div>
               </div>
             </div>
           )}
 
-          {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice[lang], 'red')}
+          {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice?.[lang], 'red')}
         </div>
       </div>
 
@@ -370,7 +380,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         <Button onClick={handleWhatsAppShare} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Share2 className="w-3.5 h-3.5" /> SHARE</Button>
       </div>
 
-      {/* WhatsApp Style Chat History */}
       <div className={cn(
         "mt-8 p-6 rounded-[2.5rem] border-2 shadow-2xl transition-colors duration-500",
         isNight ? "bg-zinc-950 border-[#FBBF24]/30" : "bg-white border-[#FBBF24]/40"
