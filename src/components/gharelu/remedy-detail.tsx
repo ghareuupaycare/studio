@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Remedy } from '@/lib/remedy-types';
-import { Language } from '@/app/page';
+import { Language, Theme } from '@/app/page';
 import { 
   Heart,
   Info,
@@ -401,20 +401,18 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             isNight ? "bg-white/5 border-white/20 text-white/60" : "bg-primary/5 border-primary/20 text-muted-foreground"
           )}>
             <p>
-              {isHindi 
-                ? "विशेष परामर्श: प्रिय पाठक, यह घरेलू उपाय शैक्षिक उद्देश्य से साझा किए गए हैं। किसी भी गंभीर स्थिति में हों, तो कृपया किसी योग्य डॉक्टर या वैद्य से व्यक्तिगत सलाह ज़रूर लें।"
-                : "Special Advice: Dear Reader, these home remedies are shared for educational purposes. If you are in any serious condition, please seek personal advice from a qualified doctor or Vaidya."
-              }
+              विशेष परामर्श: प्रिय पाठक, यह घरेलू उपाय शैक्षिक उद्देश्य से साझा किए गए हैं। किसी भी गंभीर स्थिति में हों, तो कृपया किसी योग्य डॉक्टर या वैद्य से व्यक्तिगत सलाह ज़रूर लें।
             </p>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-end items-center gap-1.5 pt-4 mb-4 overflow-x-auto pb-2 no-scrollbar">
+      <div className="flex justify-start items-center gap-1.5 pt-4 mb-4 overflow-x-auto pb-2 no-scrollbar">
+        {/* WhatsApp Button First as requested */}
+        <WhatsAppShareButton remedy={remedy} lang={lang} />
+        
         <Button onClick={() => window.print()} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><FileDown className="w-3.5 h-3.5" /> PDF</Button>
         <Button onClick={handleCopy} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Copy className="w-3.5 h-3.5" /> LINK</Button>
-        {/* Using the new modular WhatsAppShareButton component */}
-        <WhatsAppShareButton remedy={remedy} lang={lang} />
       </div>
 
       <div className={cn(
