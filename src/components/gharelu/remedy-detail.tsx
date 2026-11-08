@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Remedy } from '@/lib/remedy-types';
-import { Language, Theme } from '@/app/page';
+import { Language } from '@/app/page';
 import { 
   Heart,
   Info,
@@ -15,7 +15,6 @@ import {
   Clock,
   ShieldCheck,
   User,
-  Share2,
   Copy,
   FileDown,
   Volume2,
@@ -33,6 +32,7 @@ import Image from 'next/image';
 import { useFirestore } from '@/firebase';
 import { getChatUserId, getChatCacheKey, listenToChatThread, postUserExperience } from '@/lib/chat-sync';
 import { speakText, stopSpeech } from '@/lib/audio-reader';
+import { WhatsAppShareButton } from './whatsapp-share-button';
 
 interface RemedyDetailProps {
   remedy: Remedy;
@@ -186,15 +186,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   };
 
   const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/remedy/${remedy.id}` : '';
-
-  const handleWhatsAppShare = () => {
-    try {
-      const intro = remedy.introduction?.[lang];
-      const briefIntro = Array.isArray(intro) ? (intro as string[])[0] : (intro as string || '').split('\n')[0];
-      const message = `🌿 *${remedy.name?.[lang]}* 🌿\n\n${briefIntro}\n\nपूरा नुस्खा यहाँ देखें:\n${shareUrl}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(toEnglishDigits(message))}`, '_blank');
-    } catch (e) {}
-  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl).then(() => {
@@ -422,7 +413,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       <div className="flex justify-end items-center gap-1.5 pt-4 mb-4 overflow-x-auto pb-2 no-scrollbar">
         <Button onClick={() => window.print()} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><FileDown className="w-3.5 h-3.5" /> PDF</Button>
         <Button onClick={handleCopy} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Copy className="w-3.5 h-3.5" /> LINK</Button>
-        <Button onClick={handleWhatsAppShare} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Share2 className="w-3.5 h-3.5" /> SHARE</Button>
+        {/* Using the new modular WhatsAppShareButton component */}
+        <WhatsAppShareButton remedy={remedy} lang={lang} />
       </div>
 
       <div className={cn(
