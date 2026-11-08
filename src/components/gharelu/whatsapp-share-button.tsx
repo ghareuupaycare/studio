@@ -29,17 +29,25 @@ export const WhatsAppShareButton = ({ remedy, lang }: WhatsAppShareButtonProps) 
         ? (intro as string[])[0] 
         : (intro as string || '').split('\n')[0];
       
-      const shareUrl = typeof window !== 'undefined' 
-        ? `${window.location.origin}/remedy/${remedy.id}` 
-        : `https://ghareluupaycare.vercel.app/remedy/${remedy.id}`;
+      // Use the remedy's ID or slug to build the direct deep link URL
+      const identifier = remedy.slug || remedy.id;
+      if (!identifier) return;
+
+      const baseUrl = typeof window !== 'undefined' 
+        ? window.location.origin 
+        : (process.env.NEXT_PUBLIC_BASE_URL || 'https://ghareluupaycare.vercel.app');
+      
+      const shareUrl = `${baseUrl}/remedy/${identifier}`;
       
       const brandHeader = isHindi ? '🌿 *घरेलू उपाय केयर* 🌿' : '🌿 *Gharelu Upay Care* 🌿';
       const cta = isHindi 
         ? '💡 अपनी उम्र के हिसाब से \'स्मार्ट खुराक\' और पूरी जानकारी देखने के लिए नीचे दिए गए लिंक पर क्लिक करें:' 
         : '💡 To see \'Smart Dosage\' according to your age and complete details, click the link below:';
 
-      const message = `${brandHeader}\n\n*${title}*\n\n${briefIntro}\n\n${cta}\n\n${shareUrl}`;
-      const finalEncodedMessage = encodeURIComponent(toEnglishDigits(message));
+      // Build the message parts separately to avoid mangling the URL during digit normalization
+      const messageBody = `${brandHeader}\n\n*${title}*\n\n${briefIntro}\n\n${cta}`;
+      const finalMessage = `${toEnglishDigits(messageBody)}\n\n${shareUrl}`;
+      const finalEncodedMessage = encodeURIComponent(finalMessage);
       
       window.open(`https://wa.me/?text=${finalEncodedMessage}`, '_blank');
     } catch (e) {
