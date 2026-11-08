@@ -23,14 +23,13 @@ export const RemedyActionBar = ({ remedy, lang }: RemedyActionBarProps) => {
   const { toast } = useToast();
   const isHindi = lang === 'hi';
 
-  // Critical fix: ensure URL matches the dynamic routing [id] correctly
+  // Fix: Use the established working query parameter format
   const getShareUrl = () => {
     if (typeof window === 'undefined') return '';
-    const identifier = remedy.slug || remedy.id;
-    return `${window.location.origin}/remedy/${encodeURIComponent(identifier)}`;
+    return `${window.location.origin}/?remedyId=${remedy.id}`;
   };
 
-  const handleWhatsAppShare = () => {
+  const getRichMessageContent = () => {
     const title = remedy.name?.[lang] || '';
     const intro = remedy.introduction?.[lang];
     const briefIntro = Array.isArray(intro) ? intro[0] : (intro as string || '').split('\n')[0];
@@ -38,11 +37,20 @@ export const RemedyActionBar = ({ remedy, lang }: RemedyActionBarProps) => {
 
     const brandHeader = isHindi ? '🌿 *घरेलू उपाय केयर* 🌿' : '🌿 *Gharelu Upay Care* 🌿';
     const cta = isHindi 
-      ? '💡 अपनी उम्र के हिसाब से \'स्मार्ट खुराक\' और पूरी जानकारी देखने के लिए नीचे दिए गए लिंक पर क्लिक करें:' 
-      : '💡 To see \'Smart Dosage\' according to your age and complete details, click the link below:';
+      ? "💡 अपनी उम्र के हिसाब से 'स्मार्ट खुराक' और पूरी जानकारी देखने के लिए नीचे दिए गए लिंक पर क्लिक करें:" 
+      : "💡 To see 'Smart Dosage' according to your age and complete details, click the link below:";
 
     const messageBody = `${brandHeader}\n\n*${title}*\n\n${briefIntro}\n\n${cta}`;
-    const finalMessage = `${toEnglishDigits(messageBody)}\n\n${shareUrl}`;
+    return {
+      title,
+      text: toEnglishDigits(messageBody),
+      url: shareUrl
+    };
+  };
+
+  const handleWhatsAppShare = () => {
+    const { text, url } = getRichMessageContent();
+    const finalMessage = `${text}\n\n${url}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(finalMessage)}`, '_blank');
   };
 
@@ -54,15 +62,21 @@ export const RemedyActionBar = ({ remedy, lang }: RemedyActionBarProps) => {
   };
 
   const handleGeneralShare = async () => {
-    const shareUrl = getShareUrl();
+    const { title, text, url } = getRichMessageContent();
+    
     if (navigator.share) {
       try {
         await navigator.share({
-          title: remedy.name?.[lang] as string,
-          text: isHindi ? 'घरेलू उपाय केयर' : 'Gharelu Upay Care',
-          url: shareUrl,
+          title,
+          text, // Now sends the rich promotional text
+          url
         });
-      } catch (e) {}
+      } catch (e) {
+        // Fallback to copy link if share is cancelled or fails
+        if ((e as Error).name !== 'AbortError') {
+          handleCopyLink();
+        }
+      }
     } else {
       handleCopyLink();
     }
@@ -70,7 +84,7 @@ export const RemedyActionBar = ({ remedy, lang }: RemedyActionBarProps) => {
 
   return (
     <div className="flex justify-start items-center gap-1.5 pt-4 mb-4 overflow-x-auto pb-2 no-scrollbar">
-      {/* WhatsApp Button */}
+      {/* 1. WhatsApp Button */}
       <Button 
         onClick={handleWhatsAppShare} 
         className="h-10 px-4 bg-[#25D366] hover:bg-[#20ba5a] text-white border-none rounded-xl flex items-center gap-2 font-black text-xs shrink-0 active:scale-95 transition-all shadow-lg"
@@ -78,7 +92,7 @@ export const RemedyActionBar = ({ remedy, lang }: RemedyActionBarProps) => {
         <WhatsAppIcon /> WHATSAPP
       </Button>
 
-      {/* PDF Button */}
+      {/* 2. PDF Button */}
       <Button 
         onClick={() => window.print()} 
         className="h-10 px-4 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0 active:scale-95 transition-all"
@@ -86,7 +100,7 @@ export const RemedyActionBar = ({ remedy, lang }: RemedyActionBarProps) => {
         <FileDown className="w-4 h-4" /> PDF
       </Button>
 
-      {/* Copy Link Button */}
+      {/* 3. Link Button */}
       <Button 
         onClick={handleCopyLink} 
         className="h-10 px-4 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0 active:scale-95 transition-all"
@@ -94,7 +108,7 @@ export const RemedyActionBar = ({ remedy, lang }: RemedyActionBarProps) => {
         <Copy className="w-4 h-4" /> LINK
       </Button>
 
-      {/* General Share Button */}
+      {/* 4. Share Button (Now with Rich Text) */}
       <Button 
         onClick={handleGeneralShare} 
         className="h-10 px-4 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0 active:scale-95 transition-all"
