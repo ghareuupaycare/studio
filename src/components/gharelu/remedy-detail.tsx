@@ -22,7 +22,8 @@ import {
   PlayCircle,
   MessageSquare,
   Sparkles,
-  Loader2
+  Loader2,
+  Share2
 } from 'lucide-react';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -191,6 +192,25 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     navigator.clipboard.writeText(shareUrl).then(() => {
       toast({ title: isHindi ? "लिंक कॉपी हो गया" : "Link Copied" });
     });
+  };
+
+  const handleGeneralShare = async () => {
+    const title = remedy.name?.[lang] as string;
+    const text = isHindi ? 'घरेलू उपाय केयर' : 'Gharelu Upay Care';
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text,
+          url: shareUrl,
+        });
+      } catch (e) {
+        // Fallback silently if cancelled or error
+      }
+    } else {
+      handleCopy();
+    }
   };
 
   const getVariantStyles = (variant: SectionVariant) => {
@@ -413,6 +433,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         
         <Button onClick={() => window.print()} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><FileDown className="w-3.5 h-3.5" /> PDF</Button>
         <Button onClick={handleCopy} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Copy className="w-3.5 h-3.5" /> LINK</Button>
+        <Button onClick={handleGeneralShare} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Share2 className="w-3.5 h-3.5" /> SHARE</Button>
       </div>
 
       <div className={cn(
