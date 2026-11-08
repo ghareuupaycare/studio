@@ -138,7 +138,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         const currentDose = remedy.doses?.[selectedDoseIndex];
         const selectedDoseText = currentDose?.dose?.[lang] || '';
 
-        // Pre-clean routine for audio
         let routineSpeech = '';
         const routineObj = remedy.routine as any;
         if (routineObj?.[lang]) {
@@ -182,7 +181,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         );
       } catch (error) {
         console.error("Audio reader error:", error);
-        toast({ variant: 'destructive', title: 'Audio Error', description: 'Failed to play audio.' });
       }
     }
   };
@@ -195,9 +193,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       const briefIntro = Array.isArray(intro) ? (intro as string[])[0] : (intro as string || '').split('\n')[0];
       const message = `🌿 *${remedy.name?.[lang]}* 🌿\n\n${briefIntro}\n\nपूरा नुस्खा यहाँ देखें:\n${shareUrl}`;
       window.open(`https://wa.me/?text=${encodeURIComponent(toEnglishDigits(message))}`, '_blank');
-    } catch (e) {
-      console.error("Share error:", e);
-    }
+    } catch (e) {}
   };
 
   const handleCopy = () => {
@@ -408,21 +404,15 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
           {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice?.[lang], 'red')}
 
-          {/* Static Special Advice Disclaimer */}
+          {/* PERMANENT STATIC DISCLAIMER FOOTER */}
           <div className={cn(
-            "p-5 rounded-[2.5rem] border border-dashed text-[12px] leading-relaxed mb-6 font-medium italic text-center",
-            isNight ? "bg-white/5 border-white/20 text-white/50" : "bg-primary/5 border-primary/20 text-muted-foreground"
+            "p-5 rounded-[2.5rem] border border-dashed text-[13px] leading-relaxed mb-6 font-bold text-center",
+            isNight ? "bg-white/5 border-white/20 text-white/60" : "bg-primary/5 border-primary/20 text-muted-foreground"
           )}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <AlertTriangle className="w-4 h-4 text-accent" />
-              <span className="font-black uppercase tracking-[0.2em] text-accent">
-                {isHindi ? 'विशेष परामर्श' : 'Special Advice'}
-              </span>
-            </div>
             <p>
               {isHindi 
-                ? "प्रिय पाठक, यहाँ दिए गए सभी घरेलू उपचार केवल शैक्षिक और सामान्य स्वास्थ्य जागरूकता के उद्देश्य से साझा किए गए हैं। इन्हें पेशेवर चिकित्सा सलाह का विकल्प बिल्कुल न समझें। स्थिति गंभीर होने पर योग्य डॉक्टर से परामर्श लें।"
-                : "Dear Reader, all home remedies shared here are for educational purposes only. Do not consider them a substitute for professional medical advice. Consult a doctor in case of serious conditions."
+                ? "विशेष परामर्श: प्रिय पाठक, यह घरेलू उपाय शैक्षिक उद्देश्य से साझा किए गए हैं। किसी भी गंभीर स्थिति में हों, तो कृपया किसी योग्य डॉक्टर या वैद्य से व्यक्तिगत सलाह ज़रूर लें।"
+                : "Special Advice: Dear Reader, these home remedies are shared for educational purposes. If you are in any serious condition, please seek personal advice from a qualified doctor or Vaidya."
               }
             </p>
           </div>
