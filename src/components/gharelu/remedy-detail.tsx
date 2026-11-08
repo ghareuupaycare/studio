@@ -117,9 +117,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   };
 
   /**
-   * Optimized Instant Audio Trigger:
-   * Extracts text directly from the current 'remedy' prop object.
-   * NO static fallbacks or hardcoded values.
+   * ABSOLUTE DYNAMIC AUDIO EXTRACTION:
+   * Always reads from the 'remedy' prop passed to the component instance.
    */
   const handleToggleAudio = () => {
     if (isAudioPlaying) {
@@ -128,82 +127,78 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       return;
     }
 
-    // 1. Grab current dynamic content
-    const currentRemedy = remedy; 
-    const currentLang = lang;
-    
-    // Safety check
-    if (!currentRemedy?.name?.[currentLang]) return;
+    // Safety check for remedy data
+    if (!remedy || !remedy.name?.[lang]) return;
 
-    // 2. Build text sequence dynamically from props
     const textParts: string[] = [];
     
     // Title
-    textParts.push(currentRemedy.name[currentLang]);
+    textParts.push(remedy.name[lang]);
 
     // 1. Introduction
     textParts.push(labels.introduction);
-    const intro = currentRemedy.introduction?.[currentLang];
+    const intro = remedy.introduction?.[lang];
     textParts.push(Array.isArray(intro) ? intro.join('. ') : (intro || ''));
 
     // 2. Ingredients
     textParts.push(labels.ingredients);
-    const ingr = currentRemedy.ingredients?.[currentLang];
+    const ingr = remedy.ingredients?.[lang];
     textParts.push(Array.isArray(ingr) ? ingr.join('. ') : (ingr || ''));
 
     // 3. Preparation
     textParts.push(labels.preparation);
-    const prep = currentRemedy.preparation?.[currentLang];
+    const prep = remedy.preparation?.[lang];
     textParts.push(Array.isArray(prep) ? prep.join('. ') : (prep || ''));
 
-    // 4. Smart Dosage (DYNAMIC: Current tab only)
+    // 4. Smart Dosage (Only current active tab)
     textParts.push(labels.dosage);
-    const doseObj = currentRemedy.doses?.[selectedDoseIndex];
-    if (doseObj) {
-      textParts.push(doseObj.ageRange?.[currentLang] || '');
-      const doseContent = doseObj.dose?.[currentLang];
+    const activeDose = remedy.doses?.[selectedDoseIndex];
+    if (activeDose) {
+      textParts.push(activeDose.ageRange?.[lang] || '');
+      const doseContent = activeDose.dose?.[lang];
       textParts.push(Array.isArray(doseContent) ? doseContent.join('. ') : (doseContent || ''));
     }
 
     // 5. Usage
     textParts.push(labels.usage);
-    const usage = currentRemedy.usage?.[currentLang];
+    const usage = remedy.usage?.[lang];
     textParts.push(Array.isArray(usage) ? usage.join('. ') : (usage || ''));
 
     // 6. Diet Eat
     textParts.push(labels.dietEat);
-    const dietEat = currentRemedy.dietEat?.[currentLang];
+    const dietEat = remedy.dietEat?.[lang];
     textParts.push(Array.isArray(dietEat) ? dietEat.join('. ') : (dietEat || ''));
 
     // 7. Diet Avoid
     textParts.push(labels.dietAvoid);
-    const dietAvoid = currentRemedy.dietAvoid?.[currentLang];
+    const dietAvoid = remedy.dietAvoid?.[lang];
     textParts.push(Array.isArray(dietAvoid) ? dietAvoid.join('. ') : (dietAvoid || ''));
 
     // 8. Routine
     textParts.push(labels.routine);
-    const routine = currentRemedy.routine;
-    if ((routine as any)?.[currentLang]) {
-      const rot = (routine as any)[currentLang];
-      textParts.push(Array.isArray(rot) ? rot.join('. ') : rot);
-    } else {
-      if (routine.morning?.[currentLang]) textParts.push(`${isHindi ? 'सुबह' : 'Morning'}: ${Array.isArray(routine.morning[currentLang]) ? routine.morning[currentLang].join('. ') : routine.morning[currentLang]}`);
-      if (routine.afternoon?.[currentLang]) textParts.push(`${isHindi ? 'दोपहर' : 'Afternoon'}: ${Array.isArray(routine.afternoon[currentLang]) ? routine.afternoon[currentLang].join('. ') : routine.afternoon[currentLang]}`);
-      if (routine.evening?.[currentLang]) textParts.push(`${isHindi ? 'शाम' : 'Evening'}: ${Array.isArray(routine.evening[currentLang]) ? routine.evening[currentLang].join('. ') : routine.evening[currentLang]}`);
+    const routine = remedy.routine;
+    if (routine) {
+      if ((routine as any)[lang]) {
+        const val = (routine as any)[lang];
+        textParts.push(Array.isArray(val) ? val.join('. ') : val);
+      } else {
+        if (routine.morning?.[lang]) textParts.push(`${isHindi ? 'सुबह' : 'Morning'}: ${Array.isArray(routine.morning[lang]) ? routine.morning[lang].join('. ') : routine.morning[lang]}`);
+        if (routine.afternoon?.[lang]) textParts.push(`${isHindi ? 'दोपहर' : 'Afternoon'}: ${Array.isArray(routine.afternoon[lang]) ? routine.afternoon[lang].join('. ') : routine.afternoon[lang]}`);
+        if (routine.evening?.[lang]) textParts.push(`${isHindi ? 'शाम' : 'Evening'}: ${Array.isArray(routine.evening[lang]) ? routine.evening[lang].join('. ') : routine.evening[lang]}`);
+      }
     }
 
     // 9. Safety
     textParts.push(labels.safety);
-    const safety = currentRemedy.safetyAdvice?.[currentLang];
+    const safety = remedy.safetyAdvice?.[lang];
     textParts.push(Array.isArray(safety) ? safety.join('. ') : (safety || ''));
 
-    // Final clean text
     const fullText = textParts.filter(p => !!p).join('. ');
 
-    // Invoke Speech instantly
+    // Invoke speech instantly using the cleaned dynamic text
     speakText(
       toEnglishDigits(fullText),
-      currentLang,
+      lang,
       () => setIsAudioPlaying(true),
       () => setIsAudioPlaying(false)
     );
@@ -362,6 +357,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
               </div>
               
+              {/* FIXED RENDERING: Check if routine has the current lang directly (Admin format) or structured (Static format) */}
               {(remedy.routine as any)[lang] ? (
                 <div className="text-[15px] leading-relaxed font-medium">
                   {Array.isArray((remedy.routine as any)[lang]) 

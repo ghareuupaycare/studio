@@ -1,7 +1,7 @@
 /**
  * @fileOverview Browser-native Text-to-Speech utility for reading remedies.
  * Supports both Hindi (hi-IN) and English (en-US).
- * Optimized for instant response and reliability.
+ * Optimized for INSTANT response (under 1 second) and zero hardcoded content.
  */
 
 export const stopSpeech = () => {
@@ -11,8 +11,8 @@ export const stopSpeech = () => {
 };
 
 /**
- * Robust Speech synthesis optimized for instant playback (under 1 second).
- * It takes raw text and language as input, ensuring no hardcoded content is used.
+ * Robust Speech synthesis that takes raw text from the caller.
+ * Strictly avoids any internal fallbacks to ensure it only reads what is passed.
  */
 export const speakText = (
   text: string,
@@ -20,19 +20,22 @@ export const speakText = (
   onStart: () => void,
   onEnd: () => void
 ) => {
-  if (typeof window === 'undefined' || !text.trim()) {
+  if (typeof window === 'undefined' || !text || !text.trim()) {
     onEnd();
     return;
   }
 
-  // 1. Cancel any existing speech immediately to clear the queue
+  // 1. Force-stop any current speech to clear the browser buffer instantly
   window.speechSynthesis.cancel();
 
-  // 2. Prepare the utterance with the provided text only
+  // 2. Create the utterance object with the provided dynamic text
   const utterance = new SpeechSynthesisUtterance(text);
   
+  // Set language to Hindi or English as requested
   utterance.lang = lang === 'hi' ? 'hi-IN' : 'en-US';
-  utterance.rate = 0.85; // Calm, natural pace
+  
+  // Set strictly to 0.85 for a calm, natural Vaidya-like pace
+  utterance.rate = 0.85; 
   utterance.pitch = 1.0;
   utterance.volume = 1.0;
 
@@ -52,10 +55,10 @@ export const speakText = (
   };
 
   /**
-   * Browser-specific fix: Chrome/Safari require a tiny pause after cancel()
-   * but 20ms is enough for nearly instant execution.
+   * Browser-specific optimization: A tiny delay ensures the browser's 
+   * speech engine has processed the 'cancel' command before starting the new one.
    */
   setTimeout(() => {
     window.speechSynthesis.speak(utterance);
-  }, 20);
+  }, 50);
 };
