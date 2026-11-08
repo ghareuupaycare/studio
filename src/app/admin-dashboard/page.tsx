@@ -141,6 +141,23 @@ export default function AdminDashboard() {
     });
   }, [questions]);
 
+  // Helper for Timestamps
+  const formatTime = (ts: any) => {
+    if (!ts) return "";
+    try {
+      const ms = typeof ts.toMillis === 'function' ? ts.toMillis() : (ts.seconds ? ts.seconds * 1000 : new Date(ts).getTime());
+      return new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch (e) { return ""; }
+  };
+
+  const formatDate = (ts: any) => {
+    if (!ts) return "";
+    try {
+      const ms = typeof ts.toMillis === 'function' ? ts.toMillis() : (ts.seconds ? ts.seconds * 1000 : new Date(ts).getTime());
+      return new Date(ms).toLocaleDateString([], { day: 'numeric', month: 'short' });
+    } catch (e) { return ""; }
+  };
+
   // Form Handlers
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -353,7 +370,7 @@ export default function AdminDashboard() {
             <AdminRemedyList 
               groupedRecipes={groupedRecipes} 
               onEdit={handleEditRecipe} 
-              onDelete={handleDeleteRecipe} 
+              onDelete={handleRecipeSubmit} 
               onDeleteCategory={() => {}} 
               onDeleteSubCategory={() => {}} 
               onQuickAdd={() => setView('add-recipe')} 
@@ -386,12 +403,18 @@ export default function AdminDashboard() {
                             <div className={cn("px-4 py-2 rounded-2xl rounded-tr-none max-w-[85%] border shadow-sm", isNight ? "bg-zinc-800 border-white/5" : "bg-muted/30 border-primary/5")}>
                               <p className="text-sm font-bold">{item.question}</p>
                             </div>
+                            <span className="text-[9px] font-bold opacity-40 mt-1 mr-1">
+                              {formatDate(item.timestamp)}, {formatTime(item.timestamp)}
+                            </span>
                           </div>
                           {item.answer && (
-                            <div className="mt-4 self-start max-w-[85%]">
-                              <div className="px-4 py-2 rounded-2xl rounded-tl-none border-2 border-accent/40 bg-accent/5">
+                            <div className="w-full flex flex-col items-start mt-4">
+                              <div className="px-4 py-2 rounded-2xl rounded-tl-none border-2 border-accent/40 bg-accent/5 max-w-[85%] shadow-sm">
                                 <p className="text-sm font-medium">{item.answer}</p>
                               </div>
+                              <span className="text-[9px] font-bold opacity-40 mt-1 ml-1">
+                                {formatDate(item.answeredAt)}, {formatTime(item.answeredAt)}
+                              </span>
                             </div>
                           )}
                         </div>
