@@ -192,7 +192,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const handleWhatsAppShare = () => {
     try {
       const intro = remedy.introduction?.[lang];
-      const briefIntro = Array.isArray(intro) ? intro[0] : (intro || '').split('\n')[0];
+      const briefIntro = Array.isArray(intro) ? (intro as string[])[0] : (intro as string || '').split('\n')[0];
       const message = `🌿 *${remedy.name?.[lang]}* 🌿\n\n${briefIntro}\n\nपूरा नुस्खा यहाँ देखें:\n${shareUrl}`;
       window.open(`https://wa.me/?text=${encodeURIComponent(toEnglishDigits(message))}`, '_blank');
     } catch (e) {
@@ -359,9 +359,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
               </div>
               
-              {/* Flexible Routine Rendering to support both Structured and Flat formats */}
               {(remedy.routine as any)[lang] ? (
-                /* Handle Flat/Global Routine (Common in dynamic recipes from Admin Panel) */
                 <div className="text-[15px] leading-relaxed font-medium">
                   {Array.isArray((remedy.routine as any)[lang]) 
                     ? ((remedy.routine as any)[lang] as string[]).map((p, i) => <p key={i} className="mb-2">{toEnglishDigits(p)}</p>)
@@ -369,7 +367,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                   }
                 </div>
               ) : (
-                /* Handle Structured Routine (Morning/Afternoon/Evening) */
                 <div className="text-[15px] leading-relaxed font-medium space-y-4">
                   {remedy.routine.morning?.[lang] && (
                     <div className="flex flex-col gap-1 border-l-2 border-amber-500/30 pl-3">
@@ -410,6 +407,25 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           )}
 
           {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice?.[lang], 'red')}
+
+          {/* Static Special Advice Disclaimer */}
+          <div className={cn(
+            "p-5 rounded-[2.5rem] border border-dashed text-[12px] leading-relaxed mb-6 font-medium italic text-center",
+            isNight ? "bg-white/5 border-white/20 text-white/50" : "bg-primary/5 border-primary/20 text-muted-foreground"
+          )}>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <AlertTriangle className="w-4 h-4 text-accent" />
+              <span className="font-black uppercase tracking-[0.2em] text-accent">
+                {isHindi ? 'विशेष परामर्श' : 'Special Advice'}
+              </span>
+            </div>
+            <p>
+              {isHindi 
+                ? "प्रिय पाठक, यहाँ दिए गए सभी घरेलू उपचार केवल शैक्षिक और सामान्य स्वास्थ्य जागरूकता के उद्देश्य से साझा किए गए हैं। इन्हें पेशेवर चिकित्सा सलाह का विकल्प बिल्कुल न समझें। स्थिति गंभीर होने पर योग्य डॉक्टर से परामर्श लें।"
+                : "Dear Reader, all home remedies shared here are for educational purposes only. Do not consider them a substitute for professional medical advice. Consult a doctor in case of serious conditions."
+              }
+            </p>
+          </div>
         </div>
       </div>
 
