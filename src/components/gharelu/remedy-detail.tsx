@@ -116,12 +116,16 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     qaButton: isHindi ? 'अनुभव भेजें' : 'Send Experience',
   };
 
+  /**
+   * Optimized Text Extraction: Immediately grabs fresh data from the current remedy object.
+   */
   const handleToggleAudio = () => {
     if (isAudioPlaying) {
       stopSpeech();
       setIsAudioPlaying(false);
     } else {
       try {
+        // Collect fresh text based on current remedy and language
         const currentDose = remedy.doses?.[selectedDoseIndex];
         const selectedDoseText = currentDose?.dose?.[lang] || '';
 
@@ -136,8 +140,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           routineSpeech = `${isHindi ? 'सुबह: ' : 'Morning: '}${m}. ${isHindi ? 'दोपहर: ' : 'Afternoon: '}${a}. ${isHindi ? 'शाम: ' : 'Evening: '}${e}`;
         }
 
+        // Construct the full speech sequence from all 9 parameters
         const textParts = [
-          remedy.name?.[lang],
+          remedy.name?.[lang], // Title
           labels.introduction,
           Array.isArray(remedy.introduction?.[lang]) ? (remedy.introduction?.[lang] as string[]).join('. ') : remedy.introduction?.[lang],
           labels.ingredients,
@@ -158,8 +163,10 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           Array.isArray(remedy.safetyAdvice?.[lang]) ? (remedy.safetyAdvice?.[lang] as string[]).join('. ') : remedy.safetyAdvice?.[lang]
         ];
 
-        const textToRead = textParts.filter(Boolean).join('. ');
+        // Join and sanitize text
+        const textToRead = textParts.filter(part => typeof part === 'string' && part.trim() !== '').join('. ');
 
+        // Start Speech Synthesis instantly
         speakText(
           toEnglishDigits(textToRead),
           lang,
@@ -168,6 +175,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         );
       } catch (error) {
         console.error("Audio reader error:", error);
+        setIsAudioPlaying(false);
       }
     }
   };
@@ -386,7 +394,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      {/* NEW MODULAR ACTION BAR COMPONENT */}
       <RemedyActionBar remedy={remedy} lang={lang} />
 
       <div className={cn(
