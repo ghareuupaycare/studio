@@ -117,67 +117,96 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   };
 
   /**
-   * Optimized Text Extraction: Immediately grabs fresh data from the current remedy object.
+   * Optimized Instant Audio Trigger:
+   * Extracts text directly from the current 'remedy' prop object.
+   * NO static fallbacks or hardcoded values.
    */
   const handleToggleAudio = () => {
     if (isAudioPlaying) {
       stopSpeech();
       setIsAudioPlaying(false);
-    } else {
-      try {
-        // Collect fresh text based on current remedy and language
-        const currentDose = remedy.doses?.[selectedDoseIndex];
-        const selectedDoseText = currentDose?.dose?.[lang] || '';
-
-        let routineSpeech = '';
-        const routineObj = remedy.routine as any;
-        if (routineObj?.[lang]) {
-          routineSpeech = Array.isArray(routineObj[lang]) ? routineObj[lang].join('. ') : routineObj[lang];
-        } else if (routineObj) {
-          const m = Array.isArray(routineObj.morning?.[lang]) ? routineObj.morning[lang].join(' ') : (routineObj.morning?.[lang] || '');
-          const a = Array.isArray(routineObj.afternoon?.[lang]) ? routineObj.afternoon[lang].join(' ') : (routineObj.afternoon?.[lang] || '');
-          const e = Array.isArray(routineObj.evening?.[lang]) ? routineObj.evening[lang].join(' ') : (routineObj.evening?.[lang] || '');
-          routineSpeech = `${isHindi ? 'सुबह: ' : 'Morning: '}${m}. ${isHindi ? 'दोपहर: ' : 'Afternoon: '}${a}. ${isHindi ? 'शाम: ' : 'Evening: '}${e}`;
-        }
-
-        // Construct the full speech sequence from all 9 parameters
-        const textParts = [
-          remedy.name?.[lang], // Title
-          labels.introduction,
-          Array.isArray(remedy.introduction?.[lang]) ? (remedy.introduction?.[lang] as string[]).join('. ') : remedy.introduction?.[lang],
-          labels.ingredients,
-          Array.isArray(remedy.ingredients?.[lang]) ? (remedy.ingredients?.[lang] as string[]).join('. ') : remedy.ingredients?.[lang],
-          labels.preparation,
-          Array.isArray(remedy.preparation?.[lang]) ? (remedy.preparation?.[lang] as string[]).join('. ') : remedy.preparation?.[lang],
-          labels.dosage,
-          Array.isArray(selectedDoseText) ? (selectedDoseText as string[]).join('. ') : selectedDoseText,
-          labels.usage,
-          Array.isArray(remedy.usage?.[lang]) ? (remedy.usage?.[lang] as string[]).join('. ') : remedy.usage?.[lang],
-          labels.dietEat,
-          Array.isArray(remedy.dietEat?.[lang]) ? (remedy.dietEat?.[lang] as string[]).join('. ') : remedy.dietEat?.[lang],
-          labels.dietAvoid,
-          Array.isArray(remedy.dietAvoid?.[lang]) ? (remedy.dietAvoid?.[lang] as string[]).join('. ') : remedy.dietAvoid?.[lang],
-          labels.routine,
-          routineSpeech,
-          labels.safety,
-          Array.isArray(remedy.safetyAdvice?.[lang]) ? (remedy.safetyAdvice?.[lang] as string[]).join('. ') : remedy.safetyAdvice?.[lang]
-        ];
-
-        // Join and sanitize text
-        const textToRead = textParts.filter(part => typeof part === 'string' && part.trim() !== '').join('. ');
-
-        // Start Speech Synthesis instantly
-        speakText(
-          toEnglishDigits(textToRead),
-          lang,
-          () => setIsAudioPlaying(true),
-          () => setIsAudioPlaying(false)
-        );
-      } catch (error) {
-        console.error("Audio reader error:", error);
-        setIsAudioPlaying(false);
-      }
+      return;
     }
+
+    // 1. Grab current dynamic content
+    const currentRemedy = remedy; 
+    const currentLang = lang;
+    
+    // Safety check
+    if (!currentRemedy?.name?.[currentLang]) return;
+
+    // 2. Build text sequence dynamically from props
+    const textParts: string[] = [];
+    
+    // Title
+    textParts.push(currentRemedy.name[currentLang]);
+
+    // 1. Introduction
+    textParts.push(labels.introduction);
+    const intro = currentRemedy.introduction?.[currentLang];
+    textParts.push(Array.isArray(intro) ? intro.join('. ') : (intro || ''));
+
+    // 2. Ingredients
+    textParts.push(labels.ingredients);
+    const ingr = currentRemedy.ingredients?.[currentLang];
+    textParts.push(Array.isArray(ingr) ? ingr.join('. ') : (ingr || ''));
+
+    // 3. Preparation
+    textParts.push(labels.preparation);
+    const prep = currentRemedy.preparation?.[currentLang];
+    textParts.push(Array.isArray(prep) ? prep.join('. ') : (prep || ''));
+
+    // 4. Smart Dosage (DYNAMIC: Current tab only)
+    textParts.push(labels.dosage);
+    const doseObj = currentRemedy.doses?.[selectedDoseIndex];
+    if (doseObj) {
+      textParts.push(doseObj.ageRange?.[currentLang] || '');
+      const doseContent = doseObj.dose?.[currentLang];
+      textParts.push(Array.isArray(doseContent) ? doseContent.join('. ') : (doseContent || ''));
+    }
+
+    // 5. Usage
+    textParts.push(labels.usage);
+    const usage = currentRemedy.usage?.[currentLang];
+    textParts.push(Array.isArray(usage) ? usage.join('. ') : (usage || ''));
+
+    // 6. Diet Eat
+    textParts.push(labels.dietEat);
+    const dietEat = currentRemedy.dietEat?.[currentLang];
+    textParts.push(Array.isArray(dietEat) ? dietEat.join('. ') : (dietEat || ''));
+
+    // 7. Diet Avoid
+    textParts.push(labels.dietAvoid);
+    const dietAvoid = currentRemedy.dietAvoid?.[currentLang];
+    textParts.push(Array.isArray(dietAvoid) ? dietAvoid.join('. ') : (dietAvoid || ''));
+
+    // 8. Routine
+    textParts.push(labels.routine);
+    const routine = currentRemedy.routine;
+    if ((routine as any)?.[currentLang]) {
+      const rot = (routine as any)[currentLang];
+      textParts.push(Array.isArray(rot) ? rot.join('. ') : rot);
+    } else {
+      if (routine.morning?.[currentLang]) textParts.push(`${isHindi ? 'सुबह' : 'Morning'}: ${Array.isArray(routine.morning[currentLang]) ? routine.morning[currentLang].join('. ') : routine.morning[currentLang]}`);
+      if (routine.afternoon?.[currentLang]) textParts.push(`${isHindi ? 'दोपहर' : 'Afternoon'}: ${Array.isArray(routine.afternoon[currentLang]) ? routine.afternoon[currentLang].join('. ') : routine.afternoon[currentLang]}`);
+      if (routine.evening?.[currentLang]) textParts.push(`${isHindi ? 'शाम' : 'Evening'}: ${Array.isArray(routine.evening[currentLang]) ? routine.evening[currentLang].join('. ') : routine.evening[currentLang]}`);
+    }
+
+    // 9. Safety
+    textParts.push(labels.safety);
+    const safety = currentRemedy.safetyAdvice?.[currentLang];
+    textParts.push(Array.isArray(safety) ? safety.join('. ') : (safety || ''));
+
+    // Final clean text
+    const fullText = textParts.filter(p => !!p).join('. ');
+
+    // Invoke Speech instantly
+    speakText(
+      toEnglishDigits(fullText),
+      currentLang,
+      () => setIsAudioPlaying(true),
+      () => setIsAudioPlaying(false)
+    );
   };
 
   const getVariantStyles = (variant: SectionVariant) => {
