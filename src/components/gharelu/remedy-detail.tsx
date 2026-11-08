@@ -15,15 +15,12 @@ import {
   Clock,
   ShieldCheck,
   User,
-  Copy,
-  FileDown,
   Volume2,
   VolumeX,
   PlayCircle,
   MessageSquare,
   Sparkles,
-  Loader2,
-  Share2
+  Loader2
 } from 'lucide-react';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -33,7 +30,7 @@ import Image from 'next/image';
 import { useFirestore } from '@/firebase';
 import { getChatUserId, getChatCacheKey, listenToChatThread, postUserExperience } from '@/lib/chat-sync';
 import { speakText, stopSpeech } from '@/lib/audio-reader';
-import { WhatsAppShareButton } from './whatsapp-share-button';
+import { RemedyActionBar } from './remedy-action-bar';
 
 interface RemedyDetailProps {
   remedy: Remedy;
@@ -54,22 +51,11 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const chatEndRef = useRef<HTMLDivElement>(null);
   const isInitialLoad = useRef(true);
 
-  // Audio Reader State
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
-
-  // Q&A States
   const [question, setQuestion] = useState('');
   const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
   const [chatThread, setChatThread] = useState<any[]>([]);
   const [userId, setUserId] = useState<string>('');
-
-  const safeTsToMillis = (ts: any): number => {
-    if (!ts) return Date.now();
-    if (typeof ts.toMillis === 'function') return ts.toMillis();
-    if (ts.seconds) return ts.seconds * 1000;
-    const parsed = new Date(ts).getTime();
-    return isNaN(parsed) ? Date.now() : parsed;
-  };
 
   useEffect(() => {
     const uid = getChatUserId();
@@ -186,33 +172,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     }
   };
 
-  const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/remedy/${remedy.id}` : '';
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      toast({ title: isHindi ? "लिंक कॉपी हो गया" : "Link Copied" });
-    });
-  };
-
-  const handleGeneralShare = async () => {
-    const title = remedy.name?.[lang] as string;
-    const text = isHindi ? 'घरेलू उपाय केयर' : 'Gharelu Upay Care';
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title,
-          text,
-          url: shareUrl,
-        });
-      } catch (e) {
-        // Fallback silently if cancelled or error
-      }
-    } else {
-      handleCopy();
-    }
-  };
-
   const getVariantStyles = (variant: SectionVariant) => {
     if (isNight) return "bg-zinc-900 border-zinc-800 text-white";
     switch (variant) {
@@ -254,17 +213,17 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const formatTime = (ts: any) => {
     try {
-      return new Date(safeTsToMillis(ts)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const ms = ts?.toMillis?.() || ts?.seconds * 1000 || new Date(ts).getTime();
+      return new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     } catch (e) { return ""; }
   };
 
   const formatDate = (ts: any) => {
     try {
-      return new Date(safeTsToMillis(ts)).toLocaleDateString([], { day: 'numeric', month: 'short' });
+      const ms = ts?.toMillis?.() || ts?.seconds * 1000 || new Date(ts).getTime();
+      return new Date(ms).toLocaleDateString([], { day: 'numeric', month: 'short' });
     } catch (e) { return ""; }
   };
-
-  if (!remedy) return null;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-24 max-w-2xl mx-auto overflow-hidden">
@@ -427,14 +386,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         </div>
       </div>
 
-      <div className="flex justify-start items-center gap-1.5 pt-4 mb-4 overflow-x-auto pb-2 no-scrollbar">
-        {/* WhatsApp Button First as requested */}
-        <WhatsAppShareButton remedy={remedy} lang={lang} />
-        
-        <Button onClick={() => window.print()} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><FileDown className="w-3.5 h-3.5" /> PDF</Button>
-        <Button onClick={handleCopy} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Copy className="w-3.5 h-3.5" /> LINK</Button>
-        <Button onClick={handleGeneralShare} className="h-9 px-3 bg-[#14532D] text-white border-2 border-[#FBBF24] rounded-xl flex items-center gap-1.5 font-bold text-xs shrink-0"><Share2 className="w-3.5 h-3.5" /> SHARE</Button>
-      </div>
+      {/* NEW MODULAR ACTION BAR COMPONENT */}
+      <RemedyActionBar remedy={remedy} lang={lang} />
 
       <div className={cn(
         "mt-8 p-6 rounded-[2.5rem] border-2 shadow-2xl transition-colors duration-500",
@@ -452,7 +405,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                     <p className="text-[14px] font-bold leading-tight">{item.question}</p>
                   </div>
                   <span className="text-[9px] font-bold opacity-40 mt-1 mr-1">
-                    {formatDate(item._sortTs)}, {formatTime(item._sortTs)}
+                    {formatDate(item.timestamp)}, {formatTime(item.timestamp)}
                   </span>
                 </div>
 
