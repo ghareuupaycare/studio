@@ -127,34 +127,35 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     } else {
       try {
         isMountedRef.current = true;
-        // Clear any previous stuck speech instantly
         if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
           window.speechSynthesis.cancel();
         }
 
         const currentLang = lang || 'hi';
         
-        // 1. Title
-        const titleText = typeof remedy?.name === 'object' ? (remedy.name[currentLang] || remedy.name['hi'] || '') : (remedy?.name || '');
+        // 1. Title (Mapped to 'name' in our Remedy type)
+        const titleText = remedy?.name 
+          ? (typeof remedy.name === 'object' ? (remedy.name[currentLang] || remedy.name['hi'] || '') : remedy.name) 
+          : '';
         
         // 2. Introduction
         let introText = '';
-        const introRaw = remedy?.introduction?.[currentLang] || remedy?.introduction;
+        const introRaw = remedy?.introduction ? (remedy.introduction[currentLang] || remedy.introduction['hi'] || remedy.introduction) : null;
         if (Array.isArray(introRaw)) introText = introRaw.join('. ');
         else if (typeof introRaw === 'string') introText = introRaw;
 
         // 3. Ingredients
         let ingredientsText = '';
-        const ingRaw = remedy?.ingredients?.[currentLang] || remedy?.ingredients;
+        const ingRaw = remedy?.ingredients ? (remedy.ingredients[currentLang] || remedy.ingredients['hi'] || remedy.ingredients) : null;
         if (Array.isArray(ingRaw)) {
-          ingredientsText = ingRaw.map((item: any) => typeof item === 'string' ? item : `${item.name || ''} - ${item.quantity || ''}`).join(', ');
+          ingredientsText = ingRaw.map((item: any) => `${item?.name || item || ''} - ${item?.quantity || ''}`).join(', ');
         }
 
         // 4. Preparation Steps
         let stepsText = '';
-        const prepRaw = remedy?.preparation?.[currentLang] || remedy?.preparation;
+        const prepRaw = remedy?.preparation ? (remedy.preparation[currentLang] || remedy.preparation['hi'] || remedy.preparation) : null;
         if (Array.isArray(prepRaw)) {
-          stepsText = prepRaw.map((step: any, i: number) => `विधि ${i + 1}: ${typeof step === 'string' ? step : (step.instruction || '')}`).join('. ');
+          stepsText = prepRaw.map((step: any, i: number) => `विधि ${i + 1}: ${typeof step === 'string' ? step : (step?.instruction || '')}`).join('. ');
         } else if (typeof prepRaw === 'string') {
           stepsText = prepRaw;
         }
@@ -164,29 +165,29 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         if (remedy?.doses && Array.isArray(remedy.doses)) {
           const activeIdx = typeof selectedDoseIndex !== 'undefined' ? selectedDoseIndex : 0;
           const doseObj = remedy.doses[activeIdx] || remedy.doses[0];
-          const dAge = doseObj?.ageRange?.[currentLang] || doseObj?.ageRange || '';
-          const dTextRaw = doseObj?.dose?.[currentLang] || doseObj?.dose || '';
-          const dText = Array.isArray(dTextRaw) ? dTextRaw.join('. ') : dTextRaw;
-          activeDosageText = `स्मार्ट खुराक (${dAge}): ${dText}`;
+          const dAge = doseObj?.ageRange ? (typeof doseObj.ageRange === 'object' ? (doseObj.ageRange[currentLang] || doseObj.ageRange['hi'] || '') : doseObj.ageRange) : '';
+          const dText = doseObj?.dose ? (typeof doseObj.dose === 'object' ? (doseObj.dose[currentLang] || doseObj.dose['hi'] || '') : doseObj.dose) : '';
+          const dTextClean = Array.isArray(dText) ? dText.join('. ') : dText;
+          if (dTextClean) activeDosageText = `स्मार्ट खुराक (${dAge}): ${dTextClean}`;
         }
 
         // 6. Usage Rules
         let usageText = '';
-        const usageRaw = remedy?.usage?.[currentLang] || remedy?.usage;
+        const usageRaw = remedy?.usage ? (remedy.usage[currentLang] || remedy.usage['hi'] || remedy.usage) : null;
         if (Array.isArray(usageRaw)) {
-          usageText = usageRaw.map((rule: any, i: number) => `सेवन नियम ${i + 1}: ${typeof rule === 'string' ? rule : (rule.rule || '')}`).join('. ');
+          usageText = usageRaw.map((rule: any, i: number) => `सेवन नियम ${i + 1}: ${typeof rule === 'string' ? rule : (rule?.rule || '')}`).join('. ');
         } else if (typeof usageRaw === 'string') {
           usageText = usageRaw;
         }
 
         // 7. Diet Eat & Avoid
         let eatText = '';
-        const eatRaw = remedy?.dietEat?.[currentLang] || remedy?.dietEat;
+        const eatRaw = remedy?.dietEat ? (remedy.dietEat[currentLang] || remedy.dietEat['hi'] || remedy.dietEat) : null;
         if (Array.isArray(eatRaw)) eatText = `क्या खाएं: ${eatRaw.join(', ')}`;
         else if (typeof eatRaw === 'string') eatText = `क्या खाएं: ${eatRaw}`;
 
         let avoidText = '';
-        const avoidRaw = remedy?.dietAvoid?.[currentLang] || remedy?.dietAvoid;
+        const avoidRaw = remedy?.dietAvoid ? (remedy.dietAvoid[currentLang] || remedy.dietAvoid['hi'] || remedy.dietAvoid) : null;
         if (Array.isArray(avoidRaw)) avoidText = `क्या न खाएं: ${avoidRaw.join(', ')}`;
         else if (typeof avoidRaw === 'string') avoidText = `क्या न खाएं: ${avoidRaw}`;
 
@@ -194,23 +195,27 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         let routineText = '';
         const r = remedy?.routine;
         if (r) {
-          const morning = Array.isArray(r.morning?.[currentLang]) ? r.morning[currentLang].join('. ') : (r.morning?.[currentLang] || '');
-          const afternoon = Array.isArray(r.afternoon?.[currentLang]) ? r.afternoon[currentLang].join('. ') : (r.afternoon?.[currentLang] || '');
-          const evening = Array.isArray(r.evening?.[currentLang]) ? r.evening[currentLang].join('. ') : (r.evening?.[currentLang] || '');
+          const morning = r.morning?.[currentLang] || r.morning?.['hi'] || '';
+          const morningStr = Array.isArray(morning) ? morning.join('. ') : morning;
+          const afternoon = r.afternoon?.[currentLang] || r.afternoon?.['hi'] || '';
+          const afternoonStr = Array.isArray(afternoon) ? afternoon.join('. ') : afternoon;
+          const evening = r.evening?.[currentLang] || r.evening?.['hi'] || '';
+          const eveningStr = Array.isArray(evening) ? evening.join('. ') : evening;
+          
           routineText = [
-            morning ? `सुबह: ${morning}` : '',
-            afternoon ? `दोपहर: ${afternoon}` : '',
-            evening ? `शाम: ${evening}` : ''
+            morningStr ? `सुबह: ${morningStr}` : '',
+            afternoonStr ? `दोपहर: ${afternoonStr}` : '',
+            eveningStr ? `शाम: ${eveningStr}` : ''
           ].filter(Boolean).join('. ');
         }
 
         // 9. Safety Advice
         let safetyText = '';
-        const safetyRaw = remedy?.safetyAdvice?.[currentLang] || remedy?.safetyAdvice;
+        const safetyRaw = remedy?.safetyAdvice ? (remedy.safetyAdvice[currentLang] || remedy.safetyAdvice['hi'] || remedy.safetyAdvice) : null;
         if (Array.isArray(safetyRaw)) safetyText = `सुरक्षा सूचना: ${safetyRaw.join('. ')}`;
         else if (typeof safetyRaw === 'string') safetyText = `सुरक्षा सूचना: ${safetyRaw}`;
 
-        // Complete 1 to 9 sections compiled in a single clean stream
+        // Compile full text safely
         const fullText = toEnglishDigits(
           [
             titleText,
@@ -409,15 +414,15 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             <div className="text-[15px] leading-relaxed font-medium space-y-4">
               <div className="border-l-2 border-amber-500/30 pl-3">
                 <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'सुबह' : 'Morning'}</span>
-                <div className="mt-1">{toEnglishDigits(Array.isArray(remedy.routine.morning[lang]) ? remedy.routine.morning[lang].join('. ') : remedy.routine.morning[lang])}</div>
+                <div className="mt-1">{toEnglishDigits(remedy.routine?.morning?.[lang] ? (Array.isArray(remedy.routine.morning[lang]) ? remedy.routine.morning[lang].join('. ') : remedy.routine.morning[lang]) : '')}</div>
               </div>
               <div className="border-l-2 border-amber-500/30 pl-3">
                 <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'दोपहर' : 'Afternoon'}</span>
-                <div className="mt-1">{toEnglishDigits(Array.isArray(remedy.routine.afternoon[lang]) ? remedy.routine.afternoon[lang].join('. ') : remedy.routine.afternoon[lang])}</div>
+                <div className="mt-1">{toEnglishDigits(remedy.routine?.afternoon?.[lang] ? (Array.isArray(remedy.routine.afternoon[lang]) ? remedy.routine.afternoon[lang].join('. ') : remedy.routine.afternoon[lang]) : '')}</div>
               </div>
               <div className="border-l-2 border-amber-500/30 pl-3">
                 <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'शाम' : 'Evening'}</span>
-                <div className="mt-1">{toEnglishDigits(Array.isArray(remedy.routine.evening[lang]) ? remedy.routine.evening[lang].join('. ') : remedy.routine.evening[lang])}</div>
+                <div className="mt-1">{toEnglishDigits(remedy.routine?.evening?.[lang] ? (Array.isArray(remedy.routine.evening[lang]) ? remedy.routine.evening[lang].join('. ') : remedy.routine.evening[lang]) : '')}</div>
               </div>
             </div>
           </div>
