@@ -109,6 +109,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     } else {
       try {
         const currentLang = lang || 'hi';
+        
+        // 1. Title & Intro
         const titleText = typeof remedy?.name === 'object' ? (remedy.name[currentLang] || remedy.name['hi'] || '') : (remedy?.name || '');
         
         let introText = '';
@@ -116,18 +118,21 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         if (Array.isArray(introRaw)) introText = introRaw.join('. ');
         else if (typeof introRaw === 'string') introText = introRaw;
 
+        // 2. Ingredients
         let ingredientsText = '';
-        const ingRaw = (remedy?.ingredients as any)?.[currentLang] || remedy?.ingredients;
+        const ingRaw = remedy?.ingredients?.[currentLang] || remedy?.ingredients;
         if (Array.isArray(ingRaw)) {
           ingredientsText = ingRaw.map((item: any) => typeof item === 'string' ? item : `${item.name || ''} - ${item.quantity || ''}`).join(', ');
         }
 
+        // 3. Preparation Steps
         let stepsText = '';
         const prepRaw = remedy?.preparation?.[currentLang] || remedy?.preparation;
         if (Array.isArray(prepRaw)) {
           stepsText = prepRaw.map((step: any, i: number) => `विधि ${i + 1}: ${typeof step === 'string' ? step : (step.instruction || '')}`).join('. ');
         }
 
+        // 4. Smart Dosage (Active Selected Dose)
         let activeDosageText = '';
         if (remedy?.doses && Array.isArray(remedy.doses)) {
           const activeIdx = typeof selectedDoseIndex !== 'undefined' ? selectedDoseIndex : 0;
@@ -138,6 +143,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           activeDosageText = `स्मार्ट खुराक (${dAge}): ${dText}`;
         }
 
+        // 5. Usage Guidelines
         let usageText = '';
         const usageRaw = remedy?.usage?.[currentLang] || remedy?.usage;
         if (Array.isArray(usageRaw)) {
@@ -146,6 +152,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           usageText = usageRaw;
         }
 
+        // 6 & 7. Diet Eat & Avoid
         let eatText = '';
         const eatRaw = remedy?.dietEat?.[currentLang] || remedy?.dietEat;
         if (Array.isArray(eatRaw)) eatText = `क्या खाएं: ${eatRaw.join(', ')}`;
@@ -156,6 +163,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         if (Array.isArray(avoidRaw)) avoidText = `क्या न खाएं: ${avoidRaw.join(', ')}`;
         else if (typeof avoidRaw === 'string') avoidText = `क्या न खाएं: ${avoidRaw}`;
 
+        // 8. Routine
         let routineText = '';
         const routineRaw = remedy?.routine;
         if (routineRaw) {
@@ -173,22 +181,22 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           }
         }
 
+        // 9. Safety Advice
         let safetyText = '';
         const safetyRaw = remedy?.safetyAdvice?.[currentLang] || remedy?.safetyAdvice;
         if (Array.isArray(safetyRaw)) safetyText = `सुरक्षा सूचना: ${safetyRaw.join('. ')}`;
         else if (typeof safetyRaw === 'string') safetyText = `सुरक्षा सूचना: ${safetyRaw}`;
 
-        const fullText = toEnglishDigits(
-          `${titleText}. परिचय: ${introText}. आवश्यक सामग्री: ${ingredientsText}. बनाने की विधि: ${stepsText}. ${activeDosageText}. सेवन विधि: ${usageText}. ${eatText}. ${avoidText}. दिनचर्या: ${routineText}. ${safetyText}`
-        );
+        const part1 = toEnglishDigits(`${titleText}. परिचय: ${introText}. आवश्यक सामग्री: ${ingredientsText}.`);
+        const part2 = toEnglishDigits(`बनाने की विधि: ${stepsText}. ${activeDosageText}. सेवन विधि: ${usageText}. ${eatText}. ${avoidText}. दिनचर्या: ${routineText}. ${safetyText}`);
 
         setIsAudioPlaying(true);
-        speakText(
-          fullText,
-          currentLang,
-          () => setIsAudioPlaying(true),
-          () => setIsAudioPlaying(false)
-        );
+        // Part 1
+        speakText(part1, currentLang, () => {}, () => {
+          // Sequential Part 2
+          speakText(part2, currentLang, () => {}, () => setIsAudioPlaying(false));
+        });
+
       } catch (err) {
         console.error('Audio Error:', err);
         setIsAudioPlaying(false);
