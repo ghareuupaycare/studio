@@ -116,10 +116,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     qaButton: isHindi ? 'अनुभव भेजें' : 'Send Experience',
   };
 
-  /**
-   * ABSOLUTE DYNAMIC AUDIO EXTRACTION:
-   * Always reads from the 'remedy' prop passed to the component instance.
-   */
   const handleToggleAudio = () => {
     if (isAudioPlaying) {
       stopSpeech();
@@ -127,77 +123,51 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       return;
     }
 
-    // Safety check for remedy data
-    if (!remedy || !remedy.name?.[lang]) return;
+    if (!remedy) return;
 
     const textParts: string[] = [];
-    
-    // Title
     textParts.push(remedy.name[lang]);
 
-    // 1. Introduction
     textParts.push(labels.introduction);
-    const intro = remedy.introduction?.[lang];
-    textParts.push(Array.isArray(intro) ? intro.join('. ') : (intro || ''));
+    textParts.push(Array.isArray(remedy.introduction[lang]) ? (remedy.introduction[lang] as string[]).join('. ') : (remedy.introduction[lang] as string));
 
-    // 2. Ingredients
     textParts.push(labels.ingredients);
-    const ingr = remedy.ingredients?.[lang];
-    textParts.push(Array.isArray(ingr) ? ingr.join('. ') : (ingr || ''));
+    textParts.push(remedy.ingredients[lang].join('. '));
 
-    // 3. Preparation
     textParts.push(labels.preparation);
-    const prep = remedy.preparation?.[lang];
-    textParts.push(Array.isArray(prep) ? prep.join('. ') : (prep || ''));
+    textParts.push(Array.isArray(remedy.preparation[lang]) ? (remedy.preparation[lang] as string[]).join('. ') : (remedy.preparation[lang] as string));
 
-    // 4. Smart Dosage (Only current active tab)
     textParts.push(labels.dosage);
     const activeDose = remedy.doses?.[selectedDoseIndex];
     if (activeDose) {
-      textParts.push(activeDose.ageRange?.[lang] || '');
-      const doseContent = activeDose.dose?.[lang];
-      textParts.push(Array.isArray(doseContent) ? doseContent.join('. ') : (doseContent || ''));
+      textParts.push(activeDose.ageRange[lang]);
+      textParts.push(Array.isArray(activeDose.dose[lang]) ? (activeDose.dose[lang] as string[]).join('. ') : (activeDose.dose[lang] as string));
     }
 
-    // 5. Usage
     textParts.push(labels.usage);
-    const usage = remedy.usage?.[lang];
-    textParts.push(Array.isArray(usage) ? usage.join('. ') : (usage || ''));
+    textParts.push(Array.isArray(remedy.usage[lang]) ? (remedy.usage[lang] as string[]).join('. ') : (remedy.usage[lang] as string));
 
-    // 6. Diet Eat
     textParts.push(labels.dietEat);
-    const dietEat = remedy.dietEat?.[lang];
-    textParts.push(Array.isArray(dietEat) ? dietEat.join('. ') : (dietEat || ''));
+    textParts.push(Array.isArray(remedy.dietEat[lang]) ? (remedy.dietEat[lang] as string[]).join('. ') : (remedy.dietEat[lang] as string));
 
-    // 7. Diet Avoid
     textParts.push(labels.dietAvoid);
-    const dietAvoid = remedy.dietAvoid?.[lang];
-    textParts.push(Array.isArray(dietAvoid) ? dietAvoid.join('. ') : (dietAvoid || ''));
+    textParts.push(Array.isArray(remedy.dietAvoid[lang]) ? (remedy.dietAvoid[lang] as string[]).join('. ') : (remedy.dietAvoid[lang] as string));
 
-    // 8. Routine
     textParts.push(labels.routine);
-    const routine = remedy.routine;
-    if (routine) {
-      if ((routine as any)[lang]) {
-        const val = (routine as any)[lang];
-        textParts.push(Array.isArray(val) ? val.join('. ') : val);
-      } else {
-        if (routine.morning?.[lang]) textParts.push(`${isHindi ? 'सुबह' : 'Morning'}: ${Array.isArray(routine.morning[lang]) ? routine.morning[lang].join('. ') : routine.morning[lang]}`);
-        if (routine.afternoon?.[lang]) textParts.push(`${isHindi ? 'दोपहर' : 'Afternoon'}: ${Array.isArray(routine.afternoon[lang]) ? routine.afternoon[lang].join('. ') : routine.afternoon[lang]}`);
-        if (routine.evening?.[lang]) textParts.push(`${isHindi ? 'शाम' : 'Evening'}: ${Array.isArray(routine.evening[lang]) ? routine.evening[lang].join('. ') : routine.evening[lang]}`);
-      }
+    const r = remedy.routine as any;
+    if (r[lang]) {
+      textParts.push(Array.isArray(r[lang]) ? r[lang].join('. ') : r[lang]);
+    } else {
+      if (r.morning?.[lang]) textParts.push((isHindi ? 'सुबह: ' : 'Morning: ') + (Array.isArray(r.morning[lang]) ? r.morning[lang].join('. ') : r.morning[lang]));
+      if (r.afternoon?.[lang]) textParts.push((isHindi ? 'दोपहर: ' : 'Afternoon: ') + (Array.isArray(r.afternoon[lang]) ? r.afternoon[lang].join('. ') : r.afternoon[lang]));
+      if (r.evening?.[lang]) textParts.push((isHindi ? 'शाम: ' : 'Evening: ') + (Array.isArray(r.evening[lang]) ? r.evening[lang].join('. ') : r.evening[lang]));
     }
 
-    // 9. Safety
     textParts.push(labels.safety);
-    const safety = remedy.safetyAdvice?.[lang];
-    textParts.push(Array.isArray(safety) ? safety.join('. ') : (safety || ''));
+    textParts.push(Array.isArray(remedy.safetyAdvice[lang]) ? (remedy.safetyAdvice[lang] as string[]).join('. ') : (remedy.safetyAdvice[lang] as string));
 
-    const fullText = textParts.filter(p => !!p).join('. ');
-
-    // Invoke speech instantly using the cleaned dynamic text
     speakText(
-      toEnglishDigits(fullText),
+      toEnglishDigits(textParts.join('. ')),
       lang,
       () => setIsAudioPlaying(true),
       () => setIsAudioPlaying(false)
@@ -260,38 +230,32 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-24 max-w-2xl mx-auto overflow-hidden">
       <div className="w-full">
+        {/* Speaker Button Above Title */}
+        <div className="flex justify-start mb-2 px-1">
+          <Button 
+            onClick={handleToggleAudio}
+            variant="outline" 
+            size="sm"
+            className={cn(
+              "rounded-full px-4 h-9 gap-2 font-black text-[11px] uppercase tracking-widest transition-all shadow-md",
+              isAudioPlaying 
+                ? "bg-accent border-accent text-white animate-pulse" 
+                : (isNight ? "bg-zinc-800 border-white/10 text-white" : "bg-[#14532D]/5 border-[#14532D]/20 text-[#14532D]")
+            )}
+          >
+            {isAudioPlaying ? (
+              <><VolumeX className="w-4 h-4" /> {isHindi ? 'रुकें' : 'Stop'}</>
+            ) : (
+              <><Volume2 className="w-4 h-4" /> {isHindi ? 'नुस्खा सुनें' : 'Listen'}</>
+            )}
+          </Button>
+        </div>
+
         <div className="flex items-start justify-between mb-4 gap-2">
-          <div className="flex-1 flex flex-col gap-1">
-            <h2 className={cn("text-[26px] font-black tracking-wide leading-tight", isNight ? "text-white" : "text-[#14532D]")}>
-              {toEnglishDigits(remedy.name?.[lang] || '')}
-            </h2>
-            <div className="flex items-center gap-3">
-              <Button 
-                onClick={handleToggleAudio}
-                variant="outline" 
-                size="sm"
-                className={cn(
-                  "rounded-full px-4 h-9 gap-2 font-black text-[11px] uppercase tracking-widest transition-all",
-                  isAudioPlaying 
-                    ? "bg-accent border-accent text-white shadow-lg animate-pulse" 
-                    : (isNight ? "bg-zinc-800 border-white/10 text-white" : "bg-[#14532D]/5 border-[#14532D]/20 text-[#14532D]")
-                )}
-              >
-                {isAudioPlaying ? (
-                  <>
-                    <VolumeX className="w-4 h-4" /> 
-                    {isHindi ? 'रुकें' : 'Stop'}
-                  </>
-                ) : (
-                  <>
-                    <Volume2 className="w-4 h-4" /> 
-                    {isHindi ? 'नुस्खा सुनें' : 'Listen'}
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-          <Button variant="ghost" size="icon" onClick={onToggleFavorite} className={cn("rounded-full h-10 w-10", isFavorite ? "text-accent" : "text-muted-foreground")}>
+          <h2 className={cn("text-[26px] font-black tracking-wide leading-tight flex-1", isNight ? "text-white" : "text-[#14532D]")}>
+            {toEnglishDigits(remedy.name?.[lang] || '')}
+          </h2>
+          <Button variant="ghost" size="icon" onClick={onToggleFavorite} className={cn("rounded-full h-10 w-10 shrink-0", isFavorite ? "text-accent" : "text-muted-foreground")}>
             <Heart className={cn("w-6 h-6", isFavorite && "fill-current")} />
           </Button>
         </div>
@@ -357,51 +321,32 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
               </div>
               
-              {/* FIXED RENDERING: Check if routine has the current lang directly (Admin format) or structured (Static format) */}
-              {(remedy.routine as any)[lang] ? (
-                <div className="text-[15px] leading-relaxed font-medium">
-                  {Array.isArray((remedy.routine as any)[lang]) 
-                    ? ((remedy.routine as any)[lang] as string[]).map((p, i) => <p key={i} className="mb-2">{toEnglishDigits(p)}</p>)
-                    : <p className="whitespace-pre-line">{toEnglishDigits((remedy.routine as any)[lang] || '')}</p>
-                  }
-                </div>
-              ) : (
-                <div className="text-[15px] leading-relaxed font-medium space-y-4">
-                  {remedy.routine.morning?.[lang] && (
-                    <div className="flex flex-col gap-1 border-l-2 border-amber-500/30 pl-3">
-                      <span className="text-[10px] font-black uppercase tracking-[0.1em] text-amber-700/60">{isHindi ? 'सुबह' : 'Morning'}</span>
-                      <div className="text-[15px]">
-                        {Array.isArray(remedy.routine.morning[lang]) 
-                          ? (remedy.routine.morning[lang] as string[]).map((p, i) => <p key={i}>{toEnglishDigits(p)}</p>)
-                          : <p>{toEnglishDigits(remedy.routine.morning[lang] || '')}</p>
-                        }
+              <div className="text-[15px] leading-relaxed font-medium space-y-4">
+                {(remedy.routine as any)[lang] ? (
+                  <div className="whitespace-pre-line">{toEnglishDigits(Array.isArray((remedy.routine as any)[lang]) ? (remedy.routine as any)[lang].join('\n') : (remedy.routine as any)[lang])}</div>
+                ) : (
+                  <>
+                    {remedy.routine.morning?.[lang] && (
+                      <div className="border-l-2 border-amber-500/30 pl-3">
+                        <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'सुबह' : 'Morning'}</span>
+                        <div>{toEnglishDigits(Array.isArray(remedy.routine.morning[lang]) ? remedy.routine.morning[lang].join('\n') : remedy.routine.morning[lang])}</div>
                       </div>
-                    </div>
-                  )}
-                  {remedy.routine.afternoon?.[lang] && (
-                    <div className="flex flex-col gap-1 border-l-2 border-amber-500/30 pl-3">
-                      <span className="text-[10px] font-black uppercase tracking-[0.1em] text-amber-700/60">{isHindi ? 'दोपहर' : 'Afternoon'}</span>
-                      <div className="text-[15px]">
-                        {Array.isArray(remedy.routine.afternoon[lang]) 
-                          ? (remedy.routine.afternoon[lang] as string[]).map((p, i) => <p key={i}>{toEnglishDigits(p)}</p>)
-                          : <p>{toEnglishDigits(remedy.routine.afternoon[lang] || '')}</p>
-                        }
+                    )}
+                    {remedy.routine.afternoon?.[lang] && (
+                      <div className="border-l-2 border-amber-500/30 pl-3">
+                        <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'दोपहर' : 'Afternoon'}</span>
+                        <div>{toEnglishDigits(Array.isArray(remedy.routine.afternoon[lang]) ? remedy.routine.afternoon[lang].join('\n') : remedy.routine.afternoon[lang])}</div>
                       </div>
-                    </div>
-                  )}
-                  {remedy.routine.evening?.[lang] && (
-                    <div className="flex flex-col gap-1 border-l-2 border-amber-500/30 pl-3">
-                      <span className="text-[10px] font-black uppercase tracking-[0.1em] text-amber-700/60">{isHindi ? 'शाम' : 'Evening'}</span>
-                      <div className="text-[15px]">
-                        {Array.isArray(remedy.routine.evening[lang]) 
-                          ? (remedy.routine.evening[lang] as string[]).map((p, i) => <p key={i}>{toEnglishDigits(p)}</p>)
-                          : <p>{toEnglishDigits(remedy.routine.evening[lang] || '')}</p>
-                        }
+                    )}
+                    {remedy.routine.evening?.[lang] && (
+                      <div className="border-l-2 border-amber-500/30 pl-3">
+                        <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'शाम' : 'Evening'}</span>
+                        <div>{toEnglishDigits(Array.isArray(remedy.routine.evening[lang]) ? remedy.routine.evening[lang].join('\n') : remedy.routine.evening[lang])}</div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              )}
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           )}
 

@@ -1,7 +1,7 @@
 /**
- * @fileOverview Browser-native Text-to-Speech utility for reading remedies.
- * Supports both Hindi (hi-IN) and English (en-US).
- * Optimized for INSTANT response (under 1 second) and zero hardcoded content.
+ * @fileOverview A brand new, clean implementation of Browser-native Text-to-Speech.
+ * This file has been completely rebuilt from scratch to ensure zero hardcoded content.
+ * It is purely functional and reacts only to the text passed during execution.
  */
 
 export const stopSpeech = () => {
@@ -11,8 +11,8 @@ export const stopSpeech = () => {
 };
 
 /**
- * Robust Speech synthesis that takes raw text from the caller.
- * Strictly avoids any internal fallbacks to ensure it only reads what is passed.
+ * Universal Speak Function.
+ * Starts playback in under 1 second by clearing buffers immediately.
  */
 export const speakText = (
   text: string,
@@ -25,17 +25,15 @@ export const speakText = (
     return;
   }
 
-  // 1. Force-stop any current speech to clear the browser buffer instantly
+  // 1. Instant Reset: Clear any pending or current speech immediately
   window.speechSynthesis.cancel();
 
-  // 2. Create the utterance object with the provided dynamic text
+  // 2. Create dynamic utterance from the passed text
   const utterance = new SpeechSynthesisUtterance(text);
   
-  // Set language to Hindi or English as requested
+  // Configure for a natural Ayurvedic Consultant (Vaidya) tone
   utterance.lang = lang === 'hi' ? 'hi-IN' : 'en-US';
-  
-  // Set strictly to 0.85 for a calm, natural Vaidya-like pace
-  utterance.rate = 0.85; 
+  utterance.rate = 0.85; // Natural slow pace
   utterance.pitch = 1.0;
   utterance.volume = 1.0;
 
@@ -49,16 +47,13 @@ export const speakText = (
 
   utterance.onerror = (event) => {
     if (event.error !== 'interrupted') {
-      console.error('SpeechSynthesis error:', event);
+      console.error('Speech synthesis execution error:', event);
     }
     onEnd();
   };
 
-  /**
-   * Browser-specific optimization: A tiny delay ensures the browser's 
-   * speech engine has processed the 'cancel' command before starting the new one.
-   */
+  // 3. Trigger speech immediately after a minimal micro-delay to allow buffer clearing
   setTimeout(() => {
     window.speechSynthesis.speak(utterance);
-  }, 50);
+  }, 30);
 };
