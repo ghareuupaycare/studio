@@ -127,7 +127,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
         const currentLang = lang || 'hi';
         
-        // Dynamic extraction based on the actual Remedy prop mapping
+        // 1. Title & Intro
         const titleText = typeof remedy?.name === 'object' ? (remedy.name[currentLang] || remedy.name['hi'] || '') : (remedy?.name || '');
         
         let introText = '';
@@ -135,18 +135,23 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         if (Array.isArray(introRaw)) introText = introRaw.join('. ');
         else if (typeof introRaw === 'string') introText = introRaw;
 
+        // 2. Ingredients
         let ingredientsText = '';
         const ingRaw = remedy?.ingredients?.[currentLang] || remedy?.ingredients;
         if (Array.isArray(ingRaw)) {
           ingredientsText = ingRaw.map((item: any) => typeof item === 'string' ? item : `${item.name || ''} - ${item.quantity || ''}`).join(', ');
         }
 
+        // 3. Preparation Steps
         let stepsText = '';
         const prepRaw = remedy?.preparation?.[currentLang] || remedy?.preparation;
         if (Array.isArray(prepRaw)) {
           stepsText = prepRaw.map((step: any, i: number) => `विधि ${i + 1}: ${typeof step === 'string' ? step : (step.instruction || '')}`).join('. ');
+        } else if (typeof prepRaw === 'string') {
+          stepsText = prepRaw;
         }
 
+        // 4. Smart Dosage (Active Selected Dose)
         let activeDosageText = '';
         if (remedy?.doses && Array.isArray(remedy.doses)) {
           const activeIdx = typeof selectedDoseIndex !== 'undefined' ? selectedDoseIndex : 0;
@@ -157,6 +162,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           activeDosageText = `स्मार्ट खुराक (${dAge}): ${dText}`;
         }
 
+        // 5. Usage Guidelines
         let usageText = '';
         const usageRaw = remedy?.usage?.[currentLang] || remedy?.usage;
         if (Array.isArray(usageRaw)) {
@@ -165,6 +171,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           usageText = usageRaw;
         }
 
+        // 6 & 7. Diet Eat & Avoid
         let eatText = '';
         const eatRaw = remedy?.dietEat?.[currentLang] || remedy?.dietEat;
         if (Array.isArray(eatRaw)) eatText = `क्या खाएं: ${eatRaw.join(', ')}`;
@@ -175,6 +182,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         if (Array.isArray(avoidRaw)) avoidText = `क्या न खाएं: ${avoidRaw.join(', ')}`;
         else if (typeof avoidRaw === 'string') avoidText = `क्या न खाएं: ${avoidRaw}`;
 
+        // 8. Routine
         let routineText = '';
         const routineRaw = remedy?.routine;
         if (routineRaw) {
@@ -192,23 +200,49 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           }
         }
 
+        // 9. Safety Advice
         let safetyText = '';
         const safetyRaw = remedy?.safetyAdvice?.[currentLang] || remedy?.safetyAdvice;
         if (Array.isArray(safetyRaw)) safetyText = `सुरक्षा सूचना: ${safetyRaw.join('. ')}`;
         else if (typeof safetyRaw === 'string') safetyText = `सुरक्षा सूचना: ${safetyRaw}`;
 
-        // Complete 1 to 9 sections compiled in a single clean stream without truncation
-        const fullText = toEnglishDigits(
-          `${titleText}. परिचय: ${introText}. आवश्यक सामग्री: ${ingredientsText}. बनाने की विधि: ${stepsText}. ${activeDosageText}. सेवन विधि: ${usageText}. ${eatText}. ${avoidText}. दिनचर्या: ${routineText}. ${safetyText}`
-        );
+        // Safe chunks to prevent browser SpeechSynthesisErrorEvent overload
+        const chunks = [
+          toEnglishDigits(`${titleText}. परिचय: ${introText}`),
+          toEnglishDigits(`आवश्यक सामग्री: ${ingredientsText}`),
+          toEnglishDigits(`बनाने की विधि: ${stepsText}`),
+          toEnglishDigits(`${activeDosageText}. सेवन विधि: ${usageText}`),
+          toEnglishDigits(`${eatText}. ${avoidText}`),
+          toEnglishDigits(`दिनचर्या: ${routineText}. ${safetyText}`)
+        ].filter(text => text && text.trim().length > 0);
 
         setIsAudioPlaying(true);
-        speakText(
-          fullText,
-          currentLang,
-          () => setIsAudioPlaying(true),
-          () => setIsAudioPlaying(false)
-        );
+
+        let currentIndex = 0;
+        const playNextChunk = () => {
+          if (currentIndex >= chunks.length) {
+            setIsAudioPlaying(false);
+            return;
+          }
+          
+          const chunkText = chunks[currentIndex];
+          currentIndex++;
+
+          speakText(
+            chunkText,
+            currentLang,
+            () => {
+              // chunk started
+            },
+            () => {
+              // chunk ended, play next chunk sequentially
+              playNextChunk();
+            }
+          );
+        };
+
+        playNextChunk();
+
       } catch (err) {
         console.error('Audio Error:', err);
         setIsAudioPlaying(false);
