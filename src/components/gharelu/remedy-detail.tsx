@@ -57,6 +57,18 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const [chatThread, setChatThread] = useState<any[]>([]);
   const [userId, setUserId] = useState<string>('');
 
+  // CRITICAL FIX: Stop audio when user navigates away or component unmounts
+  useEffect(() => {
+    return () => {
+      try {
+        stopSpeech();
+        setIsAudioPlaying(false);
+      } catch (e) {
+        console.error('Cleanup error:', e);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     const uid = getChatUserId();
     setUserId(uid);
@@ -83,7 +95,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     return () => {
       unsubscribe();
       isInitialLoad.current = true;
-      stopSpeech(); 
     };
   }, [db, remedy?.id]);
 
@@ -155,12 +166,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         // 6 & 7. Diet Eat & Avoid
         let eatText = '';
         const eatRaw = remedy?.dietEat?.[currentLang] || remedy?.dietEat;
-        if (Array.isArray(eatRaw)) eatText = `क्या खाएं: ${eatRaw.join(', ')}`;
+        if (Array.isArray(eatRaw)) eatText = `क्या खाएं: ${Array.isArray(eatRaw) ? eatRaw.join(', ') : eatRaw}`;
         else if (typeof eatRaw === 'string') eatText = `क्या खाएं: ${eatRaw}`;
 
         let avoidText = '';
         const avoidRaw = remedy?.dietAvoid?.[currentLang] || remedy?.dietAvoid;
-        if (Array.isArray(avoidRaw)) avoidText = `क्या न खाएं: ${avoidRaw.join(', ')}`;
+        if (Array.isArray(avoidRaw)) avoidText = `क्या न खाएं: ${Array.isArray(avoidRaw) ? avoidRaw.join(', ') : avoidRaw}`;
         else if (typeof avoidRaw === 'string') avoidText = `क्या न खाएं: ${avoidRaw}`;
 
         // 8. Routine
@@ -184,16 +195,15 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         // 9. Safety Advice
         let safetyText = '';
         const safetyRaw = remedy?.safetyAdvice?.[currentLang] || remedy?.safetyAdvice;
-        if (Array.isArray(safetyRaw)) safetyText = `सुरक्षा सूचना: ${safetyRaw.join('. ')}`;
+        if (Array.isArray(safetyRaw)) safetyText = `सुरक्षा सूचना: ${Array.isArray(safetyRaw) ? safetyRaw.join('. ') : safetyRaw}`;
         else if (typeof safetyRaw === 'string') safetyText = `सुरक्षा सूचना: ${safetyRaw}`;
 
         const part1 = toEnglishDigits(`${titleText}. परिचय: ${introText}. आवश्यक सामग्री: ${ingredientsText}.`);
         const part2 = toEnglishDigits(`बनाने की विधि: ${stepsText}. ${activeDosageText}. सेवन विधि: ${usageText}. ${eatText}. ${avoidText}. दिनचर्या: ${routineText}. ${safetyText}`);
 
         setIsAudioPlaying(true);
-        // Part 1
+        // Start playback sequentially using split parts to avoid crashes
         speakText(part1, currentLang, () => {}, () => {
-          // Sequential Part 2
           speakText(part2, currentLang, () => {}, () => setIsAudioPlaying(false));
         });
 
