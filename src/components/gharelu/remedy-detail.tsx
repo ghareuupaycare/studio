@@ -50,6 +50,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const db = useFirestore();
   const chatEndRef = useRef<HTMLDivElement>(null);
   const isInitialLoad = useRef(true);
+  const isMountedRef = useRef(true);
 
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [question, setQuestion] = useState('');
@@ -59,7 +60,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   // 1. Component mount/unmount cleanup for instant audio stop on back navigation
   useEffect(() => {
+    isMountedRef.current = true;
     return () => {
+      isMountedRef.current = false;
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
@@ -82,6 +85,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     }
 
     const unsubscribe = listenToChatThread(db, remedy.id, uid, (messages) => {
+      if (!isMountedRef.current) return;
       setChatThread(messages);
       localStorage.setItem(cacheKey, JSON.stringify(messages));
       if (!isInitialLoad.current) {
@@ -113,6 +117,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const handleToggleAudio = () => {
     if (isAudioPlaying) {
+      isMountedRef.current = false;
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
@@ -120,6 +125,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       setIsAudioPlaying(false);
     } else {
       try {
+        isMountedRef.current = true;
         // Clear any previous stuck speech instantly
         if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
           window.speechSynthesis.cancel();
@@ -220,8 +226,16 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
         let currentIndex = 0;
         const playNextChunk = () => {
+          // अगर यूजर बैक चला गया है, तो आगे के टुकड़े बिल्कुल न बोलें
+          if (!isMountedRef.current) {
+            if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+            }
+            return;
+          }
+
           if (currentIndex >= chunks.length) {
-            setIsAudioPlaying(false);
+            if (isMountedRef.current) setIsAudioPlaying(false);
             return;
           }
           
@@ -232,11 +246,10 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             chunkText,
             currentLang,
             () => {
-              // chunk started
+              if (isMountedRef.current) playNextChunk();
             },
             () => {
-              // chunk ended, play next chunk sequentially
-              playNextChunk();
+              if (isMountedRef.current) setIsAudioPlaying(false);
             }
           );
         };
@@ -245,7 +258,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
       } catch (err) {
         console.error('Audio Error:', err);
-        setIsAudioPlaying(false);
+        if (isMountedRef.current) setIsAudioPlaying(false);
       }
     }
   };
