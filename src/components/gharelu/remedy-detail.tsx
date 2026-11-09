@@ -102,24 +102,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     }
   };
 
-  const labels = {
-    introduction: isHindi ? '1. बीमारी का परिचय' : '1. Introduction',
-    ingredients: isHindi ? '2. आवश्यक सामग्री' : '2. Required Ingredients',
-    preparation: isHindi ? '3. बनाने की विधि' : '3. Preparation Method',
-    dosage: isHindi ? '4. स्मार्ट खुराक' : '4. Smart Dosage',
-    usage: isHindi ? '5. सेवन विधि' : '5. Consumption Method',
-    dietEat: isHindi ? '6. क्या खाएं' : '6. What to Eat',
-    dietAvoid: isHindi ? '7. क्या न खाएं' : '7. What Not to Eat',
-    routine: isHindi ? '8. दिनचर्या' : '8. Daily Routine',
-    safety: isHindi ? '9. सुरक्षा सूचना' : '9. Safety Information',
-    qaPlaceholder: isHindi ? 'अपना अनुभव साझा करें...' : 'Share your experience...',
-    qaButton: isHindi ? 'अनुभव भेजें' : 'Send Experience',
-  };
-
-  /**
-   * CRITICAL REWRITE: Strictly dynamic prop-mapping for Audio.
-   * Purges all global references and uses current remedy prop fields only.
-   */
   const handleToggleAudio = () => {
     if (isAudioPlaying) {
       stopSpeech();
@@ -129,7 +111,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
     if (!remedy) return;
 
-    // Direct mapping to currently mounted remedy data
+    // Direct extraction from props to ensure 100% dynamic behavior
     const titleText = remedy.name?.[lang] || '';
     
     const intro = remedy.introduction?.[lang];
@@ -143,8 +125,37 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       ? prepSteps.map((step, index) => `विधि ${index + 1}: ${step}`).join('. ') 
       : (prepSteps as string || '');
 
-    // Constructing full dynamic payload
-    const fullText = toEnglishDigits(`${titleText}. परिचय: ${introText}. आवश्यक सामग्री: ${ingredientsText}. बनाने की विधि: ${stepsText}`);
+    const smartDosageText = remedy.doses && remedy.doses.length > 0
+      ? `स्मार्ट खुराक: ${remedy.doses.map(d => `${d.ageRange?.[lang]}: ${Array.isArray(d.dose?.[lang]) ? d.dose[lang].join(', ') : d.dose?.[lang]}`).join('. ')}`
+      : '';
+
+    const usage = remedy.usage?.[lang];
+    const usageText = usage ? `सेवन विधि: ${Array.isArray(usage) ? usage.join('. ') : usage}` : '';
+
+    const dietEat = remedy.dietEat?.[lang];
+    const whatToEatText = dietEat ? `क्या खाएं: ${Array.isArray(dietEat) ? dietEat.join(', ') : dietEat}` : '';
+
+    const dietAvoid = remedy.dietAvoid?.[lang];
+    const whatToAvoidText = dietAvoid ? `क्या न खाएं: ${Array.isArray(dietAvoid) ? dietAvoid.join(', ') : dietAvoid}` : '';
+
+    let routineText = '';
+    const routineData = remedy.routine as any;
+    if (routineData?.[lang]) {
+      routineText = `दिनचर्या: ${Array.isArray(routineData[lang]) ? routineData[lang].join('. ') : routineData[lang]}`;
+    } else if (routineData?.morning || routineData?.afternoon || routineData?.evening) {
+      const morning = routineData.morning?.[lang];
+      const afternoon = routineData.afternoon?.[lang];
+      const evening = routineData.evening?.[lang];
+      routineText = `दिनचर्या: ${morning ? `सुबह: ${Array.isArray(morning) ? morning.join('. ') : morning}. ` : ''}${afternoon ? `दोपहर: ${Array.isArray(afternoon) ? afternoon.join('. ') : afternoon}. ` : ''}${evening ? `शाम: ${Array.isArray(evening) ? evening.join('. ') : evening}` : ''}`;
+    }
+
+    const safety = remedy.safetyAdvice?.[lang];
+    const safetyText = safety ? `सुरक्षा सूचना: ${Array.isArray(safety) ? safety.join('. ') : safety}` : '';
+
+    // Constructing final dynamic payload
+    const fullText = toEnglishDigits(
+      `${titleText}. परिचय: ${introText}. आवश्यक सामग्री: ${ingredientsText}. बनाने की विधि: ${stepsText}. ${smartDosageText}. ${usageText}. ${whatToEatText}. ${whatToAvoidText}. ${routineText}. ${safetyText}`
+    );
 
     setIsAudioPlaying(true);
     
@@ -154,6 +165,20 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       () => setIsAudioPlaying(true),
       () => setIsAudioPlaying(false)
     );
+  };
+
+  const labels = {
+    introduction: isHindi ? '1. बीमारी का परिचय' : '1. Introduction',
+    ingredients: isHindi ? '2. आवश्यक सामग्री' : '2. Required Ingredients',
+    preparation: isHindi ? '3. बनाने की विधि' : '3. Preparation Method',
+    dosage: isHindi ? '4. स्मार्ट खुराक' : '4. Smart Dosage',
+    usage: isHindi ? '5. सेवन विधि' : '5. Consumption Method',
+    dietEat: isHindi ? '6. क्या खाएं' : '6. What to Eat',
+    dietAvoid: isHindi ? '7. क्या न खाएं' : '7. What Not to Eat',
+    routine: isHindi ? '8. दिनचर्या' : '8. Daily Routine',
+    safety: isHindi ? '9. सुरक्षा सूचना' : '9. Safety Information',
+    qaPlaceholder: isHindi ? 'अपना अनुभव साझा करें...' : 'Share your experience...',
+    qaButton: isHindi ? 'अनुभव भेजें' : 'Send Experience',
   };
 
   const getVariantStyles = (variant: SectionVariant) => {
