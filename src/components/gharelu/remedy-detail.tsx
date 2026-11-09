@@ -125,49 +125,72 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
     if (!remedy) return;
 
+    // Dynamically compile the text from current remedy props
     const textParts: string[] = [];
-    textParts.push(remedy.name[lang]);
+    textParts.push(remedy.name[lang] || '');
 
+    // 1. Intro
     textParts.push(labels.introduction);
-    textParts.push(Array.isArray(remedy.introduction[lang]) ? (remedy.introduction[lang] as string[]).join('. ') : (remedy.introduction[lang] as string));
+    const intro = remedy.introduction?.[lang];
+    textParts.push(Array.isArray(intro) ? intro.join('. ') : (intro || ''));
 
+    // 2. Ingredients
     textParts.push(labels.ingredients);
-    textParts.push(remedy.ingredients[lang].join('. '));
+    const ing = remedy.ingredients?.[lang];
+    textParts.push(Array.isArray(ing) ? ing.join('. ') : (ing || ''));
 
+    // 3. Preparation
     textParts.push(labels.preparation);
-    textParts.push(Array.isArray(remedy.preparation[lang]) ? (remedy.preparation[lang] as string[]).join('. ') : (remedy.preparation[lang] as string));
+    const prep = remedy.preparation?.[lang];
+    textParts.push(Array.isArray(prep) ? prep.join('. ') : (prep || ''));
 
+    // 4. Dosage
     textParts.push(labels.dosage);
     const activeDose = remedy.doses?.[selectedDoseIndex];
     if (activeDose) {
-      textParts.push(activeDose.ageRange[lang]);
-      textParts.push(Array.isArray(activeDose.dose[lang]) ? (activeDose.dose[lang] as string[]).join('. ') : (activeDose.dose[lang] as string));
+      textParts.push(activeDose.ageRange[lang] || '');
+      const dVal = activeDose.dose?.[lang];
+      textParts.push(Array.isArray(dVal) ? dVal.join('. ') : (dVal || ''));
     }
 
+    // 5. Usage
     textParts.push(labels.usage);
-    textParts.push(Array.isArray(remedy.usage[lang]) ? (remedy.usage[lang] as string[]).join('. ') : (remedy.usage[lang] as string));
+    const usage = remedy.usage?.[lang];
+    textParts.push(Array.isArray(usage) ? usage.join('. ') : (usage || ''));
 
+    // 6. Diet Eat
     textParts.push(labels.dietEat);
-    textParts.push(Array.isArray(remedy.dietEat[lang]) ? (remedy.dietEat[lang] as string[]).join('. ') : (remedy.dietEat[lang] as string));
+    const eat = remedy.dietEat?.[lang];
+    textParts.push(Array.isArray(eat) ? eat.join('. ') : (eat || ''));
 
+    // 7. Diet Avoid
     textParts.push(labels.dietAvoid);
-    textParts.push(Array.isArray(remedy.dietAvoid[lang]) ? (remedy.dietAvoid[lang] as string[]).join('. ') : (remedy.dietAvoid[lang] as string));
+    const avoid = remedy.dietAvoid?.[lang];
+    textParts.push(Array.isArray(avoid) ? avoid.join('. ') : (avoid || ''));
 
+    // 8. Routine
     textParts.push(labels.routine);
-    const r = remedy.routine as any;
-    if (r[lang]) {
-      textParts.push(Array.isArray(r[lang]) ? r[lang].join('. ') : r[lang]);
-    } else {
-      if (r.morning?.[lang]) textParts.push((isHindi ? 'सुबह: ' : 'Morning: ') + (Array.isArray(r.morning[lang]) ? r.morning[lang].join('. ') : r.morning[lang]));
-      if (r.afternoon?.[lang]) textParts.push((isHindi ? 'दोपहर: ' : 'Afternoon: ') + (Array.isArray(r.afternoon[lang]) ? r.afternoon[lang].join('. ') : r.afternoon[lang]));
-      if (r.evening?.[lang]) textParts.push((isHindi ? 'शाम: ' : 'Evening: ') + (Array.isArray(r.evening[lang]) ? r.evening[lang].join('. ') : r.evening[lang]));
+    const routine = remedy.routine as any;
+    if (routine) {
+      if (routine[lang]) {
+        textParts.push(Array.isArray(routine[lang]) ? routine[lang].join('. ') : routine[lang]);
+      } else {
+        if (routine.morning?.[lang]) textParts.push((isHindi ? 'सुबह: ' : 'Morning: ') + (Array.isArray(routine.morning[lang]) ? routine.morning[lang].join('. ') : routine.morning[lang]));
+        if (routine.afternoon?.[lang]) textParts.push((isHindi ? 'दोपहर: ' : 'Afternoon: ') + (Array.isArray(routine.afternoon[lang]) ? routine.afternoon[lang].join('. ') : routine.afternoon[lang]));
+        if (routine.evening?.[lang]) textParts.push((isHindi ? 'शाम: ' : 'Evening: ') + (Array.isArray(routine.evening[lang]) ? routine.evening[lang].join('. ') : routine.evening[lang]));
+      }
     }
 
+    // 9. Safety
     textParts.push(labels.safety);
-    textParts.push(Array.isArray(remedy.safetyAdvice[lang]) ? (remedy.safetyAdvice[lang] as string[]).join('. ') : (remedy.safetyAdvice[lang] as string));
+    const safety = remedy.safetyAdvice?.[lang];
+    textParts.push(Array.isArray(safety) ? safety.join('. ') : (safety || ''));
+
+    // Final Clean string with standardized digits for consistent reading
+    const finalText = toEnglishDigits(textParts.filter(p => p.trim() !== '').join('. '));
 
     speakText(
-      toEnglishDigits(textParts.join('. ')),
+      finalText,
       lang,
       () => setIsAudioPlaying(true),
       () => setIsAudioPlaying(false)
@@ -230,7 +253,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-24 max-w-2xl mx-auto overflow-hidden">
       <div className="w-full">
-        {/* Speaker Button Above Title */}
+        {/* Speaker Button Above Title - LEFT ALIGNED */}
         <div className="flex justify-start mb-2 px-1">
           <Button 
             onClick={handleToggleAudio}
@@ -322,6 +345,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               </div>
               
               <div className="text-[15px] leading-relaxed font-medium space-y-4">
+                {/* Resilient Daily Routine Rendering */}
                 {(remedy.routine as any)[lang] ? (
                   <div className="whitespace-pre-line">{toEnglishDigits(Array.isArray((remedy.routine as any)[lang]) ? (remedy.routine as any)[lang].join('\n') : (remedy.routine as any)[lang])}</div>
                 ) : (
@@ -329,19 +353,19 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                     {remedy.routine.morning?.[lang] && (
                       <div className="border-l-2 border-amber-500/30 pl-3">
                         <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'सुबह' : 'Morning'}</span>
-                        <div>{toEnglishDigits(Array.isArray(remedy.routine.morning[lang]) ? remedy.routine.morning[lang].join('\n') : remedy.routine.morning[lang])}</div>
+                        <div className="mt-1">{toEnglishDigits(Array.isArray(remedy.routine.morning[lang]) ? remedy.routine.morning[lang].join('\n') : remedy.routine.morning[lang])}</div>
                       </div>
                     )}
                     {remedy.routine.afternoon?.[lang] && (
                       <div className="border-l-2 border-amber-500/30 pl-3">
                         <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'दोपहर' : 'Afternoon'}</span>
-                        <div>{toEnglishDigits(Array.isArray(remedy.routine.afternoon[lang]) ? remedy.routine.afternoon[lang].join('\n') : remedy.routine.afternoon[lang])}</div>
+                        <div className="mt-1">{toEnglishDigits(Array.isArray(remedy.routine.afternoon[lang]) ? remedy.routine.afternoon[lang].join('\n') : remedy.routine.afternoon[lang])}</div>
                       </div>
                     )}
                     {remedy.routine.evening?.[lang] && (
                       <div className="border-l-2 border-amber-500/30 pl-3">
                         <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'शाम' : 'Evening'}</span>
-                        <div>{toEnglishDigits(Array.isArray(remedy.routine.evening[lang]) ? remedy.routine.evening[lang].join('\n') : remedy.routine.evening[lang])}</div>
+                        <div className="mt-1">{toEnglishDigits(Array.isArray(remedy.routine.evening[lang]) ? remedy.routine.evening[lang].join('\n') : remedy.routine.evening[lang])}</div>
                       </div>
                     )}
                   </>
@@ -352,7 +376,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
           {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice?.[lang], 'red')}
 
-          {/* PERMANENT STATIC DISCLAIMER FOOTER */}
+          {/* PERMANENT STATIC DISCLAIMER FOOTER - Exactly as requested */}
           <div className={cn(
             "p-5 rounded-[2.5rem] border border-dashed text-[13px] leading-relaxed mb-6 font-bold text-center",
             isNight ? "bg-white/5 border-white/20 text-white/60" : "bg-primary/5 border-primary/20 text-muted-foreground"

@@ -33,7 +33,7 @@ export const speakText = (
   
   // Configure for a natural Ayurvedic Consultant (Vaidya) tone
   utterance.lang = lang === 'hi' ? 'hi-IN' : 'en-US';
-  utterance.rate = 0.85; // Natural slow pace
+  utterance.rate = 0.85; // Natural slow and calm pace as requested
   utterance.pitch = 1.0;
   utterance.volume = 1.0;
 
@@ -53,6 +53,7 @@ export const speakText = (
   };
 
   // 3. Trigger speech immediately after a minimal micro-delay to allow buffer clearing
+  // This ensures the browser is ready to play the new stream instantly.
   setTimeout(() => {
     window.speechSynthesis.speak(utterance);
   }, 30);
