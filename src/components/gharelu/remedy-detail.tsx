@@ -57,10 +57,13 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const [chatThread, setChatThread] = useState<any[]>([]);
   const [userId, setUserId] = useState<string>('');
 
-  // CRITICAL FIX: Stop audio when user navigates away or component unmounts
+  // CRITICAL FIX: Stop and Cancel speech when user navigates away or component unmounts
   useEffect(() => {
     return () => {
       try {
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
         stopSpeech();
         setIsAudioPlaying(false);
       } catch (e) {
@@ -115,10 +118,17 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const handleToggleAudio = () => {
     if (isAudioPlaying) {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
       stopSpeech();
       setIsAudioPlaying(false);
     } else {
       try {
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
+        
         const currentLang = lang || 'hi';
         
         // 1. Title & Intro
@@ -202,7 +212,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         const part2 = toEnglishDigits(`बनाने की विधि: ${stepsText}. ${activeDosageText}. सेवन विधि: ${usageText}. ${eatText}. ${avoidText}. दिनचर्या: ${routineText}. ${safetyText}`);
 
         setIsAudioPlaying(true);
-        // Start playback sequentially using split parts to avoid crashes
+        // Start playback sequentially using split parts to avoid crashes on long text
         speakText(part1, currentLang, () => {}, () => {
           speakText(part2, currentLang, () => {}, () => setIsAudioPlaying(false));
         });
