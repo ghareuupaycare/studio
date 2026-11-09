@@ -116,6 +116,10 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     qaButton: isHindi ? 'अनुभव भेजें' : 'Send Experience',
   };
 
+  /**
+   * CRITICAL REWRITE: Strictly dynamic prop-mapping for Audio.
+   * Purges all global references and uses current remedy prop fields only.
+   */
   const handleToggleAudio = () => {
     if (isAudioPlaying) {
       stopSpeech();
@@ -125,76 +129,27 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
     if (!remedy) return;
 
-    // MANDATORY: Clear SpeechSynthesis before starting
-    stopSpeech();
-
-    // STRICT DYNAMIC DATA BINDING: No hardcoded fallbacks or default IDs allowed
-    const textParts: string[] = [];
+    // Direct mapping to currently mounted remedy data
+    const titleText = remedy.name?.[lang] || '';
     
-    // Title
-    textParts.push(remedy.name[lang] || '');
-
-    // 1. Introduction
-    textParts.push(labels.introduction);
     const intro = remedy.introduction?.[lang];
-    textParts.push(Array.isArray(intro) ? intro.join('. ') : (intro as string || ''));
+    const introText = Array.isArray(intro) ? intro.join('. ') : (intro as string || '');
 
-    // 2. Ingredients
-    textParts.push(labels.ingredients);
-    const ing = remedy.ingredients?.[lang];
-    textParts.push(Array.isArray(ing) ? ing.join('. ') : (ing as string || ''));
+    const ingredientsList = remedy.ingredients?.[lang];
+    const ingredientsText = Array.isArray(ingredientsList) ? ingredientsList.join(', ') : (ingredientsList as string || '');
 
-    // 3. Preparation
-    textParts.push(labels.preparation);
-    const prep = remedy.preparation?.[lang];
-    textParts.push(Array.isArray(prep) ? prep.join('. ') : (prep as string || ''));
+    const prepSteps = remedy.preparation?.[lang];
+    const stepsText = Array.isArray(prepSteps) 
+      ? prepSteps.map((step, index) => `विधि ${index + 1}: ${step}`).join('. ') 
+      : (prepSteps as string || '');
 
-    // 4. Dosage (Selected Age Group)
-    textParts.push(labels.dosage);
-    const activeDose = remedy.doses?.[selectedDoseIndex];
-    if (activeDose) {
-      textParts.push(activeDose.ageRange[lang] || '');
-      const dVal = activeDose.dose?.[lang];
-      textParts.push(Array.isArray(dVal) ? dVal.join('. ') : (dVal as string || ''));
-    }
+    // Constructing full dynamic payload
+    const fullText = toEnglishDigits(`${titleText}. परिचय: ${introText}. आवश्यक सामग्री: ${ingredientsText}. बनाने की विधि: ${stepsText}`);
 
-    // 5. Usage
-    textParts.push(labels.usage);
-    const usage = remedy.usage?.[lang];
-    textParts.push(Array.isArray(usage) ? usage.join('. ') : (usage as string || ''));
-
-    // 6. Diet Eat
-    textParts.push(labels.dietEat);
-    const eat = remedy.dietEat?.[lang];
-    textParts.push(Array.isArray(eat) ? eat.join('. ') : (eat as string || ''));
-
-    // 7. Diet Avoid
-    textParts.push(labels.dietAvoid);
-    const avoid = remedy.dietAvoid?.[lang];
-    textParts.push(Array.isArray(avoid) ? avoid.join('. ') : (avoid as string || ''));
-
-    // 8. Routine
-    textParts.push(labels.routine);
-    const r = remedy.routine as any;
-    if (r) {
-      if (r[lang]) {
-        textParts.push(Array.isArray(r[lang]) ? r[lang].join('. ') : r[lang]);
-      } else {
-        if (r.morning?.[lang]) textParts.push((isHindi ? 'सुबह: ' : 'Morning: ') + (Array.isArray(r.morning[lang]) ? r.morning[lang].join('. ') : r.morning[lang]));
-        if (r.afternoon?.[lang]) textParts.push((isHindi ? 'दोपहर: ' : 'Afternoon: ') + (Array.isArray(r.afternoon[lang]) ? r.afternoon[lang].join('. ') : r.afternoon[lang]));
-        if (r.evening?.[lang]) textParts.push((isHindi ? 'शाम: ' : 'Evening: ') + (Array.isArray(r.evening[lang]) ? r.evening[lang].join('. ') : r.evening[lang]));
-      }
-    }
-
-    // 9. Safety Advice
-    textParts.push(labels.safety);
-    const safety = remedy.safetyAdvice?.[lang];
-    textParts.push(Array.isArray(safety) ? safety.join('. ') : (safety as string || ''));
-
-    const finalText = toEnglishDigits(textParts.filter(p => p && p.trim() !== '').join('. '));
-
+    setIsAudioPlaying(true);
+    
     speakText(
-      finalText,
+      fullText,
       lang,
       () => setIsAudioPlaying(true),
       () => setIsAudioPlaying(false)
@@ -257,7 +212,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-24 max-w-2xl mx-auto overflow-hidden">
       <div className="w-full">
-        {/* REPOSITIONED: Speaker Button above title, left side */}
         <div className="flex justify-start mb-2 px-1">
           <Button 
             onClick={handleToggleAudio}
@@ -377,7 +331,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
           {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice?.[lang], 'red')}
 
-          {/* PERMANENT DISCLAIMER BOX (Mandatory Fixed Text) */}
           <div className={cn(
             "p-5 rounded-[2.5rem] border border-dashed text-[13px] leading-relaxed mb-6 font-bold text-center",
             isNight ? "bg-white/5 border-white/20 text-white/60" : "bg-primary/5 border-primary/20 text-muted-foreground"
