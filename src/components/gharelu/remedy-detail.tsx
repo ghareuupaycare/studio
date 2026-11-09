@@ -125,50 +125,55 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
     if (!remedy) return;
 
-    // STRICT DYNAMIC DATA BINDING - No Fallbacks
+    // MANDATORY: Clear SpeechSynthesis before starting
+    stopSpeech();
+
+    // STRICT DYNAMIC DATA BINDING: No hardcoded fallbacks or default IDs allowed
     const textParts: string[] = [];
+    
+    // Title
     textParts.push(remedy.name[lang] || '');
 
-    // 1. Intro
+    // 1. Introduction
     textParts.push(labels.introduction);
     const intro = remedy.introduction?.[lang];
-    textParts.push(Array.isArray(intro) ? intro.join('. ') : (intro || ''));
+    textParts.push(Array.isArray(intro) ? intro.join('. ') : (intro as string || ''));
 
     // 2. Ingredients
     textParts.push(labels.ingredients);
     const ing = remedy.ingredients?.[lang];
-    textParts.push(Array.isArray(ing) ? ing.join('. ') : (ing || ''));
+    textParts.push(Array.isArray(ing) ? ing.join('. ') : (ing as string || ''));
 
     // 3. Preparation
     textParts.push(labels.preparation);
     const prep = remedy.preparation?.[lang];
-    textParts.push(Array.isArray(prep) ? prep.join('. ') : (prep || ''));
+    textParts.push(Array.isArray(prep) ? prep.join('. ') : (prep as string || ''));
 
-    // 4. Dosage
+    // 4. Dosage (Selected Age Group)
     textParts.push(labels.dosage);
     const activeDose = remedy.doses?.[selectedDoseIndex];
     if (activeDose) {
       textParts.push(activeDose.ageRange[lang] || '');
       const dVal = activeDose.dose?.[lang];
-      textParts.push(Array.isArray(dVal) ? dVal.join('. ') : (dVal || ''));
+      textParts.push(Array.isArray(dVal) ? dVal.join('. ') : (dVal as string || ''));
     }
 
     // 5. Usage
     textParts.push(labels.usage);
     const usage = remedy.usage?.[lang];
-    textParts.push(Array.isArray(usage) ? usage.join('. ') : (usage || ''));
+    textParts.push(Array.isArray(usage) ? usage.join('. ') : (usage as string || ''));
 
     // 6. Diet Eat
     textParts.push(labels.dietEat);
     const eat = remedy.dietEat?.[lang];
-    textParts.push(Array.isArray(eat) ? eat.join('. ') : (eat || ''));
+    textParts.push(Array.isArray(eat) ? eat.join('. ') : (eat as string || ''));
 
     // 7. Diet Avoid
     textParts.push(labels.dietAvoid);
     const avoid = remedy.dietAvoid?.[lang];
-    textParts.push(Array.isArray(avoid) ? avoid.join('. ') : (avoid || ''));
+    textParts.push(Array.isArray(avoid) ? avoid.join('. ') : (avoid as string || ''));
 
-    // 8. Routine (Resilient Extraction)
+    // 8. Routine
     textParts.push(labels.routine);
     const r = remedy.routine as any;
     if (r) {
@@ -181,12 +186,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       }
     }
 
-    // 9. Safety
+    // 9. Safety Advice
     textParts.push(labels.safety);
     const safety = remedy.safetyAdvice?.[lang];
-    textParts.push(Array.isArray(safety) ? safety.join('. ') : (safety || ''));
+    textParts.push(Array.isArray(safety) ? safety.join('. ') : (safety as string || ''));
 
-    const finalText = toEnglishDigits(textParts.filter(p => p.trim() !== '').join('. '));
+    const finalText = toEnglishDigits(textParts.filter(p => p && p.trim() !== '').join('. '));
 
     speakText(
       finalText,
@@ -252,6 +257,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-24 max-w-2xl mx-auto overflow-hidden">
       <div className="w-full">
+        {/* REPOSITIONED: Speaker Button above title, left side */}
         <div className="flex justify-start mb-2 px-1">
           <Button 
             onClick={handleToggleAudio}
@@ -371,6 +377,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
           {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice?.[lang], 'red')}
 
+          {/* PERMANENT DISCLAIMER BOX (Mandatory Fixed Text) */}
           <div className={cn(
             "p-5 rounded-[2.5rem] border border-dashed text-[13px] leading-relaxed mb-6 font-bold text-center",
             isNight ? "bg-white/5 border-white/20 text-white/60" : "bg-primary/5 border-primary/20 text-muted-foreground"
