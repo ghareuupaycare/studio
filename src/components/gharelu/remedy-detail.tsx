@@ -165,7 +165,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         if (remedy?.doses && Array.isArray(remedy.doses)) {
           const activeIdx = typeof selectedDoseIndex !== 'undefined' ? selectedDoseIndex : 0;
           const doseObj = remedy.doses[activeIdx] || remedy.doses[0];
-          const dAge = doseObj?.ageRange ? (typeof doseObj.ageRange === 'object' ? (doseObj.ageRange[currentLang] || doseObj.ageRange['hi'] || '') : doseObj.ageRange) : '';
+          const dAge = doseObj?.age ? (typeof doseObj.age === 'object' ? (doseObj.age[currentLang] || doseObj.age['hi'] || '') : doseObj.age) : (doseObj?.ageRange ? (doseObj.ageRange[currentLang] || doseObj.ageRange['hi'] || '') : '');
           const dText = doseObj?.dose ? (typeof doseObj.dose === 'object' ? (doseObj.dose[currentLang] || doseObj.dose['hi'] || '') : doseObj.dose) : '';
           const dTextClean = Array.isArray(dText) ? dText.join('. ') : dText;
           if (dTextClean) activeDosageText = `स्मार्ट खुराक (${dAge}): ${dTextClean}`;
@@ -215,35 +215,59 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         if (Array.isArray(safetyRaw)) safetyText = `सुरक्षा सूचना: ${safetyRaw.join('. ')}`;
         else if (typeof safetyRaw === 'string') safetyText = `सुरक्षा सूचना: ${safetyRaw}`;
 
-        // Compile full text safely
-        const fullText = toEnglishDigits(
-          [
-            titleText,
-            introText ? `परिचय: ${introText}` : '',
-            ingredientsText ? `आवश्यक सामग्री: ${ingredientsText}` : '',
-            stepsText ? `बनाने की विधि: ${stepsText}` : '',
-            activeDosageText,
-            usageText ? `सेवन विधि: ${usageText}` : '',
-            eatText,
-            avoidText,
-            routineText ? `दिनचर्या: ${routineText}` : '',
-            safetyText
-          ].filter(Boolean).join('. ')
-        );
+        // Compile raw text for chunking
+        const rawSentences = [
+          titleText,
+          introText ? `परिचय: ${introText}` : '',
+          ingredientsText ? `आवश्यक सामग्री: ${ingredientsText}` : '',
+          stepsText ? `बनाने की विधि: ${stepsText}` : '',
+          activeDosageText,
+          usageText ? `सेवन विधि: ${usageText}` : '',
+          eatText,
+          avoidText,
+          routineText ? `दिनचर्या: ${routineText}` : '',
+          safetyText
+        ].filter(Boolean).join('. ');
+
+        // Split text into small safe chunks to prevent SpeechSynthesisErrorEvent
+        const chunks = rawSentences
+          .split('.')
+          .map(s => s.trim())
+          .filter(s => s.length > 0);
 
         if (!isMountedRef.current) return;
         setIsAudioPlaying(true);
 
-        speakText(
-          fullText,
-          currentLang,
-          () => {
-            if (isMountedRef.current) setIsAudioPlaying(false);
-          },
-          () => {
-            if (isMountedRef.current) setIsAudioPlaying(false);
+        let currentIndex = 0;
+        const playNextChunk = () => {
+          if (!isMountedRef.current) {
+            if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+            }
+            return;
           }
-        );
+
+          if (currentIndex >= chunks.length) {
+            if (isMountedRef.current) setIsAudioPlaying(false);
+            return;
+          }
+          
+          const chunkText = chunks[currentIndex] + '.';
+          currentIndex++;
+
+          speakText(
+            toEnglishDigits(chunkText),
+            currentLang,
+            () => {
+              if (isMountedRef.current) playNextChunk();
+            },
+            () => {
+              if (isMountedRef.current) setIsAudioPlaying(false);
+            }
+          );
+        };
+
+        playNextChunk();
 
       } catch (err) {
         console.error('Audio Error:', err);
@@ -383,7 +407,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                       selectedDoseIndex === i ? "bg-accent border-accent text-white shadow-lg scale-95" : (isNight ? "bg-white/5 border-white/10 text-white" : "bg-white border-amber-200 text-[#5F4B1A] hover:bg-amber-50")
                     )}
                   >
-                    <User className="w-3.5 h-3.5" /> {toEnglishDigits(dose.ageRange?.[lang] || '')}
+                    <User className="w-3.5 h-3.5" /> {toEnglishDigits(dose.age?.[lang] || dose.ageRange?.[lang] || '')}
                   </button>
                 ))}
               </div>
@@ -414,15 +438,39 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             <div className="text-[15px] leading-relaxed font-medium space-y-4">
               <div className="border-l-2 border-amber-500/30 pl-3">
                 <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'सुबह' : 'Morning'}</span>
-                <div className="mt-1">{toEnglishDigits(remedy.routine?.morning?.[lang] ? (Array.isArray(remedy.routine.morning[lang]) ? remedy.routine.morning[lang].join('. ') : remedy.routine.morning[lang]) : '')}</div>
+                <div className="mt-1">
+                  {toEnglishDigits(
+                    remedy.routine?.morning?.[lang] 
+                      ? (Array.isArray(remedy.routine.morning[lang]) 
+                          ? remedy.routine.morning[lang].join('. ') 
+                          : remedy.routine.morning[lang]) 
+                      : ''
+                  )}
+                </div>
               </div>
               <div className="border-l-2 border-amber-500/30 pl-3">
                 <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'दोपहर' : 'Afternoon'}</span>
-                <div className="mt-1">{toEnglishDigits(remedy.routine?.afternoon?.[lang] ? (Array.isArray(remedy.routine.afternoon[lang]) ? remedy.routine.afternoon[lang].join('. ') : remedy.routine.afternoon[lang]) : '')}</div>
+                <div className="mt-1">
+                  {toEnglishDigits(
+                    remedy.routine?.afternoon?.[lang] 
+                      ? (Array.isArray(remedy.routine.afternoon[lang]) 
+                          ? remedy.routine.afternoon[lang].join('. ') 
+                          : remedy.routine.afternoon[lang]) 
+                      : ''
+                  )}
+                </div>
               </div>
               <div className="border-l-2 border-amber-500/30 pl-3">
                 <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'शाम' : 'Evening'}</span>
-                <div className="mt-1">{toEnglishDigits(remedy.routine?.evening?.[lang] ? (Array.isArray(remedy.routine.evening[lang]) ? remedy.routine.evening[lang].join('. ') : remedy.routine.evening[lang]) : '')}</div>
+                <div className="mt-1">
+                  {toEnglishDigits(
+                    remedy.routine?.evening?.[lang] 
+                      ? (Array.isArray(remedy.routine.evening[lang]) 
+                          ? remedy.routine.evening[lang].join('. ') 
+                          : remedy.routine.evening[lang]) 
+                      : ''
+                  )}
+                </div>
               </div>
             </div>
           </div>
