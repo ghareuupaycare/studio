@@ -66,7 +66,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
-      stopSpeech();
+      if (typeof stopSpeech === 'function') {
+        stopSpeech();
+      }
       setIsAudioPlaying(false);
     };
   }, []);
@@ -122,156 +124,190 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
-      stopSpeech();
+      if (typeof stopSpeech === 'function') {
+        stopSpeech();
+      }
       setIsAudioPlaying(false);
-    } else {
-      try {
-        isMountedRef.current = true;
-        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
+      return;
+    }
+
+    try {
+      isMountedRef.current = true;
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (typeof stopSpeech === 'function') {
+        stopSpeech();
+      }
+
+      const currentLang = lang || 'hi';
+
+      const getLocalizedValue = (val: any): string => {
+        if (!val) return '';
+        if (typeof val === 'string') return val.trim();
+        if (typeof val === 'object') {
+          return String(val[currentLang] || val['hi'] || val['en'] || '').trim();
         }
+        return '';
+      };
 
-        const currentLang = lang || 'hi';
-        
-        // 1. Title (Mapped to 'name' in our Remedy type)
-        const titleText = remedy?.name 
-          ? (typeof remedy.name === 'object' ? (remedy.name[currentLang] || remedy.name['hi'] || '') : remedy.name) 
-          : '';
-        
-        // 2. Introduction
-        let introText = '';
-        const introRaw = remedy?.introduction ? (remedy.introduction[currentLang] || remedy.introduction['hi'] || remedy.introduction) : null;
-        if (Array.isArray(introRaw)) introText = introRaw.join('. ');
-        else if (typeof introRaw === 'string') introText = introRaw;
+      const getLocalizedListOrText = (val: any, itemFormatter?: (item: any, idx: number) => string): string => {
+        if (!val) return '';
+        const target =
+          typeof val === 'object' && !Array.isArray(val)
+            ? (val[currentLang] ?? val['hi'] ?? val['en'] ?? val)
+            : val;
 
-        // 3. Ingredients
-        let ingredientsText = '';
-        const ingRaw = remedy?.ingredients ? (remedy.ingredients[currentLang] || remedy.ingredients['hi'] || remedy.ingredients) : null;
-        if (Array.isArray(ingRaw)) {
-          ingredientsText = ingRaw.map((item: any) => `${item?.name || item || ''} - ${item?.quantity || ''}`).join(', ');
+        if (typeof target === 'string') {
+          return target.trim();
         }
-
-        // 4. Preparation Steps
-        let stepsText = '';
-        const prepRaw = remedy?.preparation ? (remedy.preparation[currentLang] || remedy.preparation['hi'] || remedy.preparation) : null;
-        if (Array.isArray(prepRaw)) {
-          stepsText = prepRaw.map((step: any, i: number) => `विधि ${i + 1}: ${typeof step === 'string' ? step : (step?.instruction || '')}`).join('. ');
-        } else if (typeof prepRaw === 'string') {
-          stepsText = prepRaw;
+        if (Array.isArray(target)) {
+          return target
+            .map((item, idx) => {
+              if (itemFormatter) return itemFormatter(item, idx);
+              if (typeof item === 'string') return item.trim();
+              if (item && typeof item === 'object') {
+                return getLocalizedValue(item.text || item.instruction || item.rule || item.description || item.name || '');
+              }
+              return '';
+            })
+            .filter(Boolean)
+            .join('। ');
         }
-
-        // 5. Active Smart Dosage
-        let activeDosageText = '';
-        if (remedy?.doses && Array.isArray(remedy.doses)) {
-          const activeIdx = typeof selectedDoseIndex !== 'undefined' ? selectedDoseIndex : 0;
-          const doseObj = remedy.doses[activeIdx] || remedy.doses[0];
-          const dAge = doseObj?.age ? (typeof doseObj.age === 'object' ? (doseObj.age[currentLang] || doseObj.age['hi'] || '') : doseObj.age) : (doseObj?.ageRange ? (doseObj.ageRange[currentLang] || doseObj.ageRange['hi'] || '') : '');
-          const dText = doseObj?.dose ? (typeof doseObj.dose === 'object' ? (doseObj.dose[currentLang] || doseObj.dose['hi'] || '') : doseObj.dose) : '';
-          const dTextClean = Array.isArray(dText) ? dText.join('. ') : dText;
-          if (dTextClean) activeDosageText = `स्मार्ट खुराक (${dAge}): ${dTextClean}`;
+        if (target && typeof target === 'object') {
+          return Object.entries(target)
+            .map(([k, v]) => {
+              const vStr = getLocalizedValue(v);
+              return vStr ? `${k}: ${vStr}` : '';
+            })
+            .filter(Boolean)
+            .join('। ');
         }
+        return '';
+      };
 
-        // 6. Usage Rules
-        let usageText = '';
-        const usageRaw = remedy?.usage ? (remedy.usage[currentLang] || remedy.usage['hi'] || remedy.usage) : null;
-        if (Array.isArray(usageRaw)) {
-          usageText = usageRaw.map((rule: any, i: number) => `सेवन नियम ${i + 1}: ${typeof rule === 'string' ? rule : (rule?.rule || '')}`).join('. ');
-        } else if (typeof usageRaw === 'string') {
-          usageText = usageRaw;
+      // 0. Title
+      const titleStr = getLocalizedValue(remedy?.name);
+
+      // 1. परिचय (Introduction)
+      const introStr = getLocalizedListOrText(remedy?.introduction);
+
+      // 2. आवश्यक सामग्री (Ingredients)
+      const ingredientsStr = getLocalizedListOrText(remedy?.ingredients, (item: any) => {
+        if (typeof item === 'string') return item.trim();
+        const name = getLocalizedValue(item?.name || item);
+        const qty = getLocalizedValue(item?.quantity || item?.amount);
+        return [name, qty].filter(Boolean).join(' - ');
+      });
+
+      // 3. बनाने की विधि (Preparation)
+      const stepsStr = getLocalizedListOrText(remedy?.preparation, (step: any, idx: number) => {
+        const text =
+          typeof step === 'string'
+            ? step.trim()
+            : getLocalizedValue(step?.instruction || step?.step || step?.description || step?.text);
+        return text ? `चरण ${idx + 1}: ${text}` : '';
+      });
+
+      // स्मार्ट खुराक (Active Smart Dosage)
+      let dosageStr = '';
+      if (Array.isArray(remedy?.doses) && remedy.doses.length > 0) {
+        const safeIdx =
+          typeof selectedDoseIndex === 'number' && selectedDoseIndex >= 0 && selectedDoseIndex < remedy.doses.length
+            ? selectedDoseIndex
+            : 0;
+        const doseObj = remedy.doses[safeIdx] || remedy.doses[0];
+        const ageText = getLocalizedValue(doseObj?.age || doseObj?.ageRange || doseObj?.label);
+        const doseText = getLocalizedValue(doseObj?.dose || doseObj?.dosage || doseObj?.amount || doseObj?.instruction);
+        if (ageText || doseText) {
+          dosageStr = `स्मार्ट खुराक${ageText ? ` (${ageText})` : ''}: ${doseText}`;
         }
+      }
 
-        // 7. Diet Eat & Avoid
-        let eatText = '';
-        const eatRaw = remedy?.dietEat ? (remedy.dietEat[currentLang] || remedy.dietEat['hi'] || remedy.dietEat) : null;
-        if (Array.isArray(eatRaw)) eatText = `क्या खाएं: ${eatRaw.join(', ')}`;
-        else if (typeof eatRaw === 'string') eatText = `क्या खाएं: ${eatRaw}`;
+      // सेवन विधि (Usage)
+      const usageStr = getLocalizedListOrText(remedy?.usage, (rule: any, idx: number) => {
+        const text =
+          typeof rule === 'string'
+            ? rule.trim()
+            : getLocalizedValue(rule?.rule || rule?.instruction || rule?.text || rule?.description);
+        return text ? `नियम ${idx + 1}: ${text}` : '';
+      });
 
-        let avoidText = '';
-        const avoidRaw = remedy?.dietAvoid ? (remedy.dietAvoid[currentLang] || remedy.dietAvoid['hi'] || remedy.dietAvoid) : null;
-        if (Array.isArray(avoidRaw)) avoidText = `क्या न खाएं: ${avoidRaw.join(', ')}`;
-        else if (typeof avoidRaw === 'string') avoidText = `क्या न खाएं: ${avoidRaw}`;
+      // क्या खाएं / क्या न खाएं (Diet)
+      const eatStr = getLocalizedListOrText(remedy?.dietEat);
+      const avoidStr = getLocalizedListOrText(remedy?.dietAvoid);
 
-        // 8. Routine
-        let routineText = '';
-        const r = remedy?.routine;
-        if (r) {
-          const morning = r.morning?.[currentLang] || r.morning?.['hi'] || '';
-          const morningStr = Array.isArray(morning) ? morning.join('. ') : morning;
-          const afternoon = r.afternoon?.[currentLang] || r.afternoon?.['hi'] || '';
-          const afternoonStr = Array.isArray(afternoon) ? afternoon.join('. ') : afternoon;
-          const evening = r.evening?.[currentLang] || r.evening?.['hi'] || '';
-          const eveningStr = Array.isArray(evening) ? evening.join('. ') : evening;
-          
-          routineText = [
-            morningStr ? `सुबह: ${morningStr}` : '',
-            afternoonStr ? `दोपहर: ${afternoonStr}` : '',
-            eveningStr ? `शाम: ${eveningStr}` : ''
-          ].filter(Boolean).join('. ');
-        }
+      // दिनचर्या (Routine)
+      const routineStr = getLocalizedListOrText(remedy?.routine, (r: any) => {
+        if (typeof r === 'string') return r.trim();
+        const time = getLocalizedValue(r?.time || r?.period);
+        const desc = getLocalizedValue(r?.description || r?.activity || r?.text);
+        return [time, desc].filter(Boolean).join(': ');
+      });
 
-        // 9. Safety Advice
-        let safetyText = '';
-        const safetyRaw = remedy?.safetyAdvice ? (remedy.safetyAdvice[currentLang] || remedy.safetyAdvice['hi'] || remedy.safetyAdvice) : null;
-        if (Array.isArray(safetyRaw)) safetyText = `सुरक्षा सूचना: ${safetyRaw.join('. ')}`;
-        else if (typeof safetyRaw === 'string') safetyText = `सुरक्षा सूचना: ${safetyRaw}`;
+      // सुरक्षा सूचना (Safety Advice)
+      const safetyStr = getLocalizedListOrText(remedy?.safetyAdvice);
 
-        // Compile raw text for chunking
-        const rawSentences = [
-          titleText,
-          introText ? `परिचय: ${introText}` : '',
-          ingredientsText ? `आवश्यक सामग्री: ${ingredientsText}` : '',
-          stepsText ? `बनाने की विधि: ${stepsText}` : '',
-          activeDosageText,
-          usageText ? `सेवन विधि: ${usageText}` : '',
-          eatText,
-          avoidText,
-          routineText ? `दिनचर्या: ${routineText}` : '',
-          safetyText
-        ].filter(Boolean).join('. ');
+      // Section-wise blocks
+      const sectionBlocks = [
+        titleStr ? `नुस्खा: ${titleStr}` : '',
+        introStr ? `परिचय: ${introStr}` : '',
+        ingredientsStr ? `आवश्यक सामग्री: ${ingredientsStr}` : '',
+        stepsStr ? `बनाने की विधि: ${stepsStr}` : '',
+        dosageStr,
+        usageStr ? `सेवन विधि: ${usageStr}` : '',
+        eatStr ? `क्या खाएं: ${eatStr}` : '',
+        avoidStr ? `क्या न खाएं: ${avoidStr}` : '',
+        routineStr ? `दिनचर्या: ${routineStr}` : '',
+        safetyStr ? `सुरक्षा सूचना: ${safetyStr}` : '',
+      ]
+        .map((block) => toEnglishDigits(block).replace(/\s+/g, ' ').trim())
+        .filter((block) => block.length > 0);
 
-        // Split text into small safe chunks to prevent SpeechSynthesisErrorEvent
-        const chunks = rawSentences
-          .split('.')
-          .map(s => s.trim())
-          .filter(s => s.length > 0);
+      if (sectionBlocks.length === 0) {
+        setIsAudioPlaying(false);
+        return;
+      }
 
-        if (!isMountedRef.current) return;
-        setIsAudioPlaying(true);
+      setIsAudioPlaying(true);
+      let currentIndex = 0;
 
-        let currentIndex = 0;
-        const playNextChunk = () => {
-          if (!isMountedRef.current) {
-            if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-              window.speechSynthesis.cancel();
-            }
-            return;
+      const speakNextSection = () => {
+        if (!isMountedRef.current) {
+          if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
           }
+          setIsAudioPlaying(false);
+          return;
+        }
 
-          if (currentIndex >= chunks.length) {
-            if (isMountedRef.current) setIsAudioPlaying(false);
-            return;
+        if (currentIndex >= sectionBlocks.length) {
+          setIsAudioPlaying(false);
+          return;
+        }
+
+        const textToSpeak = sectionBlocks[currentIndex];
+        currentIndex += 1;
+
+        speakText(
+          textToSpeak,
+          currentLang,
+          () => {
+            if (!isMountedRef.current) return;
+            speakNextSection();
+          },
+          () => {
+            if (!isMountedRef.current) return;
+            setIsAudioPlaying(false);
           }
-          
-          const chunkText = chunks[currentIndex] + '.';
-          currentIndex++;
+        );
+      };
 
-          speakText(
-            toEnglishDigits(chunkText),
-            currentLang,
-            () => {
-              if (isMountedRef.current) playNextChunk();
-            },
-            () => {
-              if (isMountedRef.current) setIsAudioPlaying(false);
-            }
-          );
-        };
-
-        playNextChunk();
-
-      } catch (err) {
-        console.error('Audio Error:', err);
-        if (isMountedRef.current) setIsAudioPlaying(false);
+      speakNextSection();
+    } catch (err) {
+      console.error('Audio Error:', err);
+      if (isMountedRef.current) {
+        setIsAudioPlaying(false);
       }
     }
   };
