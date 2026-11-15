@@ -29,7 +29,7 @@ import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { useFirestore } from '@/firebase';
 import { getChatUserId, getChatCacheKey, listenToChatThread, postUserExperience } from '@/lib/chat-sync';
-import { speakText, stopSpeech } from '@/lib/audio-reader';
+import { stopSpeech } from '@/lib/audio-reader';
 import { RemedyActionBar } from './remedy-action-bar';
 
 interface RemedyDetailProps {
@@ -50,7 +50,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const db = useFirestore();
   const chatEndRef = useRef<HTMLDivElement>(null);
   const isInitialLoad = useRef(true);
+  
   const isMountedRef = useRef(true);
+  const sessionRef = useRef(0);
 
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [question, setQuestion] = useState('');
@@ -58,25 +60,22 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const [chatThread, setChatThread] = useState<any[]>([]);
   const [userId, setUserId] = useState<string>('');
 
-  const stopAllAudioNow = () => {
-    isMountedRef.current = false;
+  const stopSpeechEngine = () => {
+    sessionRef.current += 1;
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+      try {
+        window.speechSynthesis.cancel();
+      } catch (_) {}
     }
     if (typeof stopSpeech === 'function') {
-      stopSpeech();
+      try {
+        stopSpeech();
+      } catch (_) {}
     }
-    setIsAudioPlaying(false);
   };
 
   useEffect(() => {
     isMountedRef.current = true;
-    return () => {
-      stopAllAudioNow();
-    };
-  }, []);
-
-  useEffect(() => {
     const uid = getChatUserId();
     setUserId(uid);
     if (!db || !remedy?.id || !uid) return;
@@ -101,6 +100,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     });
 
     return () => {
+      isMountedRef.current = false;
+      stopSpeechEngine();
+      setIsAudioPlaying(false);
       unsubscribe();
       isInitialLoad.current = true;
     };
@@ -123,18 +125,20 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const handleToggleAudio = () => {
     if (isAudioPlaying) {
-      stopAllAudioNow();
+      stopSpeechEngine();
+      if (isMountedRef.current) {
+        setIsAudioPlaying(false);
+      }
       return;
     }
 
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      return;
+    }
+
+    stopSpeechEngine();
+    const activeSession = sessionRef.current;
     isMountedRef.current = true;
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
-    if (typeof stopSpeech === 'function') {
-      stopSpeech();
-    }
-    setIsAudioPlaying(true);
 
     try {
       const currentLang = lang || 'hi';
@@ -229,7 +233,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       });
       const safetyText = pickSection(remedy?.safetyAdvice);
 
-      const sectionList = [
+      const orderedSections = [
         titleText,
         introText ? `बीमारी का परिचय: ${introText}` : '',
         ingredientsText ? `आवश्यक सामग्री: ${ingredientsText}` : '',
@@ -244,45 +248,68 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         .map((s) => toEnglishDigits(s).replace(/\s+/g, ' ').trim())
         .filter(Boolean);
 
-      if (sectionList.length === 0) {
-        setIsAudioPlaying(false);
+      if (orderedSections.length === 0) {
+        if (isMountedRef.current) setIsAudioPlaying(false);
         return;
       }
 
-      let pointer = 0;
+      if (isMountedRef.current) {
+        setIsAudioPlaying(true);
+      }
 
-      const runNext = () => {
-        if (!isMountedRef.current) {
-          stopAllAudioNow();
+      let stepIndex = 0;
+
+      const speakAtIndex = () => {
+        if (!isMountedRef.current || sessionRef.current !== activeSession) {
           return;
         }
 
-        if (pointer >= sectionList.length) {
-          setIsAudioPlaying(false);
-          return;
-        }
-
-        const block = sectionList[pointer];
-        pointer += 1;
-
-        speakText(
-          block,
-          currentLang,
-          () => {
-            if (!isMountedRef.current) return;
-            runNext();
-          },
-          () => {
-            if (!isMountedRef.current) return;
+        if (stepIndex >= orderedSections.length) {
+          if (isMountedRef.current && sessionRef.current === activeSession) {
             setIsAudioPlaying(false);
           }
-        );
+          return;
+        }
+
+        const currentBlock = orderedSections[stepIndex];
+        stepIndex += 1;
+
+        const utterance = new SpeechSynthesisUtterance(currentBlock);
+        utterance.lang = currentLang === 'en' ? 'en-US' : 'hi-IN';
+
+        const voices = window.speechSynthesis.getVoices();
+        if (voices && voices.length > 0) {
+          const matchedVoice = voices.find((v) =>
+            currentLang === 'en'
+              ? v.lang?.toLowerCase().startsWith('en')
+              : v.lang?.toLowerCase().startsWith('hi')
+          );
+          if (matchedVoice) {
+            utterance.voice = matchedVoice;
+          }
+        }
+
+        utterance.onend = () => {
+          if (!isMountedRef.current || sessionRef.current !== activeSession) return;
+          speakAtIndex();
+        };
+
+        utterance.onerror = (event: any) => {
+          if (!isMountedRef.current || sessionRef.current !== activeSession) return;
+          if (event?.error === 'interrupted' || event?.error === 'canceled') {
+            setIsAudioPlaying(false);
+            return;
+          }
+          speakAtIndex();
+        };
+
+        window.speechSynthesis.speak(utterance);
       };
 
-      runNext();
+      speakAtIndex();
     } catch (err) {
       console.error('Audio Error:', err);
-      if (isMountedRef.current) {
+      if (isMountedRef.current && sessionRef.current === activeSession) {
         setIsAudioPlaying(false);
       }
     }
@@ -315,7 +342,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     if (!content) return null;
     const points: string[] = Array.isArray(content) 
       ? content.filter(item => typeof item === 'string' && item.trim() !== '') 
-      : (typeof content === 'string' ? content.split('\n').filter(line => line.trim() !== '') : []);
+      : (typeof content === 'object' ? 
+          Object.values(content).flatMap(v => {
+            const val = v?.[lang] || v?.hi || v;
+            return Array.isArray(val) ? val : [val];
+          }).filter(item => typeof item === 'string' && item.trim() !== '')
+        : (typeof content === 'string' ? content.split('\n').filter(line => line.trim() !== '') : []));
     
     if (points.length === 0) return null;
 
@@ -440,61 +472,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           {renderSection(<Activity className="w-5 h-5" />, labels.usage, remedy.usage?.[lang], 'yellow')}
           {renderSection(<Apple className="w-5 h-5" />, labels.dietEat, remedy.dietEat?.[lang], 'green')}
           {renderSection(<AlertTriangle className="w-5 h-5" />, labels.dietAvoid, remedy.dietAvoid?.[lang], 'red')}
-          
-          <div className={cn("p-6 rounded-[2.5rem] border shadow-md space-y-4 mb-6 transition-all duration-300", getVariantStyles('yellow'))}>
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-amber-500/10 text-amber-700"><Clock className="w-5 h-5" /></div>
-              <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
-            </div>
-            
-            <div className="text-[15px] leading-relaxed font-medium">
-              <ul className="space-y-3 list-none p-0 m-0">
-                {remedy.routine?.morning || remedy.routine?.afternoon || remedy.routine?.evening ? (
-                  <>
-                    {['morning', 'afternoon', 'evening'].map((timeKey) => {
-                      const timeData = (remedy.routine as any)?.[timeKey];
-                      if (!timeData) return null;
-                      
-                      const label = timeKey === 'morning' ? (isHindi ? 'सुबह' : 'Morning') : 
-                                    timeKey === 'afternoon' ? (isHindi ? 'दोपहर' : 'Afternoon') : 
-                                    (isHindi ? 'शाम' : 'Evening');
-                      
-                      const content = Array.isArray(timeData[lang]) 
-                        ? timeData[lang].join('. ') 
-                        : (timeData[lang] || '');
-                      
-                      if (!content) return null;
-
-                      return (
-                        <li key={timeKey} className="flex items-start gap-3">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-2 shrink-0" />
-                          <span>
-                            <span className="font-black text-amber-700 mr-1">{label}:</span>
-                            {toEnglishDigits(content)}
-                          </span>
-                        </li>
-                      );
-                    })}
-                  </>
-                ) : (
-                  (() => {
-                    const data = (remedy.routine as any)?.[lang] || (remedy.routine as any);
-                    const points: string[] = Array.isArray(data) 
-                      ? data.filter(item => typeof item === 'string' && item.trim() !== '') 
-                      : (typeof data === 'string' ? data.split('\n').filter(line => line.trim() !== '') : []);
-                    
-                    return points.map((item, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-2 shrink-0" />
-                        <span>{toEnglishDigits(item)}</span>
-                      </li>
-                    ));
-                  })()
-                )}
-              </ul>
-            </div>
-          </div>
-
+          {renderSection(<Clock className="w-5 h-5" />, labels.routine, remedy.routine, 'yellow')}
           {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice?.[lang], 'red')}
 
           <div className={cn(
