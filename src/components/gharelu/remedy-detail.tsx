@@ -66,6 +66,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
+      if (typeof stopSpeech === 'function') {
+        stopSpeech();
+      }
       setIsAudioPlaying(false);
     };
   }, []);
@@ -121,120 +124,175 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
-      stopSpeech();
+      if (typeof stopSpeech === 'function') {
+        stopSpeech();
+      }
       setIsAudioPlaying(false);
-    } else {
-      try {
-        isMountedRef.current = true;
-        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
+      return;
+    }
+
+    try {
+      isMountedRef.current = true;
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (typeof stopSpeech === 'function') {
+        stopSpeech();
+      }
+
+      const currentLang = lang || 'hi';
+
+      const getLocalizedValue = (val: any): string => {
+        if (!val) return '';
+        if (typeof val === 'string') return val.trim();
+        if (typeof val === 'object') {
+          return String(val[currentLang] || val['hi'] || val['en'] || '').trim();
         }
+        return '';
+      };
 
-        const currentLang = lang || 'hi';
-        
-        // 1. Title
-        const titleText = remedy?.name ? (remedy.name[currentLang] || remedy.name['hi'] || '') : '';
-        
-        // 2. Introduction
-        let introText = '';
-        const introRaw = remedy?.introduction ? (remedy.introduction[currentLang] || remedy.introduction['hi'] || remedy.introduction) : null;
-        if (Array.isArray(introRaw)) introText = introRaw.join('. ');
-        else if (typeof introRaw === 'string') introText = introRaw;
+      const getLocalizedListOrText = (val: any, itemFormatter?: (item: any, idx: number) => string): string => {
+        if (!val) return '';
+        const target =
+          typeof val === 'object' && !Array.isArray(val)
+            ? (val[currentLang] ?? val['hi'] ?? val['en'] ?? val)
+            : val;
 
-        // 3. Ingredients
-        let ingredientsText = '';
-        const ingRaw = remedy?.ingredients ? (remedy.ingredients[currentLang] || remedy.ingredients['hi'] || remedy.ingredients) : null;
-        if (Array.isArray(ingRaw)) {
-          ingredientsText = ingRaw.map((item: any) => `${item?.name || ''} - ${item?.quantity || ''}`).join(', ');
+        if (typeof target === 'string') {
+          return target.trim();
         }
-
-        // 4. Preparation Steps
-        let stepsText = '';
-        const prepRaw = remedy?.preparation ? (remedy.preparation[currentLang] || remedy.preparation['hi'] || remedy.preparation) : null;
-        if (Array.isArray(prepRaw)) {
-          stepsText = prepRaw.map((step: any, i: number) => `विधि ${i + 1}: ${typeof step === 'string' ? step : (step?.instruction || '')}`).join('. ');
+        if (Array.isArray(target)) {
+          return target
+            .map((item, idx) => {
+              if (itemFormatter) return itemFormatter(item, idx);
+              if (typeof item === 'string') return item.trim();
+              if (item && typeof item === 'object') {
+                return getLocalizedValue(item.text || item.instruction || item.rule || item.description || item.name || '');
+              }
+              return '';
+            })
+            .filter(Boolean)
+            .join('। ');
         }
-
-        // 5. Active Smart Dosage
-        let activeDosageText = '';
-        if (remedy?.doses && Array.isArray(remedy.doses)) {
-          const activeIdx = typeof selectedDoseIndex !== 'undefined' ? selectedDoseIndex : 0;
-          const doseObj = remedy.doses[activeIdx] || remedy.doses[0];
-          const dAge = doseObj?.age ? (typeof doseObj.age === 'object' ? (doseObj.age[currentLang] || doseObj.age['hi'] || '') : doseObj.age) : '';
-          const dText = doseObj?.dose ? (typeof doseObj.dose === 'object' ? (doseObj.dose[currentLang] || doseObj.dose['hi'] || '') : doseObj.dose) : '';
-          if (dText) activeDosageText = `स्मार्ट खुराक (${dAge}): ${dText}`;
+        if (target && typeof target === 'object') {
+          return Object.entries(target)
+            .map(([k, v]) => {
+              const vStr = getLocalizedValue(v);
+              return vStr ? `${k}: ${vStr}` : '';
+            })
+            .filter(Boolean)
+            .join('। ');
         }
+        return '';
+      };
 
-        // 6. Usage Rules
-        let usageText = '';
-        const usageRaw = remedy?.usage ? (remedy.usage[currentLang] || remedy.usage['hi'] || remedy.usage) : null;
-        if (Array.isArray(usageRaw)) {
-          usageText = usageRaw.map((rule: any, i: number) => `सेवन नियम ${i + 1}: ${typeof rule === 'string' ? rule : (rule?.rule || '')}`).join('. ');
-        } else if (typeof usageRaw === 'string') {
-          usageText = usageRaw;
+      const titleStr = getLocalizedValue(remedy?.name);
+      const introStr = getLocalizedListOrText(remedy?.introduction);
+      const ingredientsStr = getLocalizedListOrText(remedy?.ingredients, (item: any) => {
+        if (typeof item === 'string') return item.trim();
+        const name = getLocalizedValue(item?.name);
+        const qty = getLocalizedValue(item?.quantity || item?.amount);
+        return [name, qty].filter(Boolean).join(' - ');
+      });
+      const stepsStr = getLocalizedListOrText(remedy?.preparation, (step: any, idx: number) => {
+        const text =
+          typeof step === 'string'
+            ? step.trim()
+            : getLocalizedValue(step?.instruction || step?.step || step?.description || step?.text);
+        return text ? `चरण ${idx + 1}: ${text}` : '';
+      });
+
+      let dosageStr = '';
+      if (Array.isArray(remedy?.doses) && remedy.doses.length > 0) {
+        const safeIdx =
+          typeof selectedDoseIndex === 'number' && selectedDoseIndex >= 0 && selectedDoseIndex < remedy.doses.length
+            ? selectedDoseIndex
+            : 0;
+        const doseObj = remedy.doses[safeIdx] || remedy.doses[0];
+        const ageText = getLocalizedValue(doseObj?.age || doseObj?.ageRange);
+        const doseText = getLocalizedValue(doseObj?.dose);
+        if (ageText || doseText) {
+          dosageStr = `स्मार्ट खुराक${ageText ? ` (${ageText})` : ''}: ${doseText}`;
         }
+      }
 
-        // 7. Diet Eat & Avoid
-        let eatText = '';
-        const eatRaw = remedy?.dietEat ? (remedy.dietEat[currentLang] || remedy.dietEat['hi'] || remedy.dietEat) : null;
-        if (Array.isArray(eatRaw)) eatText = `क्या खाएं: ${eatRaw.join(', ')}`;
+      const usageStr = getLocalizedListOrText(remedy?.usage, (rule: any, idx: number) => {
+        const text =
+          typeof rule === 'string'
+            ? rule.trim()
+            : getLocalizedValue(rule?.rule || rule?.instruction || rule?.text || rule?.description);
+        return text ? `नियम ${idx + 1}: ${text}` : '';
+      });
 
-        let avoidText = '';
-        const avoidRaw = remedy?.dietAvoid ? (remedy.dietAvoid[currentLang] || remedy.dietAvoid['hi'] || remedy.dietAvoid) : null;
-        if (Array.isArray(avoidRaw)) avoidText = `क्या न खाएं: ${avoidRaw.join(', ')}`;
+      const eatStr = getLocalizedListOrText(remedy?.dietEat);
+      const avoidStr = getLocalizedListOrText(remedy?.dietAvoid);
+      const routineStr = getLocalizedListOrText(remedy?.routine, (r: any) => {
+        if (typeof r === 'string') return r.trim();
+        const time = getLocalizedValue(r?.time || r?.period);
+        const desc = getLocalizedValue(r?.description || r?.activity || r?.text);
+        return [time, desc].filter(Boolean).join(': ');
+      });
+      const safetyStr = getLocalizedListOrText(remedy?.safetyAdvice);
 
-        // 8. Routine
-        let routineText = '';
-        const routineRaw = remedy?.routine ? (remedy.routine[currentLang] || remedy.routine['hi'] || remedy.routine) : null;
-        if (routineRaw) {
-          if (Array.isArray(routineRaw)) {
-            routineText = routineRaw.map((r: any) => `${r?.time || ''}: ${r?.description || ''}`).join('. ');
-          } else if (typeof routineRaw === 'object' && !routineRaw.hi) {
-            routineText = Object.entries(routineRaw).map(([k, v]) => `${k}: ${v}`).join('. ');
-          } else if (typeof routineRaw === 'object' && routineRaw.hi) {
-            routineText = routineRaw[currentLang] || routineRaw['hi'];
+      const sections = [
+        titleStr ? `नुस्खा: ${titleStr}` : '',
+        introStr ? `बीमारी का परिचय: ${introStr}` : '',
+        ingredientsStr ? `आवश्यक सामग्री: ${ingredientsStr}` : '',
+        stepsStr ? `बनाने की विधि: ${stepsStr}` : '',
+        dosageStr,
+        usageStr ? `सेवन विधि: ${usageStr}` : '',
+        eatStr ? `क्या खाएं: ${eatStr}` : '',
+        avoidStr ? `क्या न खाएं: ${avoidStr}` : '',
+        routineStr ? `दिनचर्या: ${routineStr}` : '',
+        safetyStr ? `सुरक्षा सूचना: ${safetyStr}` : '',
+      ]
+        .map((s) => toEnglishDigits(s).replace(/\s+/g, ' ').trim())
+        .filter(Boolean);
+
+      if (sections.length === 0) {
+        setIsAudioPlaying(false);
+        return;
+      }
+
+      setIsAudioPlaying(true);
+      let index = 0;
+
+      const playNext = () => {
+        if (!isMountedRef.current) {
+          if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
           }
+          setIsAudioPlaying(false);
+          return;
         }
 
-        // 9. Safety Advice
-        let safetyText = '';
-        const safetyRaw = remedy?.safetyAdvice ? (remedy.safetyAdvice[currentLang] || remedy.safetyAdvice['hi'] || remedy.safetyAdvice) : null;
-        if (Array.isArray(safetyRaw)) safetyText = `सुरक्षा सूचना: ${safetyRaw.join('. ')}`;
-        else if (typeof safetyRaw === 'string') safetyText = `सुरक्षा सूचना: ${safetyRaw}`;
+        if (index >= sections.length) {
+          setIsAudioPlaying(false);
+          return;
+        }
 
-        // Build chunks for safe playback
-        const chunks = [
-          toEnglishDigits(`${titleText}. परिचय: ${introText}`),
-          toEnglishDigits(`आवश्यक सामग्री: ${ingredientsText}`),
-          toEnglishDigits(`बनाने की विधि: ${stepsText}`),
-          toEnglishDigits(`${activeDosageText}. सेवन विधि: ${usageText}`),
-          toEnglishDigits(`${eatText}. ${avoidText}`),
-          toEnglishDigits(`दिनचर्या: ${routineText}. ${safetyText}`)
-        ].filter(text => text && text.trim().length > 0);
+        const currentBlock = sections[index];
+        index += 1;
 
-        if (!isMountedRef.current || chunks.length === 0) return;
-        setIsAudioPlaying(true);
-
-        let idx = 0;
-        const playNext = () => {
-          if (!isMountedRef.current) return;
-          if (idx >= chunks.length) {
+        speakText(
+          currentBlock,
+          currentLang,
+          () => {
+            if (!isMountedRef.current) return;
+            playNext();
+          },
+          () => {
+            if (!isMountedRef.current) return;
             setIsAudioPlaying(false);
-            return;
           }
-          const txt = chunks[idx];
-          idx++;
-          speakText(txt, currentLang, () => {
-            if (isMountedRef.current) playNext();
-          }, () => {
-            if (isMountedRef.current) setIsAudioPlaying(false);
-          });
-        };
-        playNext();
+        );
+      };
 
-      } catch (err) {
-        console.error('Audio Error:', err);
-        if (isMountedRef.current) setIsAudioPlaying(false);
+      playNext();
+    } catch (err) {
+      console.error('Audio Error:', err);
+      if (isMountedRef.current) {
+        setIsAudioPlaying(false);
       }
     }
   };
@@ -398,57 +456,51 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
               <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
             </div>
             
-            <div className="text-[15px] leading-relaxed font-medium space-y-4">
-              {/* Check if routine has morning/afternoon/evening structure */}
-              {(remedy.routine as any)?.morning || (remedy.routine as any)?.afternoon || (remedy.routine as any)?.evening ? (
-                <>
-                  {(remedy.routine as any)?.morning && (
-                    <div className="border-l-2 border-amber-500/30 pl-3">
-                      <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'सुबह' : 'Morning'}</span>
-                      <div className="mt-1">
-                        {toEnglishDigits(
-                          Array.isArray((remedy.routine as any).morning[lang]) 
-                            ? (remedy.routine as any).morning[lang].join('. ') 
-                            : ((remedy.routine as any).morning[lang] || '')
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  {(remedy.routine as any)?.afternoon && (
-                    <div className="border-l-2 border-amber-500/30 pl-3">
-                      <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'दोपहर' : 'Afternoon'}</span>
-                      <div className="mt-1">
-                        {toEnglishDigits(
-                          Array.isArray((remedy.routine as any).afternoon[lang]) 
-                            ? (remedy.routine as any).afternoon[lang].join('. ') 
-                            : ((remedy.routine as any).afternoon[lang] || '')
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  {(remedy.routine as any)?.evening && (
-                    <div className="border-l-2 border-amber-500/30 pl-3">
-                      <span className="text-[10px] font-black uppercase text-amber-700/60">{isHindi ? 'शाम' : 'Evening'}</span>
-                      <div className="mt-1">
-                        {toEnglishDigits(
-                          Array.isArray((remedy.routine as any).evening[lang]) 
-                            ? (remedy.routine as any).evening[lang].join('. ') 
-                            : ((remedy.routine as any).evening[lang] || '')
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </>
-              ) : (
-                /* Fallback for simple {hi, en} structure in live recipes */
-                <div className="mt-1">
-                  {toEnglishDigits(
-                    Array.isArray((remedy.routine as any)?.[lang]) 
-                      ? (remedy.routine as any)[lang].join('. ') 
-                      : ((remedy.routine as any)?.[lang] || '')
-                  )}
-                </div>
-              )}
+            <div className="text-[15px] leading-relaxed font-medium">
+              <ul className="space-y-3 list-none p-0 m-0">
+                {(remedy.routine as any)?.morning || (remedy.routine as any)?.afternoon || (remedy.routine as any)?.evening ? (
+                  <>
+                    {['morning', 'afternoon', 'evening'].map((timeKey) => {
+                      const timeData = (remedy.routine as any)?.[timeKey];
+                      if (!timeData) return null;
+                      
+                      const label = timeKey === 'morning' ? (isHindi ? 'सुबह' : 'Morning') : 
+                                    timeKey === 'afternoon' ? (isHindi ? 'दोपहर' : 'Afternoon') : 
+                                    (isHindi ? 'शाम' : 'Evening');
+                      
+                      const content = Array.isArray(timeData[lang]) 
+                        ? timeData[lang].join('. ') 
+                        : (timeData[lang] || '');
+                      
+                      if (!content) return null;
+
+                      return (
+                        <li key={timeKey} className="flex items-start gap-3">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-2 shrink-0" />
+                          <span>
+                            <span className="font-black text-amber-700 mr-1">{label}:</span>
+                            {toEnglishDigits(content)}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </>
+                ) : (
+                  (() => {
+                    const data = (remedy.routine as any)?.[lang] || (remedy.routine as any);
+                    const points: string[] = Array.isArray(data) 
+                      ? data.filter(item => typeof item === 'string' && item.trim() !== '') 
+                      : (typeof data === 'string' ? data.split('\n').filter(line => line.trim() !== '') : []);
+                    
+                    return points.map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-2 shrink-0" />
+                        <span>{toEnglishDigits(item)}</span>
+                      </li>
+                    ));
+                  })()
+                )}
+              </ul>
             </div>
           </div>
 
