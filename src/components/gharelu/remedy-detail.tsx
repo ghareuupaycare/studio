@@ -108,6 +108,15 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     };
   }, [db, remedy?.id]);
 
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      stopSpeechEngine();
+      setIsAudioPlaying(false);
+    };
+  }, []);
+
   const handleQuestionSubmit = async () => {
     if (!question.trim() || !db || !userId) return;
     setIsSubmittingQuestion(true);
@@ -185,7 +194,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         return '';
       };
 
-      const titleText = pickText(remedy?.name);
+      const titleText = pickText(remedy?.name || (remedy as any)?.title);
       const introText = pickSection(remedy?.introduction);
       const ingredientsText = pickSection(remedy?.ingredients, (item: any) => {
         if (typeof item === 'string') return item.trim();
@@ -472,7 +481,58 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           {renderSection(<Activity className="w-5 h-5" />, labels.usage, remedy.usage?.[lang], 'yellow')}
           {renderSection(<Apple className="w-5 h-5" />, labels.dietEat, remedy.dietEat?.[lang], 'green')}
           {renderSection(<AlertTriangle className="w-5 h-5" />, labels.dietAvoid, remedy.dietAvoid?.[lang], 'red')}
-          {renderSection(<Clock className="w-5 h-5" />, labels.routine, remedy.routine, 'yellow')}
+          
+          {/* Section 8: Routine */}
+          {remedy.routine && (
+            <div className={cn("p-6 rounded-[2.5rem] border shadow-md space-y-4 mb-6 transition-all duration-300", getVariantStyles('yellow'))}>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-amber-500/10 text-amber-700">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <h3 className="text-[18px] font-bold leading-tight">{labels.routine}</h3>
+              </div>
+              <div className="text-[15px] leading-relaxed font-medium space-y-2">
+                <ul className="space-y-3 list-none p-0 m-0">
+                  {(() => {
+                    const r = remedy.routine;
+                    // Case 1: Structured (static data like in cold-data.ts)
+                    if (r.morning || r.afternoon || r.evening) {
+                      return [
+                        { label: isHindi ? 'सुबह' : 'Morning', val: r.morning },
+                        { label: isHindi ? 'दोपहर' : 'Afternoon', val: r.afternoon },
+                        { label: isHindi ? 'शाम' : 'Evening', val: r.evening }
+                      ].map((item, i) => {
+                        const text = item.val?.[lang] || item.val?.hi || (typeof item.val === 'string' ? item.val : '');
+                        if (!text) return null;
+                        return (
+                          <li key={i} className="flex items-start gap-3">
+                            <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0 bg-amber-600" />
+                            <span className="flex flex-col">
+                              <span className="text-[10px] font-black uppercase opacity-60">{item.label}</span>
+                              <span>{toEnglishDigits(text)}</span>
+                            </span>
+                          </li>
+                        );
+                      });
+                    }
+                    // Case 2: Flat localized (dynamic data from Firestore)
+                    const flatVal = r[lang] || r['hi'];
+                    if (flatVal) {
+                      const lines = Array.isArray(flatVal) ? flatVal : String(flatVal).split('\n');
+                      return lines.filter(l => l.trim()).map((item, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0 bg-amber-600" />
+                          <span>{toEnglishDigits(item)}</span>
+                        </li>
+                      ));
+                    }
+                    return null;
+                  })()}
+                </ul>
+              </div>
+            </div>
+          )}
+
           {renderSection(<ShieldCheck className="w-5 h-5" />, labels.safety, remedy.safetyAdvice?.[lang], 'red')}
 
           <div className={cn(
