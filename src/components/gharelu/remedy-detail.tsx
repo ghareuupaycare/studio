@@ -186,7 +186,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         return '';
       };
 
-      // 0. Title
+      // 0. Title (mapped to 'name' in our data)
       const titleStr = getLocalizedValue(remedy?.name);
 
       // 1. परिचय (Introduction)
@@ -195,7 +195,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       // 2. आवश्यक सामग्री (Ingredients)
       const ingredientsStr = getLocalizedListOrText(remedy?.ingredients, (item: any) => {
         if (typeof item === 'string') return item.trim();
-        const name = getLocalizedValue(item?.name || item);
+        const name = getLocalizedValue(item?.name);
         const qty = getLocalizedValue(item?.quantity || item?.amount);
         return [name, qty].filter(Boolean).join(' - ');
       });
@@ -209,7 +209,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         return text ? `चरण ${idx + 1}: ${text}` : '';
       });
 
-      // स्मार्ट खुराक (Active Smart Dosage)
+      // 4. स्मार्ट खुराक (Active Smart Dosage)
       let dosageStr = '';
       if (Array.isArray(remedy?.doses) && remedy.doses.length > 0) {
         const safeIdx =
@@ -224,7 +224,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         }
       }
 
-      // सेवन विधि (Usage)
+      // 5. सेवन विधि (Usage)
       const usageStr = getLocalizedListOrText(remedy?.usage, (rule: any, idx: number) => {
         const text =
           typeof rule === 'string'
@@ -233,25 +233,20 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         return text ? `नियम ${idx + 1}: ${text}` : '';
       });
 
-      // क्या खाएं / क्या न खाएं (Diet)
+      // 6. क्या खाएं / 7. क्या न खाएं (Diet)
       const eatStr = getLocalizedListOrText(remedy?.dietEat);
       const avoidStr = getLocalizedListOrText(remedy?.dietAvoid);
 
-      // दिनचर्या (Routine)
-      const routineStr = getLocalizedListOrText(remedy?.routine, (r: any) => {
-        if (typeof r === 'string') return r.trim();
-        const time = getLocalizedValue(r?.time || r?.period);
-        const desc = getLocalizedValue(r?.description || r?.activity || r?.text);
-        return [time, desc].filter(Boolean).join(': ');
-      });
+      // 8. दिनचर्या (Routine)
+      const routineStr = getLocalizedListOrText(remedy?.routine);
 
-      // सुरक्षा सूचना (Safety Advice)
+      // 9. सुरक्षा सूचना (Safety Advice)
       const safetyStr = getLocalizedListOrText(remedy?.safetyAdvice);
 
-      // Section-wise blocks
-      const sectionBlocks = [
+      // Section-wise blocks to be read sequentially
+      const sections = [
         titleStr ? `नुस्खा: ${titleStr}` : '',
-        introStr ? `परिचय: ${introStr}` : '',
+        introStr ? `बीमारी का परिचय: ${introStr}` : '',
         ingredientsStr ? `आवश्यक सामग्री: ${ingredientsStr}` : '',
         stepsStr ? `बनाने की विधि: ${stepsStr}` : '',
         dosageStr,
@@ -261,49 +256,29 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         routineStr ? `दिनचर्या: ${routineStr}` : '',
         safetyStr ? `सुरक्षा सूचना: ${safetyStr}` : '',
       ]
-        .map((block) => toEnglishDigits(block).replace(/\s+/g, ' ').trim())
-        .filter((block) => block.length > 0);
+        .map((s) => toEnglishDigits(s).replace(/\s+/g, ' ').trim())
+        .filter(Boolean);
 
-      if (sectionBlocks.length === 0) {
+      if (sections.length === 0) {
         setIsAudioPlaying(false);
         return;
       }
 
       setIsAudioPlaying(true);
-      let currentIndex = 0;
+      
+      const fullTextToSpeak = sections.join('. ');
 
-      const speakNextSection = () => {
-        if (!isMountedRef.current) {
-          if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-          }
+      speakText(
+        fullTextToSpeak,
+        currentLang,
+        () => {
+          if (!isMountedRef.current) return;
+        },
+        () => {
+          if (!isMountedRef.current) return;
           setIsAudioPlaying(false);
-          return;
         }
-
-        if (currentIndex >= sectionBlocks.length) {
-          setIsAudioPlaying(false);
-          return;
-        }
-
-        const textToSpeak = sectionBlocks[currentIndex];
-        currentIndex += 1;
-
-        speakText(
-          textToSpeak,
-          currentLang,
-          () => {
-            if (!isMountedRef.current) return;
-            speakNextSection();
-          },
-          () => {
-            if (!isMountedRef.current) return;
-            setIsAudioPlaying(false);
-          }
-        );
-      };
-
-      speakNextSection();
+      );
     } catch (err) {
       console.error('Audio Error:', err);
       if (isMountedRef.current) {
@@ -477,9 +452,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 <div className="mt-1">
                   {toEnglishDigits(
                     remedy.routine?.morning?.[lang] 
-                      ? (Array.isArray(remedy.routine.morning[lang]) 
-                          ? remedy.routine.morning[lang].join('. ') 
-                          : remedy.routine.morning[lang]) 
+                      ? (Array.isArray(remedy.routine.morning?.[lang]) 
+                          ? remedy.routine.morning?.[lang].join('. ') 
+                          : remedy.routine.morning?.[lang]) 
                       : ''
                   )}
                 </div>
@@ -489,9 +464,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 <div className="mt-1">
                   {toEnglishDigits(
                     remedy.routine?.afternoon?.[lang] 
-                      ? (Array.isArray(remedy.routine.afternoon[lang]) 
-                          ? remedy.routine.afternoon[lang].join('. ') 
-                          : remedy.routine.afternoon[lang]) 
+                      ? (Array.isArray(remedy.routine.afternoon?.[lang]) 
+                          ? remedy.routine.afternoon?.[lang].join('. ') 
+                          : remedy.routine.afternoon?.[lang]) 
                       : ''
                   )}
                 </div>
@@ -501,9 +476,9 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 <div className="mt-1">
                   {toEnglishDigits(
                     remedy.routine?.evening?.[lang] 
-                      ? (Array.isArray(remedy.routine.evening[lang]) 
-                          ? remedy.routine.evening[lang].join('. ') 
-                          : remedy.routine.evening[lang]) 
+                      ? (Array.isArray(remedy.routine.evening?.[lang]) 
+                          ? remedy.routine.evening?.[lang].join('. ') 
+                          : remedy.routine.evening?.[lang]) 
                       : ''
                   )}
                 </div>
