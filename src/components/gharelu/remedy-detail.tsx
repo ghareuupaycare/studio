@@ -58,18 +58,21 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   const [chatThread, setChatThread] = useState<any[]>([]);
   const [userId, setUserId] = useState<string>('');
 
-  // 1. Component mount/unmount cleanup for instant audio stop on back navigation
+  const stopAllAudioNow = () => {
+    isMountedRef.current = false;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    if (typeof stopSpeech === 'function') {
+      stopSpeech();
+    }
+    setIsAudioPlaying(false);
+  };
+
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
-      isMountedRef.current = false;
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
-      if (typeof stopSpeech === 'function') {
-        stopSpeech();
-      }
-      setIsAudioPlaying(false);
+      stopAllAudioNow();
     };
   }, []);
 
@@ -120,29 +123,23 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
 
   const handleToggleAudio = () => {
     if (isAudioPlaying) {
-      isMountedRef.current = false;
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
-      if (typeof stopSpeech === 'function') {
-        stopSpeech();
-      }
-      setIsAudioPlaying(false);
+      stopAllAudioNow();
       return;
     }
 
-    try {
-      isMountedRef.current = true;
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
-      if (typeof stopSpeech === 'function') {
-        stopSpeech();
-      }
+    isMountedRef.current = true;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    if (typeof stopSpeech === 'function') {
+      stopSpeech();
+    }
+    setIsAudioPlaying(true);
 
+    try {
       const currentLang = lang || 'hi';
 
-      const getLocalizedValue = (val: any): string => {
+      const pickText = (val: any): string => {
         if (!val) return '';
         if (typeof val === 'string') return val.trim();
         if (typeof val === 'object') {
@@ -151,34 +148,32 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         return '';
       };
 
-      const getLocalizedListOrText = (val: any, itemFormatter?: (item: any, idx: number) => string): string => {
+      const pickSection = (val: any, formatter?: (item: any, idx: number) => string): string => {
         if (!val) return '';
-        const target =
+        const data =
           typeof val === 'object' && !Array.isArray(val)
             ? (val[currentLang] ?? val['hi'] ?? val['en'] ?? val)
             : val;
 
-        if (typeof target === 'string') {
-          return target.trim();
-        }
-        if (Array.isArray(target)) {
-          return target
+        if (typeof data === 'string') return data.trim();
+        if (Array.isArray(data)) {
+          return data
             .map((item, idx) => {
-              if (itemFormatter) return itemFormatter(item, idx);
+              if (formatter) return formatter(item, idx);
               if (typeof item === 'string') return item.trim();
               if (item && typeof item === 'object') {
-                return getLocalizedValue(item.text || item.instruction || item.rule || item.description || item.name || '');
+                return pickText(item.text || item.instruction || item.rule || item.description || item.name || '');
               }
               return '';
             })
             .filter(Boolean)
             .join('। ');
         }
-        if (target && typeof target === 'object') {
-          return Object.entries(target)
+        if (data && typeof data === 'object') {
+          return Object.entries(data)
             .map(([k, v]) => {
-              const vStr = getLocalizedValue(v);
-              return vStr ? `${k}: ${vStr}` : '';
+              const vText = pickText(v);
+              return vText ? `${k}: ${vText}` : '';
             })
             .filter(Boolean)
             .join('। ');
@@ -186,100 +181,96 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         return '';
       };
 
-      const titleStr = getLocalizedValue(remedy?.name);
-      const introStr = getLocalizedListOrText(remedy?.introduction);
-      const ingredientsStr = getLocalizedListOrText(remedy?.ingredients, (item: any) => {
+      const titleText = pickText(remedy?.name);
+      const introText = pickSection(remedy?.introduction);
+      const ingredientsText = pickSection(remedy?.ingredients, (item: any) => {
         if (typeof item === 'string') return item.trim();
-        const name = getLocalizedValue(item?.name);
-        const qty = getLocalizedValue(item?.quantity || item?.amount);
+        const name = pickText(item?.name);
+        const qty = pickText(item?.quantity || item?.amount);
         return [name, qty].filter(Boolean).join(' - ');
       });
-      const stepsStr = getLocalizedListOrText(remedy?.preparation, (step: any, idx: number) => {
-        const text =
+      const prepText = pickSection(remedy?.preparation, (step: any, idx: number) => {
+        const stepText =
           typeof step === 'string'
             ? step.trim()
-            : getLocalizedValue(step?.instruction || step?.step || step?.description || step?.text);
-        return text ? `चरण ${idx + 1}: ${text}` : '';
+            : pickText(step?.instruction || step?.step || step?.description || step?.text);
+        return stepText ? `चरण ${idx + 1}: ${stepText}` : '';
       });
 
-      let dosageStr = '';
+      let doseText = '';
       if (Array.isArray(remedy?.doses) && remedy.doses.length > 0) {
-        const safeIdx =
+        const idx =
           typeof selectedDoseIndex === 'number' && selectedDoseIndex >= 0 && selectedDoseIndex < remedy.doses.length
             ? selectedDoseIndex
             : 0;
-        const doseObj = remedy.doses[safeIdx] || remedy.doses[0];
-        const ageText = getLocalizedValue(doseObj?.age || doseObj?.ageRange);
-        const doseText = getLocalizedValue(doseObj?.dose);
-        if (ageText || doseText) {
-          dosageStr = `स्मार्ट खुराक${ageText ? ` (${ageText})` : ''}: ${doseText}`;
+        const d = remedy.doses[idx] || remedy.doses[0];
+        const age = pickText(d?.ageRange || d?.age || (d as any)?.label);
+        const amount = pickText(d?.dose || (d as any)?.dosage || (d as any)?.amount || (d as any)?.instruction);
+        if (age || amount) {
+          doseText = `स्मार्ट खुराक${age ? ` (${age})` : ''}: ${amount}`;
         }
       }
 
-      const usageStr = getLocalizedListOrText(remedy?.usage, (rule: any, idx: number) => {
-        const text =
+      const usageText = pickSection(remedy?.usage, (rule: any, idx: number) => {
+        const rText =
           typeof rule === 'string'
             ? rule.trim()
-            : getLocalizedValue(rule?.rule || rule?.instruction || rule?.text || rule?.description);
-        return text ? `नियम ${idx + 1}: ${text}` : '';
+            : pickText(rule?.rule || rule?.instruction || rule?.text || rule?.description);
+        return rText ? `नियम ${idx + 1}: ${rText}` : '';
       });
 
-      const eatStr = getLocalizedListOrText(remedy?.dietEat);
-      const avoidStr = getLocalizedListOrText(remedy?.dietAvoid);
-      const routineStr = getLocalizedListOrText(remedy?.routine, (r: any) => {
+      const eatText = pickSection(remedy?.dietEat);
+      const avoidText = pickSection(remedy?.dietAvoid);
+      const routineText = pickSection(remedy?.routine, (r: any) => {
         if (typeof r === 'string') return r.trim();
-        const time = getLocalizedValue(r?.time || r?.period);
-        const desc = getLocalizedValue(r?.description || r?.activity || r?.text);
+        const time = pickText(r?.time || r?.period);
+        const desc = pickText(r?.description || r?.activity || r?.text);
         return [time, desc].filter(Boolean).join(': ');
       });
-      const safetyStr = getLocalizedListOrText(remedy?.safetyAdvice);
+      const safetyText = pickSection(remedy?.safetyAdvice);
 
-      const sections = [
-        titleStr ? `नुस्खा: ${titleStr}` : '',
-        introStr ? `बीमारी का परिचय: ${introStr}` : '',
-        ingredientsStr ? `आवश्यक सामग्री: ${ingredientsStr}` : '',
-        stepsStr ? `बनाने की विधि: ${stepsStr}` : '',
-        dosageStr,
-        usageStr ? `सेवन विधि: ${usageStr}` : '',
-        eatStr ? `क्या खाएं: ${eatStr}` : '',
-        avoidStr ? `क्या न खाएं: ${avoidStr}` : '',
-        routineStr ? `दिनचर्या: ${routineStr}` : '',
-        safetyStr ? `सुरक्षा सूचना: ${safetyStr}` : '',
+      const sectionList = [
+        titleText,
+        introText ? `बीमारी का परिचय: ${introText}` : '',
+        ingredientsText ? `आवश्यक सामग्री: ${ingredientsText}` : '',
+        prepText ? `बनाने की विधि: ${prepText}` : '',
+        doseText,
+        usageText ? `सेवन विधि: ${usageText}` : '',
+        eatText ? `क्या खाएं: ${eatText}` : '',
+        avoidText ? `क्या न खाएं: ${avoidText}` : '',
+        routineText ? `दिनचर्या: ${routineText}` : '',
+        safetyText ? `सुरक्षा सूचना: ${safetyText}` : '',
       ]
         .map((s) => toEnglishDigits(s).replace(/\s+/g, ' ').trim())
         .filter(Boolean);
 
-      if (sections.length === 0) {
+      if (sectionList.length === 0) {
         setIsAudioPlaying(false);
         return;
       }
 
-      setIsAudioPlaying(true);
-      let index = 0;
+      let pointer = 0;
 
-      const playNext = () => {
+      const runNext = () => {
         if (!isMountedRef.current) {
-          if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-          }
+          stopAllAudioNow();
+          return;
+        }
+
+        if (pointer >= sectionList.length) {
           setIsAudioPlaying(false);
           return;
         }
 
-        if (index >= sections.length) {
-          setIsAudioPlaying(false);
-          return;
-        }
-
-        const currentBlock = sections[index];
-        index += 1;
+        const block = sectionList[pointer];
+        pointer += 1;
 
         speakText(
-          currentBlock,
+          block,
           currentLang,
           () => {
             if (!isMountedRef.current) return;
-            playNext();
+            runNext();
           },
           () => {
             if (!isMountedRef.current) return;
@@ -288,7 +279,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         );
       };
 
-      playNext();
+      runNext();
     } catch (err) {
       console.error('Audio Error:', err);
       if (isMountedRef.current) {
@@ -308,7 +299,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
     routine: isHindi ? '8. दिनचर्या' : '8. Daily Routine',
     safety: isHindi ? '9. सुरक्षा सूचना' : '9. Safety Information',
     qaPlaceholder: isHindi ? 'अपना अनुभव साझा करें...' : 'Share your experience...',
-    qaButton: isHindi ? 'अनुभव भेजें' : 'Send Experience',
+    qaButton: isHindi ? 'नया अनुभव भेजें' : 'Send Experience',
   };
 
   const getVariantStyles = (variant: SectionVariant) => {
@@ -428,7 +419,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                       selectedDoseIndex === i ? "bg-accent border-accent text-white shadow-lg scale-95" : (isNight ? "bg-white/5 border-white/10 text-white" : "bg-white border-amber-200 text-[#5F4B1A] hover:bg-amber-50")
                     )}
                   >
-                    <User className="w-3.5 h-3.5" /> {toEnglishDigits(dose.age?.[lang] || dose.ageRange?.[lang] || '')}
+                    <User className="w-3.5 h-3.5" /> {toEnglishDigits(dose.ageRange?.[lang] || dose.age?.[lang] || '')}
                   </button>
                 ))}
               </div>
@@ -458,7 +449,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             
             <div className="text-[15px] leading-relaxed font-medium">
               <ul className="space-y-3 list-none p-0 m-0">
-                {(remedy.routine as any)?.morning || (remedy.routine as any)?.afternoon || (remedy.routine as any)?.evening ? (
+                {remedy.routine?.morning || remedy.routine?.afternoon || remedy.routine?.evening ? (
                   <>
                     {['morning', 'afternoon', 'evening'].map((timeKey) => {
                       const timeData = (remedy.routine as any)?.[timeKey];
