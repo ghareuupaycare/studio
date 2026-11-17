@@ -17,7 +17,6 @@ import {
   User,
   Volume2,
   VolumeX,
-  PlayCircle,
   MessageSquare,
   Sparkles,
   Loader2
@@ -26,11 +25,11 @@ import { cn, toEnglishDigits } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import Image from 'next/image';
 import { useFirestore } from '@/firebase';
 import { getChatUserId, getChatCacheKey, listenToChatThread, postUserExperience } from '@/lib/chat-sync';
 import { stopSpeech } from '@/lib/audio-reader';
 import { RemedyActionBar } from './remedy-action-bar';
+import { RemedyHeroImage } from './remedy-hero-image';
 
 interface RemedyDetailProps {
   remedy: Remedy;
@@ -107,15 +106,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
       isInitialLoad.current = true;
     };
   }, [db, remedy?.id]);
-
-  useEffect(() => {
-    isMountedRef.current = true;
-    return () => {
-      isMountedRef.current = false;
-      stopSpeechEngine();
-      setIsAudioPlaying(false);
-    };
-  }, []);
 
   const handleQuestionSubmit = async () => {
     if (!question.trim() || !db || !userId) return;
@@ -194,7 +184,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
         return '';
       };
 
-      const titleText = pickText(remedy?.name || (remedy as any)?.title);
+      const titleText = pickText(remedy?.name);
       const introText = pickSection(remedy?.introduction);
       const ingredientsText = pickSection(remedy?.ingredients, (item: any) => {
         if (typeof item === 'string') return item.trim();
@@ -217,8 +207,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
             ? selectedDoseIndex
             : 0;
         const d = remedy.doses[idx] || remedy.doses[0];
-        const age = pickText(d?.ageRange || d?.age || (d as any)?.label);
-        const amount = pickText(d?.dose || (d as any)?.dosage || (d as any)?.amount || (d as any)?.instruction);
+        const age = pickText(d?.ageRange || d?.age || d?.label);
+        const amount = pickText(d?.dose || d?.dosage || d?.amount || d?.instruction);
         if (age || amount) {
           doseText = `स्मार्ट खुराक${age ? ` (${age})` : ''}: ${amount}`;
         }
@@ -399,6 +389,8 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-24 max-w-2xl mx-auto overflow-hidden">
       <div className="w-full">
+        <RemedyHeroImage url={remedy.image} alt={remedy.name?.[lang]} />
+        
         <div className="flex justify-start mb-2 px-1">
           <Button 
             onClick={handleToggleAudio}
@@ -428,17 +420,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           </Button>
         </div>
 
-        {remedy.image && (
-          <div className="mb-8 relative aspect-[16/9] w-full rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-accent/20">
-            <Image src={remedy.image} alt={remedy.name?.[lang] as string || 'remedy'} fill className="object-cover" sizes="(max-width: 768px) 100vw, 800px" priority />
-            {isAudioPlaying && (
-              <div className="absolute top-4 right-4 bg-accent text-white p-2 rounded-full shadow-lg animate-bounce">
-                <PlayCircle className="w-6 h-6" />
-              </div>
-            )}
-          </div>
-        )}
-
         <div className="space-y-0">
           {renderSection(<Info className="w-5 h-5" />, labels.introduction, remedy.introduction?.[lang], 'green')}
           {renderSection(<Beaker className="w-5 h-5" />, labels.ingredients, remedy.ingredients?.[lang], 'yellow')}
@@ -460,7 +441,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                       selectedDoseIndex === i ? "bg-accent border-accent text-white shadow-lg scale-95" : (isNight ? "bg-white/5 border-white/10 text-white" : "bg-white border-amber-200 text-[#5F4B1A] hover:bg-amber-50")
                     )}
                   >
-                    <User className="w-3.5 h-3.5" /> {toEnglishDigits(dose.ageRange?.[lang] || dose.age?.[lang] || '')}
+                    <User className="w-3.5 h-3.5" /> {toEnglishDigits(dose.ageRange?.[lang] || dose.ageRange || '')}
                   </button>
                 ))}
               </div>
@@ -468,9 +449,16 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 <div className={cn("p-5 rounded-2xl border-l-4", isNight ? "bg-white/5 border-accent" : "bg-white/60 border-accent")}>
                   <div className="text-[16px] font-bold leading-relaxed">
                     <ul className="space-y-2 list-none p-0 m-0">
-                      {(Array.isArray(remedy.doses[selectedDoseIndex].dose?.[lang]) ? (remedy.doses[selectedDoseIndex].dose?.[lang] as string[]) : (remedy.doses[selectedDoseIndex].dose?.[lang] as string || '').split('\n')).filter(p => p.trim() !== '').map((point, idx) => (
-                        <li key={idx} className="flex items-start gap-3"><span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" /><span>{toEnglishDigits(point)}</span></li>
-                      ))}
+                      {(() => {
+                        const doseVal = remedy.doses[selectedDoseIndex].dose?.[lang];
+                        const points = Array.isArray(doseVal) ? doseVal : String(doseVal || '').split('\n');
+                        return points.filter(p => p.trim() !== '').map((point, idx) => (
+                          <li key={idx} className="flex items-start gap-3">
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 shrink-0" />
+                            <span>{toEnglishDigits(point)}</span>
+                          </li>
+                        ));
+                      })()}
                     </ul>
                   </div>
                 </div>
@@ -482,7 +470,6 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
           {renderSection(<Apple className="w-5 h-5" />, labels.dietEat, remedy.dietEat?.[lang], 'green')}
           {renderSection(<AlertTriangle className="w-5 h-5" />, labels.dietAvoid, remedy.dietAvoid?.[lang], 'red')}
           
-          {/* Section 8: Routine */}
           {remedy.routine && (
             <div className={cn("p-6 rounded-[2.5rem] border shadow-md space-y-4 mb-6 transition-all duration-300", getVariantStyles('yellow'))}>
               <div className="flex items-center gap-3">
@@ -495,18 +482,18 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 <ul className="space-y-3 list-none p-0 m-0">
                   {(() => {
                     const r = remedy.routine;
-                    // Case 1: Structured (static data like in cold-data.ts)
-                    if (r.morning || r.afternoon || r.evening) {
+                    if (r && (r.morning || r.afternoon || r.evening)) {
                       return [
                         { label: isHindi ? 'सुबह' : 'Morning', val: r.morning },
                         { label: isHindi ? 'दोपहर' : 'Afternoon', val: r.afternoon },
                         { label: isHindi ? 'शाम' : 'Evening', val: r.evening }
                       ].map((item, i) => {
-                        const text = item.val?.[lang] || item.val?.hi || (typeof item.val === 'string' ? item.val : '');
-                        if (!text) return null;
+                        const textVal = item.val?.[lang] || item.val?.hi || (typeof item.val === 'string' ? item.val : '');
+                        if (!textVal) return null;
+                        const text = Array.isArray(textVal) ? textVal.join(', ') : textVal;
                         return (
                           <li key={i} className="flex items-start gap-3">
-                            <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0 bg-amber-600" />
+                            <span className={cn("w-1.5 h-1.5 rounded-full mt-2 shrink-0 bg-amber-600")} />
                             <span className="flex flex-col">
                               <span className="text-[10px] font-black uppercase opacity-60">{item.label}</span>
                               <span>{toEnglishDigits(text)}</span>
@@ -515,13 +502,12 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                         );
                       });
                     }
-                    // Case 2: Flat localized (dynamic data from Firestore)
-                    const flatVal = r[lang] || r['hi'];
+                    const flatVal = r?.[lang] || r?.['hi'];
                     if (flatVal) {
                       const lines = Array.isArray(flatVal) ? flatVal : String(flatVal).split('\n');
                       return lines.filter(l => l.trim()).map((item, i) => (
                         <li key={i} className="flex items-start gap-3">
-                          <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0 bg-amber-600" />
+                          <span className={cn("w-1.5 h-1.5 rounded-full mt-2 shrink-0 bg-amber-600")} />
                           <span>{toEnglishDigits(item)}</span>
                         </li>
                       ));

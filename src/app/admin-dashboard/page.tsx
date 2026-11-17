@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
@@ -174,26 +173,49 @@ export default function AdminDashboard() {
     const file = e.target.files?.[0];
     if (!file || !storage) return;
 
-    setIsUploadingImage(true);
-    const storageRef = ref(storage, `recipe_images/${Date.now()}_${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
+    // Limit to 1MB
+    if (file.size > 1024 * 1024) {
+      toast({ 
+        variant: "destructive", 
+        title: "File too large", 
+        description: "कृपया 1MB से कम साइज की इमेज चुनें।" 
+      });
+      e.target.value = ''; // Reset input
+      return;
+    }
 
-    uploadTask.on('state_changed', 
-      (snapshot) => {
-        setUploadProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-      }, 
-      (error) => {
-        console.error("Upload error", error);
-        toast({ variant: "destructive", title: "इमेज अपलोड विफल" });
-        setIsUploadingImage(false);
-      }, 
-      async () => {
-        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        setRecipeImageUrl(downloadURL);
-        setIsUploadingImage(false);
-        toast({ title: "इमेज अपलोड सफल" });
-      }
-    );
+    setIsUploadingImage(true);
+    setUploadProgress(0);
+
+    try {
+      const storageRef = ref(storage, `recipes/${Date.now()}_${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on('state_changed', 
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+        }, 
+        (error) => {
+          console.error("Upload error:", error);
+          setIsUploadingImage(false);
+          toast({ 
+            variant: "destructive", 
+            title: "Upload Failed", 
+            description: "इमेज अपलोड नहीं हो सकी। आप इसके बिना भी जारी रख सकते हैं।" 
+          });
+        }, 
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          setRecipeImageUrl(downloadURL);
+          setIsUploadingImage(false);
+          toast({ title: "Image Uploaded", description: "इमेज सफलतापूर्वक अपलोड हो गई है।" });
+        }
+      );
+    } catch (err) {
+      console.error("Storage error:", err);
+      setIsUploadingImage(false);
+    }
   };
 
   const handleRecipeSubmit = async (e: React.FormEvent) => {
@@ -370,7 +392,7 @@ export default function AdminDashboard() {
             <AdminRemedyList 
               groupedRecipes={groupedRecipes} 
               onEdit={handleEditRecipe} 
-              onDelete={handleRecipeSubmit} 
+              onDelete={handleDeleteRecipe} 
               onDeleteCategory={() => {}} 
               onDeleteSubCategory={() => {}} 
               onQuickAdd={() => setView('add-recipe')} 
