@@ -32,11 +32,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Check if the environment is not production
+  const isDev = process.env.NODE_ENV !== 'production';
+
   return (
     <html lang="hi">
       <head>
-        <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-        <script>eruda.init();</script>
+        {/* Enable Eruda console only in development/preview mode */}
+        {isDev && (
+          <>
+            <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+            <script dangerouslySetInnerHTML={{ __html: "eruda.init();" }} />
+          </>
+        )}
         
         {/* Google Search Console Verification */}
         <meta name="google-site-verification" content="MVboRUnfOsCahICx3pIfAyiQckT1iDnl38k-OgYpVFo" />
