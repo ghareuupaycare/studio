@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
@@ -12,13 +12,18 @@ interface RemedyHeroImageProps {
 export const RemedyHeroImage = ({ url, alt }: RemedyHeroImageProps) => {
   const [error, setError] = useState(false);
 
+  // Reset error state if url changes
+  useEffect(() => {
+    setError(false);
+  }, [url]);
+
   if (!url || error) return null;
 
   return (
-    <div className="mb-6 w-full animate-in fade-in duration-700">
+    <div className="mb-6 w-full animate-in fade-in zoom-in duration-700">
       <div className={cn(
         "relative aspect-video w-full overflow-hidden rounded-[2.5rem] shadow-2xl",
-        "border-4 border-amber-400/30"
+        "border-4 border-amber-400/30 ring-1 ring-amber-400/10"
       )}>
         <Image 
           src={url} 

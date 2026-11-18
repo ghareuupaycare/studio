@@ -6,12 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { LayoutDashboard, LogOut, PlusCircle, ChevronLeft, ClipboardList, Moon, Sun, MessageSquare, Send, Trash2, Sparkles, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useFirestore, useStorage } from '@/firebase';
+import { useFirestore } from '@/firebase';
 import { 
   collection, onSnapshot, query, orderBy, deleteDoc, doc, 
   addDoc, updateDoc, serverTimestamp 
 } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { AdminRemedyList } from '@/components/admin/admin-remedy-list';
 import { AdminForm } from '@/components/admin/admin-form';
 import { cn } from '@/lib/utils';
@@ -51,7 +50,6 @@ export default function AdminDashboard() {
   const router = useRouter();
   const { toast } = useToast();
   const db = useFirestore();
-  const storage = useStorage();
   
   const [isLoaded, setIsLoaded] = useState(false);
   const [view, setView] = useState<ViewState>('overview');
@@ -93,7 +91,7 @@ export default function AdminDashboard() {
       setQuestions(snapshot.docs.map(doc => ({ 
         id: doc.id, 
         ...doc.data(),
-        _ts: doc.data().timestamp?.toMillis() || Date.now()
+        _ts: (doc.data().timestamp as any)?.toMillis() || Date.now()
       })));
     });
 
@@ -171,50 +169,68 @@ export default function AdminDashboard() {
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !storage) return;
+    if (!file) return;
 
-    // Limit to 1MB
-    if (file.size > 1024 * 1024) {
+    // Limit to 2MB for processing
+    if (file.size > 2 * 1024 * 1024) {
       toast({ 
         variant: "destructive", 
         title: "File too large", 
-        description: "कृपया 1MB से कम साइज की इमेज चुनें।" 
+        description: "कृपया 2MB से कम साइज की इमेज चुनें।" 
       });
-      e.target.value = ''; // Reset input
+      e.target.value = '';
       return;
     }
 
     setIsUploadingImage(true);
-    setUploadProgress(0);
+    setUploadProgress(20);
 
     try {
-      const storageRef = ref(storage, `recipes/${Date.now()}_${file.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          setUploadProgress(50);
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 675; // Maintain 16:9 roughly
+          let width = img.width;
+          let height = img.height;
 
-      uploadTask.on('state_changed', 
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress);
-        }, 
-        (error) => {
-          console.error("Upload error:", error);
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          // Compress to JPEG with 0.7 quality
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          setRecipeImageUrl(compressedBase64);
+          setUploadProgress(100);
           setIsUploadingImage(false);
-          toast({ 
-            variant: "destructive", 
-            title: "Upload Failed", 
-            description: "इमेज अपलोड नहीं हो सकी। आप इसके बिना भी जारी रख सकते हैं।" 
-          });
-        }, 
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          setRecipeImageUrl(downloadURL);
-          setIsUploadingImage(false);
-          toast({ title: "Image Uploaded", description: "इमेज सफलतापूर्वक अपलोड हो गई है।" });
-        }
-      );
+          toast({ title: "Image Ready", description: "तस्वीर सुरक्षित करने के लिए तैयार है।" });
+        };
+      };
     } catch (err) {
-      console.error("Storage error:", err);
+      console.error("Image processing error:", err);
       setIsUploadingImage(false);
+      toast({ 
+        variant: "destructive", 
+        title: "Error", 
+        description: "इमेज प्रोसेस करने में समस्या आई।" 
+      });
     }
   };
 
@@ -257,7 +273,7 @@ export default function AdminDashboard() {
       setEditingId(null);
       setView('manage');
     } catch (error) {
-      toast({ variant: "destructive", title: "त्रुटि", description: "नुस्खा सेव नहीं हो सका।" });
+      toast({ variant: "destructive", title: "Error", description: "नुस्खा सेव नहीं हो सका।" });
     } finally {
       setIsSubmitting(false);
     }
@@ -307,7 +323,7 @@ export default function AdminDashboard() {
       await deleteDoc(doc(db, 'recipes', id));
       toast({ title: "नुस्खा हटा दिया गया" });
     } catch (e) {
-      toast({ variant: "destructive", title: "हटाने में त्रुटि" });
+      toast({ variant: "destructive", title: "Error" });
     }
   };
 
@@ -318,7 +334,7 @@ export default function AdminDashboard() {
       await postAdminReply(db, latestDoc.id, replyText[threadKey]);
       setReplyText(prev => ({ ...prev, [threadKey]: '' }));
       toast({ title: "जवाब भेज दिया गया!" });
-    } catch (e) { toast({ variant: "destructive", title: "त्रुटि" }); }
+    } catch (e) { toast({ variant: "destructive", title: "Error" }); }
   };
 
   const handleQuestionDelete = async (qId: string) => {
@@ -326,7 +342,7 @@ export default function AdminDashboard() {
     try { 
       await deleteDoc(doc(db, 'questions', qId)); 
       toast({ title: "संदेश हटा दिया गया" });
-    } catch (e) { toast({ variant: "destructive", title: "त्रुटि" }); }
+    } catch (e) { toast({ variant: "destructive", title: "Error" }); }
   };
 
   if (!isLoaded) return null;

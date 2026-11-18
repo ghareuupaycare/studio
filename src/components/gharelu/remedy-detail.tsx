@@ -389,6 +389,7 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-24 max-w-2xl mx-auto overflow-hidden">
       <div className="w-full">
+        {/* Remedy Hero Image placed strictly above the listen button */}
         <RemedyHeroImage url={remedy.image} alt={remedy.name?.[lang]} />
         
         <div className="flex justify-start mb-2 px-1">
@@ -482,26 +483,33 @@ export const RemedyDetail = ({ remedy, theme, lang, isFavorite, onToggleFavorite
                 <ul className="space-y-3 list-none p-0 m-0">
                   {(() => {
                     const r = remedy.routine;
-                    if (r && (r.morning || r.afternoon || r.evening)) {
-                      return [
-                        { label: isHindi ? 'सुबह' : 'Morning', val: r.morning },
-                        { label: isHindi ? 'दोपहर' : 'Afternoon', val: r.afternoon },
-                        { label: isHindi ? 'शाम' : 'Evening', val: r.evening }
-                      ].map((item, i) => {
-                        const textVal = item.val?.[lang] || item.val?.hi || (typeof item.val === 'string' ? item.val : '');
-                        if (!textVal) return null;
-                        const text = Array.isArray(textVal) ? textVal.join(', ') : textVal;
-                        return (
-                          <li key={i} className="flex items-start gap-3">
-                            <span className={cn("w-1.5 h-1.5 rounded-full mt-2 shrink-0 bg-amber-600")} />
-                            <span className="flex flex-col">
-                              <span className="text-[10px] font-black uppercase opacity-60">{item.label}</span>
-                              <span>{toEnglishDigits(text)}</span>
-                            </span>
-                          </li>
-                        );
-                      });
+                    const items = [];
+                    
+                    // Handle morning
+                    const morningVal = r?.morning?.[lang] || r?.morning?.hi || (typeof r?.morning === 'string' ? r.morning : null);
+                    if (morningVal) items.push({ label: isHindi ? 'सुबह' : 'Morning', text: morningVal });
+                    
+                    // Handle afternoon
+                    const afternoonVal = r?.afternoon?.[lang] || r?.afternoon?.hi || (typeof r?.afternoon === 'string' ? r.afternoon : null);
+                    if (afternoonVal) items.push({ label: isHindi ? 'दोपहर' : 'Afternoon', text: afternoonVal });
+                    
+                    // Handle evening
+                    const eveningVal = r?.evening?.[lang] || r?.evening?.hi || (typeof r?.evening === 'string' ? r.evening : null);
+                    if (eveningVal) items.push({ label: isHindi ? 'शाम' : 'Evening', text: eveningVal });
+
+                    if (items.length > 0) {
+                      return items.map((item, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <span className={cn("w-1.5 h-1.5 rounded-full mt-2 shrink-0 bg-amber-600")} />
+                          <span className="flex flex-col">
+                            <span className="text-[10px] font-black uppercase opacity-60">{item.label}</span>
+                            <span>{toEnglishDigits(Array.isArray(item.text) ? item.text.join(', ') : item.text)}</span>
+                          </span>
+                        </li>
+                      ));
                     }
+
+                    // Fallback for flat routine data
                     const flatVal = r?.[lang] || r?.['hi'];
                     if (flatVal) {
                       const lines = Array.isArray(flatVal) ? flatVal : String(flatVal).split('\n');
