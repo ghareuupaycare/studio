@@ -14,7 +14,7 @@ export const AppSplashScreen = () => {
       const timer = setTimeout(() => {
         setVisible(false);
         sessionStorage.setItem('gharelu_splash_seen', 'true');
-      }, 1500); // Duration of 1.5 seconds
+      }, 2500); // Slightly longer for better brand visibility
       return () => clearTimeout(timer);
     }
   }, []);
@@ -22,15 +22,15 @@ export const AppSplashScreen = () => {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-[#14532D] flex flex-col items-center justify-center animate-out fade-out fill-mode-forwards duration-500 delay-1000">
+    <div className="fixed inset-0 z-[9999] bg-[#14532D] flex flex-col items-center justify-center animate-out fade-out fill-mode-forwards duration-500 delay-2000">
       <div className="relative w-48 h-48 mb-6 animate-in zoom-in-50 fade-in duration-700">
         <div className="absolute inset-0 bg-white/10 rounded-full animate-ping opacity-25" />
         <Image 
-          src="/icon-512.png" 
+          src="/icon-512x512.png" 
           alt="Gharelu Upay Care" 
           width={512} 
           height={512}
-          className="relative z-10 w-full h-full object-contain rounded-full border-4 border-amber-400"
+          className="relative z-10 w-full h-full object-contain rounded-full border-4 border-amber-400 p-2 bg-white"
           priority
         />
       </div>
@@ -44,7 +44,7 @@ export const AppSplashScreen = () => {
       </div>
       
       {/* Bottom Loading Indicator */}
-      <div className="absolute bottom-12 w-12 h-1.5 bg-white/20 rounded-full overflow-hidden">
+      <div className="absolute bottom-12 w-24 h-1.5 bg-white/20 rounded-full overflow-hidden">
         <div className="h-full bg-accent animate-progress origin-left w-full" />
       </div>
 
@@ -54,7 +54,7 @@ export const AppSplashScreen = () => {
           100% { transform: scaleX(1); }
         }
         .animate-progress {
-          animation: progress 1.2s ease-in-out forwards;
+          animation: progress 2s ease-in-out forwards;
         }
       `}</style>
     </div>
