@@ -15,6 +15,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from '@/lib/utils';
 import { Language, Theme } from '@/app/page';
 import { useRouter } from 'next/navigation';
+import { PwaInstallItem } from './pwa-install-item';
 
 interface SidebarMenuProps {
   lang: Language;
@@ -32,7 +33,7 @@ export const SidebarMenu = ({ lang, theme }: SidebarMenuProps) => {
       icon: <Info className="w-4 h-4" />, 
       title: isHindi ? 'हमारे बारे में' : 'About Us', 
       content: isHindi 
-        ? "प्रिय पाठक, 'घरेलू उपाय केयर' परिवार में आपका आत्मीय स्वागत है। हमारा एकमात्र पावन उद्देश्य भारत की सदियों पुरानी, समृद्ध और प्रामाणिक आयुर्वेद परंपरा तथा घरेलू नुस्खों को आधुनिक तकनीक के माध्यम से सीधे आपके मोबाइल तक पहुँचाना है। हम चाहते हैं कि हर घर में स्वास्थ्य की खुशहाली हो और लोग अपनी रोजमर्रा की छोटी-बड़ी दिक्कतों का समाधान प्रकृति की गोद में ढूंढ सकें। हमारी पूरी टीम दिन-रात मेहनत करके शुद्ध और सही जानकारियां जुटाती है ताकि आपकी जीवनशैली सरल, निरोगी और प्राकृतिक बन सके। हमसे जुड़ने और इस स्वस्थ भारत के सफर का हिस्सा बनने के लिए आपका कोटि-कोटि धन्यवाद।" 
+        ? "प्रिय पाठक, 'घरेलू उपाय केयर' परिवार में आपका आत्मीय स्वागत है। हमारा एकमात्र पावन उद्देश्य भारत की सदियों पुरानी, समृद्ध और प्रामाणिक आयुर्वेद परंपरा तथा घरेलू नुस्खों को आधुनिक तकनीक के माध्यम से सीधे आपके मोबाइल तक पहुँचाना है। हम चाहते हैं कि हर घर में स्वास्थ्य की खुशहाली हो और लोग अपनी रोजमर्रा की छोटी-बड़ी दिक्कतों का समाधान प्रकृति की गोद में ढूंढ सकें। हमारी पूरी टीम दिन-रात मेहनत करके शुद्ध और सही जानकारियां जुटाती है ताकि आपकी जीवनशैली सरल, निरोगी og प्राकृतिक बन सके। हमसे जुड़ने और इस स्वस्थ भारत के सफर का हिस्सा बनने के लिए आपका कोटि-कोटि धन्यवाद।" 
         : "Dear Reader, a warm welcome to the 'Gharelu Upay Care' family. Our sole and sacred mission is to bring India's centuries-old, rich, and authentic Ayurvedic traditions and home remedies directly to your mobile via modern technology. We wish for health and happiness in every home, empowering people to find natural solutions for daily well-being. Our dedicated team works tirelessly to gather pure, accurate information to make your lifestyle simple, healthy, and natural. Thank you from the bottom of our hearts for joining us on this journey toward a healthier nation."
     },
     { 
@@ -64,7 +65,7 @@ export const SidebarMenu = ({ lang, theme }: SidebarMenuProps) => {
       icon: <FileText className="w-4 h-4" />, 
       title: isHindi ? 'नियम एवं शर्तें' : 'Terms & Conditions', 
       content: isHindi 
-        ? "इस ऐप का उपयोग करके आप हमारी सामान्य सेवा शर्तों और नियमों से अपनी सहमति व्यक्त करते हैं। यहाँ साझा की गई जानकारियां पारंपरिक लोक-ज्ञान पर आधारित हैं। यूज़र इन नुस्खों का उपयोग अपनी स्वेच्छा और विवेक के आधार पर करते हैं। ऐप के किसी भी कंटेंट को बिना अनुमति के व्यावसायिक रूप से कॉपी करना सख्त मना है। सुरक्षित रहें, स्वस्थ रहें, आपका स्वास्थ्य ही सर्वोपरि है।" 
+        ? "इस ऐप का उपयोग करके आप हमारी सामान्य सेवा शर्तों और नियमों से अपनी सहमति व्यक्त करते हैं। यहाँ साझा की गई जानकारियां पारंपरिक लोक-ज्ञान पर आधारित हैं। यूज़र इन नुस्खों का उपयोग अपनी सवेच्छा और विवेक के आधार पर करते हैं। ऐप के किसी भी कंटेंट को बिना अनुमति के व्यावसायिक रूप से कॉपी करना सख्त मना है। सुरक्षित रहें, स्वस्थ रहें, आपका स्वास्थ्य ही सर्वोपरि है।" 
         : "By using this app, you agree to our standard terms of service. The information shared is based on traditional folk knowledge. Users apply these remedies at their own discretion. Commercial copying of this app's content without explicit permission is strictly prohibited. Stay safe, stay healthy, your health is our supreme priority."
     }
   ];
@@ -102,7 +103,7 @@ export const SidebarMenu = ({ lang, theme }: SidebarMenuProps) => {
         </SheetHeader>
         
         <ScrollArea className="flex-1 bg-transparent">
-          <div className="p-5 max-w-full mx-auto w-full">
+          <div className="p-5 max-w-full mx-auto w-full space-y-3">
             <Accordion type="single" collapsible className="w-full space-y-3">
               {legalPages.map((page) => (
                 <AccordionItem key={page.id} value={page.id} className="border-none">
@@ -131,7 +132,12 @@ export const SidebarMenu = ({ lang, theme }: SidebarMenuProps) => {
                 </AccordionItem>
               ))}
             </Accordion>
-            <div className="mt-8 mb-10 px-4">
+            
+            <div className="pt-4 px-4">
+               <PwaInstallItem isNight={isNight} isHindi={isHindi} />
+            </div>
+
+            <div className="px-4">
               <SheetClose asChild>
                 <Button 
                   variant="ghost" 

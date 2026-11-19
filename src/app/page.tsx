@@ -8,6 +8,7 @@ import { HomeView } from '@/components/gharelu/home-view';
 import { CategoryDetailView } from '@/components/gharelu/category-detail-view';
 import { FavoritesOverlay } from '@/components/gharelu/favorites-overlay';
 import { NotificationsOverlay } from '@/components/gharelu/notifications-overlay';
+import { AppSplashScreen } from '@/components/gharelu/app-splash-screen';
 import { cn } from '@/lib/utils';
 import { REMEDIES as STATIC_REMEDIES, Remedy } from '@/lib/remedy-data';
 import { useFirestore } from '@/firebase';
@@ -231,6 +232,7 @@ function GhareluUpayAppContent() {
       "min-h-screen flex flex-col transition-colors duration-500",
       isNight ? "bg-black text-white" : "bg-[#FDFBF7] text-foreground"
     )}>
+      <AppSplashScreen />
       <TopBar 
         lang={lang} 
         theme={theme} 
