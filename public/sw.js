@@ -1,8 +1,9 @@
 
 /**
- * PWA Service Worker for Gharelu Upay Care.
- * Satisfies installability criteria for modern browsers.
+ * Minimal Service Worker for PWA Installability
  */
+const CACHE_NAME = 'gharelu-upay-v1';
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
@@ -12,5 +13,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Pass-through fetch handler
+  // Let the browser handle network requests normally
+  return;
 });

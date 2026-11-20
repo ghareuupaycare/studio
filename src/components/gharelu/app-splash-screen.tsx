@@ -7,6 +7,7 @@ import Image from 'next/image';
 /**
  * AppSplashScreen - A clean, white welcome animation.
  * Features: 2-second duration, brand logo zoom-in effect.
+ * Strictly uses /icon-512.png as the source.
  */
 export const AppSplashScreen = () => {
   const [visible, setVisible] = useState(false);
@@ -18,7 +19,7 @@ export const AppSplashScreen = () => {
       const timer = setTimeout(() => {
         setVisible(false);
         sessionStorage.setItem('gharelu_splash_seen', 'true');
-      }, 2000); // Set to exactly 2 seconds as requested
+      }, 2000); // Exactly 2 seconds as requested
       return () => clearTimeout(timer);
     }
   }, []);
@@ -26,7 +27,7 @@ export const AppSplashScreen = () => {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center overflow-hidden animate-out fade-out fill-mode-forwards duration-500 delay-1800">
+    <div className="fixed inset-0 z-[9999] bg-[#FFFFFF] flex flex-col items-center justify-center overflow-hidden animate-out fade-out fill-mode-forwards duration-500 delay-[1800ms]">
       <div className="relative w-64 h-64 animate-splash-zoom">
         <Image 
           src="/icon-512.png" 
@@ -41,7 +42,7 @@ export const AppSplashScreen = () => {
       <style jsx>{`
         @keyframes splashZoom {
           0% { 
-            transform: scale(0.6); 
+            transform: scale(0.7); 
             opacity: 0; 
           }
           50% {
