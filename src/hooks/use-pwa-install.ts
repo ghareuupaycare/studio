@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -5,27 +6,29 @@ import { useState, useEffect } from 'react';
 export function usePwaInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstallable, setIsInstallable] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    const handler = (e: Event) => {
-      // Prevent Chrome 67 and earlier from automatically showing the prompt
-      e.preventDefault();
-      // Stash the event so it can be triggered later.
-      setDeferredPrompt(e);
-      setIsInstallable(true);
-      console.log('PWA: beforeinstallprompt event captured');
-    };
+    // Check if already in standalone mode
+    if (typeof window !== 'undefined') {
+      const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+      setIsStandalone(isStandaloneMode);
 
-    window.addEventListener('beforeinstallprompt', handler);
+      const handler = (e: Event) => {
+        // Prevent Chrome 67 and earlier from automatically showing the prompt
+        e.preventDefault();
+        // Stash the event so it can be triggered later.
+        setDeferredPrompt(e);
+        setIsInstallable(true);
+        console.log('PWA: beforeinstallprompt event captured');
+      };
 
-    // Check if app is already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsInstallable(false);
+      window.addEventListener('beforeinstallprompt', handler);
+
+      return () => {
+        window.removeEventListener('beforeinstallprompt', handler);
+      };
     }
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handler);
-    };
   }, []);
 
   const installApp = async () => {
@@ -48,5 +51,5 @@ export function usePwaInstall() {
     return outcome === 'accepted';
   };
 
-  return { isInstallable, installApp };
+  return { isInstallable, installApp, isStandalone };
 }

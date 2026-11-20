@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -9,7 +10,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { cn } from '@/lib/utils';
 
@@ -19,35 +19,37 @@ interface PwaInstallItemProps {
 }
 
 export const PwaInstallItem = ({ isNight, isHindi }: PwaInstallItemProps) => {
-  const { isInstallable, installApp } = usePwaInstall();
+  const { isInstallable, installApp, isStandalone } = usePwaInstall();
   const [showInstructions, setShowInstructions] = useState(false);
-  const [installed, setInstalled] = useState(false);
+
+  // 1. If already in standalone mode, show friendly confirmation text
+  if (isStandalone) {
+    return (
+      <div className={cn(
+        "w-full h-14 flex items-center justify-start gap-4 px-4 rounded-2xl border transition-all",
+        isNight 
+          ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" 
+          : "bg-emerald-50 border-emerald-100 text-emerald-700"
+      )}>
+        <CheckCircle className="w-5 h-5 shrink-0" />
+        <span className="text-[12px] font-black uppercase tracking-widest leading-tight">
+          {isHindi ? 'आप पहले से घरेलू उपाय केयर ऐप में हैं' : 'You are already in the app'}
+        </span>
+      </div>
+    );
+  }
 
   const handleInstallClick = async () => {
+    // 2. If native prompt is available, trigger it directly
     if (isInstallable) {
-      const result = await installApp();
-      if (result) {
-        setInstalled(true);
-      } else {
-        // User cancelled or prompt failed
-        setShowInstructions(true);
-      }
+      await installApp();
     } else {
-      // Prompt not available (iOS or already handled)
+      // 3. Fallback for iOS / Unsupported browsers
       setShowInstructions(true);
     }
   };
 
   const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/.test(navigator.userAgent);
-
-  if (installed) {
-    return (
-      <div className="w-full h-14 flex items-center justify-center gap-2 text-emerald-500 font-bold">
-        <CheckCircle className="w-5 h-5" />
-        <span>{isHindi ? 'ऐप इंस्टॉल हो गया' : 'App Installed'}</span>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -68,25 +70,25 @@ export const PwaInstallItem = ({ isNight, isHindi }: PwaInstallItemProps) => {
       <Dialog open={showInstructions} onOpenChange={setShowInstructions}>
         <DialogContent className={cn(
           "max-w-[90vw] w-[350px] rounded-3xl border-none p-6",
-          isNight ? "bg-zinc-900 text-white" : "bg-white"
+          isNight ? "bg-zinc-900 text-white" : "bg-[#FDFBF7] text-foreground"
         )}>
           <DialogHeader>
-            <DialogTitle className="text-xl font-headline font-black text-center">
+            <DialogTitle className="text-xl font-headline font-black text-center mb-4">
               {isHindi ? 'ऐप कैसे इंस्टॉल करें?' : 'How to Install?'}
             </DialogTitle>
-            <div className="pt-4 space-y-5">
+            <div className="space-y-5">
               {isIOS ? (
                 <div className="space-y-4 text-left">
                   <div className="flex items-center gap-3">
-                    <div className="bg-accent/20 w-8 h-8 flex items-center justify-center rounded-full text-accent font-bold">1</div>
-                    <p className="text-sm">
+                    <div className="bg-accent/20 w-8 h-8 flex items-center justify-center rounded-full text-accent font-black shrink-0">1</div>
+                    <p className="text-sm font-bold">
                       {isHindi ? 'नीचे बने "Share" बटन पर क्लिक करें' : 'Tap the "Share" button below'}
                       <Share className="inline-block mx-1 w-4 h-4" />
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="bg-accent/20 w-8 h-8 flex items-center justify-center rounded-full text-accent font-bold">2</div>
-                    <p className="text-sm">
+                    <div className="bg-accent/20 w-8 h-8 flex items-center justify-center rounded-full text-accent font-black shrink-0">2</div>
+                    <p className="text-sm font-bold">
                       {isHindi ? 'नीचे स्क्रॉल करें और "Add to Home Screen" चुनें' : 'Scroll down and select "Add to Home Screen"'}
                       <PlusSquare className="inline-block mx-1 w-4 h-4" />
                     </p>
@@ -95,25 +97,25 @@ export const PwaInstallItem = ({ isNight, isHindi }: PwaInstallItemProps) => {
               ) : (
                 <div className="space-y-4 text-left">
                   <div className="flex items-center gap-3">
-                    <div className="bg-accent/20 w-8 h-8 flex items-center justify-center rounded-full text-accent font-bold">1</div>
-                    <p className="text-sm">
+                    <div className="bg-accent/20 w-8 h-8 flex items-center justify-center rounded-full text-accent font-black shrink-0">1</div>
+                    <p className="text-sm font-bold">
                       {isHindi ? 'ब्राउज़र के "3-Dots" (ऊपर दाएं) पर क्लिक करें' : 'Open the browser "3-Dots" menu'}
                       <MoreVertical className="inline-block mx-1 w-4 h-4" />
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="bg-accent/20 w-8 h-8 flex items-center justify-center rounded-full text-accent font-bold">2</div>
-                    <p className="text-sm">
+                    <div className="bg-accent/20 w-8 h-8 flex items-center justify-center rounded-full text-accent font-black shrink-0">2</div>
+                    <p className="text-sm font-bold">
                       {isHindi ? '"Install App" या "Add to Home Screen" चुनें' : 'Select "Install App" or "Add to Home Screen"'}
                       <Smartphone className="inline-block mx-1 w-4 h-4" />
                     </p>
                   </div>
                 </div>
               )}
-              <div className="pt-2">
+              <div className="pt-4">
                 <Button 
                   onClick={() => setShowInstructions(false)}
-                  className="w-full bg-primary text-white rounded-xl h-12 font-bold"
+                  className="w-full bg-[#14532D] text-white rounded-2xl h-12 font-black uppercase tracking-widest shadow-lg"
                 >
                   {isHindi ? 'ठीक है, समझ गया' : 'Got it'}
                 </Button>
