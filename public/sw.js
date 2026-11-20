@@ -1,20 +1,24 @@
 
-/**
- * Minimal Service Worker for PWA installability.
- */
-const CACHE_NAME = 'gharelu-v1';
+// Minimal Service Worker for PWA installability
+const CACHE_NAME = 'gharelu-upay-v1';
 
 self.addEventListener('install', (event) => {
-  console.log('PWA Service Worker installing.');
-});
-
-self.addEventListener('activate', (event) => {
-  console.log('PWA Service Worker activating.');
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll([
+        '/',
+        '/manifest.json',
+        '/icon-192.png',
+        '/icon-512.png'
+      ]);
+    })
+  );
 });
 
 self.addEventListener('fetch', (event) => {
-  // Required for PWA to be considered installable by Chrome
-  event.respondWith(fetch(event.request).catch(() => {
-    return caches.match(event.request);
-  }));
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
 });

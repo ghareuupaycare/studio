@@ -42,9 +42,13 @@ export const PwaInstallItem = ({ isNight, isHindi }: PwaInstallItemProps) => {
   const handleInstallClick = async () => {
     // 2. If native prompt is available, trigger it directly
     if (isInstallable) {
-      await installApp();
+      const success = await installApp();
+      if (!success) {
+        // Fallback in case prompt failed or was dismissed
+        console.log('PWA: Prompt not completed successfully');
+      }
     } else {
-      // 3. Fallback for iOS / Unsupported browsers
+      // 3. Fallback for iOS / Unsupported browsers where native prompt isn't fired
       setShowInstructions(true);
     }
   };
