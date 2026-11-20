@@ -1,23 +1,36 @@
+
 {
   "name": "घरेलू उपाय केयर",
   "short_name": "घरेलू उपाय",
-  "description": "प्रामाणिक आयुर्वेदिक और घरेलू उपचार",
+  "description": "आयुर्वेदिक घरेलू उपचार और प्रामाणिक नुस्खे।",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FDFBF7",
+  "background_color": "#ffffff",
   "theme_color": "#14532D",
   "icons": [
     {
-      "src": "/icon-192x192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/icon-512x512.png",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

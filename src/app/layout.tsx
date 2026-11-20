@@ -1,3 +1,4 @@
+
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
@@ -8,14 +9,15 @@ export const metadata: Metadata = {
   title: 'घरेलू उपाय केयर | Gharelu Upay Care',
   description: 'Ayurvedic traditional home remedies for a healthy life.',
   manifest: '/manifest.json',
-  applicationName: 'Gharelu Upay Care',
+  applicationName: 'घरेलू उपाय केयर',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'घरेलू उपाय',
   },
   icons: {
-    apple: '/icon-192x192.png',
+    icon: '/icon-192.png',
+    apple: '/icon-512.png',
   },
 };
 
@@ -32,32 +34,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Check if the environment is not production
+  // Enable debugger console in development or preview mode
   const isDev = process.env.NODE_ENV !== 'production';
 
   return (
     <html lang="hi">
       <head>
-        {/* Enable Eruda console only in development/preview mode */}
         {isDev && (
           <>
             <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
             <script dangerouslySetInnerHTML={{ __html: "eruda.init();" }} />
           </>
         )}
-        
-        {/* Google Search Console Verification */}
         <meta name="google-site-verification" content="MVboRUnfOsCahICx3pIfAyiQckT1iDnl38k-OgYpVFo" />
-        
-        {/* PWA Recognition Meta Tags */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#ffffff" />
-        <link rel="apple-touch-icon" href="/icon-192x192.png" />
+        <link rel="apple-touch-icon" href="/icon-512.png" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="application-name" content="Gharelu Upay Care" />
         
-        {/* Fonts and Other Head Elements */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
