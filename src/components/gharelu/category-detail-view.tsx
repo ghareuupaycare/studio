@@ -15,7 +15,9 @@ interface CategoryDetailViewProps {
   favorites: string[];
   onToggleFavorite: (id: string) => void;
   initialRemedyId?: string | null;
+  initialIllnessId?: string | null;
   onSelectRemedyId?: (id: string | null) => void;
+  onSelectIllnessId?: (id: string) => void;
   onLevelChange?: (level: 1 | 2 | 3) => void;
   allRemedies: Remedy[];
 }
@@ -28,7 +30,9 @@ export const CategoryDetailView = ({
   favorites, 
   onToggleFavorite,
   initialRemedyId,
+  initialIllnessId,
   onSelectRemedyId,
+  onSelectIllnessId,
   onLevelChange,
   allRemedies
 }: CategoryDetailViewProps) => {
@@ -38,6 +42,7 @@ export const CategoryDetailView = ({
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
 
+  // Handle Parent-Controlled State Changes (Sync with History/Popstate)
   useEffect(() => {
     if (initialRemedyId) {
       const remedy = allRemedies.find(r => r.id === initialRemedyId);
@@ -45,8 +50,14 @@ export const CategoryDetailView = ({
         setSelectedRemedy(remedy);
         setSelectedIllnessId(remedy.illnessId);
       }
+    } else {
+      setSelectedRemedy(null);
+      // Sync illness selection if remedy is null
+      if (initialIllnessId !== undefined) {
+        setSelectedIllnessId(initialIllnessId);
+      }
     }
-  }, [initialRemedyId, allRemedies]);
+  }, [initialRemedyId, initialIllnessId, allRemedies]);
 
   useEffect(() => {
     if (onLevelChange) {
@@ -73,19 +84,16 @@ export const CategoryDetailView = ({
   const illnessList = useMemo(() => {
     const illnesses: Record<string, string> = {};
     
-    // Add static illnesses if any
     if (activeCategoryMeta?.staticIllnesses) {
       activeCategoryMeta.staticIllnesses.forEach((i: any) => {
         illnesses[i.id] = i.title;
       });
     }
 
-    // Add dynamic illnesses from remedies
     allRemedies
       .filter(r => r.categoryId === categoryId)
       .forEach(r => {
         if (!illnesses[r.illnessId]) {
-          // FIX: Prioritize diseaseName over remedy name for category cards
           illnesses[r.illnessId] = r.diseaseName?.[lang] || r.name[lang];
         }
       });
@@ -98,14 +106,7 @@ export const CategoryDetailView = ({
   }, [allRemedies, selectedIllnessId, categoryId]);
 
   const handleInternalBack = () => {
-    if (selectedRemedy) {
-      setSelectedRemedy(null);
-      if (onSelectRemedyId) onSelectRemedyId(null);
-    } else if (selectedIllnessId) {
-      setSelectedIllnessId(null);
-    } else {
-      onBack();
-    }
+    onBack(); // Parent will handle via history.back()
   };
 
   const currentTitle = useMemo(() => {
@@ -147,7 +148,9 @@ export const CategoryDetailView = ({
           {illnessList.map((illness) => (
             <div
               key={illness.id}
-              onClick={() => setSelectedIllnessId(illness.id)}
+              onClick={() => {
+                if (onSelectIllnessId) onSelectIllnessId(illness.id);
+              }}
               className={cn(
                 "group relative w-full p-5 sm:p-6 rounded-[2rem] border-[1.5px] transition-all duration-500 flex flex-row items-center justify-between text-left cursor-pointer shadow-lg active:scale-[0.98]",
                 isNight 
@@ -180,7 +183,6 @@ export const CategoryDetailView = ({
             <div
               key={remedy.id}
               onClick={() => {
-                setSelectedRemedy(remedy);
                 if (onSelectRemedyId) onSelectRemedyId(remedy.id);
               }}
               className={cn(

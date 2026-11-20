@@ -23,6 +23,7 @@ function GhareluUpayAppContent() {
   const urlRemedyId = searchParams.get('remedyId');
   
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [selectedIllnessId, setSelectedIllnessId] = useState<string | null>(null);
   const [selectedRemedyId, setSelectedRemedyId] = useState<string | null>(null);
   const [isDetailView, setIsDetailView] = useState(false);
   const [lang, setLang] = useState<Language>('hi');
@@ -43,6 +44,31 @@ function GhareluUpayAppContent() {
   const allRemedies = useMemo(() => {
     return [...STATIC_REMEDIES, ...liveRecipes];
   }, [liveRecipes]);
+
+  // Hardware Back Button Support Logic
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      const state = event.state;
+      if (state) {
+        setSelectedCategoryId(state.categoryId || null);
+        setSelectedIllnessId(state.illnessId || null);
+        setSelectedRemedyId(state.remedyId || null);
+      } else {
+        setSelectedCategoryId(null);
+        setSelectedIllnessId(null);
+        setSelectedRemedyId(null);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    
+    // Initial State Replace
+    if (isLoaded && !urlRemedyId) {
+      window.history.replaceState({ categoryId: null, illnessId: null, remedyId: null }, '', '');
+    }
+
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isLoaded, urlRemedyId]);
 
   useEffect(() => {
     let uid = localStorage.getItem('gharelu_user_id');
@@ -142,8 +168,11 @@ function GhareluUpayAppContent() {
       const remedy = allRemedies.find(r => r.id === urlRemedyId);
       if (remedy) {
         setSelectedCategoryId(remedy.categoryId);
+        setSelectedIllnessId(remedy.illnessId);
         setSelectedRemedyId(remedy.id);
         setIsDetailView(true);
+        // Sync URL entry into history state
+        window.history.replaceState({ categoryId: remedy.categoryId, illnessId: remedy.illnessId, remedyId: remedy.id }, '', `?remedyId=${remedy.id}`);
       }
     }
   }, [urlRemedyId, allRemedies]);
@@ -176,16 +205,31 @@ function GhareluUpayAppContent() {
 
   const handleSelectCategory = (id: string) => {
     setSelectedCategoryId(id);
+    setSelectedIllnessId(null);
     setSelectedRemedyId(null);
     setIsDetailView(false);
+    window.history.pushState({ categoryId: id, illnessId: null, remedyId: null }, '', '');
+  };
+
+  const handleSelectIllness = (illnessId: string) => {
+    setSelectedIllnessId(illnessId);
+    setSelectedRemedyId(null);
+    setIsDetailView(false);
+    window.history.pushState({ categoryId: selectedCategoryId, illnessId: illnessId, remedyId: null }, '', '');
   };
 
   const handleSelectRemedy = (remedyId: string, categoryId: string) => {
+    const remedy = allRemedies.find(r => r.id === remedyId);
+    const iId = remedy?.illnessId || null;
+    
     setSelectedCategoryId(categoryId);
+    setSelectedIllnessId(iId);
     setSelectedRemedyId(remedyId);
     setIsDetailView(true);
     setIsFavoritesOpen(false);
     setIsNotificationsOpen(false);
+    
+    window.history.pushState({ categoryId, illnessId: iId, remedyId }, '', '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -210,20 +254,17 @@ function GhareluUpayAppContent() {
     localStorage.setItem('gharelu-last-check-time', now.toString());
   };
 
-  const handleBackToCategories = () => {
-    if (selectedRemedyId) {
-      setSelectedRemedyId(null);
-      setIsDetailView(false);
-    } else {
-      setSelectedCategoryId(null);
-      setIsDetailView(false);
-    }
+  const handleBackNavigation = () => {
+    window.history.back();
   };
 
   const handleGoHome = () => {
+    if (!selectedCategoryId) return;
     setSelectedCategoryId(null);
+    setSelectedIllnessId(null);
     setSelectedRemedyId(null);
     setIsDetailView(false);
+    window.history.pushState({ categoryId: null, illnessId: null, remedyId: null }, '', '/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -259,11 +300,13 @@ function GhareluUpayAppContent() {
                 categoryId={selectedCategoryId} 
                 lang={lang} 
                 theme={theme} 
-                onBack={handleBackToCategories} 
+                onBack={handleBackNavigation} 
                 favorites={favorites}
                 onToggleFavorite={handleToggleFavorite}
                 initialRemedyId={selectedRemedyId}
-                onSelectRemedyId={setSelectedRemedyId}
+                initialIllnessId={selectedIllnessId}
+                onSelectRemedyId={(id) => id && handleSelectRemedy(id, selectedCategoryId)}
+                onSelectIllnessId={handleSelectIllness}
                 onLevelChange={(level) => setIsDetailView(level === 3)}
                 allRemedies={allRemedies}
               />
