@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useMemo, Suspense } from 'react';
@@ -45,24 +46,36 @@ function GhareluUpayAppContent() {
     return [...STATIC_REMEDIES, ...liveRecipes];
   }, [liveRecipes]);
 
-  // Hardware Back Button Support Logic
+  // Robust Hardware Back Button Support
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
       const state = event.state;
+      
+      // Sync React state with the history state
       if (state) {
         setSelectedCategoryId(state.categoryId || null);
         setSelectedIllnessId(state.illnessId || null);
         setSelectedRemedyId(state.remedyId || null);
+        setIsDetailView(!!state.remedyId);
       } else {
+        // Fallback to Home if no state
         setSelectedCategoryId(null);
         setSelectedIllnessId(null);
         setSelectedRemedyId(null);
+        setIsDetailView(false);
       }
+
+      // Close overlays on back navigation
+      setIsFavoritesOpen(false);
+      setIsNotificationsOpen(false);
+      
+      // Scroll to top for natural feel
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     window.addEventListener('popstate', handlePopState);
     
-    // Initial State Replace
+    // Initial State Setup to define the "Home" baseline
     if (isLoaded && !urlRemedyId) {
       window.history.replaceState({ categoryId: null, illnessId: null, remedyId: null }, '', '');
     }
@@ -229,7 +242,8 @@ function GhareluUpayAppContent() {
     setIsFavoritesOpen(false);
     setIsNotificationsOpen(false);
     
-    window.history.pushState({ categoryId, illnessId: iId, remedyId }, '', '');
+    // We update the URL to be shareable but stay on the same Next.js page
+    window.history.pushState({ categoryId, illnessId: iId, remedyId }, '', `?remedyId=${remedyId}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
