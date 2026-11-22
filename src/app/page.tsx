@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect, useMemo, Suspense } from 'react';
@@ -39,8 +38,11 @@ function GhareluUpayAppContent() {
   const [userId, setUserId] = useState<string>('');
   const [privateAnswers, setPrivateAnswers] = useState<any[]>([]);
 
+  // Overlay States
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const allRemedies = useMemo(() => {
     return [...STATIC_REMEDIES, ...liveRecipes];
@@ -49,39 +51,64 @@ function GhareluUpayAppContent() {
   // Robust Hardware Back Button Support
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
-      const state = event.state;
+      const state = event.state || {};
       
-      // Sync React state with the history state
-      if (state) {
-        setSelectedCategoryId(state.categoryId || null);
-        setSelectedIllnessId(state.illnessId || null);
-        setSelectedRemedyId(state.remedyId || null);
-        setIsDetailView(!!state.remedyId);
-      } else {
-        // Fallback to Home if no state
-        setSelectedCategoryId(null);
-        setSelectedIllnessId(null);
-        setSelectedRemedyId(null);
-        setIsDetailView(false);
-      }
+      // Update Main Navigation States
+      setSelectedCategoryId(state.categoryId || null);
+      setSelectedIllnessId(state.illnessId || null);
+      setSelectedRemedyId(state.remedyId || null);
+      setIsDetailView(!!state.remedyId);
 
-      // Close overlays on back navigation
-      setIsFavoritesOpen(false);
-      setIsNotificationsOpen(false);
+      // Update Overlay States
+      setIsSearchOpen(state.overlay === 'search');
+      setIsFavoritesOpen(state.overlay === 'favorites');
+      setIsNotificationsOpen(state.overlay === 'notifications');
+      setIsSidebarOpen(state.overlay === 'sidebar');
       
-      // Scroll to top for natural feel
+      // Natural Scroll Behavior
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     window.addEventListener('popstate', handlePopState);
     
-    // Initial State Setup to define the "Home" baseline
+    // Initialize Baseline Home Entry if landing on root
     if (isLoaded && !urlRemedyId) {
-      window.history.replaceState({ categoryId: null, illnessId: null, remedyId: null }, '', '');
+      if (!window.history.state || window.history.state.categoryId === undefined) {
+        window.history.replaceState({ 
+          categoryId: null, illnessId: null, remedyId: null, overlay: null 
+        }, '', '/');
+      }
     }
 
     return () => window.removeEventListener('popstate', handlePopState);
   }, [isLoaded, urlRemedyId]);
+
+  // Handle Deep Link Landing - Building the History Stack
+  useEffect(() => {
+    if (isLoaded && urlRemedyId && allRemedies.length > 0) {
+      const remedy = allRemedies.find(r => r.id === urlRemedyId);
+      if (remedy && (!window.history.state || window.history.state.remedyId !== urlRemedyId)) {
+        // 1. Establish Home Baseline
+        window.history.replaceState({ categoryId: null, illnessId: null, remedyId: null, overlay: null }, '', '/');
+        
+        // 2. Push Category Level
+        window.history.pushState({ 
+          categoryId: remedy.categoryId, illnessId: null, remedyId: null, overlay: null 
+        }, '', '/');
+
+        // 3. Push Remedy Detail Level
+        window.history.pushState({ 
+          categoryId: remedy.categoryId, illnessId: remedy.illnessId, remedyId: remedy.id, overlay: null 
+        }, '', `?remedyId=${remedy.id}`);
+
+        // Update local state to match deep link
+        setSelectedCategoryId(remedy.categoryId);
+        setSelectedIllnessId(remedy.illnessId);
+        setSelectedRemedyId(remedy.id);
+        setIsDetailView(true);
+      }
+    }
+  }, [urlRemedyId, allRemedies, isLoaded]);
 
   useEffect(() => {
     let uid = localStorage.getItem('gharelu_user_id');
@@ -177,20 +204,6 @@ function GhareluUpayAppContent() {
   }, []);
 
   useEffect(() => {
-    if (urlRemedyId && allRemedies.length > 0) {
-      const remedy = allRemedies.find(r => r.id === urlRemedyId);
-      if (remedy) {
-        setSelectedCategoryId(remedy.categoryId);
-        setSelectedIllnessId(remedy.illnessId);
-        setSelectedRemedyId(remedy.id);
-        setIsDetailView(true);
-        // Sync URL entry into history state
-        window.history.replaceState({ categoryId: remedy.categoryId, illnessId: remedy.illnessId, remedyId: remedy.id }, '', `?remedyId=${remedy.id}`);
-      }
-    }
-  }, [urlRemedyId, allRemedies]);
-
-  useEffect(() => {
     if (isLoaded) {
       localStorage.setItem('gharelu-favorites', JSON.stringify(favorites));
     }
@@ -216,19 +229,20 @@ function GhareluUpayAppContent() {
 
   const isNight = theme === 'night';
 
+  // Navigation Handlers with History Support
   const handleSelectCategory = (id: string) => {
     setSelectedCategoryId(id);
     setSelectedIllnessId(null);
     setSelectedRemedyId(null);
     setIsDetailView(false);
-    window.history.pushState({ categoryId: id, illnessId: null, remedyId: null }, '', '');
+    window.history.pushState({ categoryId: id, illnessId: null, remedyId: null, overlay: null }, '', '/');
   };
 
   const handleSelectIllness = (illnessId: string) => {
     setSelectedIllnessId(illnessId);
     setSelectedRemedyId(null);
     setIsDetailView(false);
-    window.history.pushState({ categoryId: selectedCategoryId, illnessId: illnessId, remedyId: null }, '', '');
+    window.history.pushState({ categoryId: selectedCategoryId, illnessId: illnessId, remedyId: null, overlay: null }, '', '/');
   };
 
   const handleSelectRemedy = (remedyId: string, categoryId: string) => {
@@ -239,12 +253,62 @@ function GhareluUpayAppContent() {
     setSelectedIllnessId(iId);
     setSelectedRemedyId(remedyId);
     setIsDetailView(true);
-    setIsFavoritesOpen(false);
-    setIsNotificationsOpen(false);
     
-    // We update the URL to be shareable but stay on the same Next.js page
-    window.history.pushState({ categoryId, illnessId: iId, remedyId }, '', `?remedyId=${remedyId}`);
+    // Push new state with URL update for direct linking
+    window.history.pushState({ 
+      categoryId, illnessId: iId, remedyId, overlay: null 
+    }, '', `?remedyId=${remedyId}`);
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Overlay Trigger Handlers
+  const handleOpenSearch = () => {
+    setIsSearchOpen(true);
+    window.history.pushState({ 
+      categoryId: selectedCategoryId, 
+      illnessId: selectedIllnessId, 
+      remedyId: selectedRemedyId, 
+      overlay: 'search' 
+    }, '', '');
+  };
+
+  const handleOpenFavorites = () => {
+    setIsFavoritesOpen(true);
+    window.history.pushState({ 
+      categoryId: selectedCategoryId, 
+      illnessId: selectedIllnessId, 
+      remedyId: selectedRemedyId, 
+      overlay: 'favorites' 
+    }, '', '');
+  };
+
+  const handleOpenNotifications = () => {
+    setIsNotificationsOpen(true);
+    const now = Date.now();
+    setLastCheckedTime(now);
+    localStorage.setItem('gharelu-last-check-time', now.toString());
+    window.history.pushState({ 
+      categoryId: selectedCategoryId, 
+      illnessId: selectedIllnessId, 
+      remedyId: selectedRemedyId, 
+      overlay: 'notifications' 
+    }, '', '');
+  };
+
+  const handleOpenSidebar = () => {
+    setIsSidebarOpen(true);
+    window.history.pushState({ 
+      categoryId: selectedCategoryId, 
+      illnessId: selectedIllnessId, 
+      remedyId: selectedRemedyId, 
+      overlay: 'sidebar' 
+    }, '', '');
+  };
+
+  // Generic closer that uses history to stay sync
+  const handleCloseOverlay = () => {
+    window.history.back();
   };
 
   const handleToggleFavorite = (remedyId: string) => {
@@ -261,24 +325,13 @@ function GhareluUpayAppContent() {
     }
   };
 
-  const handleOpenNotifications = () => {
-    setIsNotificationsOpen(true);
-    const now = Date.now();
-    setLastCheckedTime(now);
-    localStorage.setItem('gharelu-last-check-time', now.toString());
-  };
-
-  const handleBackNavigation = () => {
-    window.history.back();
-  };
-
   const handleGoHome = () => {
     if (!selectedCategoryId) return;
     setSelectedCategoryId(null);
     setSelectedIllnessId(null);
     setSelectedRemedyId(null);
     setIsDetailView(false);
-    window.history.pushState({ categoryId: null, illnessId: null, remedyId: null }, '', '/');
+    window.history.pushState({ categoryId: null, illnessId: null, remedyId: null, overlay: null }, '', '/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -294,11 +347,15 @@ function GhareluUpayAppContent() {
         onToggleLanguage={toggleLanguage} 
         onToggleTheme={toggleTheme} 
         onSelectRemedy={handleSelectRemedy}
-        onOpenFavorites={() => setIsFavoritesOpen(true)}
+        onOpenFavorites={handleOpenFavorites}
         onOpenNotifications={handleOpenNotifications}
+        onOpenSidebar={handleOpenSidebar}
+        isSidebarOpen={isSidebarOpen}
+        onSidebarOpenChange={(open) => !open && handleCloseOverlay()}
         hasFavorites={favorites.length > 0}
         hasNotifications={hasNewNotifications}
         allRemedies={allRemedies}
+        onOpenSearch={handleOpenSearch}
       />
       
       <main 
@@ -314,7 +371,7 @@ function GhareluUpayAppContent() {
                 categoryId={selectedCategoryId} 
                 lang={lang} 
                 theme={theme} 
-                onBack={handleBackNavigation} 
+                onBack={handleCloseOverlay} 
                 favorites={favorites}
                 onToggleFavorite={handleToggleFavorite}
                 initialRemedyId={selectedRemedyId}
@@ -338,7 +395,7 @@ function GhareluUpayAppContent() {
 
       <FavoritesOverlay 
         isOpen={isFavoritesOpen}
-        onClose={() => setIsFavoritesOpen(false)}
+        onClose={handleCloseOverlay}
         lang={lang}
         theme={theme}
         favorites={favorites}
@@ -348,7 +405,7 @@ function GhareluUpayAppContent() {
 
       <NotificationsOverlay
         isOpen={isNotificationsOpen}
-        onClose={() => setIsNotificationsOpen(false)}
+        onClose={handleCloseOverlay}
         lang={lang}
         theme={theme}
         unreadRemedies={unreadRemedies}
@@ -363,6 +420,7 @@ function GhareluUpayAppContent() {
         theme={theme} 
         currentView={!selectedCategoryId ? 'home' : 'details'} 
         onViewChange={handleGoHome} 
+        onOpenSearch={handleOpenSearch}
         enableScrollHide={isDetailView}
       />
     </div>

@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Language, Theme } from '@/app/page';
 import { cn } from '@/lib/utils';
-import { Sheet, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet } from "@/components/ui/sheet";
 import { SidebarMenu } from './sidebar-menu';
 import { HeaderActions } from './header-actions';
 import { SearchOverlay } from './search-overlay';
@@ -19,9 +19,13 @@ interface TopBarProps {
   onSelectRemedy?: (remedyId: string, categoryId: string) => void;
   onOpenFavorites?: () => void;
   onOpenNotifications?: () => void;
+  onOpenSidebar?: () => void;
+  isSidebarOpen?: boolean;
+  onSidebarOpenChange?: (open: boolean) => void;
   hasFavorites?: boolean;
   hasNotifications?: boolean;
   allRemedies: Remedy[];
+  onOpenSearch?: () => void;
 }
 
 export const TopBar = ({ 
@@ -32,19 +36,16 @@ export const TopBar = ({
   onSelectRemedy, 
   onOpenFavorites,
   onOpenNotifications,
+  onOpenSidebar,
+  isSidebarOpen,
+  onSidebarOpenChange,
   hasFavorites,
   hasNotifications,
-  allRemedies
+  allRemedies,
+  onOpenSearch
 }: TopBarProps) => {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
-
-  useEffect(() => {
-    const handleOpenSearch = () => setIsSearchOpen(true);
-    window.addEventListener('open-gharelu-search', handleOpenSearch);
-    return () => window.removeEventListener('open-gharelu-search', handleOpenSearch);
-  }, []);
 
   return (
     <header className={cn(
@@ -52,12 +53,15 @@ export const TopBar = ({
       isNight ? "bg-black/95 backdrop-blur-md border-b border-white/20" : "bg-[#14532D]/95 backdrop-blur-md border-b border-white/10"
     )}>
       <div className="flex items-center gap-1 sm:gap-4 flex-1 min-w-0">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="text-white/90 hover:bg-white/5 h-10 w-10 p-0 rounded-full">
-              <Menu className="w-6 h-6" />
-            </Button>
-          </SheetTrigger>
+        <Sheet open={isSidebarOpen} onOpenChange={onSidebarOpenChange}>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={onOpenSidebar}
+            className="text-white/90 hover:bg-white/5 h-10 w-10 p-0 rounded-full"
+          >
+            <Menu className="w-6 h-6" />
+          </Button>
           <SidebarMenu lang={lang} theme={theme} />
         </Sheet>
         <h1 className="text-lg font-bold text-[#FDFBF7] truncate">
@@ -77,8 +81,8 @@ export const TopBar = ({
       />
 
       <SearchOverlay 
-        isOpen={isSearchOpen} 
-        onClose={() => setIsSearchOpen(false)} 
+        isOpen={!!window.history.state?.overlay ? window.history.state.overlay === 'search' : false} 
+        onClose={() => window.history.back()} 
         lang={lang} 
         theme={theme} 
         onSelectRemedy={(rId, cId) => onSelectRemedy?.(rId, cId)} 

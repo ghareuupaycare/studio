@@ -10,10 +10,11 @@ interface BottomNavProps {
   theme: Theme;
   currentView: 'home' | 'details' | string;
   onViewChange: (view: 'home') => void;
+  onOpenSearch?: () => void;
   enableScrollHide?: boolean;
 }
 
-export const BottomNav = ({ lang, theme, currentView, onViewChange, enableScrollHide = false }: BottomNavProps) => {
+export const BottomNav = ({ lang, theme, currentView, onViewChange, onOpenSearch, enableScrollHide = false }: BottomNavProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   
@@ -77,9 +78,7 @@ export const BottomNav = ({ lang, theme, currentView, onViewChange, enableScroll
 
       {/* Search Button (Center) */}
       <button
-        onClick={() => {
-          window.dispatchEvent(new CustomEvent('open-gharelu-search'));
-        }}
+        onClick={onOpenSearch}
         className={cn(
           "flex flex-col items-center gap-0.5 transition-all duration-200 group outline-none cursor-pointer active:scale-95 w-1/3"
         )}
