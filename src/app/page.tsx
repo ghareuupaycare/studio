@@ -278,7 +278,13 @@ function GhareluUpayAppContent() {
   };
 
   const handleCloseOverlay = () => {
-    if (typeof window !== 'undefined') window.history.back();
+    try {
+      if (typeof window !== 'undefined' && window.history.state && window.history.state.overlay) {
+        window.history.back();
+      }
+    } catch (e) {
+      console.error("Back navigation failed", e);
+    }
   };
 
   const handleToggleFavorite = (remedyId: string) => {
@@ -309,7 +315,9 @@ function GhareluUpayAppContent() {
       <TopBar 
         lang={lang} theme={theme} onToggleLanguage={toggleLanguage} onToggleTheme={toggleTheme} 
         onSelectRemedy={handleSelectRemedy} onOpenFavorites={handleOpenFavorites} onOpenNotifications={handleOpenNotifications}
-        onOpenSidebar={handleOpenSidebar} isSidebarOpen={isSidebarOpen} onSidebarOpenChange={(open) => !open && handleCloseOverlay()}
+        onOpenSidebar={handleOpenSidebar} isSidebarOpen={isSidebarOpen} onSidebarOpenChange={(open) => {
+          if (!open && isSidebarOpen) handleCloseOverlay();
+        }}
         hasFavorites={favorites.length > 0} hasNotifications={hasNewNotifications} allRemedies={allRemedies}
         onOpenSearch={handleOpenSearch} isSearchOpen={isSearchOpen} onCloseSearch={handleCloseOverlay}
       />

@@ -33,7 +33,7 @@ export const SidebarMenu = ({ lang, theme }: SidebarMenuProps) => {
       icon: <Info className="w-4 h-4" />, 
       title: isHindi ? 'हमारे बारे में' : 'About Us', 
       content: isHindi 
-        ? "प्रिय पाठक, 'घरेलू उपाय केयर' परिवार में आपका आत्मीय स्वागत है। हमारा एकमात्र पावन उद्देश्य भारत की सदियों पुरानी, समृद्ध और प्रामाणिक आयुर्वेद परंपरा तथा घरेलू नुस्खों को आधुनिक तकनीक के माध्यम से सीधे आपके मोबाइल तक पहुँचाना है। हम चाहते हैं कि हर घर में स्वास्थ्य की खुशहाली हो और लोग अपनी रोजमर्रा की छोटी-बड़ी दिक्कतों का समाधान प्रकृति की गोद में ढूंढ सकें। हमारी पूरी टीम दिन-रात मेहनत करके शुद्ध और सही जानकारियां जुटाती है ताकि आपकी जीवनशैली सरल, निरोगी og प्राकृतिक बन सके। हमसे जुड़ने और इस स्वस्थ भारत के सफर का हिस्सा बनने के लिए आपका कोटि-कोटि धन्यवाद।" 
+        ? "प्रिय पाठक, 'घरेलू उपाय केयर' परिवार में आपका आत्मीय स्वागत है। हमारा एकमात्र पावन उद्देश्य भारत की सदियों पुरानी, समृद्ध और प्रामाणिक आयुर्वेद परंपरा तथा घरेलू नुस्खों को आधुनिक तकनीक के माध्यम से सीधे आपके मोबाइल तक पहुँचाना है। हम चाहते हैं कि हर घर में स्वास्थ्य की खुशहाली हो और लोग अपनी रोजमर्रा की छोटी-बड़ी दिक्कतों का समाधान प्रकृति की गोद में ढूंढ सकें। हमारी पूरी टीम दिन-रात मेहनत करके शुद्ध और सही जानकारियां जुटाती है ताकि आपकी जीवनशैली सरल, निरोगी और प्राकृतिक बन सके। हमसे जुड़ने और इस स्वस्थ भारत के सफर का हिस्सा बनने के लिए आपका कोटि-कोटि धन्यवाद।" 
         : "Dear Reader, a warm welcome to the 'Gharelu Upay Care' family. Our sole and sacred mission is to bring India's centuries-old, rich, and authentic Ayurvedic traditions and home remedies directly to your mobile via modern technology. We wish for health and happiness in every home, empowering people to find natural solutions for daily well-being. Our dedicated team works tirelessly to gather pure, accurate information to make your lifestyle simple, healthy, and natural. Thank you from the bottom of our hearts for joining us on this journey toward a healthier nation."
     },
     { 
@@ -69,6 +69,19 @@ export const SidebarMenu = ({ lang, theme }: SidebarMenuProps) => {
         : "By using this app, you agree to our standard terms of service. The information shared is based on traditional folk knowledge. Users apply these remedies at their own discretion. Commercial copying of this app's content without explicit permission is strictly prohibited. Stay safe, stay healthy, your health is our supreme priority."
     }
   ];
+
+  const handleAdminLoginClick = () => {
+    if (typeof window !== 'undefined') {
+      // 1. Manually go back in history to clear the 'sidebar' state
+      // This will trigger popstate in page.tsx and close the drawer cleanly
+      window.history.back();
+      
+      // 2. Navigate to admin login after a small delay to allow history to settle
+      setTimeout(() => {
+        router.push('/admin-login');
+      }, 150);
+    }
+  };
 
   return (
     <SheetContent 
@@ -138,18 +151,16 @@ export const SidebarMenu = ({ lang, theme }: SidebarMenuProps) => {
             </div>
 
             <div className="px-4">
-              <SheetClose asChild>
-                <Button 
-                  variant="ghost" 
-                  className={cn(
-                    "w-full h-14 justify-start gap-4 rounded-2xl font-black text-sm uppercase tracking-widest border transition-all active:scale-95",
-                    isNight ? "bg-white/5 border-white/10 text-white" : "bg-white border-primary/10 text-primary hover:bg-primary/5"
-                  )}
-                  onClick={() => router.push('/admin-login')}
-                >
-                  <Lock className="w-5 h-5 text-accent" /> {isHindi ? 'एडमिन लॉगिन' : 'Admin Login'}
-                </Button>
-              </SheetClose>
+              <Button 
+                variant="ghost" 
+                className={cn(
+                  "w-full h-14 justify-start gap-4 rounded-2xl font-black text-sm uppercase tracking-widest border transition-all active:scale-95",
+                  isNight ? "bg-white/5 border-white/10 text-white" : "bg-white border-primary/10 text-primary hover:bg-primary/5"
+                )}
+                onClick={handleAdminLoginClick}
+              >
+                <Lock className="w-5 h-5 text-accent" /> {isHindi ? 'एडमिन लॉगिन' : 'Admin Login'}
+              </Button>
             </div>
           </div>
         </ScrollArea>
