@@ -38,7 +38,7 @@ function GhareluUpayAppContent() {
   const [userId, setUserId] = useState<string>('');
   const [privateAnswers, setPrivateAnswers] = useState<any[]>([]);
 
-  // Overlay States - Managed locally and synced with history
+  // Overlay States
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -51,28 +51,28 @@ function GhareluUpayAppContent() {
   // Robust Hardware Back Button Support
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
-      // Safe access to state, fallback to empty object if null
-      const state = event.state || {};
-      
-      // Update Main Navigation States
-      setSelectedCategoryId(state.categoryId || null);
-      setSelectedIllnessId(state.illnessId || null);
-      setSelectedRemedyId(state.remedyId || null);
-      setIsDetailView(!!state.remedyId);
+      try {
+        const state = event.state || {};
+        
+        setSelectedCategoryId(state.categoryId || null);
+        setSelectedIllnessId(state.illnessId || null);
+        setSelectedRemedyId(state.remedyId || null);
+        setIsDetailView(!!state.remedyId);
 
-      // Update Overlay States based on history token
-      setIsSearchOpen(state.overlay === 'search');
-      setIsFavoritesOpen(state.overlay === 'favorites');
-      setIsNotificationsOpen(state.overlay === 'notifications');
-      setIsSidebarOpen(state.overlay === 'sidebar');
-      
-      // Natural Scroll Behavior
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+        setIsSearchOpen(state.overlay === 'search');
+        setIsFavoritesOpen(state.overlay === 'favorites');
+        setIsNotificationsOpen(state.overlay === 'notifications');
+        setIsSidebarOpen(state.overlay === 'sidebar');
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (e) {
+        console.error("Back button handling failed", e);
+      }
     };
 
     window.addEventListener('popstate', handlePopState);
     
-    // Initial Hydration Logic
+    // Initial Hydration Logic - Safe Baseline
     if (isLoaded && !urlRemedyId) {
       if (!window.history.state || window.history.state.categoryId === undefined) {
         window.history.replaceState({ 
@@ -84,25 +84,19 @@ function GhareluUpayAppContent() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [isLoaded, urlRemedyId]);
 
-  // Handle Deep Link Landing - Building the History Stack after hydration
+  // Handle Deep Link Landing
   useEffect(() => {
     if (isLoaded && urlRemedyId && allRemedies.length > 0) {
       const remedy = allRemedies.find(r => r.id === urlRemedyId);
       if (remedy && (!window.history.state || window.history.state.remedyId !== urlRemedyId)) {
-        // 1. Establish Home Baseline
         window.history.replaceState({ categoryId: null, illnessId: null, remedyId: null, overlay: null }, '', '/');
-        
-        // 2. Push Category Level
         window.history.pushState({ 
           categoryId: remedy.categoryId, illnessId: null, remedyId: null, overlay: null 
         }, '', '/');
-
-        // 3. Push Remedy Detail Level
         window.history.pushState({ 
           categoryId: remedy.categoryId, illnessId: remedy.illnessId, remedyId: remedy.id, overlay: null 
         }, '', `?remedyId=${remedy.id}`);
 
-        // Update local state to match deep link
         setSelectedCategoryId(remedy.categoryId);
         setSelectedIllnessId(remedy.illnessId);
         setSelectedRemedyId(remedy.id);
@@ -111,16 +105,22 @@ function GhareluUpayAppContent() {
     }
   }, [urlRemedyId, allRemedies, isLoaded]);
 
+  // User ID Initialization
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    let uid = localStorage.getItem('gharelu_user_id');
-    if (!uid) {
-      uid = 'user_' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('gharelu_user_id', uid);
+    try {
+      let uid = localStorage.getItem('gharelu_user_id');
+      if (!uid) {
+        uid = 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('gharelu_user_id', uid);
+      }
+      setUserId(uid);
+    } catch (e) {
+      console.error("User ID setup failed", e);
     }
-    setUserId(uid);
   }, []);
 
+  // Listen for recipes
   useEffect(() => {
     if (!db) return;
     const recipesRef = collection(db, 'recipes');
@@ -178,44 +178,38 @@ function GhareluUpayAppContent() {
     return () => unsubscribe();
   }, [db, userId]);
 
+  // Initial Data Loading with safety
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    const savedFavs = localStorage.getItem('gharelu-favorites');
-    if (savedFavs) {
-      try {
-        setFavorites(JSON.parse(savedFavs));
-      } catch (e) {
-        console.error("Failed to load favorites", e);
-      }
-    }
+    try {
+      const savedFavs = localStorage.getItem('gharelu-favorites');
+      if (savedFavs) setFavorites(JSON.parse(savedFavs));
+    } catch (e) { console.error("Favs load error", e); }
 
-    const savedReadIds = localStorage.getItem('gharelu-read-remedy-ids');
-    if (savedReadIds) {
-      try {
-        setReadRemedyIds(JSON.parse(savedReadIds));
-      } catch (e) {
-        console.error("Failed to load read IDs", e);
-      }
-    }
+    try {
+      const savedReadIds = localStorage.getItem('gharelu-read-remedy-ids');
+      if (savedReadIds) setReadRemedyIds(JSON.parse(savedReadIds));
+    } catch (e) { console.error("Read IDs load error", e); }
 
-    const savedLastCheck = localStorage.getItem('gharelu-last-check-time');
-    if (savedLastCheck) {
-      setLastCheckedTime(parseInt(savedLastCheck));
-    }
+    try {
+      const savedLastCheck = localStorage.getItem('gharelu-last-check-time');
+      if (savedLastCheck) setLastCheckedTime(parseInt(savedLastCheck));
+    } catch (e) { console.error("Last check load error", e); }
     
     setIsLoaded(true);
   }, []);
 
+  // Save changes
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem('gharelu-favorites', JSON.stringify(favorites));
+      try { localStorage.setItem('gharelu-favorites', JSON.stringify(favorites)); } catch (e) {}
     }
   }, [favorites, isLoaded]);
 
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem('gharelu-read-remedy-ids', JSON.stringify(readRemedyIds));
+      try { localStorage.setItem('gharelu-read-remedy-ids', JSON.stringify(readRemedyIds)); } catch (e) {}
     }
   }, [readRemedyIds, isLoaded]);
 
@@ -225,7 +219,6 @@ function GhareluUpayAppContent() {
   }, [liveRecipes]);
 
   const hasNewNotifications = (isLoaded && latestRemedyTime > lastCheckedTime) || privateAnswers.length > 0;
-  
   const unreadRemedies = allRemedies.filter(r => !readRemedyIds.includes(r.id)).reverse();
 
   const toggleLanguage = () => setLang((prev) => (prev === 'hi' ? 'en' : 'hi'));
@@ -233,7 +226,7 @@ function GhareluUpayAppContent() {
 
   const isNight = theme === 'night';
 
-  // Navigation Handlers with History Support
+  // Navigation Handlers
   const handleSelectCategory = (id: string) => {
     setSelectedCategoryId(id);
     setSelectedIllnessId(null);
@@ -252,74 +245,44 @@ function GhareluUpayAppContent() {
   const handleSelectRemedy = (remedyId: string, categoryId: string) => {
     const remedy = allRemedies.find(r => r.id === remedyId);
     const iId = remedy?.illnessId || null;
-    
     setSelectedCategoryId(categoryId);
     setSelectedIllnessId(iId);
     setSelectedRemedyId(remedyId);
     setIsDetailView(true);
-    
-    window.history.pushState({ 
-      categoryId, illnessId: iId, remedyId, overlay: null 
-    }, '', `?remedyId=${remedyId}`);
-    
+    window.history.pushState({ categoryId, illnessId: iId, remedyId, overlay: null }, '', `?remedyId=${remedyId}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Overlay Trigger Handlers
+  // Overlay Handlers
   const handleOpenSearch = () => {
     setIsSearchOpen(true);
-    window.history.pushState({ 
-      categoryId: selectedCategoryId, 
-      illnessId: selectedIllnessId, 
-      remedyId: selectedRemedyId, 
-      overlay: 'search' 
-    }, '', '');
+    window.history.pushState({ categoryId: selectedCategoryId, illnessId: selectedIllnessId, remedyId: selectedRemedyId, overlay: 'search' }, '', '');
   };
 
   const handleOpenFavorites = () => {
     setIsFavoritesOpen(true);
-    window.history.pushState({ 
-      categoryId: selectedCategoryId, 
-      illnessId: selectedIllnessId, 
-      remedyId: selectedRemedyId, 
-      overlay: 'favorites' 
-    }, '', '');
+    window.history.pushState({ categoryId: selectedCategoryId, illnessId: selectedIllnessId, remedyId: selectedRemedyId, overlay: 'favorites' }, '', '');
   };
 
   const handleOpenNotifications = () => {
     setIsNotificationsOpen(true);
     const now = Date.now();
     setLastCheckedTime(now);
-    localStorage.setItem('gharelu-last-check-time', now.toString());
-    window.history.pushState({ 
-      categoryId: selectedCategoryId, 
-      illnessId: selectedIllnessId, 
-      remedyId: selectedRemedyId, 
-      overlay: 'notifications' 
-    }, '', '');
+    try { localStorage.setItem('gharelu-last-check-time', now.toString()); } catch(e) {}
+    window.history.pushState({ categoryId: selectedCategoryId, illnessId: selectedIllnessId, remedyId: selectedRemedyId, overlay: 'notifications' }, '', '');
   };
 
   const handleOpenSidebar = () => {
     setIsSidebarOpen(true);
-    window.history.pushState({ 
-      categoryId: selectedCategoryId, 
-      illnessId: selectedIllnessId, 
-      remedyId: selectedRemedyId, 
-      overlay: 'sidebar' 
-    }, '', '');
+    window.history.pushState({ categoryId: selectedCategoryId, illnessId: selectedIllnessId, remedyId: selectedRemedyId, overlay: 'sidebar' }, '', '');
   };
 
-  // Generic closer that uses history to stay sync
   const handleCloseOverlay = () => {
-    window.history.back();
+    if (typeof window !== 'undefined') window.history.back();
   };
 
   const handleToggleFavorite = (remedyId: string) => {
-    setFavorites(prev => 
-      prev.includes(remedyId) 
-        ? prev.filter(id => id !== remedyId) 
-        : [...prev, remedyId]
-    );
+    setFavorites(prev => prev.includes(remedyId) ? prev.filter(id => id !== remedyId) : [...prev, remedyId]);
   };
 
   const handleMarkAsRead = (remedyId: string) => {
@@ -338,103 +301,46 @@ function GhareluUpayAppContent() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  if (!isLoaded) return <div className="min-h-screen bg-[#FDFBF7]" />;
+
   return (
-    <div className={cn(
-      "min-h-screen flex flex-col transition-colors duration-500",
-      isNight ? "bg-black text-white" : "bg-[#FDFBF7] text-foreground"
-    )}>
+    <div className={cn("min-h-screen flex flex-col transition-colors duration-500", isNight ? "bg-black text-white" : "bg-[#FDFBF7] text-foreground")}>
       <AppSplashScreen />
       <TopBar 
-        lang={lang} 
-        theme={theme} 
-        onToggleLanguage={toggleLanguage} 
-        onToggleTheme={toggleTheme} 
-        onSelectRemedy={handleSelectRemedy}
-        onOpenFavorites={handleOpenFavorites}
-        onOpenNotifications={handleOpenNotifications}
-        onOpenSidebar={handleOpenSidebar}
-        isSidebarOpen={isSidebarOpen}
-        onSidebarOpenChange={(open) => !open && handleCloseOverlay()}
-        hasFavorites={favorites.length > 0}
-        hasNotifications={hasNewNotifications}
-        allRemedies={allRemedies}
-        onOpenSearch={handleOpenSearch}
-        isSearchOpen={isSearchOpen}
-        onCloseSearch={handleCloseOverlay}
+        lang={lang} theme={theme} onToggleLanguage={toggleLanguage} onToggleTheme={toggleTheme} 
+        onSelectRemedy={handleSelectRemedy} onOpenFavorites={handleOpenFavorites} onOpenNotifications={handleOpenNotifications}
+        onOpenSidebar={handleOpenSidebar} isSidebarOpen={isSidebarOpen} onSidebarOpenChange={(open) => !open && handleCloseOverlay()}
+        hasFavorites={favorites.length > 0} hasNotifications={hasNewNotifications} allRemedies={allRemedies}
+        onOpenSearch={handleOpenSearch} isSearchOpen={isSearchOpen} onCloseSearch={handleCloseOverlay}
       />
       
-      <main 
-        className={cn(
-          "flex-1 w-full transition-colors duration-500 relative pt-20 pb-24",
-          isNight ? "bg-black" : "bg-[#FDFBF7]"
-        )}
-      >
+      <main className={cn("flex-1 w-full transition-colors duration-500 relative pt-20 pb-24", isNight ? "bg-black" : "bg-[#FDFBF7]")}>
         <div className="w-full">
           {selectedCategoryId ? (
             <div className="max-w-2xl mx-auto px-6">
               <CategoryDetailView 
-                categoryId={selectedCategoryId} 
-                lang={lang} 
-                theme={theme} 
-                onBack={handleCloseOverlay} 
-                favorites={favorites}
-                onToggleFavorite={handleToggleFavorite}
-                initialRemedyId={selectedRemedyId}
-                initialIllnessId={selectedIllnessId}
-                onSelectRemedyId={(id) => id && handleSelectRemedy(id, selectedCategoryId)}
-                onSelectIllnessId={handleSelectIllness}
-                onLevelChange={(level) => setIsDetailView(level === 3)}
-                allRemedies={allRemedies}
+                categoryId={selectedCategoryId} lang={lang} theme={theme} onBack={handleCloseOverlay} 
+                favorites={favorites} onToggleFavorite={handleToggleFavorite} initialRemedyId={selectedRemedyId}
+                initialIllnessId={selectedIllnessId} onSelectRemedyId={(id) => id && handleSelectRemedy(id, selectedCategoryId)}
+                onSelectIllnessId={handleSelectIllness} onLevelChange={(level) => setIsDetailView(level === 3)} allRemedies={allRemedies}
               />
             </div>
           ) : (
-            <HomeView 
-              lang={lang} 
-              theme={theme} 
-              onSelectCategory={handleSelectCategory} 
-              allRemedies={allRemedies}
-            />
+            <HomeView lang={lang} theme={theme} onSelectCategory={handleSelectCategory} allRemedies={allRemedies} />
           )}
         </div>
       </main>
 
-      <FavoritesOverlay 
-        isOpen={isFavoritesOpen}
-        onClose={handleCloseOverlay}
-        lang={lang}
-        theme={theme}
-        favorites={favorites}
-        onSelectRemedy={handleSelectRemedy}
-        allRemedies={allRemedies}
-      />
-
-      <NotificationsOverlay
-        isOpen={isNotificationsOpen}
-        onClose={handleCloseOverlay}
-        lang={lang}
-        theme={theme}
-        unreadRemedies={unreadRemedies}
-        onMarkAsRead={handleMarkAsRead}
-        onSelectRemedy={handleSelectRemedy}
-        privateAnswers={privateAnswers}
-        db={db}
-      />
-
-      <BottomNav 
-        lang={lang} 
-        theme={theme} 
-        currentView={!selectedCategoryId ? 'home' : 'details'} 
-        onViewChange={handleGoHome} 
-        onOpenSearch={handleOpenSearch}
-        enableScrollHide={isDetailView}
-      />
+      <FavoritesOverlay isOpen={isFavoritesOpen} onClose={handleCloseOverlay} lang={lang} theme={theme} favorites={favorites} onSelectRemedy={handleSelectRemedy} allRemedies={allRemedies} />
+      <NotificationsOverlay isOpen={isNotificationsOpen} onClose={handleCloseOverlay} lang={lang} theme={theme} unreadRemedies={unreadRemedies} onMarkAsRead={handleMarkAsRead} onSelectRemedy={handleSelectRemedy} privateAnswers={privateAnswers} db={db} />
+      <BottomNav lang={lang} theme={theme} currentView={!selectedCategoryId ? 'home' : 'details'} onViewChange={handleGoHome} onOpenSearch={handleOpenSearch} enableScrollHide={isDetailView} />
     </div>
   );
 }
 
 export default function GhareluUpayApp() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div className="min-h-screen bg-[#FDFBF7]" />}>
       <GhareluUpayAppContent />
     </Suspense>
   );

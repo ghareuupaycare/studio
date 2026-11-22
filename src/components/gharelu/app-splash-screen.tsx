@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -6,21 +5,28 @@ import Image from 'next/image';
 
 /**
  * AppSplashScreen - A clean, white welcome animation.
- * Features: 2-second duration, brand logo zoom-in effect.
- * Strictly uses /icon-512.png as the source.
+ * Optimized with safety guards for storage and SSR.
  */
 export const AppSplashScreen = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const hasSeenSplash = sessionStorage.getItem('gharelu_splash_seen');
-    if (!hasSeenSplash) {
-      setVisible(true);
-      const timer = setTimeout(() => {
-        setVisible(false);
-        sessionStorage.setItem('gharelu_splash_seen', 'true');
-      }, 2000); // Exactly 2 seconds as requested
-      return () => clearTimeout(timer);
+    if (typeof window === 'undefined') return;
+    
+    try {
+      const hasSeenSplash = sessionStorage.getItem('gharelu_splash_seen');
+      if (!hasSeenSplash) {
+        setVisible(true);
+        const timer = setTimeout(() => {
+          setVisible(false);
+          try {
+            sessionStorage.setItem('gharelu_splash_seen', 'true');
+          } catch (e) {}
+        }, 2000);
+        return () => clearTimeout(timer);
+      }
+    } catch (e) {
+      console.error("Splash screen storage access failed", e);
     }
   }, []);
 
