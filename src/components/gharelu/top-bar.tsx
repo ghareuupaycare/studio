@@ -26,6 +26,8 @@ interface TopBarProps {
   hasNotifications?: boolean;
   allRemedies: Remedy[];
   onOpenSearch?: () => void;
+  isSearchOpen?: boolean;
+  onCloseSearch?: () => void;
 }
 
 export const TopBar = ({ 
@@ -42,7 +44,9 @@ export const TopBar = ({
   hasFavorites,
   hasNotifications,
   allRemedies,
-  onOpenSearch
+  onOpenSearch,
+  isSearchOpen = false,
+  onCloseSearch
 }: TopBarProps) => {
   const isNight = theme === 'night';
   const isHindi = lang === 'hi';
@@ -81,8 +85,8 @@ export const TopBar = ({
       />
 
       <SearchOverlay 
-        isOpen={!!window.history.state?.overlay ? window.history.state.overlay === 'search' : false} 
-        onClose={() => window.history.back()} 
+        isOpen={isSearchOpen} 
+        onClose={onCloseSearch || (() => {})} 
         lang={lang} 
         theme={theme} 
         onSelectRemedy={(rId, cId) => onSelectRemedy?.(rId, cId)} 

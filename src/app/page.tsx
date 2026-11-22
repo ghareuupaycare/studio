@@ -38,7 +38,7 @@ function GhareluUpayAppContent() {
   const [userId, setUserId] = useState<string>('');
   const [privateAnswers, setPrivateAnswers] = useState<any[]>([]);
 
-  // Overlay States
+  // Overlay States - Managed locally and synced with history
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -51,6 +51,7 @@ function GhareluUpayAppContent() {
   // Robust Hardware Back Button Support
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
+      // Safe access to state, fallback to empty object if null
       const state = event.state || {};
       
       // Update Main Navigation States
@@ -59,7 +60,7 @@ function GhareluUpayAppContent() {
       setSelectedRemedyId(state.remedyId || null);
       setIsDetailView(!!state.remedyId);
 
-      // Update Overlay States
+      // Update Overlay States based on history token
       setIsSearchOpen(state.overlay === 'search');
       setIsFavoritesOpen(state.overlay === 'favorites');
       setIsNotificationsOpen(state.overlay === 'notifications');
@@ -71,7 +72,7 @@ function GhareluUpayAppContent() {
 
     window.addEventListener('popstate', handlePopState);
     
-    // Initialize Baseline Home Entry if landing on root
+    // Initial Hydration Logic
     if (isLoaded && !urlRemedyId) {
       if (!window.history.state || window.history.state.categoryId === undefined) {
         window.history.replaceState({ 
@@ -83,7 +84,7 @@ function GhareluUpayAppContent() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [isLoaded, urlRemedyId]);
 
-  // Handle Deep Link Landing - Building the History Stack
+  // Handle Deep Link Landing - Building the History Stack after hydration
   useEffect(() => {
     if (isLoaded && urlRemedyId && allRemedies.length > 0) {
       const remedy = allRemedies.find(r => r.id === urlRemedyId);
@@ -111,6 +112,7 @@ function GhareluUpayAppContent() {
   }, [urlRemedyId, allRemedies, isLoaded]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     let uid = localStorage.getItem('gharelu_user_id');
     if (!uid) {
       uid = 'user_' + Math.random().toString(36).substr(2, 9);
@@ -177,6 +179,8 @@ function GhareluUpayAppContent() {
   }, [db, userId]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const savedFavs = localStorage.getItem('gharelu-favorites');
     if (savedFavs) {
       try {
@@ -254,7 +258,6 @@ function GhareluUpayAppContent() {
     setSelectedRemedyId(remedyId);
     setIsDetailView(true);
     
-    // Push new state with URL update for direct linking
     window.history.pushState({ 
       categoryId, illnessId: iId, remedyId, overlay: null 
     }, '', `?remedyId=${remedyId}`);
@@ -356,6 +359,8 @@ function GhareluUpayAppContent() {
         hasNotifications={hasNewNotifications}
         allRemedies={allRemedies}
         onOpenSearch={handleOpenSearch}
+        isSearchOpen={isSearchOpen}
+        onCloseSearch={handleCloseOverlay}
       />
       
       <main 
