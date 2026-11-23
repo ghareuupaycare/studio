@@ -42,21 +42,28 @@ export const CategoryDetailView = ({
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
 
-  // Handle Parent-Controlled State Changes (Sync with History/Popstate)
+  // Robust State Synchronization with History
   useEffect(() => {
+    // Priority 1: Remedy Detail (Level 3)
     if (initialRemedyId) {
       const remedy = allRemedies.find(r => r.id === initialRemedyId);
       if (remedy) {
         setSelectedRemedy(remedy);
         setSelectedIllnessId(remedy.illnessId);
-      }
-    } else {
-      setSelectedRemedy(null);
-      // Sync illness selection if remedy is null
-      if (initialIllnessId !== undefined) {
-        setSelectedIllnessId(initialIllnessId);
+        return;
       }
     }
+    
+    // Priority 2: Remedy List (Level 2)
+    if (initialIllnessId) {
+      setSelectedRemedy(null);
+      setSelectedIllnessId(initialIllnessId);
+      return;
+    }
+    
+    // Priority 3: Illness List (Level 1)
+    setSelectedRemedy(null);
+    setSelectedIllnessId(null);
   }, [initialRemedyId, initialIllnessId, allRemedies]);
 
   useEffect(() => {

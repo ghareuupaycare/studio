@@ -54,6 +54,7 @@ function GhareluUpayAppContent() {
       try {
         const state = event.state || {};
         
+        // Synchronize all navigation states carefully
         setSelectedCategoryId(state.categoryId || null);
         setSelectedIllnessId(state.illnessId || null);
         setSelectedRemedyId(state.remedyId || null);
@@ -72,7 +73,7 @@ function GhareluUpayAppContent() {
 
     window.addEventListener('popstate', handlePopState);
     
-    // Initial Hydration Logic - Safe Baseline
+    // Initial Baseline Entry
     if (isLoaded && !urlRemedyId) {
       if (!window.history.state || window.history.state.categoryId === undefined) {
         window.history.replaceState({ 
@@ -84,15 +85,25 @@ function GhareluUpayAppContent() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [isLoaded, urlRemedyId]);
 
-  // Handle Deep Link Landing
+  // Handle Deep Link Landing with full stack building
   useEffect(() => {
     if (isLoaded && urlRemedyId && allRemedies.length > 0) {
       const remedy = allRemedies.find(r => r.id === urlRemedyId);
       if (remedy && (!window.history.state || window.history.state.remedyId !== urlRemedyId)) {
+        // Rebuild history stack so back button works step-by-step
         window.history.replaceState({ categoryId: null, illnessId: null, remedyId: null, overlay: null }, '', '/');
+        
+        // Push Category level
         window.history.pushState({ 
           categoryId: remedy.categoryId, illnessId: null, remedyId: null, overlay: null 
         }, '', '/');
+        
+        // Push Illness/Remedy List level (Crucial missing step!)
+        window.history.pushState({ 
+          categoryId: remedy.categoryId, illnessId: remedy.illnessId, remedyId: null, overlay: null 
+        }, '', '/');
+        
+        // Push Final Remedy Detail level
         window.history.pushState({ 
           categoryId: remedy.categoryId, illnessId: remedy.illnessId, remedyId: remedy.id, overlay: null 
         }, '', `?remedyId=${remedy.id}`);
@@ -244,11 +255,21 @@ function GhareluUpayAppContent() {
 
   const handleSelectRemedy = (remedyId: string, categoryId: string) => {
     const remedy = allRemedies.find(r => r.id === remedyId);
-    const iId = remedy?.illnessId || null;
+    if (!remedy) return;
+
+    const iId = remedy.illnessId || null;
+    
+    // Ensure we have a proper stack if jumping from Search/Home
+    if (selectedCategoryId !== categoryId || selectedIllnessId !== iId) {
+      window.history.pushState({ categoryId, illnessId: null, remedyId: null, overlay: null }, '', '/');
+      window.history.pushState({ categoryId, illnessId: iId, remedyId: null, overlay: null }, '', '/');
+    }
+
     setSelectedCategoryId(categoryId);
     setSelectedIllnessId(iId);
     setSelectedRemedyId(remedyId);
     setIsDetailView(true);
+    
     window.history.pushState({ categoryId, illnessId: iId, remedyId, overlay: null }, '', `?remedyId=${remedyId}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -279,7 +300,8 @@ function GhareluUpayAppContent() {
 
   const handleCloseOverlay = () => {
     try {
-      if (typeof window !== 'undefined' && window.history.state && window.history.state.overlay) {
+      if (typeof window !== 'undefined') {
+        // Universal back to allow in-page back button to function for all levels
         window.history.back();
       }
     } catch (e) {
