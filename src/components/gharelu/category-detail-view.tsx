@@ -39,7 +39,11 @@ export const CategoryDetailView = ({
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
 
-  // Level Logic derived purely from props to prevent race conditions during history navigation
+  // Level Logic derived strictly from props to prevent race conditions during popstate sync
+  // Level 1: Category List (CategoryId present, illness/remedy null)
+  // Level 2: Remedy List (IllnessId present, remedyId null)
+  // Level 3: Remedy Detail (RemedyId present)
+  
   const selectedIllnessId = initialIllnessId || (initialRemedyId ? allRemedies.find(r => r.id === initialRemedyId)?.illnessId : null) || null;
   
   const selectedRemedy = useMemo(() => {
@@ -97,7 +101,7 @@ export const CategoryDetailView = ({
     return firstRemedy?.mainCategory?.[lang] || categoryId;
   }, [selectedRemedy, selectedIllnessId, illnessList, activeCategoryMeta, lang, categoryId, allRemedies]);
 
-  // Level monitoring for parent UI hints
+  // Notify parent of level for UI adjustments
   React.useEffect(() => {
     if (onLevelChange) {
       if (selectedRemedy) onLevelChange(3);

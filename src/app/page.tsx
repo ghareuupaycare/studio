@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, Suspense } from 'react';
+import React, { useState, useEffect, useMemo, Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { TopBar } from '@/components/gharelu/top-bar';
 import { BottomNav } from '@/components/gharelu/bottom-nav';
@@ -44,17 +44,19 @@ function GhareluUpayAppContent() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const initialDeepLinkProcessed = useRef(false);
+
   const allRemedies = useMemo(() => {
     return [...STATIC_REMEDIES, ...liveRecipes];
   }, [liveRecipes]);
 
-  // Robust Hardware Back Button Support
+  // Robust History Sync - History state is the single source of truth after initial load
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
       try {
         const state = event.state || {};
         
-        // Synchronize all navigation states carefully
+        // Synchronize all navigation states strictly from history state
         setSelectedCategoryId(state.categoryId || null);
         setSelectedIllnessId(state.illnessId || null);
         setSelectedRemedyId(state.remedyId || null);
@@ -73,8 +75,8 @@ function GhareluUpayAppContent() {
 
     window.addEventListener('popstate', handlePopState);
     
-    // Initial Baseline Entry
-    if (isLoaded && !urlRemedyId) {
+    // Ensure Baseline Home Entry
+    if (isLoaded) {
       if (!window.history.state || window.history.state.categoryId === undefined) {
         window.history.replaceState({ 
           categoryId: null, illnessId: null, remedyId: null, overlay: null 
@@ -83,27 +85,29 @@ function GhareluUpayAppContent() {
     }
 
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [isLoaded, urlRemedyId]);
+  }, [isLoaded]);
 
-  // Handle Deep Link Landing with full stack building (Fix Level 2 skipping)
+  // Handle Deep Link Landing with atomic multi-step stack building
   useEffect(() => {
-    if (isLoaded && urlRemedyId && allRemedies.length > 0) {
+    if (isLoaded && urlRemedyId && allRemedies.length > 0 && !initialDeepLinkProcessed.current) {
       const remedy = allRemedies.find(r => r.id === urlRemedyId);
-      if (remedy && (!window.history.state || window.history.state.remedyId !== urlRemedyId)) {
-        // Rebuild history stack so back button works step-by-step
+      if (remedy) {
+        initialDeepLinkProcessed.current = true;
+        
+        // Reset and build the stack from bottom up
         window.history.replaceState({ categoryId: null, illnessId: null, remedyId: null, overlay: null }, '', '/');
         
-        // Push Category level (Level 1)
+        // Level 1: Category
         window.history.pushState({ 
           categoryId: remedy.categoryId, illnessId: null, remedyId: null, overlay: null 
         }, '', '/');
         
-        // Push Illness/Remedy List level (Level 2 - Crucial Fix!)
+        // Level 2: Remedy List
         window.history.pushState({ 
           categoryId: remedy.categoryId, illnessId: remedy.illnessId, remedyId: null, overlay: null 
         }, '', '/');
         
-        // Push Final Remedy Detail level (Level 3)
+        // Level 3: Remedy Detail (Final destination)
         window.history.pushState({ 
           categoryId: remedy.categoryId, illnessId: remedy.illnessId, remedyId: remedy.id, overlay: null 
         }, '', `?remedyId=${remedy.id}`);
@@ -189,7 +193,7 @@ function GhareluUpayAppContent() {
     return () => unsubscribe();
   }, [db, userId]);
 
-  // Initial Data Loading with safety
+  // Initial Data Loading
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
@@ -259,13 +263,15 @@ function GhareluUpayAppContent() {
 
     const iId = remedy.illnessId || null;
     
-    // Ensure Level 2 (Remedy Titles List) is in the history stack
-    // if coming from Home or Search directly
-    if (selectedCategoryId !== categoryId || selectedIllnessId !== iId) {
-      // Level 1: Category List
-      window.history.pushState({ categoryId, illnessId: null, remedyId: null, overlay: null }, '', '/');
-      // Level 2: Remedy List (Illness level)
-      window.history.pushState({ categoryId, illnessId: iId, remedyId: null, overlay: null }, '', '/');
+    // Check where we are. If coming from Home or Search (Level 0), push intermediate levels first.
+    if (!selectedCategoryId) {
+       // Push Level 1 (Category List)
+       window.history.pushState({ categoryId, illnessId: null, remedyId: null, overlay: null }, '', '/');
+       // Push Level 2 (Remedy List)
+       window.history.pushState({ categoryId, illnessId: iId, remedyId: null, overlay: null }, '', '/');
+    } else if (!selectedIllnessId && selectedCategoryId === categoryId) {
+       // At Level 1 (Category List), push Level 2 (Remedy List)
+       window.history.pushState({ categoryId, illnessId: iId, remedyId: null, overlay: null }, '', '/');
     }
 
     setSelectedCategoryId(categoryId);
@@ -273,7 +279,7 @@ function GhareluUpayAppContent() {
     setSelectedRemedyId(remedyId);
     setIsDetailView(true);
     
-    // Level 3: Remedy Detail
+    // Push Level 3: Remedy Detail
     window.history.pushState({ categoryId, illnessId: iId, remedyId, overlay: null }, '', `?remedyId=${remedyId}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -305,7 +311,6 @@ function GhareluUpayAppContent() {
   const handleCloseOverlay = () => {
     try {
       if (typeof window !== 'undefined') {
-        // Now works for both overlays and step-back levels
         window.history.back();
       }
     } catch (e) {
