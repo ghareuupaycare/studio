@@ -44,7 +44,7 @@ export const CategoryDetailView = ({
 
   // Robust State Synchronization with History
   useEffect(() => {
-    // Priority 1: Remedy Detail (Level 3)
+    // Level 3: Remedy Detail View
     if (initialRemedyId) {
       const remedy = allRemedies.find(r => r.id === initialRemedyId);
       if (remedy) {
@@ -54,18 +54,20 @@ export const CategoryDetailView = ({
       }
     }
     
-    // Priority 2: Remedy List (Level 2)
+    // Level 2: Remedy List (Titles List)
+    // If initialRemedyId is null but initialIllnessId is provided, we must show Level 2
     if (initialIllnessId) {
       setSelectedRemedy(null);
       setSelectedIllnessId(initialIllnessId);
       return;
     }
     
-    // Priority 3: Illness List (Level 1)
+    // Level 1: Subcategory/Illness List
     setSelectedRemedy(null);
     setSelectedIllnessId(null);
   }, [initialRemedyId, initialIllnessId, allRemedies]);
 
+  // Level monitoring for parent
   useEffect(() => {
     if (onLevelChange) {
       if (selectedRemedy) onLevelChange(3);

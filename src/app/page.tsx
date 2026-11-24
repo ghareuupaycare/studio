@@ -85,7 +85,7 @@ function GhareluUpayAppContent() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [isLoaded, urlRemedyId]);
 
-  // Handle Deep Link Landing with full stack building
+  // Handle Deep Link Landing with full stack building (Fix Level 2 skipping)
   useEffect(() => {
     if (isLoaded && urlRemedyId && allRemedies.length > 0) {
       const remedy = allRemedies.find(r => r.id === urlRemedyId);
@@ -93,17 +93,17 @@ function GhareluUpayAppContent() {
         // Rebuild history stack so back button works step-by-step
         window.history.replaceState({ categoryId: null, illnessId: null, remedyId: null, overlay: null }, '', '/');
         
-        // Push Category level
+        // Push Category level (Level 1)
         window.history.pushState({ 
           categoryId: remedy.categoryId, illnessId: null, remedyId: null, overlay: null 
         }, '', '/');
         
-        // Push Illness/Remedy List level (Crucial missing step!)
+        // Push Illness/Remedy List level (Level 2 - Crucial Fix!)
         window.history.pushState({ 
           categoryId: remedy.categoryId, illnessId: remedy.illnessId, remedyId: null, overlay: null 
         }, '', '/');
         
-        // Push Final Remedy Detail level
+        // Push Final Remedy Detail level (Level 3)
         window.history.pushState({ 
           categoryId: remedy.categoryId, illnessId: remedy.illnessId, remedyId: remedy.id, overlay: null 
         }, '', `?remedyId=${remedy.id}`);
@@ -259,9 +259,12 @@ function GhareluUpayAppContent() {
 
     const iId = remedy.illnessId || null;
     
-    // Ensure we have a proper stack if jumping from Search/Home
+    // Ensure Level 2 (Remedy Titles List) is in the history stack
+    // if coming from Home or Search directly
     if (selectedCategoryId !== categoryId || selectedIllnessId !== iId) {
+      // Level 1: Category List
       window.history.pushState({ categoryId, illnessId: null, remedyId: null, overlay: null }, '', '/');
+      // Level 2: Remedy List (Illness level)
       window.history.pushState({ categoryId, illnessId: iId, remedyId: null, overlay: null }, '', '/');
     }
 
@@ -270,6 +273,7 @@ function GhareluUpayAppContent() {
     setSelectedRemedyId(remedyId);
     setIsDetailView(true);
     
+    // Level 3: Remedy Detail
     window.history.pushState({ categoryId, illnessId: iId, remedyId, overlay: null }, '', `?remedyId=${remedyId}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -301,7 +305,7 @@ function GhareluUpayAppContent() {
   const handleCloseOverlay = () => {
     try {
       if (typeof window !== 'undefined') {
-        // Universal back to allow in-page back button to function for all levels
+        // Now works for both overlays and step-back levels
         window.history.back();
       }
     } catch (e) {
