@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Language, Theme } from '@/app/page';
 import { cn, toEnglishDigits } from '@/lib/utils';
 import { ChevronLeft, ArrowRight } from 'lucide-react';
@@ -36,45 +36,16 @@ export const CategoryDetailView = ({
   onLevelChange,
   allRemedies
 }: CategoryDetailViewProps) => {
-  const [selectedIllnessId, setSelectedIllnessId] = useState<string | null>(null);
-  const [selectedRemedy, setSelectedRemedy] = useState<Remedy | null>(null);
-  
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
 
-  // Robust State Synchronization with History
-  useEffect(() => {
-    // Level 3: Remedy Detail View
-    if (initialRemedyId) {
-      const remedy = allRemedies.find(r => r.id === initialRemedyId);
-      if (remedy) {
-        setSelectedRemedy(remedy);
-        setSelectedIllnessId(remedy.illnessId);
-        return;
-      }
-    }
-    
-    // Level 2: Remedy List (Titles List)
-    // If initialRemedyId is null but initialIllnessId is provided, we must show Level 2
-    if (initialIllnessId) {
-      setSelectedRemedy(null);
-      setSelectedIllnessId(initialIllnessId);
-      return;
-    }
-    
-    // Level 1: Subcategory/Illness List
-    setSelectedRemedy(null);
-    setSelectedIllnessId(null);
-  }, [initialRemedyId, initialIllnessId, allRemedies]);
-
-  // Level monitoring for parent
-  useEffect(() => {
-    if (onLevelChange) {
-      if (selectedRemedy) onLevelChange(3);
-      else if (selectedIllnessId) onLevelChange(2);
-      else onLevelChange(1);
-    }
-  }, [selectedRemedy, selectedIllnessId, onLevelChange]);
+  // Level Logic derived purely from props to prevent race conditions during history navigation
+  const selectedIllnessId = initialIllnessId || (initialRemedyId ? allRemedies.find(r => r.id === initialRemedyId)?.illnessId : null) || null;
+  
+  const selectedRemedy = useMemo(() => {
+    if (!initialRemedyId) return null;
+    return allRemedies.find(r => r.id === initialRemedyId) || null;
+  }, [initialRemedyId, allRemedies]);
 
   const activeCategoryMeta = useMemo(() => {
     const meta: Record<string, any> = {
@@ -114,10 +85,6 @@ export const CategoryDetailView = ({
     return allRemedies.filter(r => r.categoryId === categoryId && r.illnessId === selectedIllnessId);
   }, [allRemedies, selectedIllnessId, categoryId]);
 
-  const handleInternalBack = () => {
-    onBack(); // Parent will handle via history.back()
-  };
-
   const currentTitle = useMemo(() => {
     if (selectedRemedy) return selectedRemedy.name[lang];
     if (selectedIllnessId) {
@@ -130,11 +97,20 @@ export const CategoryDetailView = ({
     return firstRemedy?.mainCategory?.[lang] || categoryId;
   }, [selectedRemedy, selectedIllnessId, illnessList, activeCategoryMeta, lang, categoryId, allRemedies]);
 
+  // Level monitoring for parent UI hints
+  React.useEffect(() => {
+    if (onLevelChange) {
+      if (selectedRemedy) onLevelChange(3);
+      else if (selectedIllnessId) onLevelChange(2);
+      else onLevelChange(1);
+    }
+  }, [selectedRemedy, selectedIllnessId, onLevelChange]);
+
   return (
     <div className="space-y-10 animate-in slide-in-from-right-4 duration-500 pb-10 max-w-2xl mx-auto">
       <div className="flex items-center gap-4">
         <button 
-          onClick={handleInternalBack}
+          onClick={onBack}
           className={cn(
             "p-3 rounded-full transition-all active:scale-95 shadow-md cursor-pointer",
             isNight ? "bg-white text-black" : "bg-[#14532D] text-white"
