@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useMemo } from 'react';
@@ -123,6 +124,26 @@ export const CategoryDetailView = ({
           <ChevronLeft className="w-6 h-6" />
         </button>
         <div className="flex flex-col text-left">
+          {/* Label 1: Condition List View */}
+          {!selectedIllnessId && (
+            <span className={cn(
+              "text-[10px] sm:text-xs font-black uppercase tracking-[0.15em] mb-0.5 opacity-60 transition-colors",
+              isNight ? "text-white" : "text-[#14532D]"
+            )}>
+              {isHindi ? 'अपनी समस्या चुनें • बीमारियों की सूची' : 'Select your problem • List of conditions'}
+            </span>
+          )}
+
+          {/* Label 2: Remedy Titles List View */}
+          {selectedIllnessId && !selectedRemedy && (
+            <span className={cn(
+              "text-[10px] sm:text-xs font-black uppercase tracking-[0.1em] mb-0.5 opacity-60 transition-colors",
+              isNight ? "text-white" : "text-[#14532D]"
+            )}>
+              {isHindi ? 'जो नुस्खा आपको पसंद आए और आसान लगे, वह आज़माना शुरू कर सकते हैं' : 'Try the remedy that you like and find easy to use'}
+            </span>
+          )}
+
           <h2 className={cn(
             "font-black font-headline leading-tight tracking-wide text-2xl",
             isNight ? "text-white" : "text-[#14532D]"
