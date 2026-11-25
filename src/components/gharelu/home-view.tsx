@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useMemo } from 'react';
@@ -19,10 +20,31 @@ export const HomeView = ({ lang, theme, onSelectCategory, allRemedies }: HomeVie
   const categories = useMemo(() => {
     const catMap = new Map<string, { id: string; title: string; subtitle: string }>();
 
+    // Updated Metadata with specific disease examples
     const categoryMetadata: Record<string, any> = {
       fever_flu: {
-        hi: { title: '1. मौसमी बुखार एवं फ्लू', subtitle: 'बुखार, जुकाम और खांसी के लिए प्रामाणिक आयुर्वेदिक उपचार' },
-        en: { title: '1. Seasonal Fever & Flu', subtitle: 'Authentic Ayurvedic remedies for fever, cold and cough' }
+        hi: { title: 'मौसमी बीमारियां', subtitle: 'बुखार, सर्दी-जुकाम, वायरल, गले की खराश' },
+        en: { title: 'Seasonal Fever & Flu', subtitle: 'Fever, Cold & Cough, Viral, Sore Throat' }
+      },
+      stomach_ailments: {
+        hi: { title: 'पेट के रोग', subtitle: 'गैस, कब्ज़, एसिडिटी, अपच' },
+        en: { title: 'Stomach Ailments', subtitle: 'Gas, Constipation, Acidity, Indigestion' }
+      },
+      lifestyle_diseases: {
+        hi: { title: 'असाध्य एवं जीवनशैली के रोग', subtitle: 'डायबिटीज, बीपी, दमा, थायरॉइड' },
+        en: { title: 'Lifestyle Diseases', subtitle: 'Diabetes, BP, Asthma, Thyroid' }
+      },
+      women_diseases: {
+        hi: { title: 'महिला के रोग', subtitle: 'मासिक धर्म, पीसीओडी, कमजोरी' },
+        en: { title: 'Women Health', subtitle: 'Periods, PCOD, Weakness' }
+      },
+      detox: {
+        hi: { title: 'संपूर्ण शरीर शुद्धि', subtitle: 'रक्त शुद्धि, लिवर डिटॉक्स, हल्कापन, ऊर्जा' },
+        en: { title: 'Whole Body Detox', subtitle: 'Blood Detox, Liver Cleanse, Lightness, Energy' }
+      },
+      men_diseases: {
+        hi: { title: 'पुरुषों के रोग', subtitle: 'थकान, कमजोरी, जोश, स्टैमिना' },
+        en: { title: 'Men Health', subtitle: 'Fatigue, Weakness, Vitality, Stamina' }
       }
     };
 

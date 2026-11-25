@@ -40,11 +40,6 @@ export const CategoryDetailView = ({
   const isHindi = lang === 'hi';
   const isNight = theme === 'night';
 
-  // Level Logic derived strictly from props to prevent race conditions during popstate sync
-  // Level 1: Category List (CategoryId present, illness/remedy null)
-  // Level 2: Remedy List (IllnessId present, remedyId null)
-  // Level 3: Remedy Detail (RemedyId present)
-  
   const selectedIllnessId = initialIllnessId || (initialRemedyId ? allRemedies.find(r => r.id === initialRemedyId)?.illnessId : null) || null;
   
   const selectedRemedy = useMemo(() => {
@@ -55,7 +50,7 @@ export const CategoryDetailView = ({
   const activeCategoryMeta = useMemo(() => {
     const meta: Record<string, any> = {
       fever_flu: {
-        title: isHindi ? '1. मौसमी बुखार एवं फ्लू' : '1. Seasonal Fever & Flu',
+        title: isHindi ? 'मौसमी बीमारियां' : 'Seasonal Fever & Flu',
         staticIllnesses: [
           { id: 'general-fever', title: isHindi ? '1. सामान्य बुखार' : '1. General Fever' },
           { id: 'common-cold', title: isHindi ? '2. नजला और जुकाम' : '2. Cold & Flu' },
@@ -102,7 +97,6 @@ export const CategoryDetailView = ({
     return firstRemedy?.mainCategory?.[lang] || categoryId;
   }, [selectedRemedy, selectedIllnessId, illnessList, activeCategoryMeta, lang, categoryId, allRemedies]);
 
-  // Notify parent of level for UI adjustments
   React.useEffect(() => {
     if (onLevelChange) {
       if (selectedRemedy) onLevelChange(3);
@@ -112,46 +106,45 @@ export const CategoryDetailView = ({
   }, [selectedRemedy, selectedIllnessId, onLevelChange]);
 
   return (
-    <div className="space-y-10 animate-in slide-in-from-right-4 duration-500 pb-10 max-w-2xl mx-auto">
+    <div className="space-y-6 animate-in slide-in-from-right-4 duration-500 pb-10 max-w-2xl mx-auto">
       <div className="flex items-center gap-4">
         <button 
           onClick={onBack}
           className={cn(
-            "p-3 rounded-full transition-all active:scale-95 shadow-md cursor-pointer",
+            "p-3 rounded-full transition-all active:scale-95 shadow-md cursor-pointer shrink-0",
             isNight ? "bg-white text-black" : "bg-[#14532D] text-white"
           )}
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
-        <div className="flex flex-col text-left">
-          {/* Label 1: Condition List View */}
-          {!selectedIllnessId && (
+        <h2 className={cn(
+          "font-black font-headline leading-tight tracking-wide text-2xl",
+          isNight ? "text-white" : "text-[#14532D]"
+        )}>
+          {toEnglishDigits(currentTitle)}
+        </h2>
+      </div>
+
+      {/* Language Aware Labels - Placed BELOW heading and ABOVE cards */}
+      {!selectedRemedy && (
+        <div className="px-1 animate-in fade-in duration-700">
+          {!selectedIllnessId ? (
             <span className={cn(
-              "text-[10px] sm:text-xs font-black uppercase tracking-[0.15em] mb-0.5 opacity-60 transition-colors",
+              "text-[10px] sm:text-xs font-black uppercase tracking-[0.15em] opacity-60",
               isNight ? "text-white" : "text-[#14532D]"
             )}>
               {isHindi ? 'अपनी समस्या चुनें • बीमारियों की सूची' : 'Select your problem • List of conditions'}
             </span>
-          )}
-
-          {/* Label 2: Remedy Titles List View */}
-          {selectedIllnessId && !selectedRemedy && (
+          ) : (
             <span className={cn(
-              "text-[10px] sm:text-xs font-black uppercase tracking-[0.1em] mb-0.5 opacity-60 transition-colors",
+              "text-[10px] sm:text-xs font-black uppercase tracking-[0.1em] opacity-60",
               isNight ? "text-white" : "text-[#14532D]"
             )}>
               {isHindi ? 'जो नुस्खा आपको पसंद आए और आसान लगे, वह आज़माना शुरू कर सकते हैं' : 'Try the remedy that you like and find easy to use'}
             </span>
           )}
-
-          <h2 className={cn(
-            "font-black font-headline leading-tight tracking-wide text-2xl",
-            isNight ? "text-white" : "text-[#14532D]"
-          )}>
-            {toEnglishDigits(currentTitle)}
-          </h2>
         </div>
-      </div>
+      )}
 
       {!selectedIllnessId ? (
         <div className="grid grid-cols-1 gap-3">
