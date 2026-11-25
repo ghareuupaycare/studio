@@ -18,54 +18,62 @@ export const HomeView = ({ lang, theme, onSelectCategory, allRemedies }: HomeVie
   const isHindi = lang === 'hi';
 
   const categories = useMemo(() => {
-    const catMap = new Map<string, { id: string; title: string; subtitle: string }>();
-
-    // Updated Metadata with specific disease examples
-    const categoryMetadata: Record<string, any> = {
-      fever_flu: {
-        hi: { title: 'मौसमी बीमारियां', subtitle: 'बुखार, सर्दी-जुकाम, वायरल, गले की खराश' },
-        en: { title: 'Seasonal Fever & Flu', subtitle: 'Fever, Cold & Cough, Viral, Sore Throat' }
-      },
-      stomach_ailments: {
-        hi: { title: 'पेट के रोग', subtitle: 'गैस, कब्ज़, एसिडिटी, अपच' },
-        en: { title: 'Stomach Ailments', subtitle: 'Gas, Constipation, Acidity, Indigestion' }
-      },
-      lifestyle_diseases: {
-        hi: { title: 'असाध्य एवं जीवनशैली के रोग', subtitle: 'डायबिटीज, बीपी, दमा, थायरॉइड' },
-        en: { title: 'Lifestyle Diseases', subtitle: 'Diabetes, BP, Asthma, Thyroid' }
-      },
-      women_diseases: {
-        hi: { title: 'महिला के रोग', subtitle: 'मासिक धर्म, पीसीओडी, कमजोरी' },
-        en: { title: 'Women Health', subtitle: 'Periods, PCOD, Weakness' }
-      },
-      detox: {
-        hi: { title: 'संपूर्ण शरीर शुद्धि', subtitle: 'रक्त शुद्धि, लिवर डिटॉक्स, हल्कापन, ऊर्जा' },
-        en: { title: 'Whole Body Detox', subtitle: 'Blood Detox, Liver Cleanse, Lightness, Energy' }
-      },
-      men_diseases: {
-        hi: { title: 'पुरुषों के रोग', subtitle: 'थकान, कमजोरी, जोश, स्टैमिना' },
-        en: { title: 'Men Health', subtitle: 'Fatigue, Weakness, Vitality, Stamina' }
-      }
-    };
-
+    // 1. Group unique illness display names by categoryId
+    const illnessNamesMap = new Map<string, Set<string>>();
+    
     allRemedies.forEach(remedy => {
-      if (!remedy.categoryId) return;
-      if (!catMap.has(remedy.categoryId)) {
-        const meta = categoryMetadata[remedy.categoryId];
-        if (meta) {
-          catMap.set(remedy.categoryId, {
-            id: remedy.categoryId,
-            title: meta[lang].title,
-            subtitle: meta[lang].subtitle
-          });
-        } else if (remedy.mainCategory) {
-          catMap.set(remedy.categoryId, {
-            id: remedy.categoryId,
-            title: remedy.mainCategory[lang] || remedy.categoryId,
-            subtitle: isHindi ? 'आयुर्वेदिक घरेलू उपचार और नुस्खे' : 'Ayurvedic home remedies and solutions'
-          });
+      const cid = remedy.categoryId;
+      if (!cid) return;
+      
+      if (!illnessNamesMap.has(cid)) {
+        illnessNamesMap.set(cid, new Set<string>());
+      }
+      
+      // Get display name for the illness (from diseaseName or fallback to name)
+      const rawName = remedy.diseaseName?.[lang] || remedy.name[lang];
+      if (rawName) {
+        // Clean leading numbers (e.g. "1. Fever" -> "Fever")
+        const cleanName = rawName.replace(/^\d+[\s.]*/, '').trim();
+        if (cleanName) {
+          illnessNamesMap.get(cid)?.add(cleanName);
         }
       }
+    });
+
+    const catMap = new Map<string, { id: string; title: string; subtitle: string }>();
+
+    // Mapping for user-friendly titles since IDs might be messy or technical
+    const categoryTitleMeta: Record<string, Record<string, string>> = {
+      fever_flu: { hi: 'मौसमी बीमारियां', en: 'Seasonal Fever & Flu' },
+      stomach_ailments: { hi: 'पेट के रोग', en: 'Stomach Ailments' },
+      lifestyle_diseases: { hi: 'असाध्य एवं जीवनशैली के रोग', en: 'Lifestyle Diseases' },
+      women_diseases: { hi: 'महिला के रोग', en: 'Women Health' },
+      detox: { hi: 'संपूर्ण शरीर शुद्धि', en: 'Whole Body Detox' },
+      men_diseases: { hi: 'पुरुषों के रोग', en: 'Men Health' }
+    };
+
+    // 2. Build final category card objects
+    allRemedies.forEach(remedy => {
+      const cid = remedy.categoryId;
+      if (!cid || catMap.has(cid)) return;
+
+      // Extract first 4 illness names for this category
+      const illnesses = Array.from(illnessNamesMap.get(cid) || []);
+      const dynamicSubtitle = illnesses.slice(0, 4).join(', ');
+      
+      const fallbackSubtitle = isHindi 
+        ? 'आयुर्वेदिक घरेलू उपचार और नुस्खे' 
+        : 'Ayurvedic home remedies and solutions';
+
+      // Find best title: check meta map first, then fallback to remedy's mainCategory string
+      const metaTitle = categoryTitleMeta[cid]?.[lang];
+      const categoryTitle = metaTitle || (remedy.mainCategory?.[lang] || cid);
+
+      catMap.set(cid, {
+        id: cid,
+        title: categoryTitle,
+        subtitle: dynamicSubtitle || fallbackSubtitle
+      });
     });
 
     return Array.from(catMap.values());

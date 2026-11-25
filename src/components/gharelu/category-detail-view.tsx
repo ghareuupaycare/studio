@@ -125,9 +125,8 @@ export const CategoryDetailView = ({
         </h2>
       </div>
 
-      {/* Language Aware Labels - Placed BELOW heading and ABOVE cards */}
       {!selectedRemedy && (
-        <div className="px-1 animate-in fade-in duration-700">
+        <div className="px-1 -mt-2 animate-in fade-in duration-700">
           {!selectedIllnessId ? (
             <span className={cn(
               "text-[10px] sm:text-xs font-black uppercase tracking-[0.15em] opacity-60",
