@@ -61,6 +61,10 @@ export const AppSplashScreen = () => {
         }
         .animate-splash-zoom {
           animation: splashZoom 2000ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          will-change: transform;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          image-rendering: -webkit-optimize-contrast;
         }
       `}</style>
     </div>
