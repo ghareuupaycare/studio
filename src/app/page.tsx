@@ -243,6 +243,10 @@ function GhareluUpayAppContent() {
 
   // Navigation Handlers
   const handleSelectCategory = (id: string) => {
+    setIsSearchOpen(false);
+    setIsFavoritesOpen(false);
+    setIsNotificationsOpen(false);
+    setIsSidebarOpen(false);
     setSelectedCategoryId(id);
     setSelectedIllnessId(null);
     setSelectedRemedyId(null);
@@ -251,6 +255,10 @@ function GhareluUpayAppContent() {
   };
 
   const handleSelectIllness = (illnessId: string) => {
+    setIsSearchOpen(false);
+    setIsFavoritesOpen(false);
+    setIsNotificationsOpen(false);
+    setIsSidebarOpen(false);
     setSelectedIllnessId(illnessId);
     setSelectedRemedyId(null);
     setIsDetailView(false);
@@ -260,6 +268,12 @@ function GhareluUpayAppContent() {
   const handleSelectRemedy = (remedyId: string, categoryId: string) => {
     const remedy = allRemedies.find(r => r.id === remedyId);
     if (!remedy) return;
+
+    // Manually ensure overlays are visually closed before pushing content stack
+    setIsSearchOpen(false);
+    setIsFavoritesOpen(false);
+    setIsNotificationsOpen(false);
+    setIsSidebarOpen(false);
 
     const iId = remedy.illnessId || null;
     
@@ -329,6 +343,10 @@ function GhareluUpayAppContent() {
   };
 
   const handleGoHome = () => {
+    setIsSearchOpen(false);
+    setIsFavoritesOpen(false);
+    setIsNotificationsOpen(false);
+    setIsSidebarOpen(false);
     if (!selectedCategoryId) return;
     setSelectedCategoryId(null);
     setSelectedIllnessId(null);

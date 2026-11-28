@@ -40,7 +40,7 @@ export const NotificationsOverlay = ({
     const categoryId = remedy.categoryId || 'fever_flu';
     onMarkAsRead(remedy.id);
     onSelectRemedy(remedy.id, categoryId);
-    onClose();
+    // Removed onClose() call here to prevent redundant history.back()
   };
 
   const handlePrivateClick = async (item: any) => {
@@ -48,7 +48,7 @@ export const NotificationsOverlay = ({
       await updateDoc(doc(db, 'questions', item.id), { isRead: true });
     }
     onSelectRemedy(item.remedyId, 'live');
-    onClose();
+    // Removed onClose() call here to prevent redundant history.back()
   };
 
   return (

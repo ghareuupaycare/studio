@@ -141,8 +141,9 @@ export const SearchOverlay = ({ isOpen, onClose, lang, theme, onSelectRemedy, al
   const handleResultClick = (remedy: Remedy) => {
     const categoryId = remedy.categoryId || 'fever_flu';
     onSelectRemedy(remedy.id, categoryId);
-    onClose();
     setQuery('');
+    // Removed onClose() call here to prevent redundant history.back() 
+    // which was skipping the Detail view back to the list view.
   };
 
   // Utility to highlight matching words in text
